@@ -1,18 +1,17 @@
 #
-# Copyright (C) 2011-2012 Barchart, Inc. <http://www.barchart.com/>
+# Copyright (C) 2010-2012 Andrei Pozolotin <Andrei.Pozolotin@gmail.com>
 #
 # All rights reserved. Licensed under the OSI BSD License.
 #
 # http://www.opensource.org/licenses/bsd-license.php
 #
 
-.project
+#
+# keep .project for gh-switch
+#
+!.project
 .classpath
 .settings/
 
 bin/
 target/
-
-release.properties
-pom.xml.*
- 
