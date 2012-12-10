@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Bandwidth Estimation</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="img0.html">First page</a> <a href="img27.html">Back</a> <a href="img29.html">Continue</a> <a href="img49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="text28.html">Text</a></center><br>
+<center><img src="img28.png" alt=""></center>
+<h3>Notes:</h3><br>
+
+<p><p style="direction:ltr;"><font color="#000000">We have one last unclear issue in the UDT congestion control algorithm: how to know the bandwidth B? UDT uses packet-pair based bandwidth estimation technique.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">UDT sends out a full sized back-to-back packet pair at randomized intervals. Once the pair of packets passes through a narrow link segment, there will be a gap between the two packets. At the receiver side, the bottleneck bandwidth can be estimated by the packet size over the inter-packet space.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">This is the ideal situation. In the real world there may be noises from cross traffic, host interrupt coalescence, context switch, and so on. On the one hand, we have to use median and mean filters to filter out these negative impacts. On the other hand, the errors can not be completely removed. UDT has to be robust to estimation error. That is why we use a projection filter in the congestion control formula.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+
+</p>
+</body>
+</html>

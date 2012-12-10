@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Application Programming Interface (API)</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text19.html">Back</a> <a href="text21.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img20.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">Application Programming Interface (API)</b></font></h1>
+<ul><li style="direction:ltr;"><h2>Socket API</h2></li>
+<li style="direction:ltr;"><h2>New API</h2></li>
+<ul><li style="direction:ltr;">sendfile/recvfile: efficient file transfer</li>
+<li style="direction:ltr;">sendmsg/recvmsg: messaging with partial reliability</li>
+<li style="direction:ltr;">selectEx: a more efficient version of “select”</li>
+</ul><li style="direction:ltr;"><h2>Rendezvous Connect</h2></li>
+<ul><li style="direction:ltr;">Firewall traversing</li>
+</ul></ul><br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">In the last slide for the UDT design and implementation, I would like to talk a little about the UDT API. The reason is not that almost half of the UDT code is to deal with API, but the API semantics is somehow part of a transport protocol. It affects the design and implementation, and it affects application development as well.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">We kept the traditional socket interface, with small updates, such that application developers do not need much time to learn UDT programming. In addition, we also made an effort such that in certain conditions, existing applications can turn from TCP to UDT without any modifications.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+</body>
+</html>

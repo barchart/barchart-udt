@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>UDT Control Algorithm</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text24.html">Back</a> <a href="text26.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img25.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">UDT Control Algorithm</b></font></h1>
+<ul><li style="direction:ltr;"><h2>Increase</h2></li>
+<ul><li style="direction:ltr;"><i><font color="#CC3300">(x) = f( B - x ) * c</i> </font></li>
+<li style="direction:ltr;">	where <i>B</i> is the link capacity (Bandwidth), <i>c</i> is a constant parameter</li>
+</ul><li style="direction:ltr;"><h2>Constant rate control interval (<i>SYN</i>), irrelevant to RTT</h2></li>
+<ul><li style="direction:ltr;">SYN = 0.01 seconds</li>
+</ul><li style="direction:ltr;"><h2>Decrease</h2></li>
+<ul><li style="direction:ltr;">Randomized decrease factor</li>
+<li style="direction:ltr;"><i> = 1 – (8/9)n</i></li>
+</ul></ul><br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">Here is the control algorithm used in UDT. The alpha(x) is related to the difference between the network bottleneck bandwidth and the current data sending rate. As x increases, (B-x) will decrease, and we want f() to be an non-decreasing function.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">The UDT increase function actually uses a filter to project (B-x) onto each level of 10's power, which results a stepwise function. This is to be robust to bandwidth estimation error. I will talk about this shortly after.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">UDT uses a constant rate control interval in order to realize RTT fairness and reach fast convergence in long RTT links.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">We will describe how to estimate the network bandwidth B shortly after, but now let's look at an example of how UDT increases its sending rate.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">(x UNIT: bits/sec)</font></p>
+</body>
+</html>

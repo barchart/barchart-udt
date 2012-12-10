@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Efficiency Consideration</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text18.html">Back</a> <a href="text20.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img19.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">Efficiency Consideration</b></font></h1>
+<ul><li style="direction:ltr;"><h2>Less packets</h2></li>
+<ul><li style="direction:ltr;">Timer-based acknowledging</li>
+</ul><li style="direction:ltr;"><h2>Less CPU time</h2></li>
+<ul><li style="direction:ltr;">Reduce per packet processing time</li>
+<li style="direction:ltr;">Reduce memory copy</li>
+<li style="direction:ltr;">Reduce loss list processing time</li>
+<li style="direction:ltr;">Light ACK vs. regular ACK</li>
+</ul><li style="direction:ltr;"><h2>Parallel processing</h2></li>
+<ul><li style="direction:ltr;">Threading architecture</li>
+</ul><li style="direction:ltr;"><h2>Less burst in processing</h2></li>
+<ul><li style="direction:ltr;">Evenly distribute the processing time</li>
+</ul></ul><br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">As I have mentioned, design and implementation can affect the efficiency characteristic of a transport protocol. This is mainly due to the impact of the CPU usage. For example, to transfer data at 1Gbps,  about 80000 packets have to be processed in one second. If the per packet processing is too long, the throughput will be limited by CPU; if there is a CPU time burst in packet processing, then the incoming packets may overflow the UDP buffer.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">We have used many techniques in the implementation according to these efficiency considerations, including memory copy avoidance, timer-based acknowledging, and so on.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+</body>
+</html>
