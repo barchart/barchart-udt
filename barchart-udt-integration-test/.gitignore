@@ -6,10 +6,6 @@
 # http://www.opensource.org/licenses/bsd-license.php
 #
 
-/.project
-/.classpath
-/.settings
-
 /bin
 /target
 
