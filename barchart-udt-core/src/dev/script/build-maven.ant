@@ -1,0 +1,466 @@
+<!--
+
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project name="project-compile" default="target-info" basedir="${mvn.basedir}">
+
+	<!--
+		used by maven ant builder; keep in sync with eclipse cdt builder
+	-->
+
+	<!-- ####################################################### -->
+
+	<!-- setup ant-contrib -->
+
+	<path id="plugin.classpath" path="${mvn.plugin.classpath}" />
+	<!-- http://ant-contrib.sourceforge.net/cpptasks/ -->
+	<typedef resource="cpptasks.tasks" classpathref="plugin.classpath" />
+	<typedef resource="cpptasks.types" classpathref="plugin.classpath" />
+	<!-- http://ant-contrib.sourceforge.net/ -->
+	<typedef resource="net/sf/antcontrib/antcontrib.properties" classpathref="plugin.classpath" />
+
+	<!-- ####################################################### -->
+
+	<!-- detect build environment -->
+
+	<property environment="env" />
+
+	<condition property="isWindows">
+		<os family="windows" />
+	</condition>
+	<condition property="isLinux">
+		<and>
+			<os family="unix" />
+			<not>
+				<os family="mac" />
+			</not>
+		</and>
+	</condition>
+	<condition property="isMac">
+		<and>
+			<os family="unix" />
+			<os family="mac" />
+		</and>
+	</condition>
+
+	<condition property="is64">
+		<or>
+			<os arch="x86_64" />
+			<os arch="amd64" />
+		</or>
+	</condition>
+	<condition property="is32">
+		<not>
+			<isset property="is64" />
+		</not>
+	</condition>
+
+	<condition property="isX86">
+		<or>
+			<os arch="x86" />
+			<os arch="i386" />
+			<os arch="i486" />
+			<os arch="i586" />
+			<os arch="i686" />
+			<os arch="x86_64" />
+			<os arch="amd64" />
+		</or>
+	</condition>
+
+	<condition property="libOS" value="linux">
+		<isset property="isLinux" />
+	</condition>
+	<condition property="libOS" value="windows">
+		<isset property="isWindows" />
+	</condition>
+	<condition property="libOS" value="macosx">
+		<isset property="isMac" />
+	</condition>
+
+	<condition property="libBITS" value="32">
+		<isset property="is32" />
+	</condition>
+	<condition property="libBITS" value="64">
+		<isset property="is64" />
+	</condition>
+
+	<condition property="libARCH" value="x86">
+		<isset property="isX86" />
+	</condition>
+
+	<!-- must set environmet properly to run this script -->
+	<property name="mingw.home" value="${env.MINGW_HOME}" />
+
+	<available property="isMINGW" file="${mingw.home}" type="dir" />
+	<available property="isGCC" file="/usr/bin/g++" type="file" />
+
+	<condition property="isToolReady">
+		<or>
+			<and>
+				<isset property="isMac" />
+				<isset property="isGCC" />
+			</and>
+			<and>
+				<isset property="isLinux" />
+				<isset property="isGCC" />
+			</and>
+			<and>
+				<isset property="isWindows" />
+				<isset property="isX86" />
+				<isset property="is32" />
+				<isset property="isMINGW" />
+			</and>
+		</or>
+	</condition>
+
+	<condition property="isSupported">
+		<or>
+			<and>
+				<isset property="isMac" />
+				<isset property="isX86" />
+			</and>
+			<and>
+				<isset property="isLinux" />
+				<isset property="isX86" />
+			</and>
+			<and>
+				<isset property="isWindows" />
+				<isset property="isX86" />
+				<isset property="is32" />
+			</and>
+		</or>
+	</condition>
+
+	<!-- ####################################################### -->
+
+	<!-- naming convention -->
+
+	<versioninfo id="build-version" fileversion="${mvn.mavenStamp}" productversion="${mvn.version}" compatibilityversion="${mvn.version}" legalcopyright="Copyright (C) ${mvn.licenceOrganization}; Developers: ${mvn.licenceDevelopers}" productname="${mvn.nativeLibName}" companyname="${mvn.licenceOrganization} ( ${mvn.licenceWebsite} )" />
+
+	<!-- word "root" of library name -->
+	<property name="name.root" value="${mvn.nativeLibName}-${libOS}-${libARCH}-${libBITS}" />
+
+	<!-- cpptasks working directory; will contain compilation result -->
+	<property name="work.cpptasks" value="${mvn.target}/cpptasks" />
+
+	<!-- cpptasks nees both folder and root name provided to "outfile";
+	cpptasks will add prefix/suffix to the root - based on compiler name,
+	not platform type; note: must porvie "name.root" - hence all this mess -->
+	<property name="path.cpptasks.root" value="${work.cpptasks}/${name.root}" />
+
+	<!-- make own name with prefix/suffix that will match cpptasks name;
+	note: cpptasks will produce libXXX.so on both linux and windows,
+	based on 'g++' compiler type, not build platform type -->
+	<property name="name.cpptasks" value="lib${name.root}.so" />
+	<property name="name.cpptasks.map" value="${name.cpptasks}.map" />
+	<property name="name.cpptasks.sym" value="${name.cpptasks}.sym" />
+
+	<!-- full path to the artifacts produceced by cpptasks: *.so and *.map -->
+	<property name="path.cpptasks" value="${work.cpptasks}/${name.cpptasks}" />
+	<property name="path.cpptasks.map" value="${work.cpptasks}/${name.cpptasks.map}" />
+	<property name="path.cpptasks.sym" value="${work.cpptasks}/${name.cpptasks.sym}" />
+
+	<!-- real name with prefix/suffix that is requered by current platform -->
+	<condition property="name.real" value="${name.root}.dll">
+		<isset property="isWindows" />
+	</condition>
+	<condition property="name.real" value="lib${name.root}.so">
+		<isset property="isLinux" />
+	</condition>
+	<condition property="name.real" value="lib${name.root}.jnilib">
+		<isset property="isMac" />
+	</condition>
+
+	<property name="name.real.map" value="${name.real}.map" />
+	<property name="name.real.sym" value="${name.real}.sym" />
+
+	<!-- full path to the artifacts locations in maven: *.so and *.map -->
+	<property name="path.real" value="${mvn.resources}/${name.real}" />
+	<property name="path.real.map" value="${mvn.resources}/${name.real.map}" />
+	<property name="path.real.sym" value="${mvn.resources}/${name.real.sym}" />
+
+
+	<!-- ####################################################### -->
+
+	<!-- compiler setup -->
+
+	<compiler id="gcc-compiler" name="g++">
+
+		<!-- header files -->
+		<includepath path="${mvn.nativeInclude}" />
+		<includepath path="${mvn.nativeSrcUDT}/src" />
+
+		<!-- debug -->
+		<!-- compilerarg value="-v" /-->
+
+		<!-- gcc library inclusion mode -->
+		<compilerarg value="-static-libgcc" />
+
+		<!-- note: no inclusion of stdc++  library statically -->
+
+		<!-- optimizations & JNI compatibility
+		NOTE: when setting -O1, -O2, -O3, gcc produces calls that are "way too new":
+			GLIBCXX_3.4.9 _ZNSo9_M_insertIlEERSoT_
+			GLIBCXX_3.4.9 _ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
+			GLIBCXX_3.4.9 _ZNSo9_M_insertImEERSoT_
+		need to get rid of this to enable run on the older versions of libgcc + libstdc++ <= 3.4
+		-->
+		<compilerarg value="-g0" />
+		<compilerarg value="-O3" />
+		<compilerarg value="-finline-functions" />
+		<compilerarg value="-fno-strict-aliasing" />
+		<compilerarg value="-fno-omit-frame-pointer" />
+
+		<!-- code quality -->
+		<compilerarg value="-Wall" />
+		<!-- <compilerarg value="-Werror" /> -->
+		<compilerarg value="-Wno-unused" />
+		<compilerarg value="-Wno-parentheses" />
+		<compilerarg value="-fmessage-length=0" />
+
+		<defineset>
+			<define name="NDEBUG" />
+		</defineset>
+
+	</compiler>
+
+	<compiler id="gcc-compiler-linux" extends="gcc-compiler">
+		<!-- header files -->
+		<includepath path="${mvn.nativeInclude}/linux" />
+		<!-- core libraries -->
+		<compilerarg value="-pthread" />
+		<!-- compiler definitions -->
+		<defineset>
+			<define name="LINUX" />
+			<define name="_GNU_SOURCE" />
+			<define name="_REENTRANT" />
+		</defineset>
+	</compiler>
+
+	<compiler id="gcc-compiler-linux-x86-32" extends="gcc-compiler-linux">
+		<compilerarg value="-m32" />
+	</compiler>
+
+	<compiler id="gcc-compiler-linux-x86-64" extends="gcc-compiler-linux">
+		<compilerarg value="-m64" />
+		<!-- compiler definitions -->
+		<defineset>
+			<define name="AMD64" />
+			<define name="ARCH" value="AMD64" />
+		</defineset>
+	</compiler>
+
+
+
+	<compiler id="gcc-compiler-macosx" extends="gcc-compiler">
+		<!-- header files -->
+		<includepath path="${mvn.nativeInclude}/macosx" />
+	</compiler>
+
+	<compiler id="gcc-compiler-macosx-x86-32" extends="gcc-compiler-macosx">
+		<compilerarg value="-arch" />
+		<compilerarg value="x86_32" />
+	</compiler>
+
+	<compiler id="gcc-compiler-macosx-x86-64" extends="gcc-compiler-macosx">
+		<compilerarg value="-arch" />
+		<compilerarg value="x86_64" />
+	</compiler>
+
+
+
+	<compiler id="gcc-compiler-windows" extends="gcc-compiler">
+		<!-- header files -->
+		<includepath path="${mvn.nativeInclude}/win32" />
+	</compiler>
+
+	<compiler id="gcc-compiler-windows-x86-32" extends="gcc-compiler-windows">
+		<!-- compiler definitions for mingw -->
+		<defineset>
+			<define name="__MINGW__" />
+			<define name="WIN32" />
+			<!-- win 2000 -->
+			<!-- define name="_WIN32_WINNT" value="0x0500" / -->
+			<!-- win XP -->
+			<define name="_WIN32_WINNT" value="0x0501" />
+		</defineset>
+		<!-- required for thread safe c++ exceptions -->
+		<compilerarg location="end" value="-mthreads" />
+	</compiler>
+
+	<compiler id="gcc-compiler-windows-x86-64" extends="gcc-compiler-windows">
+		<!-- not tested -->
+	</compiler>
+
+	<linker id="gcc-linker" name="g++">
+		<!-- core libraries -->
+		<!-- linkerarg location="end" value=" - X -library=gcc" -->
+		<linkerarg location="end" value="-lstdc++" />
+	</linker>
+
+	<linker id="gcc-linker-linux" extends="gcc-linker">
+		<!-- map file for crash analysis; result map file will be located in work directory -->
+		<linkerarg location="end" value="-Wl,-Map,${name.cpptasks.map}" />
+		<linkerarg location="start" value="-fPIC" />
+		<!-- core libraries -->
+		<linkerarg location="end" value="--library=pthread" />
+	</linker>
+
+
+	<linker id="gcc-linker-macosx" extends="gcc-linker">
+		<!-- map file for crash analysis; result map file will be located in work directory -->
+		<linkerarg location="end" value="-Wl,-map,${name.cpptasks.map}" />
+		<linkerarg location="start" value="-flat_namespace" />
+		<!-- core libraries -->
+		<!-- linkerarg location="end" value="- - library=pthread" -->
+	</linker>
+
+
+	<linker id="gcc-linker-windows" extends="gcc-linker">
+		<!-- map file for crash analysis; result map file will be located in work directory -->
+		<linkerarg location="end" value="-Wl,-Map,${name.cpptasks.map}" />
+		<!-- provide image base to simplify library map analisys -->
+		<linkerarg location="end" value="-Wl,--image-base,0x10000000" />
+		<!-- required for java jni calling convention -->
+		<linkerarg location="end" value="-Wl,--kill-at" />
+		<linkerarg location="end" value="-Wl,--add-stdcall-alias" />
+		<!-- required for thread safe c++ exceptions -->
+		<linkerarg location="end" value="-mthreads" />
+		<!-- core mingw librarises -->
+		<!-- linkerarg location="end" value="-X-library=crtdll" /-->
+		<linkerarg location="end" value="--library=ws2_32" />
+	</linker>
+
+	<!-- ####################################################### -->
+
+	<!-- targets -->
+
+	<target name="target-info">
+
+		<echo message="### BUILD INFO" />
+
+		<echo message="java.class.path 	: ${java.class.path}" />
+		<echo message="plugin.classpath : ${mvn.plugin.classpath}" />
+
+		<echo message="basedir     : ${basedir}" />
+		<echo message="os.family   : ${os.family}" />
+		<echo message="os.name     : ${os.name}" />
+		<echo message="os.arch     : ${os.arch}" />
+		<echo message="os.version  : ${os.version}" />
+		<echo message="isToolReady : ${isToolReady}" />
+		<echo message="isSupported : ${isSupported}" />
+
+		<echo message="licenceYear         : ${mvn.licenceYear}" />
+		<echo message="licenceOrganization : ${mvn.licenceOrganization}" />
+		<echo message="licenceWebsite      : ${mvn.licenceWebsite}" />
+		<echo message="licenceDevelopers   : ${mvn.licenceDevelopers}" />
+		<echo message="mavenStamp          : ${mvn.mavenStamp}" />
+
+		<echo message="target        : ${mvn.target}" />
+		<echo message="nativeLibName : ${mvn.nativeLibName}" />
+		<echo message="nativeSrcJNI  : ${mvn.nativeSrcJNI}" />
+		<echo message="nativeSrcUDT  : ${mvn.nativeSrcUDT}" />
+		<echo message="nativeInclude : ${mvn.nativeInclude}" />
+
+		<echo message="name.root     : ${name.root}" />
+		<echo message="name.real     : ${name.real}" />
+		<echo message="name.real.map : ${name.real.map}" />
+		<echo message="name.cpptasks     : ${name.cpptasks}" />
+		<echo message="name.cpptasks.map : ${name.cpptasks.map}" />
+		<echo message="work.cpptasks  : ${work.cpptasks}" />
+		<echo message="path.cpptasks.root : ${path.cpptasks.root}" />
+		<echo message="path.real      : ${path.real}" />
+		<echo message="path.real.map  : ${path.real.map}" />
+		<echo message="path.cpptasks      : ${path.cpptasks}" />
+		<echo message="path.cpptasks.map  : ${path.cpptasks.map}" />
+
+	</target>
+
+	<target name="target-run-javah">
+		<echo message="### JNI HEADERS" />
+		<javah classpath="${mvn.target}/classes" implementation="sun" destdir="${mvn.nativeSrcJNI}" verbose="yes">
+			<class name="com.barchart.udt.${mvn.nativeLibName}" />
+		</javah>
+	</target>
+
+	<target name="diagnostics" description="diagnostics">
+		<!-- internal ant diagnostics; used for build debugging -->
+		<diagnostics />
+	</target>
+
+	<target name="target-linker-search-path">
+		<echo message="### LINKER PATH" />
+		<echo message="GCC:" />
+		<exec executable="sh">
+			<arg value="-c" />
+			<arg value="g++ -print-search-dirs | sed '/^lib/b 1;d;:1;s,/[^/.][^/]*/\.\./,/,;t 1;s,:[^=]*=,:;,;s,;,;  ,g' | tr '\;' '\n'  |  grep -v '^ */' " />
+		</exec>
+		<echo message="LD:" />
+		<exec executable="sh">
+			<arg value="-c" />
+			<arg value="ld --verbose | grep SEARCH_DIR | tr -s ' ;' '\n'" />
+		</exec>
+	</target>
+
+	<target name="target-check-pre-requisites" depends="target-info, target-linker-search-path">
+		<echo message="### CHECK PRE-REQUISITES" />
+		<fail unless="isToolReady" message="compiler tool chain is not available" />
+		<fail unless="isSupported" message="this platform is not yet supported" />
+	</target>
+
+	<target name="target-compile" depends="target-check-pre-requisites,target-run-javah">
+		<echo message="### COMPILE ARTIFACT" />
+		<mkdir dir="${work.cpptasks}" />
+		<cc outtype="shared" objdir="${work.cpptasks}" outfile="${path.cpptasks.root}">
+			<fileset dir="${mvn.nativeSrcJNI}" includes="*.cpp" />
+			<fileset dir="${mvn.nativeSrcUDT}/src" includes="*.cpp" />
+			<versioninfo refid="build-version" />
+			<compiler refid="gcc-compiler-${libOS}-${libARCH}-${libBITS}" />
+			<linker refid="gcc-linker-${libOS}" />
+		</cc>
+	</target>
+
+	<target name="target-check-library" depends="target-compile">
+		<echo message="### CHECK LIBRARY" />
+		<echo message="      ${path.cpptasks}" />
+		<exec executable="sh" failonerror="false" osfamily="unix">
+			<arg value="-c" />
+			<arg value="echo 'trying to load dependency libs:'; ldd --data-relocs --function-relocs '${path.cpptasks}';" />
+		</exec>
+		<exec executable="sh" failonerror="false" osfamily="unix">
+			<arg value="-c" />
+			<arg value="echo 'checking library versions in use:'; objdump --dynamic-syms '${path.cpptasks}' | grep 'GLIB' | sed 's/^.*\(GLIB[A-Z]*_[0-9\.]*\).*$/\t\1/' | sort -u;" />
+		</exec>
+		<exec executable="sh" failonerror="false">
+			<arg value="-c" />
+			<arg value="echo 'generating symbol map:'; nm --demangle --numeric-sort '${path.cpptasks}' > '${path.cpptasks.sym}';" />
+		</exec>
+	</target>
+
+	<target name="target-copy-artifact" depends="target-check-library">
+		<echo message="### COPY ARTIFACT" />
+		<echo message="artifact    : ${path.cpptasks}" />
+		<copy file="${path.cpptasks}" tofile="${path.real}" />
+		<echo message="artifact map: ${path.cpptasks.map}" />
+		<copy file="${path.cpptasks.map}" tofile="${path.real.map}" />
+		<echo message="artifact sym: ${path.cpptasks.sym}" />
+		<copy file="${path.cpptasks.sym}" tofile="${path.real.sym}" />
+	</target>
+
+	<!-- =================================
+          target-build
+         ================================= -->
+	<target name="target-build">
+		<echo message="### SKIPPING BUILD ###" />
+	</target>
+	<target name="target-build-really" depends="target-copy-artifact">
+		<echo message="### SUCESS" />
+	</target>
+
+
+</project>

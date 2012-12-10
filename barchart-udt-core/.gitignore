@@ -1,0 +1,33 @@
+#
+# Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+#
+# All rights reserved. Licensed under the OSI BSD License.
+#
+# http://www.opensource.org/licenses/bsd-license.php
+#
+
+
+#
+# jni header files are generated
+#
+!/src/main/c++/jni/*.h
+
+
+#
+# keep eclipse settings in repo
+#
+!.cproject
+!.project
+!.classpath
+!.settings/
+
+#
+# library exctract during test
+#
+lib/
+
+#
+# cdt build folders
+#
+cdt_*
+

@@ -1,0 +1,82 @@
+<project default="default" basedir="./..">
+
+	<property name="tag" value="master" />
+
+	<basename property="project" file="${basedir}" />
+
+	<property name="rootdir" value="${basedir}/.." />
+	<property name="sitedir" value="${rootdir}/site" />
+	<property name="tempdir" value="${java.io.tmpdir}/${project}/site" />
+
+	<property name="source" value="${basedir}/target/site" />
+	<property name="target" value="${sitedir}/${project}" />
+
+	<echo message="project : ${project}" />
+
+	<echo message="basedir : ${basedir}" />
+	<echo message="rootdir : ${rootdir}" />
+	<echo message="sitedir : ${sitedir}" />
+	<echo message="tempdir : ${tempdir}" />
+
+	<echo message="source  : ${source}" />
+	<echo message="target  : ${target}" />
+
+	<target name="default">
+
+		<echo message="kill temp" />
+		<delete dir="${tempdir}" verbose="false" />
+
+		<echo message="select tag" />
+		<exec executable="git">
+			<arg value="checkout" />
+			<arg value="${tag}" />
+		</exec>
+
+		<echo message="build site" />
+		<exec executable="mvn">
+			<arg value="validate" />
+			<arg value="clean" />
+			<arg value="site" />
+		</exec>
+
+		<echo message="copy site" />
+		<copy todir="${tempdir}" overwrite="true" verbose="false">
+			<fileset dir="${source}" />
+		</copy>
+
+		<echo message="select gh-pages" />
+		<exec executable="git">
+			<arg value="checkout" />
+			<arg value="gh-pages" />
+		</exec>
+
+		<echo message="copy site" />
+		<copy todir="${target}" overwrite="true" verbose="false">
+			<fileset dir="${tempdir}" />
+		</copy>
+
+		<echo message="commit gh-pages" />
+		<exec executable="git">
+			<arg value="add" />
+			<arg value="${target}/" />
+		</exec>
+		<exec executable="git">
+			<arg value="commit" />
+			<arg value="-m" />
+			<arg value="publish" />
+		</exec>
+		<exec executable="git">
+			<arg value="push" />
+			<arg value="origin" />
+			<arg value="gh-pages" />
+		</exec>
+
+		<echo message="select master" />
+		<exec executable="git">
+			<arg value="checkout" />
+			<arg value="master" />
+		</exec>
+
+	</target>
+
+</project>

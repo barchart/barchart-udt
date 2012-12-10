@@ -1,0 +1,47 @@
+====
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+====
+
+compiler
+
+/Od
+/D "WIN32"
+/D "_DEBUG"
+/D "_CONSOLE"
+/D "UDT_EXPORTS"
+/D "_VC80_UPGRADE=0x0710"
+/D "_WINDLL"
+/Gm
+/EHsc
+/RTC1
+/MDd
+/Fo"../src\\"
+/Fd"../src\vc90.pdb"
+/FR"../src\\"
+/W4
+/nologo
+/c
+/ZI
+/TP
+/errorReport:prompt
+
+linker
+
+/OUT:"../src/udt.dll"
+/INCREMENTAL
+/NOLOGO
+/DLL
+/MANIFEST
+/MANIFESTFILE:"../src\udt.dll.intermediate.manifest"
+/MANIFESTUAC:"level='asInvoker' uiAccess='false'"
+/DEBUG
+/PDB:"../src/udt.pdb"
+/SUBSYSTEM:CONSOLE
+/DYNAMICBASE:NO
+/ERRORREPORT:PROMPT
+kernel32.lib user32.lib ws2_32.lib
+

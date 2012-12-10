@@ -1,0 +1,30 @@
+====
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+====
+
+#####################################################
+
+Java Developer package
+http://developer.apple.com/java/download/
+Java for Mac OS X 10.6 Update 3 Developer Package
+Documentation and developer runtime of "Java for Mac OS X 10.6 Update 3". Contains JavaDoc, tools documentation, and native framework headers.
+
+
+http://discussions.info.apple.com/thread.jspa?messageID=12818890
+"If you do JNI development, you must install the Java Developer package, since it contains updated headers for the native JavaVM.framework and its sub-frameworks (8421130). The Java Developer package is available from http://connect.apple.com."
+
+https://issues.sonatype.org/browse/NAR-177?focusedCommentId=123378#action_123378
+
+sudo ln -s /System/Library/Frameworks/JavaVM.framework/Headers /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/include
+
+
+#####################################################
+
+Bypassing the Mac OS X GUI
+http://oreilly.com/pub/h/348
+
+#####################################################

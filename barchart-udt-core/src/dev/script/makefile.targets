@@ -1,0 +1,54 @@
+
+
+
+# naming
+JAVA_PACKAGE=net.sourceforge.udt
+JAVA_CLASS=SocketUDT
+JAVA_CLASS_FQN=$(JAVA_PACKAGE).$(JAVA_CLASS)
+
+JAVA_NATIVE_LIB=lib$(JAVA_CLASS)64.so 
+
+
+CPP_SRC=$(PWD)/../src/main/cpp
+JAVA_TARGET=$(PWD)/../target/classes
+JAVA_LIB_DIR=$(PWD)/../lib
+
+SIGNATURES:=$(JAVA_LIB_DIR)/signatures.txt
+
+headers: 
+#	@echo TEST $(SHELL) $(OBJS) $(PATH) ${ProjDirPath} 
+	@echo making HEADERS
+	@echo PWD=$(PWD)
+	@echo JAVA_CLASS_FQN=$(JAVA_CLASS_FQN)
+#	javah -force -verbose -jni -d "$(CPP_SRC)" -classpath "$(JAVA_TARGET)" $(JAVA_CLASS_FQN)
+	javah -verbose -jni -d "$(CPP_SRC)" -classpath "$(JAVA_TARGET)" $(JAVA_CLASS_FQN)
+
+signatures: 
+	@echo getting SIGNATURES
+	@echo JAVA_CLASS_FQN=$(JAVA_CLASS_FQN)
+	@echo ------------------------------------------------------------------------ > $(SIGNATURES)
+	javap -private -s -classpath "$(JAVA_TARGET)" net.sourceforge.udt.ExceptionUDT >> $(SIGNATURES)  
+	@echo ------------------------------------------------------------------------ >> $(SIGNATURES)
+	javap -private -s -classpath "$(JAVA_TARGET)" net.sourceforge.udt.SocketUDT >> $(SIGNATURES)  
+	@echo ------------------------------------------------------------------------ >> $(SIGNATURES)
+	javap -private -s -classpath "$(JAVA_TARGET)" net.sourceforge.udt.TypeUDT >> $(SIGNATURES)  
+	@echo ------------------------------------------------------------------------ >> $(SIGNATURES)
+ 
+
+	
+build:
+	@echo ">>> clean"
+	$(MAKE) clean
+	@echo ">>> headers"
+	$(MAKE) headers
+	@echo ">>> all"
+	$(MAKE) all
+#	@echo ">>> archive"
+#	$(MAKE) archive
+#	@echo ">>> copy"
+#	@cp $(JAVA_NATIVE_LIB) $(JAVA_TARGET)
+
+
+archive:
+	ar -rcs lib$(JAVA_CLASS)64.a net_sourceforge_udt_SocketUDT.o   
+

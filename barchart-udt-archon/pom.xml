@@ -1,0 +1,444 @@
+<!--
+
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.barchart.base</groupId>
+		<artifactId>barchart-archon</artifactId>
+		<version>2.3.2</version>
+		<relativePath />
+	</parent>
+
+	<groupId>com.barchart.udt</groupId>
+	<artifactId>barchart-udt-archon</artifactId>
+	<version>2.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<description>Java wrapper around native C++ UDT protocol implementation UDT version: 4.9</description>
+
+	<url>https://github.com/barchart/barchart-udt</url>
+
+	<inceptionYear>2009</inceptionYear>
+
+	<scm>
+		<url>https://github.com/barchart/barchart-udt</url>
+		<connection>scm:git:git://github.com/barchart/barchart-udt.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-udt.git</developerConnection>
+	</scm>
+
+	<properties>
+
+		<projectJavaVersion>1.6</projectJavaVersion>
+		<projectMavenVersion>3.0.4</projectMavenVersion>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<maven.build.timestamp.format>yyyy-MM-dd_HH-mm-ss</maven.build.timestamp.format>
+
+		<!-- must be provided by settingx.xml -->
+		<scmServerId>barchart-google-code</scmServerId>
+
+		<scmSiteURL>svn:https://barchart-udt.googlecode.com/svn/site</scmSiteURL>
+		<scmSiteProject>${project.artifactId}</scmSiteProject>
+
+		<!-- ### -->
+
+		<lin32>i386-Linux-gpp-jni</lin32>
+		<lin64>amd64-Linux-gpp-jni</lin64>
+		<mac32>i386-MacOSX-gpp-jni</mac32>
+		<mac64>x86_64-MacOSX-gpp-jni</mac64>
+		<win32>x86-Windows-gpp-jni</win32>
+		<win64>amd64-Windows-gpp-jni</win64>
+
+		<!-- ### -->
+
+		<!-- <narGroupId>org.apache.maven.plugins</narGroupId> -->
+		<!-- <narArtifactId>maven-nar-plugin</narArtifactId> -->
+		<!-- <narVersion>2.1-SNAPSHOT</narVersion> -->
+
+		<!-- <narGroupId>com.barchart.nar</narGroupId> -->
+		<!-- <narArtifactId>maven-nar-plugin</narArtifactId> -->
+		<!-- <narVersion>2.0.1-SNAPSHOT</narVersion> -->
+
+		<narGroupId>org.codeswarm</narGroupId>
+		<narArtifactId>maven-nar-plugin</narArtifactId>
+		<narVersion>20121119</narVersion>
+
+	</properties>
+
+	<repositories>
+
+	</repositories>
+
+	<pluginRepositories>
+
+		<!-- <pluginRepository> -->
+		<!-- <id>Mark.Donszelmann@gmail.com</id> -->
+		<!-- <name>Duns' Maven Snapshot Repository</name> -->
+		<!-- <url>http://duns.github.com/maven-snapshots/</url> -->
+		<!-- <releases> -->
+		<!-- <enabled>false</enabled> -->
+		<!-- <updatePolicy>never</updatePolicy> -->
+		<!-- </releases> -->
+		<!-- <snapshots> -->
+		<!-- <enabled>true</enabled> -->
+		<!-- <updatePolicy>daily</updatePolicy> -->
+		<!-- </snapshots> -->
+		<!-- </pluginRepository> -->
+
+		<!-- <pluginRepository> -->
+		<!-- <id>Mark.Donszelmann@gmail.com-custom-build</id> -->
+		<!-- <name>Duns' Maven Snapshot Repository (custom build)</name> -->
+		<!-- <url>https://oss.sonatype.org/content/repositories/snapshots/</url> -->
+		<!-- <releases> -->
+		<!-- <enabled>false</enabled> -->
+		<!-- <updatePolicy>never</updatePolicy> -->
+		<!-- </releases> -->
+		<!-- <snapshots> -->
+		<!-- <enabled>true</enabled> -->
+		<!-- <updatePolicy>daily</updatePolicy> -->
+		<!-- </snapshots> -->
+		<!-- </pluginRepository> -->
+
+	</pluginRepositories>
+
+	<build>
+
+		<defaultGoal>test</defaultGoal>
+
+		<extensions>
+
+		</extensions>
+
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.ant</groupId>
+							<artifactId>ant</artifactId>
+							<version>1.8.1</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.ant</groupId>
+							<artifactId>ant-nodeps</artifactId>
+							<version>1.8.1</version>
+						</dependency>
+						<dependency>
+							<groupId>ant-contrib</groupId>
+							<artifactId>cpptasks</artifactId>
+							<version>1.0b5</version>
+						</dependency>
+						<dependency>
+							<groupId>ant-contrib</groupId>
+							<artifactId>ant-contrib</artifactId>
+							<version>1.0b3</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+
+				<plugin>
+					<groupId>javolution</groupId>
+					<artifactId>colapi</artifactId>
+					<version>1.0.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<fork>true</fork>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>${narGroupId}</groupId>
+					<artifactId>${narArtifactId}</artifactId>
+					<version>${narVersion}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<!-- do not fork to enforce java bits during tests -->
+						<forkMode>never</forkMode>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<configuration>
+						<reportPlugins>
+
+							<plugin>
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-project-info-reports-plugin</artifactId>
+								<version>2.3.1</version>
+								<reportSets>
+									<reportSet>
+										<reports>
+											<report>index</report>
+											<report>summary</report>
+											<report>dependencies</report>
+											<report>project-team</report>
+											<report>license</report>
+											<report>issue-tracking</report>
+											<report>mailing-list</report>
+											<report>scm</report>
+										</reports>
+									</reportSet>
+								</reportSets>
+								<configuration>
+									<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+								</configuration>
+							</plugin>
+
+							<plugin>
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-jxr-plugin</artifactId>
+								<version>2.2</version>
+							</plugin>
+
+							<plugin>
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-javadoc-plugin</artifactId>
+								<version>2.7</version>
+								<configuration>
+									<quiet>true</quiet>
+									<verbose>false</verbose>
+									<links>
+										<show>public</show>
+										<link>http://java.sun.com/javase/1.6.0/docs/api</link>
+									</links>
+									<linksource>true</linksource>
+									<detectLinks>true</detectLinks>
+									<windowtitle>${project.name} API ${project.version} /
+										${maven.build.timestamp}</windowtitle>
+									<doctitle>${project.name} API ${project.version} /
+										${maven.build.timestamp}</doctitle>
+									<header><![CDATA[<a href="${project.organization.url}" target="_blank">${project.organization.name}</a>]]></header>
+									<footer><![CDATA[<a href="${project.organization.url}" target="_blank">${project.organization.name}</a>]]></footer>
+									<bottom>
+										<!-- note: these "years" are internal javadoc plugin tags -->
+										Copyright © {inceptionYear}-{currentYear}
+						<![CDATA[<a href="${project.organization.url}" target="_blank">${project.organization.name}</a>]]>.
+										All Rights Reserved.
+									</bottom>
+								</configuration>
+								<reportSets>
+									<reportSet>
+										<reports>
+											<report>javadoc</report>
+										</reports>
+									</reportSet>
+								</reportSets>
+							</plugin>
+
+							<plugin>
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-surefire-report-plugin</artifactId>
+								<version>2.6</version>
+								<reportSets>
+									<reportSet>
+										<reports>
+											<report>report-only</report>
+										</reports>
+									</reportSet>
+								</reportSets>
+							</plugin>
+
+							<!-- http://site.supose.org/doxygen-maven-plugin/report-mojo.html -->
+							<plugin>
+								<groupId>com.soebes.maven.plugins.dmg</groupId>
+								<artifactId>doxygen-maven-plugin</artifactId>
+								<version>1.0.1</version>
+								<configuration>
+									<projectName>${project.build.finalName}</projectName>
+									<input>${basedir}/src/main/c++</input>
+									<recursive>true</recursive>
+									<filePatterns>*.h *.c *.cpp</filePatterns>
+									<haveDot>true</haveDot>
+									<classGraph>true</classGraph>
+									<collaborationGraph>true</collaborationGraph>
+									<stripFromPath>${basedir}</stripFromPath>
+								</configuration>
+							</plugin>
+
+						</reportPlugins>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-invoker-plugin</artifactId>
+					<version>1.8</version>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>set-maven-version-property</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>maven-version</goal>
+						</goals>
+						<configuration>
+							<versionProperty>maven.version</versionProperty>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>enforce-barchart</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<message>### You must run Java version ${projectJavaVersion};
+										you are
+										running now: ${build.java.runtime.version} ###</message>
+									<version>${projectJavaVersion}</version>
+								</requireJavaVersion>
+								<requireMavenVersion>
+									<message>### You must run Maven version ${projectMavenVersion};
+										you
+										are running now: ${maven.version} ###</message>
+									<version>${projectMavenVersion}</version>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<!--"arguments" are overwritten by overriding profiles -->
+					<arguments>
+						--update-snapshots \
+						--define skipTests \
+						--activate-profiles \
+						release-properties,release-versions,release-attach,package-bundle
+					</arguments>
+					<preparationGoals>clean verify</preparationGoals>
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	<profiles>
+
+		<profile>
+			<!-- "think different": macosx provides tools.jar classes already in classes.jar 
+				and does not provide tools.jar as sun does -->
+			<!-- vendor @ macosx: java.vendor=Apple, Inc. -->
+			<!-- vendor @ windows: java.vendor=Sun Microsystems Inc. -->
+			<!-- vendor @ linux: java.vendor=Sun Microsystems Inc. -->
+			<id>jdk-tools-jar</id>
+			<activation>
+				<property>
+					<name>java.vendor</name>
+					<value>Sun Microsystems Inc.</value>
+				</property>
+			</activation>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-antrun-plugin</artifactId>
+							<dependencies>
+								<dependency>
+									<groupId>com.sun.jdk</groupId>
+									<artifactId>jdk-tools</artifactId>
+									<version>${projectJavaVersion}</version>
+									<scope>system</scope>
+									<systemPath>${java.home}/../lib/tools.jar</systemPath>
+								</dependency>
+							</dependencies>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+
+		<profile>
+			<id>release-versions</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>groovy-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>release-versions</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<!-- build snapshot and release version numbers during various phases 
+										of release plugin -->
+									<source>
+										//
+										version=project.version;
+										snapshot='-SNAPSHOT';
+										if(version.contains(snapshot)){
+										snapshotVersion=version;
+										releaseVersion=version.replaceAll(snapshot,'');
+										}else{
+										snapshotVersion=version+snapshot;
+										releaseVersion=version;
+										}
+										println('###snapshotVersion='+snapshotVersion);
+										println('###releaseVersion='+releaseVersion);
+										project.properties['snapshotVersion']=snapshotVersion;
+										project.properties['releaseVersion']=releaseVersion;
+										//
+									</source>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+</project>

@@ -1,0 +1,174 @@
+====
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+====
+
+------------------------------------------------------------------------
+Compiled from "ExceptionUDT.java"
+public class net.sourceforge.udt.ExceptionUDT extends java.net.SocketException{
+private static final long serialVersionUID;
+  Signature: J
+public final net.sourceforge.udt.ErrorUDT errorUDT;
+  Signature: Lnet/sourceforge/udt/ErrorUDT;
+protected net.sourceforge.udt.ExceptionUDT(int, java.lang.String);
+  Signature: (ILjava/lang/String;)V
+protected net.sourceforge.udt.ExceptionUDT(net.sourceforge.udt.ErrorUDT, java.lang.String);
+  Signature: (Lnet/sourceforge/udt/ErrorUDT;Ljava/lang/String;)V
+public net.sourceforge.udt.ExceptionUDT(java.lang.String);
+  Signature: (Ljava/lang/String;)V
+}
+
+------------------------------------------------------------------------
+Compiled from "SocketUDT.java"
+public class net.sourceforge.udt.SocketUDT extends java.lang.Object{
+private static final org.slf4j.Logger log;
+  Signature: Lorg/slf4j/Logger;
+public static final int INFINITE_TTL;
+  Signature: I
+public static final long UNLIMITED_BW;
+  Signature: J
+protected final int socketID;
+  Signature: I
+protected final int socketType;
+  Signature: I
+protected final int socketAddressFamily;
+  Signature: I
+public final net.sourceforge.udt.TypeUDT type;
+  Signature: Lnet/sourceforge/udt/TypeUDT;
+public final net.sourceforge.udt.MonitorUDT monitor;
+  Signature: Lnet/sourceforge/udt/MonitorUDT;
+protected volatile int messageTimeTolive;
+  Signature: I
+protected volatile boolean messageIsOrdered;
+  Signature: Z
+protected volatile java.net.InetSocketAddress localSocketAddress;
+  Signature: Ljava/net/InetSocketAddress;
+protected volatile java.net.InetSocketAddress remoteSocketAddress;
+  Signature: Ljava/net/InetSocketAddress;
+static {};
+  Signature: ()V
+protected static native void initClass0()   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ()V
+protected static native void stopClass0()   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ()V
+protected native int initInstance0(int)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (I)I
+protected native int initInstance1(int)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (I)I
+protected native net.sourceforge.udt.SocketUDT accept0()   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ()Lnet/sourceforge/udt/SocketUDT;
+public net.sourceforge.udt.SocketUDT accept()   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ()Lnet/sourceforge/udt/SocketUDT;
+protected native void bind0(java.net.InetSocketAddress)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Ljava/net/InetSocketAddress;)V
+public void bind(java.net.InetSocketAddress)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Ljava/net/InetSocketAddress;)V
+protected native void close0()   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ()V
+public void close()   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ()V
+protected void finalize();
+  Signature: ()V
+protected native void connect0(java.net.InetSocketAddress)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Ljava/net/InetSocketAddress;)V
+public void connect(java.net.InetSocketAddress)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Ljava/net/InetSocketAddress;)V
+protected native boolean hasLoadedRemoteSocketAddress();
+  Signature: ()Z
+public java.net.InetSocketAddress getRemoteSocketAddress()   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ()Ljava/net/InetSocketAddress;
+protected native boolean hasLoadedLocalSocketAddress();
+  Signature: ()Z
+public java.net.InetSocketAddress getLocalSocketAddress()   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ()Ljava/net/InetSocketAddress;
+protected native java.lang.Object getOption0(int, java.lang.Class)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (ILjava/lang/Class;)Ljava/lang/Object;
+public java.lang.Object getOption(net.sourceforge.udt.OptionUDT)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Lnet/sourceforge/udt/OptionUDT;)Ljava/lang/Object;
+protected native void setOption0(int, java.lang.Class, java.lang.Object)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (ILjava/lang/Class;Ljava/lang/Object;)V
+public void setOption(net.sourceforge.udt.OptionUDT, java.lang.Object)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Lnet/sourceforge/udt/OptionUDT;Ljava/lang/Object;)V
+protected native void listen0(int)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (I)V
+public void listen(int)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (I)V
+protected native int receive0(int, int, byte[])   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (II[B)I
+public int receive(byte[])   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ([B)I
+public int receiveFile(java.nio.ByteBuffer)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Ljava/nio/ByteBuffer;)I
+public int select()   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ()I
+protected native int send0(int, int, int, boolean, byte[])   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (IIIZ[B)I
+public int send(byte[])   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: ([B)I
+public void setMessageTimeTolLive(int);
+  Signature: (I)V
+public void setMessageIsOdered(boolean);
+  Signature: (Z)V
+public int sendFile(java.nio.ByteBuffer)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Ljava/nio/ByteBuffer;)I
+protected native void updateMonitor0(boolean)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Z)V
+public void updateMonitor(boolean)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Z)V
+protected native int getErrorCode0();
+  Signature: ()I
+public int getErrorCode();
+  Signature: ()I
+protected native java.lang.String getErrorMessage0();
+  Signature: ()Ljava/lang/String;
+public java.lang.String getErrorMessage();
+  Signature: ()Ljava/lang/String;
+protected native void clearError0();
+  Signature: ()V
+public void clearError();
+  Signature: ()V
+protected native boolean isOpen0();
+  Signature: ()Z
+public boolean isOpen();
+  Signature: ()Z
+protected native void test0();
+  Signature: ()V
+public void setDefaultMessageSendMode();
+  Signature: ()V
+public net.sourceforge.udt.SocketUDT(net.sourceforge.udt.TypeUDT)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Lnet/sourceforge/udt/TypeUDT;)V
+protected net.sourceforge.udt.SocketUDT(net.sourceforge.udt.TypeUDT, int)   throws net.sourceforge.udt.ExceptionUDT;
+  Signature: (Lnet/sourceforge/udt/TypeUDT;I)V
+public boolean isBound();
+  Signature: ()Z
+public boolean isConnected();
+  Signature: ()Z
+public net.sourceforge.udt.ErrorUDT getError();
+  Signature: ()Lnet/sourceforge/udt/ErrorUDT;
+}
+
+------------------------------------------------------------------------
+Compiled from "TypeUDT.java"
+public final class net.sourceforge.udt.TypeUDT extends java.lang.Enum{
+public static final net.sourceforge.udt.TypeUDT STREAM;
+  Signature: Lnet/sourceforge/udt/TypeUDT;
+public static final net.sourceforge.udt.TypeUDT DATAGRAM;
+  Signature: Lnet/sourceforge/udt/TypeUDT;
+public final int code;
+  Signature: I
+private static final net.sourceforge.udt.TypeUDT[] ENUM$VALUES;
+  Signature: [Lnet/sourceforge/udt/TypeUDT;
+static {};
+  Signature: ()V
+private net.sourceforge.udt.TypeUDT(java.lang.String, int, int);
+  Signature: (Ljava/lang/String;II)V
+public static net.sourceforge.udt.TypeUDT[] values();
+  Signature: ()[Lnet/sourceforge/udt/TypeUDT;
+public static net.sourceforge.udt.TypeUDT valueOf(java.lang.String);
+  Signature: (Ljava/lang/String;)Lnet/sourceforge/udt/TypeUDT;
+}
+
+------------------------------------------------------------------------

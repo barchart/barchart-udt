@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+
+<!--
+http://en.wikipedia.org/wiki/Launchd
+http://sourceforge.net/projects/lingon/files/
+-->
+
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>slave-agent</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/var/hudson/slave-agent.sh</string>
+		<string>start</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+</dict>
+</plist>

@@ -1,0 +1,106 @@
+====
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+====
+
+Compiled from "Set.java"
+public interface java.util.Set extends java.util.Collection{
+public abstract int size();
+  Signature: ()I
+public abstract boolean isEmpty();
+  Signature: ()Z
+public abstract boolean contains(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Z
+public abstract java.util.Iterator iterator();
+  Signature: ()Ljava/util/Iterator;
+public abstract java.lang.Object[] toArray();
+  Signature: ()[Ljava/lang/Object;
+public abstract java.lang.Object[] toArray(java.lang.Object[]);
+  Signature: ([Ljava/lang/Object;)[Ljava/lang/Object;
+public abstract boolean add(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Z
+public abstract boolean remove(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Z
+public abstract boolean containsAll(java.util.Collection);
+  Signature: (Ljava/util/Collection;)Z
+public abstract boolean addAll(java.util.Collection);
+  Signature: (Ljava/util/Collection;)Z
+public abstract boolean retainAll(java.util.Collection);
+  Signature: (Ljava/util/Collection;)Z
+public abstract boolean removeAll(java.util.Collection);
+  Signature: (Ljava/util/Collection;)Z
+public abstract void clear();
+  Signature: ()V
+public abstract boolean equals(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Z
+public abstract int hashCode();
+  Signature: ()I
+}
+
+Compiled from "Iterator.java"
+public interface java.util.Iterator{
+public abstract boolean hasNext();
+  Signature: ()Z
+public abstract java.lang.Object next();
+  Signature: ()Ljava/lang/Object;
+public abstract void remove();
+  Signature: ()V
+}
+
+Compiled from "List.java"
+public interface java.util.List extends java.util.Collection{
+public abstract int size();
+  Signature: ()I
+public abstract boolean isEmpty();
+  Signature: ()Z
+public abstract boolean contains(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Z
+public abstract java.util.Iterator iterator();
+  Signature: ()Ljava/util/Iterator;
+public abstract java.lang.Object[] toArray();
+  Signature: ()[Ljava/lang/Object;
+public abstract java.lang.Object[] toArray(java.lang.Object[]);
+  Signature: ([Ljava/lang/Object;)[Ljava/lang/Object;
+public abstract boolean add(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Z
+public abstract boolean remove(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Z
+public abstract boolean containsAll(java.util.Collection);
+  Signature: (Ljava/util/Collection;)Z
+public abstract boolean addAll(java.util.Collection);
+  Signature: (Ljava/util/Collection;)Z
+public abstract boolean addAll(int, java.util.Collection);
+  Signature: (ILjava/util/Collection;)Z
+public abstract boolean removeAll(java.util.Collection);
+  Signature: (Ljava/util/Collection;)Z
+public abstract boolean retainAll(java.util.Collection);
+  Signature: (Ljava/util/Collection;)Z
+public abstract void clear();
+  Signature: ()V
+public abstract boolean equals(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Z
+public abstract int hashCode();
+  Signature: ()I
+public abstract java.lang.Object get(int);
+  Signature: (I)Ljava/lang/Object;
+public abstract java.lang.Object set(int, java.lang.Object);
+  Signature: (ILjava/lang/Object;)Ljava/lang/Object;
+public abstract void add(int, java.lang.Object);
+  Signature: (ILjava/lang/Object;)V
+public abstract java.lang.Object remove(int);
+  Signature: (I)Ljava/lang/Object;
+public abstract int indexOf(java.lang.Object);
+  Signature: (Ljava/lang/Object;)I
+public abstract int lastIndexOf(java.lang.Object);
+  Signature: (Ljava/lang/Object;)I
+public abstract java.util.ListIterator listIterator();
+  Signature: ()Ljava/util/ListIterator;
+public abstract java.util.ListIterator listIterator(int);
+  Signature: (I)Ljava/util/ListIterator;
+public abstract java.util.List subList(int, int);
+  Signature: (II)Ljava/util/List;
+}
+

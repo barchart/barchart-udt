@@ -1,0 +1,24 @@
+====
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+====
+
+#####################################################
+
+Writing a toolchain plugin for CDT (or: things not to use XML for)
+http://thisisnotaprogrammersblog.blogspot.com/2007/10/writing-toolchain-plugin-for-cdt-or.html
+
+#####################################################
+
+CDT Plug-in Developer Guide
+http://help.eclipse.org/helios/index.jsp?nav=/13
+
+#####################################################
+
+CDT-MSVC its a plugin for Eclipse's CDT which allows you to use Microsoft toolchains inside the CDT
+http://cdt-msvc.tigris.org/
+
+#####################################################

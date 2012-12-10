@@ -1,0 +1,35 @@
+<!--
+
+    Copyright (C) 2011-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.barchart.base</groupId>
+		<artifactId>barchart-archon</artifactId>
+		<version>2.3.2</version>
+		<relativePath />
+	</parent>
+
+	<groupId>com.barchart.udt</groupId>
+	<artifactId>barchart-udt</artifactId>
+	<version>0.0.0</version>
+	<packaging>pom</packaging>
+
+	<description>eclipse import helper</description>
+
+	<modules>
+		<module>barchart-udt-archon</module>
+		<module>barchart-udt-core</module>
+		<module>barchart-udt-integration-test</module>
+	</modules>
+
+</project>
