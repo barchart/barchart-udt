@@ -9,7 +9,8 @@
 #
 # keep .project for gh-switch
 #
-!.project
+
+#.project
 .classpath
 .settings/
 
