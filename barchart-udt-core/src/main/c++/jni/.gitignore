@@ -4,3 +4,6 @@
 # instead, they should be build on demand from corresponding *.java files;
 
 /com_barchart_udt_SocketUDT.h
+
+/javah
+
