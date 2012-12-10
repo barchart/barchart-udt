@@ -10,7 +10,7 @@
 #
 # jni header files are generated
 #
-!/src/main/c++/jni/*.h
+!src/main/c++/jni/*.h
 
 
 #
@@ -24,10 +24,10 @@
 #
 # library exctract during test
 #
-lib/
+/lib
 
 #
 # cdt build folders
 #
-cdt_*
+/cdt_*
 

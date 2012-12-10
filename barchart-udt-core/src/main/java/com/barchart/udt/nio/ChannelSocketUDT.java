@@ -1,9 +1,41 @@
 /**
- * Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+ * =================================================================================
  *
- * All rights reserved. Licensed under the OSI BSD License.
+ * BSD LICENCE (http://en.wikipedia.org/wiki/BSD_licenses)
  *
- * http://www.opensource.org/licenses/bsd-license.php
+ * ARTIFACT='barchart-udt4';VERSION='1.0.2-SNAPSHOT';TIMESTAMP='2011-01-11_09-30-59';
+ *
+ * Copyright (C) 2009-2011, Barchart, Inc. (http://www.barchart.com/)
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ *     * Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
+ *
+ *     * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *
+ *     * Neither the name of the Barchart, Inc. nor the names of its contributors
+ *     may be used to endorse or promote products derived from this software
+ *     without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Developers: Andrei Pozolotin;
+ *
+ * =================================================================================
  */
 package com.barchart.udt.nio;
 
@@ -62,7 +94,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 
 	final SocketUDT socketUDT;
 
-	ChannelSocketUDT(final SelectorProvider provider, final SocketUDT socketUDT) {
+	ChannelSocketUDT(SelectorProvider provider, SocketUDT socketUDT) {
 		super(provider);
 		this.socketUDT = socketUDT;
 	}
@@ -79,8 +111,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	private volatile boolean isBlockingMode = isBlocking();
 
 	@Override
-	protected void implConfigureBlocking(final boolean block)
-			throws IOException {
+	protected void implConfigureBlocking(boolean block) throws IOException {
 		socketUDT.configureBlocking(block);
 		isBlockingMode = block;
 	}
@@ -88,7 +119,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	private volatile boolean isConnectionPending;
 
 	@Override
-	public boolean connect(final SocketAddress remote) throws IOException {
+	public boolean connect(SocketAddress remote) throws IOException {
 
 		if (!isOpen()) {
 			throw new ClosedChannelException();
@@ -104,7 +135,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			throw new NullPointerException("remote == null");
 		}
 
-		final InetSocketAddress remoteSocket = (InetSocketAddress) remote;
+		InetSocketAddress remoteSocket = (InetSocketAddress) remote;
 		if (remoteSocket.isUnresolved()) {
 			log.error("can not use unresolved address: remote={}", remote);
 			close();
@@ -162,7 +193,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 				logStatus();
 				return true;
 			} else {
-				final IOException exception = connectException;
+				IOException exception = connectException;
 				if (exception == null) {
 					return false;
 				} else {
@@ -195,7 +226,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	 * @see com.barchart.udt.SocketUDT#receive(byte[], int, int)
 	 */
 	@Override
-	public final int read(final ByteBuffer buffer) throws IOException {
+	public final int read(ByteBuffer buffer) throws IOException {
 
 		if (buffer == null) {
 			throw new NullPointerException("buffer == null");
@@ -217,9 +248,9 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 					sizeReceived = socket.receive(buffer);
 				} else {
 					assert buffer.hasArray();
-					final byte[] array = buffer.array();
-					final int position = buffer.position();
-					final int limit = buffer.limit();
+					byte[] array = buffer.array();
+					int position = buffer.position();
+					int limit = buffer.limit();
 					sizeReceived = socket.receive(array, position, limit);
 					if (0 < sizeReceived && sizeReceived <= remaining) {
 						buffer.position(position + sizeReceived);
@@ -258,7 +289,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
-	public long read(final ByteBuffer[] dsts, final int offset, final int length)
+	public long read(ByteBuffer[] dsts, int offset, int length)
 			throws IOException {
 		throw new RuntimeException("feature not available");
 	}
@@ -294,7 +325,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	 * @see com.barchart.udt.SocketUDT#send(byte[], int, int)
 	 */
 	@Override
-	public final int write(final ByteBuffer buffer) throws IOException {
+	public final int write(ByteBuffer buffer) throws IOException {
 
 		// writeCount.incrementAndGet();
 
@@ -318,9 +349,9 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 					sizeSent = socket.send(buffer);
 				} else {
 					assert buffer.hasArray();
-					final byte[] array = buffer.array();
-					final int position = buffer.position();
-					final int limit = buffer.limit();
+					byte[] array = buffer.array();
+					int position = buffer.position();
+					int limit = buffer.limit();
 					sizeSent = socket.send(array, position, limit);
 					if (0 < sizeSent && sizeSent <= remaining) {
 						buffer.position(position + sizeSent);
@@ -364,8 +395,8 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
-	public long write(final ByteBuffer[] srcs, final int offset,
-			final int length) throws IOException {
+	public long write(ByteBuffer[] srcs, int offset, int length)
+			throws IOException {
 		throw new RuntimeException("feature not available");
 	}
 
@@ -383,7 +414,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 
 	protected volatile SelectionKeyUDT channelKey;
 
-	protected void setRegistredKey(final SelectionKeyUDT key) {
+	protected void setRegistredKey(SelectionKeyUDT key) {
 		// one time init
 		assert channelKey == null;
 		channelKey = key;
@@ -393,7 +424,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 
 	protected volatile IOException connectException;
 
-	protected void setConnectException(final IOException exception) {
+	protected void setConnectException(IOException exception) {
 		this.connectException = exception;
 	}
 
