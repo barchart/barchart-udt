@@ -8,12 +8,6 @@
 
 
 #
-# jni header files are generated
-#
-!src/main/c++/jni/*.h
-
-
-#
 # keep eclipse settings in repo
 #
 !.cproject
