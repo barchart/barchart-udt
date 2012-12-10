@@ -375,7 +375,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src/main/c++"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src/main/c++/udt/src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
