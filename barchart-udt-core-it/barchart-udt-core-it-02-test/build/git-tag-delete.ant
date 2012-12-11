@@ -1,0 +1,32 @@
+<!--
+
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project default="git" basedir="./..">
+
+	<echo message="basedir : ${basedir}" />
+
+	<property name="tag" value="" />
+
+	<target name="git">
+		
+		<exec executable="git">
+			<arg value="tag" />
+			<arg value="-d" />
+			<arg value="${tag}" />
+		</exec>
+		
+		<exec executable="git">
+			<arg value="push" />
+			<arg value="origin" />
+			<arg value=":refs/tags/${tag}" />
+		</exec>
+		
+	</target>
+
+</project>

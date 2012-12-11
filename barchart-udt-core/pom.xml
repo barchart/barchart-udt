@@ -1,3 +1,5 @@
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -6,7 +8,7 @@
 	<parent>
 		<groupId>com.barchart.udt</groupId>
 		<artifactId>barchart-udt-archon</artifactId>
-		<version>2.0.0-SNAPSHOT</version>
+		<version>2.0.0</version>
 		<relativePath>../barchart-udt-archon</relativePath>
 	</parent>
 
@@ -46,6 +48,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -240,15 +243,17 @@
 						<artifactId>maven-invoker-plugin</artifactId>
 						<configuration>
 							<streamLogs>true</streamLogs>
-							<projectsDirectory>src/int/</projectsDirectory>
+							<!-- <projectsDirectory>src/int/</projectsDirectory> -->
+							<projectsDirectory>${basedir}/../.</projectsDirectory>
 							<!-- <settingsFile>src/int/settings.xml</settingsFile> -->
-							<!-- <cloneProjectsTo>${project.build.directory}/int-work</cloneProjectsTo> -->
+							<cloneProjectsTo>${project.build.directory}/int-work</cloneProjectsTo>
 							<!-- <localRepositoryPath>${project.build.directory}/int-repo</localRepositoryPath> -->
 							<invokerPropertiesFile>invoker-${label}-${jdk}.properties</invokerPropertiesFile>
 							<setupIncludes>
 							</setupIncludes>
 							<pomIncludes>
-								<pomInclude>all/pom.xml</pomInclude>
+								<!-- <pomInclude>all/pom.xml</pomInclude> -->
+								<path>barchart-udt-core-it/pom.xml</path>
 							</pomIncludes>
 							<goals>
 								<!-- goals for child maven invocation -->

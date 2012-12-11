@@ -1,0 +1,191 @@
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.barchart.udt</groupId>
+		<artifactId>barchart-udt-core-it</artifactId>
+		<version>0.0.0</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<groupId>com.barchart.udt</groupId>
+	<artifactId>barchart-udt-core-it-01-build</artifactId>
+	<packaging>jar</packaging>
+
+	<description>build bundle prototype for single os/arch</description>
+
+	<properties>
+
+		<dependencyUnpack>target/classes</dependencyUnpack>
+
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.barchart.udt</groupId>
+			<artifactId>barchart-udt-core</artifactId>
+			<version>${integrationVersion}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>com.barchart.udt</groupId>
+			<artifactId>barchart-udt-core</artifactId>
+			<version>${integrationVersion}</version>
+			<classifier>${classifier}</classifier>
+			<type>nar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<profiles>
+
+		<profile>
+			<id>nar_i386-Linux-gpp</id>
+			<activation>
+				<os>
+					<arch>i386</arch>
+					<name>Linux</name>
+				</os>
+			</activation>
+			<properties>
+				<classifier>${lin32}</classifier>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>nar_amd64-Linux-gpp</id>
+			<activation>
+				<os>
+					<name>Linux</name>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<classifier>${lin64}</classifier>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>nar_i386-MacOSX-gpp</id>
+			<activation>
+				<os>
+					<arch>i386</arch>
+					<name>Mac OS X</name>
+				</os>
+			</activation>
+			<properties>
+				<classifier>${mac32}</classifier>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>nar_x86_64-MacOSX-gpp</id>
+			<activation>
+				<os>
+					<arch>x86_64</arch>
+					<name>Mac OS X</name>
+				</os>
+			</activation>
+			<properties>
+				<classifier>${mac64}</classifier>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>nar_x86-Windows-gpp</id>
+			<activation>
+				<os>
+					<arch>x86</arch>
+					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<classifier>${win32}</classifier>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>nar_amd64-Windows-gpp</id>
+			<activation>
+				<os>
+					<arch>amd64</arch>
+					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<classifier>${win64}</classifier>
+			</properties>
+		</profile>
+
+	</profiles>
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>package-bundle-unpack</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<excludeTransitive>true</excludeTransitive>
+							<excludes>META-INF/</excludes>
+							<outputDirectory>${dependencyUnpack}</outputDirectory>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.barchart.udt</groupId>
+									<artifactId>barchart-udt-core</artifactId>
+									<version>${integrationVersion}</version>
+									<type>jar</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.barchart.udt</groupId>
+									<artifactId>barchart-udt-core</artifactId>
+									<version>${integrationVersion}</version>
+									<classifier>${classifier}</classifier>
+									<type>nar</type>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<classesDirectory>${dependencyUnpack}</classesDirectory>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>
