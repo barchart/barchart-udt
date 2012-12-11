@@ -7,27 +7,19 @@
 #
 
 #
-# keep eclipse settings in repo
+# keep eclipse cdt settings with source 
 #
 !/.cproject
 !/.project
 !/.classpath
 !/.settings
 
-#
-# drop library exctract during test
-#
-/lib
-
-#
-# drop eclipse/maven build results 
-#
 /cdt_*
 /bin
 /target
 
-#
-# drop maven release config 
-#
 /release.properties
 /pom.xml.*
+
+/lib
+

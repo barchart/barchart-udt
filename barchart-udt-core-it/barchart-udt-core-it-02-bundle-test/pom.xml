@@ -1,0 +1,75 @@
+<!--
+
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.barchart.udt</groupId>
+		<artifactId>barchart-udt-core-it</artifactId>
+		<version>0.0.0</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<groupId>com.barchart.udt</groupId>
+	<artifactId>barchart-udt-core-it-02-bundle-test</artifactId>
+	<packaging>jar</packaging>
+	
+	<description>load and test bundle prototype for single os/arch</description>
+
+	<dependencies>
+
+		<!-- should be made by previous integration step -->
+		<dependency>
+			<groupId>com.barchart.udt</groupId>
+			<artifactId>barchart-udt-core-it-01-bundle</artifactId>
+			<version>0.0.0</version>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- else makes bizarre folder locks -->
+					<forkMode>once</forkMode>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>

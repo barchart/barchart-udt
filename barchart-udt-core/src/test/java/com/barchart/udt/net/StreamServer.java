@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.StatusUDT;
 import com.barchart.udt.TypeUDT;
-import com.barchart.udt.util.HelperUtils;
+import com.barchart.udt.util.TestHelp;
 
 class StreamServer extends StreamBase {
 
@@ -48,7 +48,7 @@ class StreamServer extends StreamBase {
 	StreamServer(final TypeUDT type, final InetSocketAddress serverAddress,
 			final ServiceFactory factory) throws Exception {
 
-		super(new SocketUDT(type), HelperUtils.getLocalSocketAddress(),
+		super(new SocketUDT(type), TestHelp.getLocalSocketAddress(),
 				serverAddress);
 
 		this.factory = factory;

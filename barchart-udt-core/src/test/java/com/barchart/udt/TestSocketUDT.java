@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.HelperUtils;
+import com.barchart.udt.util.TestHelp;
 
 public class TestSocketUDT {
 
@@ -41,10 +41,10 @@ public class TestSocketUDT {
 
 		try {
 
-			InetSocketAddress localAddress1 = HelperUtils
+			InetSocketAddress localAddress1 = TestHelp
 					.getLocalSocketAddress();
 
-			InetSocketAddress localAddress2 = HelperUtils
+			InetSocketAddress localAddress2 = TestHelp
 					.getLocalSocketAddress();
 
 			SocketUDT socketServer = new SocketUDT(TypeUDT.DATAGRAM);
@@ -131,7 +131,7 @@ public class TestSocketUDT {
 		socket.setOption(OptionUDT.Is_Send_Synchronous, false);
 		assertTrue(socket.isOpen());
 
-		final InetSocketAddress localSocketAddress = HelperUtils
+		final InetSocketAddress localSocketAddress = TestHelp
 				.getLocalSocketAddress();
 
 		socket.bind(localSocketAddress);

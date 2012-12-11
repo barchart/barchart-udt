@@ -16,26 +16,29 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * maven-nar-plugin properties
+ */
 class NAR {
 
 	/** The log. */
 	private final static Logger log = LoggerFactory.getLogger(NAR.class);
 
-	static String readFileAsString(String filePath) throws Exception {
+	static String readFileAsString(final String filePath) throws Exception {
 
-		StringBuffer fileData = new StringBuffer(1024 * 4);
+		final StringBuffer fileData = new StringBuffer(1024 * 4);
 
-		InputStream stream = NAR.class.getResourceAsStream(filePath);
+		final InputStream stream = NAR.class.getResourceAsStream(filePath);
 
-		BufferedReader reader = new BufferedReader(
-				new InputStreamReader(stream));
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(
+				stream));
 
 		char[] buf = new char[1024];
 
 		int numRead = 0;
 
 		while ((numRead = reader.read(buf)) != -1) {
-			String readData = String.valueOf(buf, 0, numRead);
+			final String readData = String.valueOf(buf, 0, numRead);
 			fileData.append(readData);
 			buf = new char[1024];
 		}
@@ -56,12 +59,12 @@ class NAR {
 
 		final String name;
 
-		SupportedLinker(String name) {
+		SupportedLinker(final String name) {
 			this.name = name;
 		}
 
-		static SupportedLinker fromName(String name) {
-			for (SupportedLinker linker : values()) {
+		static SupportedLinker fromName(final String name) {
+			for (final SupportedLinker linker : values()) {
 				if (linker.name.equals(name)) {
 					return linker;
 				}
@@ -77,21 +80,21 @@ class NAR {
 
 	static final String NAR_AOL = "/nar-aol.properties";
 
-	public static void main(String... args) throws Exception {
+	public static void main(final String... args) throws Exception {
 
 		log.info("started");
 
-		String filePath = NAR_AOL;
+		final String filePath = NAR_AOL;
 
-		String narAol = readFileAsString(filePath);
+		final String narAol = readFileAsString(filePath);
 
 		log.info("\n{}", narAol);
 
-		String[] lines = narAol.split("\n");
+		final String[] lines = narAol.split("\n");
 
 		log.info("lines.length={}", lines.length);
 
-		Set<String> set = new HashSet<String>();
+		final Set<String> set = new HashSet<String>();
 
 		for (String line : lines) {
 
@@ -101,7 +104,7 @@ class NAR {
 				continue;
 			}
 
-			AOL aol = new AOL(line);
+			final AOL aol = new AOL(line);
 
 			if (aol.linker.contains("linker")) {
 				continue;
@@ -111,15 +114,15 @@ class NAR {
 				continue;
 			}
 
-			String name = aol.resourceName();
+			final String name = aol.resourceName();
 
 			set.add(name);
 
 		}
 
-		for (String line : set.toArray(new String[] {})) {
+		for (final String line : set.toArray(new String[] {})) {
 
-			String find = AOL.filterArch() + "-" + AOL.filterName();
+			final String find = AOL.filterArch() + "-" + AOL.filterName();
 
 			if (line.contains(find)) {
 				log.info("{}", line);

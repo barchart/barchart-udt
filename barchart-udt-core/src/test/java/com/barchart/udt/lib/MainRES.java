@@ -13,7 +13,7 @@ import org.junit.runner.JUnitCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.HelperUtils;
+import com.barchart.udt.util.TestHelp;
 
 public class MainRES {
 
@@ -23,13 +23,13 @@ public class MainRES {
 
 		log.info("started");
 
-		HelperUtils.logOsArch();
-		HelperUtils.logClassPath();
+		TestHelp.logOsArch();
+		TestHelp.logClassPath();
 
 		String name;
 		URL url;
 
-		name = "/lib/i386-Linux-g++/jni/libbarchart-udt4-1.0.2-SNAPSHOT.so";
+		name = "/lib/i386-Linux-g++/jni/libbarchart-udt-core-2.0.0-SNAPSHOT.so";
 		url = MainRES.class.getResource(name);
 		log.info("url={}", url);
 

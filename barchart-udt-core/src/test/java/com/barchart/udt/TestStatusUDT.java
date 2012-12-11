@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.HelperUtils;
+import com.barchart.udt.util.TestHelp;
 
 public class TestStatusUDT {
 
@@ -49,7 +49,7 @@ public class TestStatusUDT {
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
-		final InetSocketAddress localAddress1 = HelperUtils
+		final InetSocketAddress localAddress1 = TestHelp
 				.getLocalSocketAddress();
 
 		socket.bind(localAddress1);
@@ -66,7 +66,7 @@ public class TestStatusUDT {
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
-		final InetSocketAddress localAddress1 = HelperUtils
+		final InetSocketAddress localAddress1 = TestHelp
 				.getLocalSocketAddress();
 
 		socket.bind(localAddress1);
@@ -83,10 +83,10 @@ public class TestStatusUDT {
 	@Test
 	public void testSocketStatus3() throws Exception {
 
-		final InetSocketAddress clientAddress = HelperUtils
+		final InetSocketAddress clientAddress = TestHelp
 				.getLocalSocketAddress();
 
-		final InetSocketAddress serverAddress = HelperUtils
+		final InetSocketAddress serverAddress = TestHelp
 				.getLocalSocketAddress();
 
 		//

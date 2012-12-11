@@ -13,8 +13,6 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,28 +21,20 @@ public class TestRES {
 
 	static final Logger log = LoggerFactory.getLogger(TestRES.class);
 
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
 	@Test
 	public void testFileConnection() throws Exception {
 
-		String curDir = System.getProperty("user.dir");
+		final String curDir = System.getProperty("user.dir");
 		log.info("curDir: {}", curDir);
 
-		String path = "src/test/resources/test-connection.txt";
+		final String path = "src/test/resources/test-connection.txt";
 
-		File file = new File(path);
+		final File file = new File(path);
 		log.info("exists : {}", file.exists());
 
 		log.info("getAbsolutePath : {}", file.getAbsolutePath());
 
-		URLConnection conn = RES.fileConnection(file);
+		final URLConnection conn = RES.fileConnection(file);
 
 		assertTrue(conn.getLastModified() > 0);
 		log.info("getLastModified : {}", conn.getLastModified());
@@ -60,18 +50,18 @@ public class TestRES {
 		log.info("java.class.path = {}", System.getProperty("java.class.path"));
 
 		// path inside jar, relative to the root of java.class.path
-		String sourcePath = "/lib/bin/test-resource.txt";
+		final String sourcePath = "/lib/bin/test-resource.txt";
 
 		log.info("user.dir = {}", System.getProperty("user.dir"));
 
-		String targetFolder = "./target/test-lib-2/bin/";
+		final String targetFolder = "./target/test-lib-2/bin/";
 
 		RES.makeTargetFolder(targetFolder);
 
 		// path outside of jar, in file system, relative to user.dir
-		String targetPath = targetFolder + "/test-resource-extracted.txt";
+		final String targetPath = targetFolder + "/test-resource-extracted.txt";
 
-		File targetFile = new File(targetPath);
+		final File targetFile = new File(targetPath);
 
 		targetFile.delete();
 
@@ -79,13 +69,13 @@ public class TestRES {
 
 		assertTrue(targetFile.exists());
 
-		URL sourceURL = TestRES.class.getResource(sourcePath);
+		final URL sourceURL = TestRES.class.getResource(sourcePath);
 
-		URL targetURL = targetFile.toURI().toURL();
+		final URL targetURL = targetFile.toURI().toURL();
 
-		URLConnection sourceCONN = sourceURL.openConnection();
+		final URLConnection sourceCONN = sourceURL.openConnection();
 
-		URLConnection targetCONN = targetURL.openConnection();
+		final URLConnection targetCONN = targetURL.openConnection();
 
 		assertEquals(sourceCONN.getContentLength(),
 				targetCONN.getContentLength());

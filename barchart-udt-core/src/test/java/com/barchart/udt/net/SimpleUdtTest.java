@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.HelperUtils;
+import com.barchart.udt.util.TestHelp;
 
 /**
  * Sets up a simple UDT client and server to test sending messages between them.
@@ -38,14 +38,14 @@ public class SimpleUdtTest {
 		// we're getting the right one across multiple threads.
 		final AtomicReference<String> ref = new AtomicReference<String>();
 
-		final InetSocketAddress serverAddress = HelperUtils
+		final InetSocketAddress serverAddress = TestHelp
 				.getLocalSocketAddress();
 
 		startThreadedServer(serverAddress, ref);
 
 		final Socket clientSocket = new NetSocketUDT();
 
-		final InetSocketAddress clientAddress = HelperUtils
+		final InetSocketAddress clientAddress = TestHelp
 				.getLocalSocketAddress();
 
 		clientSocket.bind(clientAddress);

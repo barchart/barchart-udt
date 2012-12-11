@@ -46,15 +46,20 @@ public class VersionUDT {
 
 	static final String PROP_UDT_VERSION = "udt.version";
 
+	static final String PROP_BARCHART_NAME = "barchart.name";
 	static final String PROP_BARCHART_GROUP = "barchart.groupId";
 	static final String PROP_BARCHART_ARTIFACT = "barchart.artifactId";
 	static final String PROP_BARCHART_VERSION = "barchart.version";
 	static final String PROP_BARCHART_TIMESTAMP = "barchart.timestamp";
 
 	public static final String UDT_VERSION;
+
+	public static final String BARCHART_NAME;
+
 	public static final String BARCHART_GROUP;
 	public static final String BARCHART_ARTIFACT;
 	public static final String BARCHART_VERSION;
+
 	public static final String BARCHART_TIMESTAMP;
 
 	static final String UNKNOWN = "UNKNOWN";
@@ -62,7 +67,7 @@ public class VersionUDT {
 	static {
 
 		String udtVersion = UNKNOWN;
-		final String name = UNKNOWN;
+		String name = UNKNOWN;
 		String group = UNKNOWN;
 		String artifact = UNKNOWN;
 		String version = UNKNOWN;
@@ -79,6 +84,7 @@ public class VersionUDT {
 
 			udtVersion = props.getProperty(PROP_UDT_VERSION);
 
+			name = props.getProperty(PROP_BARCHART_NAME);
 			group = props.getProperty(PROP_BARCHART_GROUP);
 			artifact = props.getProperty(PROP_BARCHART_ARTIFACT);
 			version = props.getProperty(PROP_BARCHART_VERSION);
@@ -90,6 +96,7 @@ public class VersionUDT {
 
 		UDT_VERSION = udtVersion;
 
+		BARCHART_NAME = name;
 		BARCHART_GROUP = group;
 		BARCHART_ARTIFACT = artifact;
 		BARCHART_VERSION = version;
@@ -98,6 +105,16 @@ public class VersionUDT {
 	}
 
 	private static void append(final StringBuilder text, final String EOL) {
+
+		text.append(PROP_BARCHART_NAME);
+		text.append(" = ");
+		text.append(BARCHART_NAME);
+		text.append(EOL);
+
+		text.append(PROP_BARCHART_GROUP);
+		text.append(" = ");
+		text.append(BARCHART_GROUP);
+		text.append(EOL);
 
 		text.append(PROP_BARCHART_ARTIFACT);
 		text.append(" = ");

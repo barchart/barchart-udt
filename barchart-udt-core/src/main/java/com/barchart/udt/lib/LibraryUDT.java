@@ -79,12 +79,12 @@ enum LibraryUDT {
 		return UNKNOWN;
 	}
 
-	/** load from default extract location */
+	/** load using default extract location */
 	public static void load() throws Exception {
 		load(null);
 	}
 
-	/** load from provided extract location */
+	/** load using provided extract location */
 	public static void load(/* non-final */String targetFolder)
 			throws Exception {
 
@@ -118,7 +118,7 @@ enum LibraryUDT {
 				final String sourcePath = sourceDepRealNAR(depName);
 				RES.systemLoad(sourcePath, targetPath);
 				continue;
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.warn("\n\t {} {}", e.getClass().getSimpleName(),
 						e.getMessage());
 			}
@@ -128,7 +128,7 @@ enum LibraryUDT {
 				final String sourcePath = sourceDepTestNAR(depName);
 				RES.systemLoad(sourcePath, targetPath);
 				continue;
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.warn("\n\t {} {}", e.getClass().getSimpleName(),
 						e.getMessage());
 			}
@@ -148,7 +148,7 @@ enum LibraryUDT {
 			final String sourcePath = sourceLibRealNAR();
 			RES.systemLoad(sourcePath, targetPath);
 			return;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.warn("\n\t {} {}", e.getClass().getSimpleName(), e.getMessage());
 		}
 
@@ -157,7 +157,7 @@ enum LibraryUDT {
 			final String sourcePath = sourceLibTestCDT();
 			RES.systemLoad(sourcePath, targetPath);
 			return;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.warn("\n\t {} {}", e.getClass().getSimpleName(), e.getMessage());
 		}
 
@@ -166,7 +166,7 @@ enum LibraryUDT {
 			final String sourcePath = sourceLibTestNAR();
 			RES.systemLoad(sourcePath, targetPath);
 			return;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.warn("\n\t {} {}", e.getClass().getSimpleName(), e.getMessage());
 		}
 
@@ -198,7 +198,7 @@ enum LibraryUDT {
 	// /libbarchart-i386-Linux-g++-jni//lib/i386-Linux-g++/jni/libbarchart-1.0.2-SNAPSHOT.so
 	String sourceLibTestNAR() {
 		final String classifier = aol.resourceName();
-		final String name = VersionUDT.BARCHART_NAME;
+		final String name = VersionUDT.BARCHART_NAME; // XXX
 		final String folder = name + DASH + classifier + DASH + JNI;
 		final String path = //
 		SLASH + folder + SLASH + sourceLibRealNAR();
@@ -236,8 +236,9 @@ enum LibraryUDT {
 		return path;
 	}
 
+	/** @see System#mapLibraryName */
 	static String coreName() {
-		return System.mapLibraryName(VersionUDT.BARCHART_NAME);
+		return System.mapLibraryName(VersionUDT.BARCHART_NAME); // XXX
 	}
 
 	/**  */

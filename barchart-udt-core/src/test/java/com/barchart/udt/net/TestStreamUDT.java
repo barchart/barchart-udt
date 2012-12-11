@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.StatusUDT;
 import com.barchart.udt.TypeUDT;
-import com.barchart.udt.util.HelperUtils;
+import com.barchart.udt.util.TestHelp;
 
 /**
  * Test for UDT socket input streams and output streams.
@@ -93,7 +93,7 @@ public class TestStreamUDT {
 
 		log.info("STARTED");
 
-		final InetSocketAddress serverAddress = HelperUtils
+		final InetSocketAddress serverAddress = TestHelp
 				.getLocalSocketAddress();
 
 		startThreadedServer(serverAddress, readStrategy);
@@ -102,7 +102,7 @@ public class TestStreamUDT {
 
 		final SocketUDT clientSocket = new SocketUDT(TypeUDT.STREAM);
 
-		final InetSocketAddress clientAddress = HelperUtils
+		final InetSocketAddress clientAddress = TestHelp
 				.getLocalSocketAddress();
 
 		clientSocket.bind(clientAddress);

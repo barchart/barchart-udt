@@ -1,0 +1,94 @@
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.barchart.udt</groupId>
+		<artifactId>barchart-udt-core-it</artifactId>
+		<version>0.0.0</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<groupId>com.barchart.udt</groupId>
+	<artifactId>barchart-udt-core-it-01-bundle</artifactId>
+	<packaging>jar</packaging>
+
+	<description>build bundle prototype for single os/arch</description>
+
+	<properties>
+
+		<!-- archon sets ${integrationVersion} to current build target -->
+		<!-- archon sets ${archosClassifier} to current arch/os combination -->
+
+		<dependencyUnpack>target/classes</dependencyUnpack>
+
+	</properties>
+
+	<!-- fake deps for interactive development -->
+	<dependencies>
+
+		<dependency>
+			<groupId>com.barchart.udt</groupId>
+			<artifactId>barchart-udt-core</artifactId>
+			<version>${integrationVersion}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+
+		<plugins>
+
+			<!-- same as production bundle build, but for single arch/os -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>package-bundle-unpack</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<excludeTransitive>true</excludeTransitive>
+							<excludes>META-INF/</excludes>
+							<outputDirectory>${dependencyUnpack}</outputDirectory>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.barchart.udt</groupId>
+									<artifactId>barchart-udt-core</artifactId>
+									<version>${integrationVersion}</version>
+									<type>jar</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.barchart.udt</groupId>
+									<artifactId>barchart-udt-core</artifactId>
+									<version>${integrationVersion}</version>
+									<classifier>${archosClassifier}</classifier>
+									<type>nar</type>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<classesDirectory>${dependencyUnpack}</classesDirectory>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>

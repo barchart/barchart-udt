@@ -1,7 +1,4 @@
 eclipse.preferences.version=1
-environment/project/cdt.managedbuild.config.gnu.cygwin.so.debug.171840419=
-environment/project/cdt.managedbuild.config.gnu.cygwin.so.debug.171840419/append=true
-environment/project/cdt.managedbuild.config.gnu.cygwin.so.debug.171840419/appendContributed=true
 indexer/filesToParseUpFront=cstdarg, stdarg.h, stddef.h, sys/resource.h, ctime, sys/types.h, signal.h, cstdio
 indexer/indexAllFiles=true
 indexer/indexOnOpen=false

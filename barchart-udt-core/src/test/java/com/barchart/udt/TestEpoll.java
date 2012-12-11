@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.HelperUtils;
+import com.barchart.udt.util.TestHelp;
 
 public class TestEpoll {
 
@@ -48,7 +48,7 @@ public class TestEpoll {
 
 			int epollID = SocketUDT.epollCreate();
 
-			InetSocketAddress bindServer = HelperUtils.getLocalSocketAddress();
+			InetSocketAddress bindServer = TestHelp.getLocalSocketAddress();
 
 			SocketUDT socketServer = new SocketUDT(TypeUDT.DATAGRAM);
 			socketServer.configureBlocking(false);
@@ -56,7 +56,7 @@ public class TestEpoll {
 			socketServer.listen(1);
 			log.info("socketServer: {}", socketServer.socketID);
 
-			InetSocketAddress bindClient = HelperUtils.getLocalSocketAddress();
+			InetSocketAddress bindClient = TestHelp.getLocalSocketAddress();
 
 			SocketUDT socketClient = new SocketUDT(TypeUDT.DATAGRAM);
 			socketClient.configureBlocking(false);

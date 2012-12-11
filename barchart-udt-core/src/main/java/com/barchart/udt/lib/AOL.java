@@ -10,6 +10,9 @@ package com.barchart.udt.lib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * AOL (Architecture-OperatingSystem-Linker) maven-nar-plugin properties
+ */
 class AOL {
 
 	private final static Logger log = LoggerFactory.getLogger(AOL.class);
@@ -24,15 +27,15 @@ class AOL {
 	/** The Constant OS_ARCH. */
 	public final static String OS_ARCH = System.getProperty("os.arch");
 
-	static{
+	static {
 		log.info("OS_NAME={}", OS_NAME);
 		log.info("OS_ARCH={}", OS_ARCH);
 	}
 
 	AOL(final String line) {
 
-		String[] entry = line.split("=");
-		String[] terms = entry[0].split("\\.");
+		final String[] entry = line.split("=");
+		final String[] terms = entry[0].split("\\.");
 
 		arch = terms[0];
 		os = terms[1];

@@ -140,16 +140,14 @@
 									</links>
 									<linksource>true</linksource>
 									<detectLinks>true</detectLinks>
-									<windowtitle>${project.name} API ${project.version} /
-										${maven.build.timestamp}</windowtitle>
-									<doctitle>${project.name} API ${project.version} /
-										${maven.build.timestamp}</doctitle>
+									<windowtitle><![CDATA[${project.name} API ${project.version} / ${projectTimeISO}]]></windowtitle>
+									<doctitle><![CDATA[${project.name} API ${project.version} / ${projectTimeISO}]]></doctitle>
 									<header><![CDATA[<a href="${project.organization.url}" target="_blank">${project.organization.name}</a>]]></header>
 									<footer><![CDATA[<a href="${project.organization.url}" target="_blank">${project.organization.name}</a>]]></footer>
 									<bottom>
 										<!-- note: these "years" are internal javadoc plugin tags -->
 										Copyright © {inceptionYear}-{currentYear}
-						<![CDATA[<a href="${project.organization.url}" target="_blank">${project.organization.name}</a>]]>.
+										<![CDATA[<a href="${project.organization.url}" target="_blank">${project.organization.name}</a>]]>.
 										All Rights Reserved.
 									</bottom>
 								</configuration>

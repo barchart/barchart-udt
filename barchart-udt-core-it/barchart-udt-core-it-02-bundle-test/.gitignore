@@ -10,8 +10,7 @@
 /.classpath
 /.settings
 
-
 /bin
 /target
 
-
+/lib
