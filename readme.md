@@ -8,11 +8,12 @@
 
 -->
 
-## Barchart UDT
-
-Java wrapper around native C++ UDT protocol implementation
+## Java wrapper around native C++ UDT protocol implementation
+{:toc}
 
 ### TCP 
+
+/barchart-udt/site/barchart-udt-core/apidocs
 
 TCP is [slow](http://barchart-udt.googlecode.com/svn/site/presentation/img6.html). 
 UDT is [fast](http://barchart-udt.googlecode.com/svn/site/presentation/img9.html).
@@ -138,17 +139,19 @@ Barchart-UDT is currently used on:
 Read the 
 [presentation](http://barchart-udt.googlecode.com/svn/site/presentation/udt-2009.html)
 , study 
-[javadoc](http://barchart.github.com/barchart-udt/site/barchart-udt-core/)
+[javadoc](http://barchart.github.com/barchart-udt/site/barchart-udt-core/apidocs/index.html)
 ,
-[doxygen](http://barchart-udt.googlecode.com/svn/site/barchart-udt4/doxygen/index.html)
+[doxygen](http://barchart.github.com/barchart-udt/site/barchart-udt-core/doxygen/index.html)
 or browse the
-[source](http://code.google.com/p/barchart-udt/source/browse/#svn/trunk/barchart-udt4)
+[source xref](http://barchart.github.com/barchart-udt/site/barchart-udt-core/xref/index.html)
 . 
 
 Unit Tests in the source will provide good starting points for your java code.
 
 ### Development Environment
-[BuildSystem Build System]
+
+[Build System]
+(https://github.com/barchart/barchart-udt/wiki/BuildSystem)
  * jdk 1.6.0_37
  * maven 3.0.4
  * jenkins 1.450
@@ -162,10 +165,8 @@ Unit Tests in the source will provide good starting points for your java code.
  * windows 7
  
 ### Contact Information
+
 Please:
- # join project's [http://groups.google.com/group/barchart-udt mailing list / discussion group]
- # enter your  [http://code.google.com/p/barchart-udt/issues/list bug reports / feature requests] in the "Issues";
- # leave your  [Comments valuable thoughts] in the "Comments";
- # email project maintainer:  Andrei dot Pozolotin at gmail dot com;
+ # enter your [bug reports / feature requests](https://github.com/barchart/barchart-udt/issues) in the "Issues";
 
 Thank you.
