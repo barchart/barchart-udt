@@ -27,7 +27,7 @@ VMX="$1"
 # operation type: start|stop
 CMD="$2"
 
-VM="$HOME/$VMX"
+VM="/var/vmware/$VMX"
 USER="root"
 PASS="root"
 

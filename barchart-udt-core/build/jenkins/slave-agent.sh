@@ -62,7 +62,7 @@ REAL_NAME=$(basename $THIS_PATH)
 log "REAL_PATH=$REAL_PATH"
 
 
-# hudson working directory defined by script location
+# jenkins working directory defined by script location
 cd "$REAL_PATH"
 
 
@@ -124,19 +124,6 @@ fi
 #################################
 
 
-#
-#	example:
-#	java -jar slave.jar -jnlpUrl https://moe.barchart.com:443/hudson/computer/linux/slave-agent.jnlp -jnlpCredentials USER:PASSWORD
-#
-
-
-source	$REAL_PATH/slave-props.sh
-
-log "Hudson Master : $MASTER"
-log "Hudson Slave  : $SLAVE"
-
-#################################
-
 # correction for the usual "think different" in macosx launchd
 think(){
 
@@ -159,20 +146,25 @@ start(){
 
   status
 
-  log "START: Hudson Slave STARTING..."
+  log "START: Jenkins Slave STARTING..."
 
-#   wget --no-check-certificate --timestamping $MASTER/jnlpJars/slave.jar
+	URL="https://jenkins.barchart.com/jnlpJars/slave.jar"
+	
+	SLAVE_LOG="$REAL_PATH/slave.log"
+	SLAVE_JAR="$REAL_PATH/slave.jar"
+	SLAVE_JNLP="$REAL_PATH/slave-agent.jnlp"
 
-#  JAVA_CMD="java -jar slave.jar -jnlpUrl $MASTER/computer/$SLAVE/slave-agent.jnlp"
-  JAVA_CMD="java -jar slave.jar -jnlpUrl file:///var/hudson/slave-agent.jnlp"
+	wget --no-check-certificate "$URL" -O "$SLAVE_JAR"
 
-  $JAVA_CMD > hudson.log 2>&1 &
+	JAVA_CMD="java -jar $SLAVE_JAR -jnlpUrl file://$SLAVE_JNLP -noCertificateCheck -slaveLog $SLAVE_LOG" 
 
-  JAVA_PID=$!
+	$JAVA_CMD > jenkins.log 2>&1 &
+
+	JAVA_PID=$!
 
   disown $JAVA_PID
 
-  log "START: Hudson Slave STARTED; JAVA_PID=$JAVA_PID"
+  log "START: Jenkins Slave STARTED; JAVA_PID=$JAVA_PID"
 
 }
 
@@ -180,25 +172,25 @@ stop(){
 
   status
 
-  log "STOP: Hudson Slave STOPPING..."
+  log "STOP: Jenkins Slave STOPPING..."
 
   # TODO kill by pid
 
-  PROC_ID=$( ps -ef | grep hudson | grep slave | grep -v grep | awk '{ print $2 }' )
+  PROC_ID=$( ps -ef | grep jenkins | grep slave | grep -v grep | awk '{ print $2 }' )
 
   kill $PROC_ID
 
-  log "STOP: Hudson Slave STOPPED"
+  log "STOP: Jenkins Slave STOPPED"
 
 }
 
 status(){
 	# TODO status by pid
-  PROC_COUNT=$( ps aux | grep hudson | grep slave | grep -v grep | wc -l )
+  PROC_COUNT=$( ps aux | grep jenkins | grep slave | grep -v grep | wc -l )
   if [ $PROC_COUNT -gt 0 ]; then
-    log "STATUS: Hudson Slave is RUNNING"
+    log "STATUS: Jenkins Slave is RUNNING"
   else
-    log "STATUS: Hudson Slave is STOPPED"
+    log "STATUS: Jenkins Slave is STOPPED"
   fi
 }
 
