@@ -1,12 +1,5 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -41,18 +34,9 @@
 		<projectJavaVersion>1.6</projectJavaVersion>
 		<projectMavenVersion>3.0.4</projectMavenVersion>
 
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<maven.build.timestamp.format>yyyy-MM-dd_HH-mm-ss</maven.build.timestamp.format>
 
-		<!-- must be provided by settingx.xml -->
-		<scmServerId>barchart-google-code</scmServerId>
-
-		<scmSiteURL>svn:https://barchart-udt.googlecode.com/svn/site</scmSiteURL>
-		<scmSiteProject>${project.artifactId}</scmSiteProject>
-
-		<!-- ### -->
+		<!-- os/arch keys -->
 
 		<lin32>i386-Linux-gpp-jni</lin32>
 		<lin64>amd64-Linux-gpp-jni</lin64>
@@ -61,7 +45,7 @@
 		<win32>x86-Windows-gpp-jni</win32>
 		<win64>amd64-Windows-gpp-jni</win64>
 
-		<!-- ### -->
+		<!-- latest nar plugin -->
 
 		<!-- <narGroupId>org.apache.maven.plugins</narGroupId> -->
 		<!-- <narArtifactId>maven-nar-plugin</narArtifactId> -->
@@ -77,90 +61,16 @@
 
 	</properties>
 
-	<repositories>
-
-	</repositories>
-
-	<pluginRepositories>
-
-		<!-- <pluginRepository> -->
-		<!-- <id>Mark.Donszelmann@gmail.com</id> -->
-		<!-- <name>Duns' Maven Snapshot Repository</name> -->
-		<!-- <url>http://duns.github.com/maven-snapshots/</url> -->
-		<!-- <releases> -->
-		<!-- <enabled>false</enabled> -->
-		<!-- <updatePolicy>never</updatePolicy> -->
-		<!-- </releases> -->
-		<!-- <snapshots> -->
-		<!-- <enabled>true</enabled> -->
-		<!-- <updatePolicy>daily</updatePolicy> -->
-		<!-- </snapshots> -->
-		<!-- </pluginRepository> -->
-
-		<!-- <pluginRepository> -->
-		<!-- <id>Mark.Donszelmann@gmail.com-custom-build</id> -->
-		<!-- <name>Duns' Maven Snapshot Repository (custom build)</name> -->
-		<!-- <url>https://oss.sonatype.org/content/repositories/snapshots/</url> -->
-		<!-- <releases> -->
-		<!-- <enabled>false</enabled> -->
-		<!-- <updatePolicy>never</updatePolicy> -->
-		<!-- </releases> -->
-		<!-- <snapshots> -->
-		<!-- <enabled>true</enabled> -->
-		<!-- <updatePolicy>daily</updatePolicy> -->
-		<!-- </snapshots> -->
-		<!-- </pluginRepository> -->
-
-	</pluginRepositories>
-
 	<build>
-
-		<defaultGoal>test</defaultGoal>
-
-		<extensions>
-
-		</extensions>
 
 		<pluginManagement>
 			<plugins>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-antrun-plugin</artifactId>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.ant</groupId>
-							<artifactId>ant</artifactId>
-							<version>1.8.1</version>
-						</dependency>
-						<dependency>
-							<groupId>org.apache.ant</groupId>
-							<artifactId>ant-nodeps</artifactId>
-							<version>1.8.1</version>
-						</dependency>
-						<dependency>
-							<groupId>ant-contrib</groupId>
-							<artifactId>cpptasks</artifactId>
-							<version>1.0b5</version>
-						</dependency>
-						<dependency>
-							<groupId>ant-contrib</groupId>
-							<artifactId>ant-contrib</artifactId>
-							<version>1.0b3</version>
-						</dependency>
-					</dependencies>
-				</plugin>
-
-				<plugin>
-					<groupId>javolution</groupId>
-					<artifactId>colapi</artifactId>
-					<version>1.0.0</version>
-				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
+						<!-- fork so we can switch jdk -->
 						<fork>true</fork>
 					</configuration>
 				</plugin>
@@ -189,7 +99,7 @@
 							<plugin>
 								<groupId>org.apache.maven.plugins</groupId>
 								<artifactId>maven-project-info-reports-plugin</artifactId>
-								<version>2.3.1</version>
+								<version>2.6</version>
 								<reportSets>
 									<reportSet>
 										<reports>
@@ -212,13 +122,13 @@
 							<plugin>
 								<groupId>org.apache.maven.plugins</groupId>
 								<artifactId>maven-jxr-plugin</artifactId>
-								<version>2.2</version>
+								<version>2.3</version>
 							</plugin>
 
 							<plugin>
 								<groupId>org.apache.maven.plugins</groupId>
 								<artifactId>maven-javadoc-plugin</artifactId>
-								<version>2.7</version>
+								<version>2.9</version>
 								<configuration>
 									<quiet>true</quiet>
 									<verbose>false</verbose>
@@ -253,7 +163,7 @@
 							<plugin>
 								<groupId>org.apache.maven.plugins</groupId>
 								<artifactId>maven-surefire-report-plugin</artifactId>
-								<version>2.6</version>
+								<version>2.12.4</version>
 								<reportSets>
 									<reportSet>
 										<reports>

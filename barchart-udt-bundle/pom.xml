@@ -23,5 +23,122 @@
 	<artifactId>barchart-udt-bundle</artifactId>
 	<version>2.0.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
+	
+	<properties>
+
+		<dependencyArtifactId>barchart-udt-core</dependencyArtifactId>
+		<dependencyVersion>${snapshotVersion}</dependencyVersion>
+		<dependencyUnpack>target/classes</dependencyUnpack>
+
+	</properties>
+	
+		<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<!--"arguments" are overwritten by overriding profiles -->
+					<arguments>
+						--define skipTests \
+						--activate-profiles \
+						release-properties,release-versions,package-bundle
+					</arguments>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	<profiles>
+
+		<!-- TODO generate javadocs -->
+
+		<profile>
+			<id>package-bundle</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>package-bundle-unpack</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<excludeTransitive>true</excludeTransitive>
+									<excludes>META-INF/</excludes>
+									<outputDirectory>${dependencyUnpack}</outputDirectory>
+									<overWriteIfNewer>true</overWriteIfNewer>
+									<overWriteReleases>true</overWriteReleases>
+									<overWriteSnapshots>true</overWriteSnapshots>
+									<artifactItems>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${dependencyArtifactId}</artifactId>
+											<version>${dependencyVersion}</version>
+											<type>jar</type>
+										</artifactItem>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${dependencyArtifactId}</artifactId>
+											<classifier>${lin32}</classifier>
+											<version>${dependencyVersion}</version>
+											<type>nar</type>
+										</artifactItem>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${dependencyArtifactId}</artifactId>
+											<classifier>${lin64}</classifier>
+											<version>${dependencyVersion}</version>
+											<type>nar</type>
+										</artifactItem>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${dependencyArtifactId}</artifactId>
+											<classifier>${mac32}</classifier>
+											<version>${dependencyVersion}</version>
+											<type>nar</type>
+										</artifactItem>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${dependencyArtifactId}</artifactId>
+											<classifier>${mac64}</classifier>
+											<version>${dependencyVersion}</version>
+											<type>nar</type>
+										</artifactItem>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${dependencyArtifactId}</artifactId>
+											<classifier>${win32}</classifier>
+											<version>${dependencyVersion}</version>
+											<type>nar</type>
+										</artifactItem>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${dependencyArtifactId}</artifactId>
+											<classifier>${win64}</classifier>
+											<version>${dependencyVersion}</version>
+											<type>nar</type>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+
+			</build>
+		</profile>
+
+	</profiles>
 
 </project>

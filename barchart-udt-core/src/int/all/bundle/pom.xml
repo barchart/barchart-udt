@@ -5,26 +5,29 @@
 
 	<parent>
 		<groupId>com.barchart.udt</groupId>
-		<artifactId>barchart-udt4-int-00-parent</artifactId>
+		<artifactId>barchart-udt-int-00-archon</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>barchart-udt4-int-01-bundle</artifactId>
+	<groupId>com.barchart.udt</groupId>
+	<artifactId>barchart-udt-int-01-bundle</artifactId>
 	<packaging>jar</packaging>
+
+	<description>build bundle prototype for single os/arch</description>
 
 	<dependencies>
 
 		<dependency>
 			<groupId>com.barchart.udt</groupId>
-			<artifactId>barchart-udt4</artifactId>
+			<artifactId>barchart-udt-core</artifactId>
 			<version>${integrationVersion}</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>optional</scope>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -48,7 +51,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.barchart.udt</groupId>
-					<artifactId>barchart-udt4</artifactId>
+					<artifactId>barchart-udt-core</artifactId>
 					<version>${integrationVersion}</version>
 					<classifier>${lin32}</classifier>
 					<type>nar</type>
@@ -67,7 +70,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.barchart.udt</groupId>
-					<artifactId>barchart-udt4</artifactId>
+					<artifactId>barchart-udt-core</artifactId>
 					<version>${integrationVersion}</version>
 					<classifier>${lin64}</classifier>
 					<type>nar</type>
@@ -86,7 +89,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.barchart.udt</groupId>
-					<artifactId>barchart-udt4</artifactId>
+					<artifactId>barchart-udt-core</artifactId>
 					<version>${integrationVersion}</version>
 					<classifier>${mac32}</classifier>
 					<type>nar</type>
@@ -105,7 +108,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.barchart.udt</groupId>
-					<artifactId>barchart-udt4</artifactId>
+					<artifactId>barchart-udt-core</artifactId>
 					<version>${integrationVersion}</version>
 					<classifier>${mac64}</classifier>
 					<type>nar</type>
@@ -124,7 +127,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.barchart.udt</groupId>
-					<artifactId>barchart-udt4</artifactId>
+					<artifactId>barchart-udt-core</artifactId>
 					<version>${integrationVersion}</version>
 					<classifier>${win32}</classifier>
 					<type>nar</type>
@@ -143,7 +146,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.barchart.udt</groupId>
-					<artifactId>barchart-udt4</artifactId>
+					<artifactId>barchart-udt-core</artifactId>
 					<version>${integrationVersion}</version>
 					<classifier>${win64}</classifier>
 					<type>nar</type>
@@ -180,6 +183,7 @@
 					<classesDirectory>target/dependency</classesDirectory>
 				</configuration>
 			</plugin>
+
 		</plugins>
 
 	</build>

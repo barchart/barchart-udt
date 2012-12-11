@@ -4,47 +4,50 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.barchart.udt</groupId>
-		<artifactId>barchart-udt4-parent</artifactId>
-		<version>@project.version@</version>
+		<groupId>com.barchart.base</groupId>
+		<artifactId>barchart-archon</artifactId>
+		<version>2.3.2</version>
+		<relativePath />
 	</parent>
 
-	<artifactId>barchart-udt4-int-00-parent</artifactId>
+	<groupId>com.barchart.udt</groupId>
+	<artifactId>barchart-udt-int-00-archon</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 
+	<description>parent for integration tests</description>
+
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<integrationVersion>@project.version@</integrationVersion>
 	</properties>
 
 	<repositories>
 
-		<repository>
-			<id>local.central</id>
-			<url>@localRepositoryUrl@</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
+		<!-- <repository> -->
+		<!-- <id>local.central</id> -->
+		<!-- <url>@localRepositoryUrl@</url> -->
+		<!-- <releases> -->
+		<!-- <enabled>true</enabled> -->
+		<!-- </releases> -->
+		<!-- <snapshots> -->
+		<!-- <enabled>true</enabled> -->
+		<!-- </snapshots> -->
+		<!-- </repository> -->
 
 	</repositories>
 
 	<pluginRepositories>
 
-		<pluginRepository>
-			<id>local.central</id>
-			<url>@localRepositoryUrl@</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
+		<!-- <pluginRepository> -->
+		<!-- <id>local.central</id> -->
+		<!-- <url>@localRepositoryUrl@</url> -->
+		<!-- <releases> -->
+		<!-- <enabled>true</enabled> -->
+		<!-- </releases> -->
+		<!-- <snapshots> -->
+		<!-- <enabled>true</enabled> -->
+		<!-- </snapshots> -->
+		<!-- </pluginRepository> -->
 
 	</pluginRepositories>
 

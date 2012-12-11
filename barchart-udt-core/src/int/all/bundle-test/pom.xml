@@ -5,28 +5,31 @@
 
 	<parent>
 		<groupId>com.barchart.udt</groupId>
-		<artifactId>barchart-udt4-int-00-parent</artifactId>
+		<artifactId>barchart-udt-int-00-archon</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>barchart-udt4-int-02-bundle-test</artifactId>
+	<groupId>com.barchart.udt</groupId>
+	<artifactId>barchart-udt-int-02-bundle-test</artifactId>
 	<packaging>jar</packaging>
+	
+	<description>load and test bundle for single os/arch</description>
 
 	<dependencies>
 
 		<dependency>
 			<groupId>com.barchart.udt</groupId>
-			<artifactId>barchart-udt4-int-01-bundle</artifactId>
+			<artifactId>barchart-udt-int-01-bundle</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>optional</scope>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>provided</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -39,14 +42,14 @@
 
 		<plugins>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<configuration>
-						<!-- else makes bizarre folder locks -->
-						<forkMode>once</forkMode>
-					</configuration>
-				</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- else makes bizarre folder locks -->
+					<forkMode>once</forkMode>
+				</configuration>
+			</plugin>
 
 		</plugins>
 
