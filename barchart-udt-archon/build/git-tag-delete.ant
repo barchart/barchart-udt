@@ -11,7 +11,7 @@
 
 	<echo message="basedir : ${basedir}" />
 
-	<property name="tag" value="" />
+	<property name="tag" value="barchart-udt-archon-2.0.0" />
 
 	<target name="git">
 		
