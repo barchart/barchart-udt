@@ -23,8 +23,8 @@ based application level data transport protocol
 for distributed data intensive applications.
 
 UDT is developed by 
-[Dr.Yunhong Gu](http://users.lac.uic.edu/~yunhong)
-and others at University of Illinois.
+[Yunhong Gu](http://www.linkedin.com/in/yunhong)
+and others at University of Illinois and Google.
 
 UDT C++ implementation is available under 
 [BSD license](http://udt.sourceforge.net/license.html)
