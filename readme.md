@@ -13,16 +13,14 @@
 
 ### TCP 
 
-/barchart-udt/site/barchart-udt-core/apidocs
-
-TCP is [slow](http://barchart-udt.googlecode.com/svn/site/presentation/img6.html). 
-UDT is [fast](http://barchart-udt.googlecode.com/svn/site/presentation/img9.html).
+TCP is [slow](http://barchart.github.com/barchart-udt/site/presentation-2009/img6.html). 
+UDT is [fast](http://barchart.github.com/barchart-udt/site/presentation-2009/img9.html).
 
 ### UDT
 
 [UDT is a reliable UDP](http://udt.sourceforge.net)
-based application level data transport protocol for distributed data intensive applications.
-
+based application level data transport protocol 
+for distributed data intensive applications.
 
 UDT is developed by 
 [Dr.Yunhong Gu](http://users.lac.uic.edu/~yunhong)
@@ -36,18 +34,23 @@ UDT C++ implementation is available under
 Barchart-UDT is a Java wrapper around native C++ UDT protocol implementation.
 
 Barchart-UDT is developed by Andrei Pozolotin and others at
-[Barchart, Inc.](http://www.barchart.com)
+[Barchart, Inc.]
+(http://www.barchart.com)
 
 Barchart-UDT is available under
-[BSD license](http://udt.sourceforge.net/license.html)
+[BSD license]
+(http://udt.sourceforge.net/license.html)
 as well.
 
 Barchart-UDT exposes UDT protocol as both 
-[java.net.Socket](http://java.sun.com/javase/6/docs/api/java/net/Socket.html)
+[java.net.Socket]
+(http://java.sun.com/javase/6/docs/api/java/net/Socket.html)
 and 
-[java.nio.channels.SocketChannel](http://java.sun.com/javase/6/docs/api/java/nio/channels/SocketChannel.html)
+[java.nio.channels.SocketChannel]
+(http://java.sun.com/javase/6/docs/api/java/nio/channels/SocketChannel.html)
 and comes with a 
-[java.nio.channels.spi.SelectorProvider](http://java.sun.com/javase/6/docs/api/java/nio/channels/spi/SelectorProvider.html)
+[java.nio.channels.spi.SelectorProvider]
+(http://java.sun.com/javase/6/docs/api/java/nio/channels/spi/SelectorProvider.html)
 .
 
 ### Developers Welcome
@@ -68,15 +71,14 @@ Barchart-UDT **RELEASE** is available in
 	<dependency>
 		<groupId>com.barchart.udt</groupId>
 		<artifactId>barchart-udt-bundle</artifactId>
-		<version>X.X.X</version>
+		<version>X.Y.Z</version>
 		<type>jar</type>
 		<scope>compile</scope>
 	</dependency>
 </dependencies>
 ```
 
-To use Barchart-UDT **SNAPSHOT** as maven2 dependency in your java project, 
-
+To use Barchart-UDT **SNAPSHOT** as maven dependency in your java project, 
 please provide the following **repository** and **dependency** definitions in your **pom.xml**:
 
 ```
@@ -97,30 +99,27 @@ please provide the following **repository** and **dependency** definitions in yo
 	<dependency>
 		<groupId>com.barchart.udt</groupId>
 		<artifactId>barchart-udt-bundle</artifactId>
-		<version>X.X.X-SNAPSHOT</version>
+		<version>X.Y.Z-SNAPSHOT</version>
 		<type>jar</type>
 		<scope>compile</scope>
 	</dependency>
 </dependencies>
 ```
 Here is an
-[example pom.xml](http://code.google.com/p/barchart-udt/source/browse/trunk/test-deps/pom.xml)
+[example pom.xml](
+http://code.google.com/p/barchart-udt/source/browse/trunk/test-deps/pom.xml)
 and
-[eclipse project](http://code.google.com/p/barchart-udt/source/browse/trunk/test-deps/)
+[eclipse project]
+(http://code.google.com/p/barchart-udt/source/browse/trunk/test-deps/)
 .
 
-You can find out current *RELEASE* and *SNAPSHOT* versions here: 
+You can find out current versions here: 
+[RELEASE]
+(https://oss.sonatype.org/content/repositories/releases/com/barchart/udt/)
+[SNAPSHOT]
+(https://oss.sonatype.org/content/repositories/snapshots/com/barchart/udt/)
 
-Current *RELEASE*:
-
-http://repo1.maven.org/maven2/com/barchart/udt/
-
-Current *SNAPSHOT*:
-<br>
-https://oss.sonatype.org/content/repositories/snapshots/com/barchart/udt/
-
-Please make sure you update *barchart-udt-bundle* artifact version in your pom.xml
-
+Please make sure you update **barchart-udt-bundle** artifact version in your pom.xml
 
 ### Supported Platforms
 
