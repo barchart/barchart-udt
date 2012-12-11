@@ -45,7 +45,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc:/barchart-udt-core/cdt_i386-Linux-gpp}</value>
+					<value>${workspace_loc:/${ProjName}/cdt_x86-Windows-gpp}</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
@@ -69,7 +69,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.fullBuildTarget</key>
-					<value>build</value>
+					<value>all</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.stopOnError</key>
