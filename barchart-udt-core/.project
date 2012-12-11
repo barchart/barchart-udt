@@ -45,12 +45,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc:/${ProjName}/cdt_amd64-Linux-gpp}</value>
-					<value>${workspace_loc:/${ProjName}/cdt_amd64-Windows-gpp}</value>
-					<value>${workspace_loc:/${ProjName}/cdt_i386-Linux-gpp}</value>
-					<value>${workspace_loc:/${ProjName}/cdt_i386-MacOSX-gpp}</value>
-					<value>${workspace_loc:/${ProjName}/cdt_x86_64-MacOSX-gpp}</value>
-					<value>${workspace_loc:/${ProjName}/cdt_x86-Windows-gpp}</value>
+					<value>${workspace_loc:/barchart-udt-core/cdt_i386-Linux-gpp}</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
