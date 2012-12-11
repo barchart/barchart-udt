@@ -492,8 +492,8 @@
 					<!-- disable most nar "smart options processing" and use explicit aol.properties 
 						instead -->
 					<plugin>
-						<groupId>${narGroupId}</groupId>
-						<artifactId>${narArtifactId}</artifactId>
+						<groupId>${narPluginGroupId}</groupId>
+						<artifactId>${narPluginArtifactId}</artifactId>
 						<extensions>true</extensions>
 						<configuration>
 							<!-- place nar artifacts into test classpath for unit tests; will 

@@ -20,6 +20,9 @@
 
 	<properties>
 
+		<!-- ${integrationVersion} is set to current build target -->
+		<!-- ${archosClassifier} is set by current arch/os combination -->
+		
 		<dependencyUnpack>target/classes</dependencyUnpack>
 
 	</properties>
@@ -36,7 +39,7 @@
 			<groupId>com.barchart.udt</groupId>
 			<artifactId>barchart-udt-core</artifactId>
 			<version>${integrationVersion}</version>
-			<classifier>${classifier}</classifier>
+			<classifier>${archosClassifier}</classifier>
 			<type>nar</type>
 		</dependency>
 
@@ -53,88 +56,6 @@
 		</dependency>
 
 	</dependencies>
-
-	<profiles>
-
-		<profile>
-			<id>nar_i386-Linux-gpp</id>
-			<activation>
-				<os>
-					<arch>i386</arch>
-					<name>Linux</name>
-				</os>
-			</activation>
-			<properties>
-				<classifier>${lin32}</classifier>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>nar_amd64-Linux-gpp</id>
-			<activation>
-				<os>
-					<name>Linux</name>
-					<arch>amd64</arch>
-				</os>
-			</activation>
-			<properties>
-				<classifier>${lin64}</classifier>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>nar_i386-MacOSX-gpp</id>
-			<activation>
-				<os>
-					<arch>i386</arch>
-					<name>Mac OS X</name>
-				</os>
-			</activation>
-			<properties>
-				<classifier>${mac32}</classifier>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>nar_x86_64-MacOSX-gpp</id>
-			<activation>
-				<os>
-					<arch>x86_64</arch>
-					<name>Mac OS X</name>
-				</os>
-			</activation>
-			<properties>
-				<classifier>${mac64}</classifier>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>nar_x86-Windows-gpp</id>
-			<activation>
-				<os>
-					<arch>x86</arch>
-					<family>windows</family>
-				</os>
-			</activation>
-			<properties>
-				<classifier>${win32}</classifier>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>nar_amd64-Windows-gpp</id>
-			<activation>
-				<os>
-					<arch>amd64</arch>
-					<family>windows</family>
-				</os>
-			</activation>
-			<properties>
-				<classifier>${win64}</classifier>
-			</properties>
-		</profile>
-
-	</profiles>
 
 	<build>
 
@@ -168,7 +89,7 @@
 									<groupId>com.barchart.udt</groupId>
 									<artifactId>barchart-udt-core</artifactId>
 									<version>${integrationVersion}</version>
-									<classifier>${classifier}</classifier>
+									<classifier>${archosClassifier}</classifier>
 									<type>nar</type>
 								</artifactItem>
 							</artifactItems>

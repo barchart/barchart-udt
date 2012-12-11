@@ -1,13 +1,7 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com />
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com /> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -20,7 +14,7 @@
 
 	<groupId>com.barchart.udt</groupId>
 	<artifactId>barchart-udt-archon</artifactId>
-	<version>2.0.1-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<description>Java wrapper around native C++ UDT protocol implementation UDT version: 4.9</description>
@@ -33,17 +27,17 @@
 		<url>https://github.com/barchart/barchart-udt</url>
 		<connection>scm:git:git://github.com/barchart/barchart-udt.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-udt.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<properties>
 
 		<projectJavaVersion>1.6</projectJavaVersion>
 		<projectMavenVersion>3.0.4</projectMavenVersion>
 
-		<maven.build.timestamp.format>yyyy-MM-dd_HH-mm-ss</maven.build.timestamp.format>
+		<projectBuildStamp><![CDATA[build stamp: ${project.artifactId} ${project.version} ${projectTimeISO}]]></projectBuildStamp>
 
-		<!-- os/arch keys -->
+		<!-- os/arch library classifier keys -->
 
 		<lin32>i386-Linux-gpp-jni</lin32>
 		<lin64>amd64-Linux-gpp-jni</lin64>
@@ -54,17 +48,17 @@
 
 		<!-- latest nar plugin -->
 
-		<!-- <narGroupId>org.apache.maven.plugins</narGroupId> -->
-		<!-- <narArtifactId>maven-nar-plugin</narArtifactId> -->
-		<!-- <narVersion>2.1-SNAPSHOT</narVersion> -->
+		<!-- <narPluginGroupId>org.apache.maven.plugins</narPluginGroupId> -->
+		<!-- <narPluginArtifactId>maven-nar-plugin</narPluginArtifactId> -->
+		<!-- <narPluginVersion>2.1-SNAPSHOT</narPluginVersion> -->
 
-		<!-- <narGroupId>com.barchart.nar</narGroupId> -->
-		<!-- <narArtifactId>maven-nar-plugin</narArtifactId> -->
-		<!-- <narVersion>2.0.1-SNAPSHOT</narVersion> -->
+		<!-- <narPluginGroupId>com.barchart.nar</narPluginGroupId> -->
+		<!-- <narPluginArtifactId>maven-nar-plugin</narPluginArtifactId> -->
+		<!-- <narPluginVersion>2.0.1-SNAPSHOT</narPluginVersion> -->
 
-		<narGroupId>org.codeswarm</narGroupId>
-		<narArtifactId>maven-nar-plugin</narArtifactId>
-		<narVersion>20121119</narVersion>
+		<narPluginGroupId>org.codeswarm</narPluginGroupId>
+		<narPluginArtifactId>maven-nar-plugin</narPluginArtifactId>
+		<narPluginVersion>20121119</narPluginVersion>
 
 	</properties>
 
@@ -73,6 +67,13 @@
 		<pluginManagement>
 			<plugins>
 
+				<!-- maven-nar-plugin is ever in flux -->
+				<plugin>
+					<groupId>${narPluginGroupId}</groupId>
+					<artifactId>${narPluginArtifactId}</artifactId>
+					<version>${narPluginVersion}</version>
+				</plugin>
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
@@ -80,12 +81,6 @@
 						<!-- fork so we can switch jdk -->
 						<fork>true</fork>
 					</configuration>
-				</plugin>
-
-				<plugin>
-					<groupId>${narGroupId}</groupId>
-					<artifactId>${narArtifactId}</artifactId>
-					<version>${narVersion}</version>
 				</plugin>
 
 				<plugin>
@@ -280,15 +275,16 @@
 
 	<profiles>
 
+		<!-- "think different": macosx provides tools.jar classes already in classes.jar 
+			and does not provide tools.jar as sun does -->
 		<profile>
-			<!-- "think different": macosx provides tools.jar classes already in classes.jar 
-				and does not provide tools.jar as sun does -->
-			<!-- vendor @ macosx: java.vendor=Apple, Inc. -->
-			<!-- vendor @ windows: java.vendor=Sun Microsystems Inc. -->
-			<!-- vendor @ linux: java.vendor=Sun Microsystems Inc. -->
 			<id>jdk-tools-jar</id>
 			<activation>
 				<property>
+					<!-- jdk 1.6 -->
+					<!-- linux: java.vendor=Sun Microsystems Inc. -->
+					<!-- macosx: java.vendor=Apple, Inc. -->
+					<!-- windows: java.vendor=Sun Microsystems Inc. -->
 					<name>java.vendor</name>
 					<value>Sun Microsystems Inc.</value>
 				</property>
@@ -314,6 +310,8 @@
 			</build>
 		</profile>
 
+		<!-- build snapshot and release version numbers during various phases of 
+			release plugin -->
 		<profile>
 			<id>release-versions</id>
 			<build>
@@ -329,8 +327,6 @@
 									<goal>execute</goal>
 								</goals>
 								<configuration>
-									<!-- build snapshot and release version numbers during various phases 
-										of release plugin -->
 									<source>
 										//
 										version=project.version;
@@ -354,6 +350,80 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+
+		<!-- ${archosClassifier} selector profiles -->
+		<profile>
+			<id>nar_i386-Linux-gpp</id>
+			<activation>
+				<os>
+					<arch>i386</arch>
+					<name>Linux</name>
+				</os>
+			</activation>
+			<properties>
+				<archosClassifier>${lin32}</archosClassifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>nar_amd64-Linux-gpp</id>
+			<activation>
+				<os>
+					<name>Linux</name>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<archosClassifier>${lin64}</archosClassifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>nar_i386-MacOSX-gpp</id>
+			<activation>
+				<os>
+					<arch>i386</arch>
+					<name>Mac OS X</name>
+				</os>
+			</activation>
+			<properties>
+				<archosClassifier>${mac32}</archosClassifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>nar_x86_64-MacOSX-gpp</id>
+			<activation>
+				<os>
+					<arch>x86_64</arch>
+					<name>Mac OS X</name>
+				</os>
+			</activation>
+			<properties>
+				<archosClassifier>${mac64}</archosClassifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>nar_x86-Windows-gpp</id>
+			<activation>
+				<os>
+					<arch>x86</arch>
+					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<archosClassifier>${win32}</archosClassifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>nar_amd64-Windows-gpp</id>
+			<activation>
+				<os>
+					<arch>amd64</arch>
+					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<archosClassifier>${win64}</archosClassifier>
+			</properties>
 		</profile>
 
 	</profiles>
