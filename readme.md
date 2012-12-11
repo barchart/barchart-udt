@@ -7,9 +7,8 @@
     http://www.opensource.org/licenses/bsd-license.php
 
 -->
-
-## Java wrapper around native C++ UDT protocol implementation
 {:toc}
+## Java wrapper around native C++ UDT protocol implementation
 
 ### TCP 
 
@@ -165,7 +164,8 @@ Unit Tests in the source will provide good starting points for your java code.
  
 ### Contact Information
 
-Please:
- # enter your [bug reports / feature requests](https://github.com/barchart/barchart-udt/issues) in the "Issues";
+Please enter your 
+[bug reports / feature requests]
+(https://github.com/barchart/barchart-udt/issues) in the "Issues";
 
 Thank you.
