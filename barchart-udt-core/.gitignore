@@ -14,7 +14,8 @@
 !/.classpath
 !/.settings
 
-/cdt_*
+/cdt*
+
 /bin
 /target
 
@@ -22,4 +23,3 @@
 /pom.xml.*
 
 /lib
-
