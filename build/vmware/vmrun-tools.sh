@@ -19,12 +19,12 @@ source "$THIS_PATH/common.sh"
 verify_tool_present "vmware"
 verify_tool_present "vmrun"
 
-# relative path to vmware image
+# vmware image name
 VMX="$1"
 # operation type: start or stop
 CMD="$2"
 
-VM="$VMWARE_HOME/$VMX"
+VM="$VMWARE_HOME/$VMX/$VMX.vmx"
 USER="root"
 PASS="root"
 
