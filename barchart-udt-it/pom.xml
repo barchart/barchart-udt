@@ -9,20 +9,19 @@
 		<groupId>com.barchart.udt</groupId>
 		<artifactId>barchart-udt-archon</artifactId>
 		<version>2.0.0-SNAPSHOT</version>
-		<relativePath />
+		<relativePath>../barchart-udt-archon</relativePath>
 	</parent>
 
-	<groupId>com.barchart.udt</groupId>
-	<artifactId>barchart-udt-core-it</artifactId>
+	<artifactId>barchart-udt-it</artifactId>
 	<version>0.0.0</version>
 	<packaging>pom</packaging>
 
-	<description>core integration test sequence</description>
+	<description>integration test sequence</description>
 
 	<!-- note: tests are ordered -->
 	<modules>
-		<module>barchart-udt-core-it-01-bundle</module>
-		<module>barchart-udt-core-it-02-bundle-test</module>
+		<module>barchart-udt-it-01-bundle</module>
+		<module>barchart-udt-it-02-bundle-test</module>
 	</modules>
 
 	<properties>

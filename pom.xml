@@ -29,7 +29,9 @@
 	<modules>
 		<module>barchart-udt-archon</module>
 		<module>barchart-udt-core</module>
-		<module>barchart-udt-core-it</module>
+		<module>barchart-udt-it</module>
+		<module>barchart-udt-pack</module>
+		<module>barchart-udt-pack-bundle</module>
 		<module>barchart-udt-example</module>
 	</modules>
 

@@ -13,23 +13,22 @@
 
 	<target name="maven">
 
-		<condition property="maven-command" value="mvn">
+		<condition property="executable" value="mvn">
 			<os family="unix" />
 		</condition>
-		<condition property="maven-command" value="mvn.bat">
+		<condition property="executable" value="mvn.bat">
 			<os family="windows" />
 		</condition>
 
-		<exec executable="${maven-command}">
-
-			<arg value="clean" />
-			<arg value="install" />
-
-			<arg value="--activate-profiles" />
-			<arg value="nar" />
-
+		<exec executable="${executable}">
+			
+			<arg value="versions:use-latest-releases" />
+			
+			<arg value="--define" />
+			<arg value="includes=com.barchart.*" />
+			
 		</exec>
-
+		
 	</target>
 
 </project>

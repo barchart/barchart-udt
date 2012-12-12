@@ -14,13 +14,12 @@
 
 	<parent>
 		<groupId>com.barchart.udt</groupId>
-		<artifactId>barchart-udt-core-it</artifactId>
+		<artifactId>barchart-udt-it</artifactId>
 		<version>0.0.0</version>
 		<relativePath>..</relativePath>
 	</parent>
 
-	<groupId>com.barchart.udt</groupId>
-	<artifactId>barchart-udt-core-it-02-bundle-test</artifactId>
+	<artifactId>barchart-udt-it-02-bundle-test</artifactId>
 	<packaging>jar</packaging>
 	
 	<description>load and test bundle prototype for single os/arch</description>
@@ -30,7 +29,7 @@
 		<!-- should be made by previous integration step -->
 		<dependency>
 			<groupId>com.barchart.udt</groupId>
-			<artifactId>barchart-udt-core-it-01-bundle</artifactId>
+			<artifactId>barchart-udt-it-01-bundle</artifactId>
 			<version>0.0.0</version>
 			<type>jar</type>
 		</dependency>

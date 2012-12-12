@@ -12,9 +12,7 @@
 		<relativePath>../barchart-udt-archon</relativePath>
 	</parent>
 
-	<groupId>com.barchart.udt</groupId>
 	<artifactId>barchart-udt-core</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<scm>
@@ -31,7 +29,7 @@
 		<checkoutUDT>${target}/udt</checkoutUDT>
 		<connectionUDT>scm:cvs:pserver:anonymous:@udt.cvs.sourceforge.net:/cvsroot/udt:${moduleUDT}</connectionUDT>
 
-		<nativeSrc>src/main/c++</nativeSrc>
+		<nativeSrc>${basedir}/src/main/c++</nativeSrc>
 		<folderJNI>jni</folderJNI>
 		<folderUDT>udt</folderUDT>
 		<nativeSrcJNI>${nativeSrc}/${folderJNI}</nativeSrcJNI>
@@ -123,8 +121,8 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<arguments>
-						--update-snapshots \
 						--define skipTests \
+						--update-snapshots \
 						--activate-profiles \
 						release-versions,release-attach</arguments>
 				</configuration>
@@ -214,7 +212,7 @@
 			</build>
 		</profile>
 
-		<!-- integration test: a) build bundle b) load bundle on all platforms -->
+		<!-- integration test sequence -->
 		<profile>
 			<id>int</id>
 			<build>
@@ -228,7 +226,7 @@
 							<cloneProjectsTo>${project.build.directory}/int-work</cloneProjectsTo>
 							<invokerPropertiesFile>invoker-${label}-${jdk}.properties</invokerPropertiesFile>
 							<pomIncludes>
-								<path>barchart-udt-core-it/pom.xml</path>
+								<path>barchart-udt-it/pom.xml</path>
 							</pomIncludes>
 							<goals>
 								<!-- goals for child maven invocation -->

@@ -13,23 +13,20 @@
 
 	<target name="maven">
 
-		<condition property="maven-command" value="mvn">
+		<condition property="executable" value="mvn">
 			<os family="unix" />
 		</condition>
-		<condition property="maven-command" value="mvn.bat">
+		<condition property="executable" value="mvn.bat">
 			<os family="windows" />
 		</condition>
 
-		<exec executable="${maven-command}">
-
+		<exec executable="${executable}">
+			
 			<arg value="clean" />
-			<arg value="install" />
-
-			<arg value="--activate-profiles" />
-			<arg value="nar" />
-
+			<arg value="deploy" />
+			
 		</exec>
-
+		
 	</target>
 
 </project>
