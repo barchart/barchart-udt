@@ -15,6 +15,10 @@ source "$THIS_PATH/common.sh"
 
 ###############
 
+log "VMWARE_USER=$VMWARE_USER"
+log "VMWARE_HOST=$VMWARE_HOST"
+log "VMWARE_HOME=$VMWARE_HOME"
+
 # relative path to vmware image
 VMX="$1"
 # operation type: start or stop
