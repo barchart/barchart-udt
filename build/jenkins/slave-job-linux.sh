@@ -12,6 +12,8 @@
 # https://wiki.jenkins-ci.org/display/JENKINS/Tool+Environment+Plugin
 #
 
+cd barchart-udt-core
+
 echo "### home  = $HOME"
 echo "### pwd   = $PWD"
 
