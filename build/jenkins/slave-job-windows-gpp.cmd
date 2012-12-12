@@ -11,15 +11,17 @@
 REM #####################
 
 REM
-REM custom windows hudson build to set mingw path first
+REM custom windows jenkins build to set mingw path first
 REM
 
 REM
 REM must provide maven home via
-REM http://wiki.hudson-ci.org/display/HUDSON/Tool+Environment+Plugin
+REM https://wiki.jenkins-ci.org/display/JENKINS/Tool+Environment+Plugin
 REM
 
 REM #####################
+
+CD barchart-udt-core
 
 ECHO ### pwd   = %CD%
 ECHO ### label = %label%
@@ -34,7 +36,7 @@ ECHO ### MINGW_HOME=%MINGW_HOME%
 SET PATH=%MINGW_HOME%;%PATH%
 ECHO ### PATH=%PATH%
 
-"%APACHE_MAVEN_3_HOME%\bin\mvn" %MVN_CMD_UDT%
+"%MAVEN_HOME%\bin\mvn" clean deploy --update-snapshots --activate-profiles nar,int
 
 goto :EOF
 
