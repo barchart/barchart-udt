@@ -14,18 +14,13 @@ REM http://support.microsoft.com/kb/137890
 REM http://www.microsoft.com/downloads/en/details.aspx?familyid=9d467a69-57ff-4ae7-96ee-b18c4790cffd&displaylang=en
 REM
 
+REM sleep 20
+
 cd c:\jenkins\
 
 ECHO start >> slave-agent.log
 
-REM
-REM http://issues.hudson-ci.org/browse/HUDSON-8455
-REM
-call :sleep 30
-
-REM
-REM TODO wget
-REM
+wget --no-check-certificate "https://jenkins.barchart.com/jnlpJars/slave.jar" -O slave.jar
 
 java -jar slave.jar -slaveLog slave.log -noCertificateCheck -jnlpUrl file:slave-agent.jnlp 1> jenkins.log 2>&1
 
@@ -41,4 +36,3 @@ REM
 :: sleep for x number of seconds
 ping -n %1 127.0.0.1 > NUL 2>&1
 goto :EOF
-
