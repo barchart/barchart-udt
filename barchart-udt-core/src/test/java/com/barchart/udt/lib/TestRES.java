@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.util.TestHelp;
+
 public class TestRES {
 
 	static final Logger log = LoggerFactory.getLogger(TestRES.class);
@@ -54,14 +56,15 @@ public class TestRES {
 
 		log.info("user.dir = {}", System.getProperty("user.dir"));
 
-		final String targetFolder = "./target/test-lib-2/bin/";
+		final String targetFolder = TestHelp
+				.randomSuffix("./target/testExtractResource");
 
-		RES.makeTargetFolder(targetFolder);
+		RES.ensureTargetFolder(targetFolder);
 
 		// path outside of jar, in file system, relative to user.dir
-		final String targetPath = targetFolder + "/test-resource-extracted.txt";
+		final String targetPath = targetFolder + "/test-extracted.txt";
 
-		final File targetFile = new File(targetPath);
+		final File targetFile = new File(targetPath).getAbsoluteFile();
 
 		targetFile.delete();
 
@@ -77,9 +80,11 @@ public class TestRES {
 
 		final URLConnection targetCONN = targetURL.openConnection();
 
-		assertEquals(sourceCONN.getContentLength(),
-				targetCONN.getContentLength());
-		assertEquals(sourceCONN.getLastModified(), targetCONN.getLastModified());
+		assertEquals(//
+				sourceCONN.getContentLength(), targetCONN.getContentLength());
+
+		assertEquals(//
+				sourceCONN.getLastModified(), targetCONN.getLastModified());
 
 		targetFile.delete();
 

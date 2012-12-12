@@ -19,6 +19,9 @@ import java.net.URLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * resource extract
+ */
 class RES {
 
 	private final static Logger log = LoggerFactory.getLogger(RES.class);
@@ -49,7 +52,7 @@ class RES {
 
 	private final static int EOF = -1;
 
-	private static long timeStamp(URLConnection connIN) {
+	private static long timeStamp(final URLConnection connIN) {
 		// will use time stamp of jar file
 		return connIN.getLastModified();
 	}
@@ -83,13 +86,13 @@ class RES {
 			throw new IllegalArgumentException("resource not found");
 		}
 
-		final File targetFile = new File(targetPath);
-		log.debug("targetFile={} ", targetFile.getAbsolutePath());
+		final File targetFile = new File(targetPath).getAbsoluteFile();
+		log.debug("targetFile={} ", targetFile);
 
-		final File targetFolder = targetFile.getParentFile();
-		log.debug("targetFolder={} ", targetFolder.getAbsolutePath());
+		final File targetFolder = targetFile.getParentFile().getAbsoluteFile();
+		log.debug("targetFolder={} ", targetFolder);
 
-		makeTargetFolder(targetFolder);
+		ensureTargetFolder(targetFolder);
 
 		final URLConnection targetConn = fileConnection(targetFile);
 
@@ -133,37 +136,45 @@ class RES {
 
 	}
 
-	public static void makeTargetFolder(final File folder) throws Exception {
+	public static void ensureTargetFolder(final File folder) throws Exception {
 		if (folder.exists()) {
 			if (folder.isDirectory()) {
-				log.warn("found folder={}", folder);
+				log.info("found folder={}", folder);
 			} else {
-				log.warn("not a directory; folder={}", folder);
+				log.error("not a directory; folder={}", folder);
 				throw new IllegalArgumentException(
 						"extract destination exists, but as a file and not a folder");
 			}
 		} else {
 			final boolean isSuccess = folder.mkdirs();
 			if (isSuccess) {
-				log.info("made folder={}", folder);
+				log.info("mkdirs : folder={}", folder);
 			} else {
+				log.error("mkdirs failure; folder={}", folder);
 				throw new IllegalStateException(
-						"failed to make extract destination  folder");
+						"failed to make extract destination folder");
 			}
 		}
 	}
 
-	public static void makeTargetFolder(final String targetFolder)
+	public static void ensureTargetFolder(final String targetFolder)
 			throws Exception {
-		final File folder = new File(targetFolder);
-		makeTargetFolder(folder);
+
+		final File folder = new File(targetFolder).getAbsoluteFile();
+
+		ensureTargetFolder(folder);
+
 	}
 
 	public static void systemLoad(final String sourcePath,
 			final String targetPath) throws Exception {
+
 		extractResource(sourcePath, targetPath);
+
 		final String loadPath = (new File(targetPath)).getAbsolutePath();
+
 		System.load(loadPath);
+
 	}
 
 }

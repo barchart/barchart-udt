@@ -7,6 +7,9 @@
  */
 package com.barchart.udt.lib;
 
+/**
+ * default loader implementation
+ */
 public class LibraryLoaderDefaultUDT implements LibraryLoaderUDT {
 
 	@Override

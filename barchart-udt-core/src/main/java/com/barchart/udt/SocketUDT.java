@@ -91,24 +91,28 @@ public class SocketUDT {
 
 			final String location = ResourceUDT.getLibraryExtractLocation();
 
+			log.info("library location : {}", location);
+
 			final String loaderName = ResourceUDT.getLibraryLoaderClassName();
 
+			log.info("library loader : {}", loaderName);
+
 			@SuppressWarnings("unchecked")
-			final Class<LibraryLoaderUDT> loaderClass = (Class<LibraryLoaderUDT>) Class
-					.forName(loaderName);
+			final Class<LibraryLoaderUDT> loaderClass = //
+			(Class<LibraryLoaderUDT>) Class.forName(loaderName);
 
 			final LibraryLoaderUDT loaderInstance = loaderClass.newInstance();
 
 			loaderInstance.load(location);
 
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			log.error("failed to LOAD native library; terminating", e);
 			System.exit(1);
 		}
 
 		try {
 			initClass0();
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			log.error("failed to INIT native library; terminating", e);
 			System.exit(2);
 		}
@@ -304,7 +308,7 @@ public class SocketUDT {
 		try {
 			close();
 			super.finalize();
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			log.error("failed to close", e);
 		}
 	}
@@ -682,7 +686,7 @@ public class SocketUDT {
 		// assert millisTimeout >= DEFAULT_MIN_SELECTOR_TIMEOUT
 		// || millisTimeout <= 0;
 
-		int epollID = 0; // XXX
+		final int epollID = 0; // XXX
 
 		// return epollWait(epollID, readBuffer, writeBuffer, exceptBuffer,
 		// sizeBuffer, millisTimeout);
@@ -1040,7 +1044,7 @@ public class SocketUDT {
 		}
 		try {
 			return getLocalSocketAddress() != null;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return false;
 		}
 	}
@@ -1057,7 +1061,7 @@ public class SocketUDT {
 		}
 		try {
 			return getRemoteSocketAddress() != null;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return false;
 		}
 	}
@@ -1068,7 +1072,7 @@ public class SocketUDT {
 	 * @return error status set by last socket operation
 	 **/
 	public final ErrorUDT getError() {
-		int code = getErrorCode();
+		final int code = getErrorCode();
 		return ErrorUDT.errorFrom(code);
 	}
 
@@ -1106,11 +1110,11 @@ public class SocketUDT {
 	public final boolean isBlocking() {
 		try {
 			if (isOpen()) {
-				boolean isReceiveBlocking = (Boolean) getOption(OptionUDT.Is_Receive_Synchronous);
-				boolean isSendBlocking = (Boolean) getOption(OptionUDT.Is_Send_Synchronous);
+				final boolean isReceiveBlocking = (Boolean) getOption(OptionUDT.Is_Receive_Synchronous);
+				final boolean isSendBlocking = (Boolean) getOption(OptionUDT.Is_Send_Synchronous);
 				return isReceiveBlocking && isSendBlocking;
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.error("unexpected;", e);
 		}
 		return false;
@@ -1128,11 +1132,11 @@ public class SocketUDT {
 	public final boolean isNonBlocking() {
 		try {
 			if (isOpen()) {
-				boolean isReceiveBlocking = (Boolean) getOption(OptionUDT.Is_Receive_Synchronous);
-				boolean isSendBlocking = (Boolean) getOption(OptionUDT.Is_Send_Synchronous);
+				final boolean isReceiveBlocking = (Boolean) getOption(OptionUDT.Is_Receive_Synchronous);
+				final boolean isSendBlocking = (Boolean) getOption(OptionUDT.Is_Send_Synchronous);
 				return !isReceiveBlocking && !isSendBlocking;
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.error("unexpected;", e);
 		}
 		return false;
@@ -1282,7 +1286,7 @@ public class SocketUDT {
 			} else {
 				return remote.getAddress();
 			}
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 			log.debug("unexpected", e);
 			return null;
 		}
@@ -1300,7 +1304,7 @@ public class SocketUDT {
 			} else {
 				return remote.getPort();
 			}
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 			log.debug("unexpected", e);
 			return 0;
 		}
@@ -1319,7 +1323,7 @@ public class SocketUDT {
 			} else {
 				return local.getAddress();
 			}
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 			log.debug("unexpected", e);
 			return null;
 		}
@@ -1337,7 +1341,7 @@ public class SocketUDT {
 			} else {
 				return local.getPort();
 			}
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 			log.debug("unexpected", e);
 			return 0;
 		}
@@ -1403,7 +1407,7 @@ public class SocketUDT {
 
 		try {
 			updateMonitor(false);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return "updateMonitor failed;" + e.getMessage();
 		}
 
@@ -1483,7 +1487,7 @@ public class SocketUDT {
 
 	native void testEpoll0(); //
 
-	public static final IntBuffer newDirectIntBufer(int capacity) {
+	public static final IntBuffer newDirectIntBufer(final int capacity) {
 		return ByteBuffer. //
 				allocateDirect(capacity * SocketUDT.JAVA_INT_SIZE_IN_BYTES). //
 				order(ByteOrder.nativeOrder()). //

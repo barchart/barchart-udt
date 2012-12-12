@@ -1,0 +1,14 @@
+<!--
+
+    Copyright (C) 2010-2012 Andrei Pozolotin <Andrei.Pozolotin@gmail.com>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<container xmlns="http://www.osgi.org/xmlns/scr/v1.1.0">
+
+	<!-- empty component descriptor -->
+
+</container>
