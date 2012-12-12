@@ -9,7 +9,7 @@
 
 ###############
 
-THIS_PATH="$(dirname $(readlink -f $0))"
+THIS_PATH="$(dirname $(readlink -f -n $0))"
 
 source "$THIS_PATH/common.sh"
 

@@ -7,6 +7,7 @@
 # http://www.opensource.org/licenses/bsd-license.php
 #
 
+VMWARE_HOME="/var/vmware"
 
 if [ "$THIS_PATH" == "" ] ; then
 	echo "fatal: THIS_PATH must be set"
@@ -68,5 +69,17 @@ function verify_run_status {
 
 }
 
-VMWARE_HOME="/var/vmware"
+jenkins_node_live () {
+  NAME="$1"
+  USER="$TRIG_USER:$TRIG_PASS"
+  PAGE="https://jenkins.barchart.com/computer/$NAME/api/json?pretty=true"
+  INFO=$(curl --insecure --silent --user $USER $PAGE | grep '"offline"' | grep 'true' | wc -l )
+  echo $INFO
+}
+
+jenkins_image_path () {
+	LABEL="$1"
+	#$VMWARE_HOME/$VMX/$VMX.vmx
+	echo "jenkins-$LABEL"
+}
 
