@@ -37,6 +37,9 @@
 		<nativeSrcJNI>${nativeSrc}/${folderJNI}</nativeSrcJNI>
 		<nativeSrcUDT>${nativeSrc}/${folderUDT}</nativeSrcUDT>
 
+		<!-- ${label} is set by jenkins matrix build -->
+		<!-- ${jdk} is set by jenkins matrix build -->
+
 	</properties>
 
 	<dependencies>
@@ -119,12 +122,11 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
-					<!--"arguments" are overwritten by overriding profiles -->
 					<arguments>
 						--update-snapshots \
 						--define skipTests \
 						--activate-profiles \
-						release-properties,release-versions,release-attach</arguments>
+						release-versions,release-attach</arguments>
 				</configuration>
 			</plugin>
 
@@ -178,7 +180,7 @@
 									<overwrite>true</overwrite>
 									<resources>
 										<resource>
-											<directory> ${checkoutUDT}/${moduleUDT}</directory>
+											<directory>${checkoutUDT}/${moduleUDT}</directory>
 											<filtering>false</filtering>
 										</resource>
 									</resources>
@@ -222,16 +224,10 @@
 						<artifactId>maven-invoker-plugin</artifactId>
 						<configuration>
 							<streamLogs>true</streamLogs>
-							<!-- <projectsDirectory>src/int/</projectsDirectory> -->
 							<projectsDirectory>${basedir}/../.</projectsDirectory>
-							<!-- <settingsFile>src/int/settings.xml</settingsFile> -->
 							<cloneProjectsTo>${project.build.directory}/int-work</cloneProjectsTo>
-							<!-- <localRepositoryPath>${project.build.directory}/int-repo</localRepositoryPath> -->
 							<invokerPropertiesFile>invoker-${label}-${jdk}.properties</invokerPropertiesFile>
-							<setupIncludes>
-							</setupIncludes>
 							<pomIncludes>
-								<!-- <pomInclude>all/pom.xml</pomInclude> -->
 								<path>barchart-udt-core-it/pom.xml</path>
 							</pomIncludes>
 							<goals>

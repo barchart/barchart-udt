@@ -235,36 +235,18 @@
 							<rules>
 								<requireJavaVersion>
 									<message>### You must run Java version ${projectJavaVersion};
-										you are
-										running now: ${build.java.runtime.version} ###</message>
+										you are running now: ${build.java.runtime.version} ###</message>
 									<version>${projectJavaVersion}</version>
 								</requireJavaVersion>
 								<requireMavenVersion>
 									<message>### You must run Maven version ${projectMavenVersion};
-										you
-										are running now: ${maven.version} ###</message>
+										you are running now: ${maven.version} ###</message>
 									<version>${projectMavenVersion}</version>
 								</requireMavenVersion>
 							</rules>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<!--"arguments" are overwritten by overriding profiles -->
-					<arguments>
-						--update-snapshots \
-						--define skipTests \
-						--activate-profiles \
-						release-properties,release-versions,release-attach,package-bundle
-					</arguments>
-					<preparationGoals>clean verify</preparationGoals>
-					<goals>deploy</goals>
-				</configuration>
 			</plugin>
 
 		</plugins>

@@ -12,7 +12,7 @@ http://sourceforge.net/projects/lingon/files/
 	<string>slave-agent</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/var/hudson/slave-agent.sh</string>
+		<string>/var/jenkins/slave-agent.sh</string>
 		<string>start</string>
 	</array>
 	<key>RunAtLoad</key>

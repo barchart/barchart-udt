@@ -149,14 +149,12 @@ start(){
   log "START: Jenkins Slave STARTING..."
 
 	URL="https://jenkins.barchart.com/jnlpJars/slave.jar"
-	
-	SLAVE_LOG="$REAL_PATH/slave.log"
-	SLAVE_JAR="$REAL_PATH/slave.jar"
-	SLAVE_JNLP="$REAL_PATH/slave-agent.jnlp"
 
-	wget --no-check-certificate "$URL" -O "$SLAVE_JAR"
+	cd "$REAL_PATH"	
 
-	JAVA_CMD="java -jar $SLAVE_JAR -jnlpUrl file://$SLAVE_JNLP -noCertificateCheck -slaveLog $SLAVE_LOG" 
+	wget --no-check-certificate "$URL" -O "slave.jar"
+
+	JAVA_CMD="java -jar slave.jar -jnlpUrl file:slave-agent.jnlp -noCertificateCheck -slaveLog slave.log" 
 
 	$JAVA_CMD > jenkins.log 2>&1 &
 

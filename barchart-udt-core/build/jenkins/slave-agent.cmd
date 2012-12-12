@@ -14,7 +14,7 @@ REM http://support.microsoft.com/kb/137890
 REM http://www.microsoft.com/downloads/en/details.aspx?familyid=9d467a69-57ff-4ae7-96ee-b18c4790cffd&displaylang=en
 REM
 
-cd c:\hudson\
+cd c:\jenkins\
 
 ECHO start >> slave-agent.log
 
@@ -23,7 +23,11 @@ REM http://issues.hudson-ci.org/browse/HUDSON-8455
 REM
 call :sleep 30
 
-java -jar c:\hudson\slave.jar -jnlpUrl file:///c:/hudson/slave-agent.jnlp 1> hudson.log 2>&1
+REM
+REM TODO wget
+REM
+
+java -jar slave.jar -slaveLog slave.log -noCertificateCheck -jnlpUrl file:slave-agent.jnlp 1> jenkins.log 2>&1
 
 GOTO :EOF
 
