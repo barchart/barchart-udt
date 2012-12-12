@@ -12,22 +12,19 @@
 
 THIS_PATH="$(dirname $(readlink -f $0))"
 
-###############
-
-#
 source "$THIS_PATH/common.sh"
 
-###
+###############
 
 verify_tool_present "vmware"
 verify_tool_present "vmrun"
 
-# relative path to vmware system image
+# relative path to vmware image
 VMX="$1"
-# operation type: start|stop
+# operation type: start or stop
 CMD="$2"
 
-VM="/var/vmware/$VMX"
+VM="$VMWARE_HOME/$VMX"
 USER="root"
 PASS="root"
 

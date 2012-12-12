@@ -67,3 +67,6 @@ function verify_run_status {
 	fi
 
 }
+
+VMWARE_HOME="/var/vmware"
+
