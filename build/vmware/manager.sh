@@ -24,6 +24,7 @@ VMX="$1"
 # operation type: start or stop
 CMD="$2"
 
+scp $THIS_PATH/common.sh $VMWARE_USER@$VMWARE_HOST:$VMWARE_HOME
 scp $THIS_PATH/vmrun-tools.sh $VMWARE_USER@$VMWARE_HOST:$VMWARE_HOME
 
 ssh $VMWARE_USER@$VMWARE_HOST "$VMWARE_HOME/vmrun-tools.sh $VMX $CMD"
