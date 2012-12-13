@@ -1,0 +1,51 @@
+<!--
+
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project default="maven" basedir="./..">
+
+	<echo message="basedir : ${basedir}" />
+
+	<target name="maven">
+
+		<condition property="maven-command" value="mvn">
+			<os family="unix" />
+		</condition>
+		<condition property="maven-command" value="mvn.bat">
+			<os family="windows" />
+		</condition>
+
+		<exec executable="${maven-command}">
+
+			<arg value="clean" />
+			<arg value="verify" />
+
+			<arg value="--activate-profiles" />
+			<arg value="nar,int" />
+
+			<arg value="--debug" />
+
+
+			<arg value="--define" />
+			<arg value="label=macosx" />
+
+			<arg value="--define" />
+			<arg value="jdk=java32" />
+
+			<arg value="--define" />
+			<arg value="invoker.debug=false" />
+
+
+			<arg value="--define" />
+			<arg value="skipTests" />
+
+		</exec>
+
+	</target>
+
+</project>

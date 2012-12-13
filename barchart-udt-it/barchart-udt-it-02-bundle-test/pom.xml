@@ -1,12 +1,5 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -21,7 +14,7 @@
 
 	<artifactId>barchart-udt-it-02-bundle-test</artifactId>
 	<packaging>jar</packaging>
-	
+
 	<description>load and test bundle prototype for single os/arch</description>
 
 	<dependencies>
@@ -58,14 +51,14 @@
 
 		<plugins>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<!-- else makes bizarre folder locks -->
-					<forkMode>once</forkMode>
-				</configuration>
-			</plugin>
+			<!-- FIXME else makes bizarre folder locks -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-surefire-plugin</artifactId> -->
+			<!-- <configuration> -->
+			<!-- <forkMode>once</forkMode> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
 
 		</plugins>
 
