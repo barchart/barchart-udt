@@ -102,7 +102,7 @@ function vmware_jenkins_image {
 			echo "$VMWARE_HOME/jenkins-ubuntu/jenkins-ubuntu.vmx"
 			;;
 		"macosx" )
-			echo "$VMWARE_HOME/jenkins-macosx/jenkins-macosx.vmx"
+			echo "$VMWARE_HOME/jenkins-macosx/Mac_OS_X_10.6.X.vmx"
 			;;
 		"windows" )
 			echo "$VMWARE_HOME/jenkins-windows/jenkins-windows.vmx"
