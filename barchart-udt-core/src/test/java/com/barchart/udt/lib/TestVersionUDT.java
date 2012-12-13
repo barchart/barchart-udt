@@ -7,6 +7,7 @@
  */
 package com.barchart.udt.lib;
 
+import static com.barchart.udt.lib.VersionUDT.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -19,6 +20,19 @@ public class TestVersionUDT {
 		VersionUDT.log();
 
 		assertTrue(true);
+
+	}
+
+	@Test
+	public void testName() {
+
+		assertEquals("must convert release to snapshot",
+				"barchart-udt-core-2.0.0-SNAPSHOT",
+				barchartName("barchart-udt-core-2.0.0"));
+
+		assertEquals("must keep snapshot as snapshot ",
+				"barchart-udt-core-2.0.0-SNAPSHOT",
+				barchartName("barchart-udt-core-2.0.0-SNAPSHOT"));
 
 	}
 

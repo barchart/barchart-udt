@@ -1,0 +1,35 @@
+<!--
+
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project default="maven" basedir="./..">
+
+	<echo message="basedir : ${basedir}" />
+
+	<target name="maven">
+
+		<condition property="maven-command" value="mvn">
+			<os family="unix" />
+		</condition>
+		<condition property="maven-command" value="mvn.bat">
+			<os family="windows" />
+		</condition>
+
+		<exec executable="${maven-command}">
+
+			<arg value="clean" />
+			<arg value="install" />
+
+			<arg value="--activate-profiles" />
+			<arg value="nar,artifact-version,package-bundle" />
+
+		</exec>
+
+	</target>
+
+</project>

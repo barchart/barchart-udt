@@ -19,8 +19,7 @@
 
 	<modules>
 		<module>../barchart-udt-core</module>
-		<module>../barchart-udt-pack</module>
-		<module>../barchart-udt-pack-bundle</module>
+		<module>../barchart-udt-bundle</module>
 	</modules>
 
 	<description>Java wrapper around native C++ UDT protocol implementation UDT version: 4.9</description>
@@ -296,55 +295,6 @@
 			</build>
 		</profile>
 
-		<!-- release and snapshot versions, regardless of the build phase -->
-		<profile>
-			<id>artifact-version</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>groovy-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>artifact-version</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>execute</goal>
-								</goals>
-								<configuration>
-									<source>
-<![CDATA[
-					
-					def snapshot = '-SNAPSHOT'
-					def version  = project.version
-					
-					def releaseVersion
-					def snapshotVersion
-					
-					if( version.contains(snapshot) ){
-						releaseVersion  = version.replaceAll(snapshot,'')
-						snapshotVersion = version
-					}else{
-						releaseVersion  = version
-						snapshotVersion = version + snapshot
-					}
-					
-					println( '### releaseVersion  = ' + releaseVersion )
-					println( '### snapshotVersion = ' + snapshotVersion )
-
-					project.properties[ 'releaseVersion'  ] = releaseVersion
-					project.properties[ 'snapshotVersion' ] = snapshotVersion
-					
-]]>
-									</source>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
 		<!-- ${archosClassifier} selector profiles -->
 		<profile>
 			<id>nar_i386-Linux-gpp</id>
@@ -417,6 +367,55 @@
 			<properties>
 				<archosClassifier>${win64}</archosClassifier>
 			</properties>
+		</profile>
+
+		<!-- release and snapshot versions, regardless of the build stage -->
+		<profile>
+			<id>artifact-version</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>groovy-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>artifact-version</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<source>
+<![CDATA[
+					
+					def snapshot = '-SNAPSHOT'
+					def version  = project.version
+					
+					def releaseVersion
+					def snapshotVersion
+					
+					if( version.contains(snapshot) ){
+						releaseVersion  = version.replaceAll(snapshot,'')
+						snapshotVersion = version
+					}else{
+						releaseVersion  = version
+						snapshotVersion = version + snapshot
+					}
+					
+					println( '### releaseVersion  = ' + releaseVersion )
+					println( '### snapshotVersion = ' + snapshotVersion )
+
+					project.properties[ 'releaseVersion'  ] = releaseVersion
+					project.properties[ 'snapshotVersion' ] = snapshotVersion
+					
+]]>
+									</source>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 	</profiles>

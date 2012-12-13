@@ -1,0 +1,51 @@
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.barchart.udt</groupId>
+	<artifactId>barchart-udt-demo</artifactId>
+	<version>0.0.0</version>
+	<packaging>jar</packaging>
+
+	<repositories>
+
+		<!-- location of artifacts before they are published to maven central -->
+		<repository>
+			<id>sonatype-public</id>
+			<name>sonatype-public</name>
+			<url>http://oss.sonatype.org/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
+	</repositories>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.barchart.udt</groupId>
+			<artifactId>barchart-udt-bundle</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.9</version>
+		</dependency>
+		
+	</dependencies>
+
+</project>

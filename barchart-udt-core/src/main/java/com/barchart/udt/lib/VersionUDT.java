@@ -96,12 +96,28 @@ public class VersionUDT {
 
 		UDT_VERSION = udtVersion;
 
-		BARCHART_NAME = name;
+		BARCHART_NAME = barchartName(name);
+
 		BARCHART_GROUP = group;
 		BARCHART_ARTIFACT = artifact;
 		BARCHART_VERSION = version;
 		BARCHART_TIMESTAMP = timestamp;
 
+	}
+
+	private static final String SNAPSHOT = "-SNAPSHOT";
+
+	/**
+	 * FIXME needs build system change
+	 * <p>
+	 * current contract is to depend on NAR snapshot
+	 */
+	static String barchartName(final String name) {
+		if (name.contains(SNAPSHOT)) {
+			return name;
+		} else {
+			return name + SNAPSHOT;
+		}
 	}
 
 	private static void append(final StringBuilder text, final String EOL) {

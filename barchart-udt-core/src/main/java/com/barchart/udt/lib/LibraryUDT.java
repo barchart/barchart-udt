@@ -201,7 +201,7 @@ enum LibraryUDT {
 	// /libbarchart-i386-Linux-g++-jni//lib/i386-Linux-g++/jni/libbarchart-1.0.2-SNAPSHOT.so
 	String sourceLibTestNAR() {
 		final String classifier = aol.resourceName();
-		final String name = VersionUDT.BARCHART_NAME; // XXX
+		final String name = VersionUDT.BARCHART_NAME;
 		final String folder = name + DASH + classifier + DASH + JNI;
 		final String path = //
 		SLASH + folder + SLASH + sourceLibRealNAR();
