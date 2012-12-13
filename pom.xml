@@ -27,12 +27,18 @@
 	<description>eclipse import helper</description>
 
 	<modules>
+	
+		<!-- base -->
 		<module>barchart-udt-archon</module>
 		<module>barchart-udt-core</module>
+		<module>barchart-udt-bundle</module>
+		
+		<!-- integation tests -->
 		<module>barchart-udt-it</module>
-		<module>barchart-udt-pack</module>
-		<module>barchart-udt-pack-bundle</module>
-		<module>barchart-udt-example</module>
+		
+		<!-- examples -->
+		<module>barchart-udt-demo</module>
+		
 	</modules>
 
 </project>
