@@ -249,6 +249,18 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<arguments>
+						--define skipTests \
+						--update-snapshots \
+						--activate-profiles \
+						artifact-version,release-attach,package-bundle</arguments>
+				</configuration>
+			</plugin>
+
 		</plugins>
 
 	</build>
