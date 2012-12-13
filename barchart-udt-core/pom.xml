@@ -221,8 +221,8 @@
 								</goals>
 								<configuration>
 									<targetDirectory>${basedir}</targetDirectory>
-									<patchDirectory>src/main/patches</patchDirectory>
-									<patchTrackingFile>target/patches/patches-applied.txt</patchTrackingFile>
+									<patchDirectory>${basedir}/src/main/patches</patchDirectory>
+									<patchTrackingFile>${target}/patches/patches-applied.txt</patchTrackingFile>
 									<naturalOrderProcessing>true</naturalOrderProcessing>
 								</configuration>
 							</execution>
@@ -280,7 +280,7 @@
 				<attachArtifactId>${project.artifactId}</attachArtifactId>
 				<attachVersion>${snapshotVersion}</attachVersion>
 				<!-- -->
-				<attachFolder>${basedir}/${target/nar-all}</attachFolder>
+				<attachFolder>${target}/nar-all</attachFolder>
 				<attachFileName>${project.groupId}-${project.version}</attachFileName>
 			</properties>
 			<build>
@@ -501,7 +501,7 @@
 						<configuration>
 							<!-- place nar artifacts into test classpath for unit tests; will 
 								also use for jar/nar packaging -->
-							<targetDirectory>target/test-classes</targetDirectory>
+							<targetDirectory>${target}/test-classes</targetDirectory>
 							<libraries>
 								<library>
 									<type>jni</type>
