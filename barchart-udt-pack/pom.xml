@@ -42,7 +42,7 @@
 						--update-snapshots \
 						--define skipTests \
 						--activate-profiles \
-						release-versions,package-bundle
+						artifact-version,package-bundle
 					</arguments>
 				</configuration>
 			</plugin>

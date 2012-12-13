@@ -144,7 +144,7 @@
 				<configuration>
 					<!--"arguments" are overwritten by overriding profiles -->
 					<arguments>--define skipTests --activate-profiles
-						sonatype-oss-release,release-properties,release-versions,release-attach,!nar_i386-Linux-g++</arguments>
+						sonatype-oss-release,release-properties,artifact-version,release-attach,!nar_i386-Linux-g++</arguments>
 				</configuration>
 			</plugin>
 

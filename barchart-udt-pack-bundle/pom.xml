@@ -1,12 +1,5 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -21,16 +14,20 @@
 
 	<artifactId>barchart-udt-pack-bundle</artifactId>
 	<packaging>bundle</packaging>
-	
+
 	<properties>
 
+		<!-- bundle origin artifacts -->
+		<dependencyGroupId>com.barchart.udt</dependencyGroupId>
 		<dependencyArtifactId>barchart-udt-core</dependencyArtifactId>
 		<dependencyVersion>${snapshotVersion}</dependencyVersion>
-		<dependencyUnpack>target/classes</dependencyUnpack>
+
+		<!-- unpack folder -->
+		<dependencyUnpack>${basedir}/target/classes</dependencyUnpack>
 
 	</properties>
-	
-		<build>
+
+	<build>
 
 		<plugins>
 
@@ -42,7 +39,7 @@
 						--update-snapshots \
 						--define skipTests \
 						--activate-profiles \
-						release-versions,package-bundle
+						artifact-version,package-bundle
 					</arguments>
 				</configuration>
 			</plugin>
@@ -79,51 +76,51 @@
 									<overWriteSnapshots>true</overWriteSnapshots>
 									<artifactItems>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
+											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
 											<version>${dependencyVersion}</version>
 											<type>jar</type>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
+											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
+											<version>${dependencyVersion}</version>
 											<classifier>${lin32}</classifier>
-											<version>${dependencyVersion}</version>
 											<type>nar</type>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
+											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
+											<version>${dependencyVersion}</version>
 											<classifier>${lin64}</classifier>
-											<version>${dependencyVersion}</version>
 											<type>nar</type>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
+											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
+											<version>${dependencyVersion}</version>
 											<classifier>${mac32}</classifier>
-											<version>${dependencyVersion}</version>
 											<type>nar</type>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
+											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
+											<version>${dependencyVersion}</version>
 											<classifier>${mac64}</classifier>
-											<version>${dependencyVersion}</version>
 											<type>nar</type>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
+											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
+											<version>${dependencyVersion}</version>
 											<classifier>${win32}</classifier>
-											<version>${dependencyVersion}</version>
 											<type>nar</type>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
+											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
-											<classifier>${win64}</classifier>
 											<version>${dependencyVersion}</version>
+											<classifier>${win64}</classifier>
 											<type>nar</type>
 										</artifactItem>
 									</artifactItems>

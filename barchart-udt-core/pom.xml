@@ -124,7 +124,7 @@
 						--define skipTests \
 						--update-snapshots \
 						--activate-profiles \
-						release-versions,release-attach</arguments>
+						artifact-version,release-attach</arguments>
 				</configuration>
 			</plugin>
 
@@ -251,8 +251,17 @@
 		</profile>
 
 		<profile>
-			<!-- attach multiplatform artifacts during release -->
+			<!-- attach multi arch/os nar artifacts to the jar project -->
 			<id>release-attach</id>
+			<properties>
+				<!-- -->
+				<attachGroupId>${project.groupId}</attachGroupId>
+				<attachArtifactId>${project.artifactId}</attachArtifactId>
+				<attachVersion>${snapshotVersion}</attachVersion>
+				<!-- -->
+				<attachFolder>${basedir}/${target/nar-all}</attachFolder>
+				<attachFileName>${project.groupId}-${project.version}</attachFileName>
+			</properties>
 			<build>
 				<plugins>
 
@@ -269,55 +278,55 @@
 								<configuration>
 									<artifactItems>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
-											<artifactId>${project.artifactId}</artifactId>
+											<groupId>${attachGroupId}</groupId>
+											<artifactId>${attachArtifactId}</artifactId>
+											<version>${attachVersion}</version>
 											<classifier>${lin32}</classifier>
-											<version>${snapshotVersion}</version>
 											<type>nar</type>
-											<destFileName>${project.artifactId}-${project.version}-${lin32}.nar</destFileName>
+											<destFileName>${attachFileName}-${lin32}.nar</destFileName>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
-											<artifactId>${project.artifactId}</artifactId>
+											<groupId>${attachGroupId}</groupId>
+											<artifactId>${attachArtifactId}</artifactId>
+											<version>${attachVersion}</version>
 											<classifier>${lin64}</classifier>
-											<version>${snapshotVersion}</version>
 											<type>nar</type>
-											<destFileName>${project.artifactId}-${project.version}-${lin64}.nar</destFileName>
+											<destFileName>${attachFileName}-${lin64}.nar</destFileName>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
-											<artifactId>${project.artifactId}</artifactId>
+											<groupId>${attachGroupId}</groupId>
+											<artifactId>${attachArtifactId}</artifactId>
+											<version>${attachVersion}</version>
 											<classifier>${mac32}</classifier>
-											<version>${snapshotVersion}</version>
 											<type>nar</type>
-											<destFileName>${project.artifactId}-${project.version}-${mac32}.nar</destFileName>
+											<destFileName>${attachFileName}-${mac32}.nar</destFileName>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
-											<artifactId>${project.artifactId}</artifactId>
+											<groupId>${attachGroupId}</groupId>
+											<artifactId>${attachArtifactId}</artifactId>
+											<version>${attachVersion}</version>
 											<classifier>${mac64}</classifier>
-											<version>${snapshotVersion}</version>
 											<type>nar</type>
-											<destFileName>${project.artifactId}-${project.version}-${mac64}.nar</destFileName>
+											<destFileName>${attachFileName}-${mac64}.nar</destFileName>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
-											<artifactId>${project.artifactId}</artifactId>
+											<groupId>${attachGroupId}</groupId>
+											<artifactId>${attachArtifactId}</artifactId>
+											<version>${attachVersion}</version>
 											<classifier>${win32}</classifier>
-											<version>${snapshotVersion}</version>
 											<type>nar</type>
-											<destFileName>${project.artifactId}-${project.version}-${win32}.nar</destFileName>
+											<destFileName>${attachFileName}-${win32}.nar</destFileName>
 										</artifactItem>
 										<artifactItem>
-											<groupId>${project.groupId}</groupId>
-											<artifactId>${project.artifactId}</artifactId>
+											<groupId>${attachGroupId}</groupId>
+											<artifactId>${attachArtifactId}</artifactId>
+											<version>${attachVersion}</version>
 											<classifier>${win64}</classifier>
-											<version>${snapshotVersion}</version>
 											<type>nar</type>
-											<destFileName>${project.artifactId}-${project.version}-${win64}.nar</destFileName>
+											<destFileName>${attachFileName}-${win64}.nar</destFileName>
 										</artifactItem>
 									</artifactItems>
-									<outputDirectory>target/nar-all</outputDirectory>
+									<outputDirectory>${attachFolder}</outputDirectory>
 									<overWriteIfNewer>true</overWriteIfNewer>
 									<overWriteReleases>true</overWriteReleases>
 									<overWriteSnapshots>true</overWriteSnapshots>
@@ -339,32 +348,32 @@
 								<configuration>
 									<artifacts>
 										<artifact>
-											<file>target/nar-all/${project.artifactId}-${project.version}-${lin32}.nar</file>
+											<file>${attachFolder}/${attachFileName}-${lin32}.nar</file>
 											<classifier>${lin32}</classifier>
 											<type>nar</type>
 										</artifact>
 										<artifact>
-											<file>target/nar-all/${project.artifactId}-${project.version}-${lin64}.nar</file>
+											<file>${attachFolder}/${attachFileName}-${lin64}.nar</file>
 											<classifier>${lin64}</classifier>
 											<type>nar</type>
 										</artifact>
 										<artifact>
-											<file>target/nar-all/${project.artifactId}-${project.version}-${mac32}.nar</file>
+											<file>${attachFolder}/${attachFileName}-${mac32}.nar</file>
 											<classifier>${mac32}</classifier>
 											<type>nar</type>
 										</artifact>
 										<artifact>
-											<file>target/nar-all/${project.artifactId}-${project.version}-${mac64}.nar</file>
+											<file>${attachFolder}/${attachFileName}-${mac64}.nar</file>
 											<classifier>${mac64}</classifier>
 											<type>nar</type>
 										</artifact>
 										<artifact>
-											<file>target/nar-all/${project.artifactId}-${project.version}-${win32}.nar</file>
+											<file>${attachFolder}/${attachFileName}-${win32}.nar</file>
 											<classifier>${win32}</classifier>
 											<type>nar</type>
 										</artifact>
 										<artifact>
-											<file>target/nar-all/${project.artifactId}-${project.version}-${win64}.nar</file>
+											<file>${attachFolder}/${attachFileName}-${win64}.nar</file>
 											<classifier>${win64}</classifier>
 											<type>nar</type>
 										</artifact>
