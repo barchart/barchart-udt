@@ -6,6 +6,10 @@
 @REM http://www.opensource.org/licenses/bsd-license.php
 @REM
 
+@REM
+@REM create windows shortcut to this file under windows auto-login user 
+@REM
+
 @ECHO OFF
 
 REM

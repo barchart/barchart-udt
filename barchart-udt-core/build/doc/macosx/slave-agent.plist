@@ -6,28 +6,24 @@ http://en.wikipedia.org/wiki/Launchd
 http://sourceforge.net/projects/lingon/files/
 http://developer.apple.com/library/mac/#documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html
 
-copy this file into $HOME/Library/LaunchAgents
+copy this file into /Library/LaunchDaemons/
 
 test:
-
-cd ~/Library/LaunchAgents
-launchctl load   -S Aqua -w slave-agent.plist
-launchctl unload -S Aqua -w slave-agent.plist
+/Library/LaunchDaemons/
+sudo launchctl load -w slave-agent.plist
+sudo launchctl unload -w slave-agent.plist
 
 -->
-<dict>
-        <key>Label</key>
-        <string>slave-agent.sh</string>
-        <key>LimitLoadToSessionType</key>
-        <string>Aqua</string>
-        <key>OnDemand</key>
-        <false/>
-        <key>ProgramArguments</key>
+<plist version="1.0">
+	<dict>
+		<key>Label</key>
+		<string>slave-agent</string>
+		<key>ProgramArguments</key>
 		<array>
 			<string>/var/jenkins/slave-agent.sh</string>
 			<string>think</string>
 		</array>
-        <key>RunAtLoad</key>
-        <true/>
-</dict>
+		<key>RunAtLoad</key>
+		<true/>
+	</dict>
 </plist>
