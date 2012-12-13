@@ -1,8 +1,9 @@
-<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com /> All 
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
 	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
 <!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com /> All 
 	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -15,15 +16,14 @@
 
 	<groupId>com.barchart.udt</groupId>
 	<artifactId>barchart-udt-archon</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<scm>
 		<url>https://github.com/barchart/barchart-udt</url>
 		<connection>scm:git:git://github.com/barchart/barchart-udt.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-udt.git</developerConnection>
-	  <tag>barchart-udt-archon-2.0.0</tag>
-  </scm>
+	</scm>
 
 	<description>Java wrapper around native C++ UDT protocol implementation UDT version: 4.9</description>
 
