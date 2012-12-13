@@ -89,7 +89,7 @@ function jenkins_node_live {
 	local USER="$TRIG_USER:$TRIG_PASS"
 	local PAGE="https://$JENKINS_URL/computer/$NAME/api/json?pretty=true"
 	local LIVE=$(curl --insecure --silent --user $USER $PAGE | grep '"offline"' | grep 'true' | wc -l)
-  echo $LIVE
+	echo $LIVE
 }
 
 #

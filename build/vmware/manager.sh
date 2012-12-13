@@ -20,6 +20,9 @@ log "VMWARE_USER=$VMWARE_USER"
 log "VMWARE_HOST=$VMWARE_HOST"
 log "VMWARE_HOME=$VMWARE_HOME"
 
+log "jenkins master"
+log "JENKINS_URL=$JENKINS_URL"
+
 #
 # vmware image name
 #
