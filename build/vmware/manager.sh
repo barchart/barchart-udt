@@ -35,6 +35,7 @@ scp $THIS_PATH/vmrun-tools.sh $VMWARE_USER@$VMWARE_HOST:$VMWARE_HOME
 
 log "initiate remote action"
 ssh $VMWARE_USER@$VMWARE_HOST "$VMWARE_HOME/vmrun-tools.sh $VM_NAME $VM_ACTION"
+verify_run_status "$?" "vm action"
 
 log "ensure action completion"
 VM_LIVE=$(jenkins_expected $VM_ACTION)

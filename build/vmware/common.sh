@@ -97,8 +97,21 @@ function jenkins_node_live {
 #
 function vmware_jenkins_image {
 	local NAME="$1"
-	local IMAGE="$VMWARE_HOME/jenins-$NAME/jenins-$NAME.vmx"
-	echo "$IMAGE"
+	case $NAME in
+		"linux" )
+			echo "$VMWARE_HOME/jenkins-ubuntu/jenkins-ubuntu.vmx"
+			;;
+		"macosx" )
+			echo "$VMWARE_HOME/jenkins-macosx/jenkins-macosx.vmx"
+			;;
+		"windows" )
+			echo "$VMWARE_HOME/jenkins-windows/jenkins-windows.vmx"
+			;;
+				"*" )
+			log "invalid VM_ACTION=$VM_ACTION"
+			exit 1
+			;;
+	esac
 }
 
 #
