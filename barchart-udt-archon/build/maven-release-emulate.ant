@@ -22,6 +22,8 @@
 
 		<exec executable="${executable}">
 
+			<arg value="--errors" />
+
 			<arg value="--define" />
 			<arg value="dryRun=true" />
 
