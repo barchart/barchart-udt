@@ -97,7 +97,7 @@ function jenkins_node_live {
 #
 function vmware_jenkins_image {
 	local NAME="$1"
-	local IMAGE="$VMWARE_HOME/jenins-$NAME/jenins-$NAME.vmx
+	local IMAGE="$VMWARE_HOME/jenins-$NAME/jenins-$NAME.vmx"
 	echo "$IMAGE"
 }
 
@@ -124,16 +124,15 @@ function jenkins_node_wait {
 function jenkins_expected { 
 	local VM_ACTION="$1"
 	case $VM_ACTION in
-		start)
+		"start" )
 			echo "$NODE_LIVE"
 			;;
-		stop)
+		"stop" )
 			echo "$NODE_DEAD"
 			;;
-		*)
+		"*" )
 			log "invalid VM_ACTION=$VM_ACTION"
 			exit 1
 			;;
 	esac
-
 }
