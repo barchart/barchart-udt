@@ -46,7 +46,7 @@ log(){
 }
 
 # Get the real fully qualified path to this script
-SCRIPT=$(readlink -f -n $0)
+SCRIPT=$(realpath $0)
 
 # Resolve the any sym links;
 REAL_PATH=$(dirname  $SCRIPT)
@@ -87,17 +87,13 @@ do_uninstall(){
 # correction for the usual "think different" in macosx launchd
 do_think(){
 
-    status
+    do_status
 
-    log "waiting system startup"
+    do_restart
 
-    sleep 30
+    log "thinking different"
 
-    start
-
-    log "waiting system shutdown"
-
-    sleep 3000
+    sleep 10000
 
 }
 
@@ -110,8 +106,8 @@ do_start(){
 	URL="https://jenkins.barchart.com/jnlpJars/slave.jar"
 
 	while [ true ] ; do
-		wget --no-check-certificate "$URL" -O "slave.jar" && break 
-		log "download failure URL=$URL"
+		curl --insecure --silent --url "$URL" --output "slave.jar" && break
+		log "download failure URL=$URL [$?]"
 		sleep 1
 	done
 
