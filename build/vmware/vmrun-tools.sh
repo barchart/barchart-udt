@@ -16,33 +16,44 @@ source "$THIS_PATH/common.sh"
 
 ###############
 
+log "verify tools"
 verify_tool_present "vmware"
 verify_tool_present "vmrun"
 
+#
 # vmware image name
-VMX="$1"
-# operation type: start or stop
-CMD="$2"
+#
+VM_NAME="$1"
+#
+# image operation start or stop
+#
+VM_ACTION="$2"
 
-VM="$VMWARE_HOME/$VMX/$VMX.vmx"
-USER="root"
-PASS="root"
+#
 
-log "VM=$VM"
+VM_PATH=$(vmware_jenkins_image $VM_NAME)
+VM_USER="root"
+VM_PASS="root"
+
+log "VM_PATH=$VM_PATH"
 
 ###
 
 VMRUN_LIST="vmrun -T ws list"
-VMRUN_START="vmrun -T ws start "$VM" nogui"
-VMRUN_STOP="vmrun -T ws stop "$VM" soft"
 
-VMRUN_VAR_IN="vmrun -T ws -gu $USER -gp $PASS readVariable $VM guestEnv"
-VMRUN_VAR_OUT="vmrun -T ws -gu $USER -gp $PASS writeVariable $VM guestEnv"
-VMRUN_EXISTS="vmrun -T ws -gu $USER -gp $PASS fileExistsInGuest $VM"
-VMRUN_SCRIPT="vmrun -T ws -gu $USER -gp $PASS runScriptInGuest $VM"
-VMRUN_PROGRAM="vmrun -T ws -gu $USER -gp $PASS runProgramInGuest $VM"
-VMRUN_COPY_HOST_GUEST="vmrun -T ws -gu $USER -gp $PASS copyFileFromHostToGuest $VM"
-VMRUN_COPY_GUEST_HOST="vmrun -T ws -gu $USER -gp $PASS copyFileFromGuestToHost $VM"
+VMRUN_START="vmrun -T ws start "$VM_PATH" nogui"
+VMRUN_STOP="vmrun -T ws stop "$VM_PATH" soft"
+
+VMRUN_VAR_IN="vmrun -T ws -gu $VM_USER -gp $VM_PASS readVariable $VM_PATH guestEnv"
+VMRUN_VAR_OUT="vmrun -T ws -gu $VM_USER -gp $VM_PASS writeVariable $VM_PATH guestEnv"
+
+VMRUN_EXISTS="vmrun -T ws -gu $VM_USER -gp $VM_PASS fileExistsInGuest $VM_PATH"
+
+VMRUN_SCRIPT="vmrun -T ws -gu $VM_USER -gp $VM_PASS runScriptInGuest $VM_PATH"
+VMRUN_PROGRAM="vmrun -T ws -gu $VM_USER -gp $VM_PASS runProgramInGuest $VM_PATH"
+
+VMRUN_COPY_HOST_GUEST="vmrun -T ws -gu $VM_USER -gp $VM_PASS copyFileFromHostToGuest $VM_PATH"
+VMRUN_COPY_GUEST_HOST="vmrun -T ws -gu $VM_USER -gp $VM_PASS copyFileFromGuestToHost $VM_PATH"
 
 ###
 
@@ -51,25 +62,21 @@ log "host PWD=$PWD"
 log "guest list before"
 $VMRUN_LIST
 
-case $CMD in
-start)
-	log "guest start"
-	$VMRUN_START
-	verify_run_status "$?" "vm start"
-	log "sleep"
-	sleep 60
-	;;
-stop)
-	log "guest stop"
-	$VMRUN_STOP
-	verify_run_status "$?" "vm stop"
-	log "sleep"
-	sleep 60
-	;;
-*)
-	log "invalid CMD=$CMD"
-	exit 1
-	;;
+case $VM_ACTION in
+	start)
+		log "guest start"
+		$VMRUN_START
+		verify_run_status "$?" "vm start"
+		;;
+	stop)
+		log "guest stop"
+		$VMRUN_STOP
+		verify_run_status "$?" "vm stop"
+		;;
+	*)
+		log "invalid VM_ACTION=$VM_ACTION"
+		exit 1
+		;;
 esac
 
 log "guest list after"
@@ -78,4 +85,3 @@ $VMRUN_LIST
 ###
 
 exit 0
-

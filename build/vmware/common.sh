@@ -7,6 +7,9 @@
 # http://www.opensource.org/licenses/bsd-license.php
 #
 
+#
+# location of jenkins slave images on vmware host 
+#
 VMWARE_HOME="/var/vmware"
 
 if [ "$THIS_PATH" == "" ] ; then
@@ -69,17 +72,68 @@ function verify_run_status {
 
 }
 
-jenkins_node_live () {
-  NAME="$1"
-  USER="$TRIG_USER:$TRIG_PASS"
-  PAGE="https://jenkins.barchart.com/computer/$NAME/api/json?pretty=true"
-  INFO=$(curl --insecure --silent --user $USER $PAGE | grep '"offline"' | grep 'true' | wc -l )
-  echo $INFO
+
+#
+# node state values
+#
+NODE_LIVE="1"
+NODE_DEAD="0"
+
+#
+# node state lookup
+# https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API
+# https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project
+#
+function jenkins_node_live {
+	local NAME="$1"
+	local USER="$TRIG_USER:$TRIG_PASS"
+	local PAGE="https://$JENKINS_URL/computer/$NAME/api/json?pretty=true"
+	local LIVE=$(curl --insecure --silent --user $USER $PAGE | grep '"offline"' | grep 'true' | wc -l)
+  echo $LIVE
 }
 
-jenkins_image_path () {
-	LABEL="$1"
-	#$VMWARE_HOME/$VMX/$VMX.vmx
-	echo "jenkins-$LABEL"
+#
+# absolute path to jenkins-specific vmware image
+#
+function vmware_jenkins_image {
+	local NAME="$1"
+	local IMAGE="$VMWARE_HOME/jenins-$NAME/jenins-$NAME.vmx
+	echo "$IMAGE"
 }
 
+#
+# ensure jenkins node status
+#
+function jenkins_node_wait {
+	local NAME="$1"
+	local WAIT="$2"
+	while [ true ] ; do
+		local LIVE=$(jenkins_node_live $NAME)
+		log "NAME=$NAME WAIT=$WAIT LIVE=$LIVE"
+		if [ "$LIVE" == "$WAIT" ] ; then
+			break
+		else
+			sleep 3s
+		fi
+	done
+}
+
+#
+# expected node status based on action
+#
+function jenkins_expected { 
+	local VM_ACTION="$1"
+	case $VM_ACTION in
+		start)
+			echo "$NODE_LIVE"
+			;;
+		stop)
+			echo "$NODE_DEAD"
+			;;
+		*)
+			log "invalid VM_ACTION=$VM_ACTION"
+			exit 1
+			;;
+	esac
+
+}
