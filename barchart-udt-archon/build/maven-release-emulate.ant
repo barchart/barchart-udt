@@ -23,15 +23,15 @@
 		<exec executable="${executable}">
 
 			<arg value="--define" />
-			<arg value="resume=false" />
-
-			<arg value="--define" />
 			<arg value="dryRun=true" />
 
-			<arg value="release:prepare" />
+			<arg value="--define" />
+			<arg value="resume=false" />
 
 			<arg value="--activate-profiles" />
 			<arg value="modules" />
+
+			<arg value="release:prepare" />
 
 		</exec>
 
