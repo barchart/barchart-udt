@@ -23,7 +23,6 @@
 		<url>https://github.com/barchart/barchart-udt</url>
 		<connection>scm:git:git://github.com/barchart/barchart-udt.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-udt.git</developerConnection>
-		<tag>HEAD</tag>
 	</scm>
 
 	<description>Java wrapper around native C++ UDT protocol implementation UDT version: 4.9</description>
