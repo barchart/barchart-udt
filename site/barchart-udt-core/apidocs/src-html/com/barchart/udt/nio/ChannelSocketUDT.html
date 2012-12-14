@@ -236,8 +236,8 @@
 <FONT color="green">233</FONT>                            // see contract for receive()<a name="line.233"></a>
 <FONT color="green">234</FONT>    <a name="line.234"></a>
 <FONT color="green">235</FONT>                            if (sizeReceived &lt; 0) {<a name="line.235"></a>
-<FONT color="green">236</FONT>                                    log.trace("nothing was received; socketID={}",<a name="line.236"></a>
-<FONT color="green">237</FONT>                                                    socket.getSocketId());<a name="line.237"></a>
+<FONT color="green">236</FONT>                                    log.trace("nothing was received; socketID={}", socket<a name="line.236"></a>
+<FONT color="green">237</FONT>                                                    .getSocketId());<a name="line.237"></a>
 <FONT color="green">238</FONT>                                    return 0;<a name="line.238"></a>
 <FONT color="green">239</FONT>                            }<a name="line.239"></a>
 <FONT color="green">240</FONT>    <a name="line.240"></a>
@@ -337,8 +337,8 @@
 <FONT color="green">334</FONT>                            // see contract for send()<a name="line.334"></a>
 <FONT color="green">335</FONT>    <a name="line.335"></a>
 <FONT color="green">336</FONT>                            if (sizeSent &lt; 0) {<a name="line.336"></a>
-<FONT color="green">337</FONT>                                    log.trace("no buffer space for send; socketID={}",<a name="line.337"></a>
-<FONT color="green">338</FONT>                                                    socket.getSocketId());<a name="line.338"></a>
+<FONT color="green">337</FONT>                                    log.trace("no buffer space for send; socketID={}", socket<a name="line.337"></a>
+<FONT color="green">338</FONT>                                                    .getSocketId());<a name="line.338"></a>
 <FONT color="green">339</FONT>                                    // logStatus();<a name="line.339"></a>
 <FONT color="green">340</FONT>                                    // log.info("writeCount={} writeSize={}", writeCount,<a name="line.340"></a>
 <FONT color="green">341</FONT>                                    // writeSize);<a name="line.341"></a>
