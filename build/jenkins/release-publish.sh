@@ -11,7 +11,7 @@ echo "##################################"
 
 echo "WORKSPACE=$WORKSPACE"
 
-echo "### push changes"
+echo "### push commits"
 git push
 
 echo "### push tags"

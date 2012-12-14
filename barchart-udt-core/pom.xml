@@ -613,7 +613,7 @@
 									<goal>site</goal>
 								</goals>
 								<configuration>
-									<merge>false</merge>
+									<merge>merge</merge>
 									<server>github</server>
 									<path>site/${project.artifactId}</path>
 									<message>maven site ${project.artifactId}-${project.version}</message>

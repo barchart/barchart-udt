@@ -12,7 +12,7 @@
 
 clean validate --update-snapshots --show-version  --activate-profiles modules
 
-clean deploy  --define skipTests --update-snapshots --activate-profiles modules,artifact-version,release-attach,package-bundle
+clean deploy site --define skipTests --update-snapshots --activate-profiles modules,website,artifact-version,release-attach,package-bundle
 
 ### Release goals and options
 
