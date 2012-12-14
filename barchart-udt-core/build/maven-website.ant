@@ -13,26 +13,35 @@
 
 	<target name="maven">
 
-		<condition property="executable" value="mvn">
+		<property name="tag" value="barchart-udt-2.0.0" />
+
+		<condition property="mvn" value="mvn">
 			<os family="unix" />
 		</condition>
-		<condition property="executable" value="mvn.bat">
+		<condition property="mvn" value="mvn.bat">
 			<os family="windows" />
 		</condition>
 
-		<exec executable="${executable}">
+		<echo message="select tag" />
+		<exec executable="git">
+			<arg value="checkout" />
+			<arg value="${tag}" />
+		</exec>
+
+		<exec executable="${mvn}">
 
 			<arg value="validate" />
-			<arg value="clean" />
-			<arg value="package" />
 			<arg value="site" />
-
-			<arg value="--define" />
-			<arg value="skipTests" />
 
 			<arg value="--activate-profiles" />
 			<arg value="website" />
 
+		</exec>
+
+		<echo message="select master" />
+		<exec executable="git">
+			<arg value="checkout" />
+			<arg value="master" />
 		</exec>
 
 	</target>
