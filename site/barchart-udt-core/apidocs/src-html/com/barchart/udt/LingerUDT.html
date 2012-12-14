@@ -1,144 +1,107 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
-<head>
-<title>Source code</title>
-<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
-</head>
-<body>
-<div class="sourceContainer">
-<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
-<span class="sourceLineNo">002</span> * =================================================================================<a name="line.2"></a>
-<span class="sourceLineNo">003</span> *<a name="line.3"></a>
-<span class="sourceLineNo">004</span> * BSD LICENCE (http://en.wikipedia.org/wiki/BSD_licenses)<a name="line.4"></a>
-<span class="sourceLineNo">005</span> *<a name="line.5"></a>
-<span class="sourceLineNo">006</span> * ARTIFACT='barchart-udt4';VERSION='1.0.2-SNAPSHOT';TIMESTAMP='2011-01-11_09-30-59';<a name="line.6"></a>
-<span class="sourceLineNo">007</span> *<a name="line.7"></a>
-<span class="sourceLineNo">008</span> * Copyright (C) 2009-2011, Barchart, Inc. (http://www.barchart.com/)<a name="line.8"></a>
-<span class="sourceLineNo">009</span> *<a name="line.9"></a>
-<span class="sourceLineNo">010</span> * All rights reserved.<a name="line.10"></a>
-<span class="sourceLineNo">011</span> *<a name="line.11"></a>
-<span class="sourceLineNo">012</span> * Redistribution and use in source and binary forms, with or without modification,<a name="line.12"></a>
-<span class="sourceLineNo">013</span> * are permitted provided that the following conditions are met:<a name="line.13"></a>
-<span class="sourceLineNo">014</span> *<a name="line.14"></a>
-<span class="sourceLineNo">015</span> *     * Redistributions of source code must retain the above copyright notice,<a name="line.15"></a>
-<span class="sourceLineNo">016</span> *     this list of conditions and the following disclaimer.<a name="line.16"></a>
-<span class="sourceLineNo">017</span> *<a name="line.17"></a>
-<span class="sourceLineNo">018</span> *     * Redistributions in binary form must reproduce the above copyright notice,<a name="line.18"></a>
-<span class="sourceLineNo">019</span> *     this list of conditions and the following disclaimer in the documentation<a name="line.19"></a>
-<span class="sourceLineNo">020</span> *     and/or other materials provided with the distribution.<a name="line.20"></a>
-<span class="sourceLineNo">021</span> *<a name="line.21"></a>
-<span class="sourceLineNo">022</span> *     * Neither the name of the Barchart, Inc. nor the names of its contributors<a name="line.22"></a>
-<span class="sourceLineNo">023</span> *     may be used to endorse or promote products derived from this software<a name="line.23"></a>
-<span class="sourceLineNo">024</span> *     without specific prior written permission.<a name="line.24"></a>
-<span class="sourceLineNo">025</span> *<a name="line.25"></a>
-<span class="sourceLineNo">026</span> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"<a name="line.26"></a>
-<span class="sourceLineNo">027</span> * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED<a name="line.27"></a>
-<span class="sourceLineNo">028</span> * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.<a name="line.28"></a>
-<span class="sourceLineNo">029</span> * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,<a name="line.29"></a>
-<span class="sourceLineNo">030</span> * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,<a name="line.30"></a>
-<span class="sourceLineNo">031</span> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,<a name="line.31"></a>
-<span class="sourceLineNo">032</span> * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,<a name="line.32"></a>
-<span class="sourceLineNo">033</span> * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING<a name="line.33"></a>
-<span class="sourceLineNo">034</span> * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<a name="line.34"></a>
-<span class="sourceLineNo">035</span> *<a name="line.35"></a>
-<span class="sourceLineNo">036</span> * Developers: Andrei Pozolotin;<a name="line.36"></a>
-<span class="sourceLineNo">037</span> *<a name="line.37"></a>
-<span class="sourceLineNo">038</span> * =================================================================================<a name="line.38"></a>
-<span class="sourceLineNo">039</span> */<a name="line.39"></a>
-<span class="sourceLineNo">040</span>package com.barchart.udt;<a name="line.40"></a>
-<span class="sourceLineNo">041</span><a name="line.41"></a>
-<span class="sourceLineNo">042</span>public class LingerUDT extends Number implements Comparable&lt;LingerUDT&gt; {<a name="line.42"></a>
-<span class="sourceLineNo">043</span><a name="line.43"></a>
-<span class="sourceLineNo">044</span>        public static final LingerUDT LINGER_ZERO = new LingerUDT(0);<a name="line.44"></a>
-<span class="sourceLineNo">045</span><a name="line.45"></a>
-<span class="sourceLineNo">046</span>        // measured in seconds<a name="line.46"></a>
-<span class="sourceLineNo">047</span>        final int timeout;<a name="line.47"></a>
-<span class="sourceLineNo">048</span><a name="line.48"></a>
-<span class="sourceLineNo">049</span>        /**<a name="line.49"></a>
-<span class="sourceLineNo">050</span>         * Default constructor. NOTE: linger value is "u_short" on windows and "int"<a name="line.50"></a>
-<span class="sourceLineNo">051</span>         * on linux:&lt;br&gt;<a name="line.51"></a>
-<span class="sourceLineNo">052</span>         * Windows: &lt;a<a name="line.52"></a>
-<span class="sourceLineNo">053</span>         * href="http://msdn.microsoft.com/en-us/library/ms739165(VS.85).aspx"&gt;<a name="line.53"></a>
-<span class="sourceLineNo">054</span>         * linger Structure on Windows&lt;/a&gt;&lt;br&gt;<a name="line.54"></a>
-<span class="sourceLineNo">055</span>         * Linux: &lt;a href=<a name="line.55"></a>
-<span class="sourceLineNo">056</span>         * "http://www.gnu.org/s/libc/manual/html_node/Socket_002dLevel-Options.html"<a name="line.56"></a>
-<span class="sourceLineNo">057</span>         * &gt;GCC Socket-Level Options&lt;/a&gt;&lt;br&gt;<a name="line.57"></a>
-<span class="sourceLineNo">058</span>         * Therefore select smallest range: 0 &lt;= linger &lt;= 65535 &lt;br&gt;<a name="line.58"></a>
-<span class="sourceLineNo">059</span>         * <a name="line.59"></a>
-<span class="sourceLineNo">060</span>         * @param lingerSeconds<a name="line.60"></a>
-<span class="sourceLineNo">061</span>         *            the seconds to linger; "0" means "do not linger"<a name="line.61"></a>
-<span class="sourceLineNo">062</span>         * <a name="line.62"></a>
-<span class="sourceLineNo">063</span>         * @throws IllegalArgumentException<a name="line.63"></a>
-<span class="sourceLineNo">064</span>         *             when lingerSeconds is out of range<a name="line.64"></a>
-<span class="sourceLineNo">065</span>         */<a name="line.65"></a>
-<span class="sourceLineNo">066</span>        public LingerUDT(int lingerSeconds) throws IllegalArgumentException {<a name="line.66"></a>
-<span class="sourceLineNo">067</span>                if (65535 &lt; lingerSeconds) {<a name="line.67"></a>
-<span class="sourceLineNo">068</span>                        throw new IllegalArgumentException(<a name="line.68"></a>
-<span class="sourceLineNo">069</span>                                        "lingerSeconds is out of range: 0 &lt;= linger &lt;= 65535");<a name="line.69"></a>
-<span class="sourceLineNo">070</span>                }<a name="line.70"></a>
-<span class="sourceLineNo">071</span>                this.timeout = lingerSeconds &gt; 0 ? lingerSeconds : 0;<a name="line.71"></a>
-<span class="sourceLineNo">072</span>        }<a name="line.72"></a>
-<span class="sourceLineNo">073</span><a name="line.73"></a>
-<span class="sourceLineNo">074</span>        private static final long serialVersionUID = 3414455799823407217L;<a name="line.74"></a>
-<span class="sourceLineNo">075</span><a name="line.75"></a>
-<span class="sourceLineNo">076</span>        @Override<a name="line.76"></a>
-<span class="sourceLineNo">077</span>        public double doubleValue() {<a name="line.77"></a>
-<span class="sourceLineNo">078</span>                return timeout;<a name="line.78"></a>
-<span class="sourceLineNo">079</span>        }<a name="line.79"></a>
-<span class="sourceLineNo">080</span><a name="line.80"></a>
-<span class="sourceLineNo">081</span>        /*<a name="line.81"></a>
-<span class="sourceLineNo">082</span>         * (non-Javadoc)<a name="line.82"></a>
-<span class="sourceLineNo">083</span>         * <a name="line.83"></a>
-<span class="sourceLineNo">084</span>         * @see java.lang.Number#floatValue()<a name="line.84"></a>
-<span class="sourceLineNo">085</span>         */<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        @Override<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        public float floatValue() {<a name="line.87"></a>
-<span class="sourceLineNo">088</span>                return timeout;<a name="line.88"></a>
-<span class="sourceLineNo">089</span>        }<a name="line.89"></a>
-<span class="sourceLineNo">090</span><a name="line.90"></a>
-<span class="sourceLineNo">091</span>        @Override<a name="line.91"></a>
-<span class="sourceLineNo">092</span>        public int intValue() {<a name="line.92"></a>
-<span class="sourceLineNo">093</span>                return timeout;<a name="line.93"></a>
-<span class="sourceLineNo">094</span>        }<a name="line.94"></a>
-<span class="sourceLineNo">095</span><a name="line.95"></a>
-<span class="sourceLineNo">096</span>        @Override<a name="line.96"></a>
-<span class="sourceLineNo">097</span>        public long longValue() {<a name="line.97"></a>
-<span class="sourceLineNo">098</span>                return timeout;<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        }<a name="line.99"></a>
-<span class="sourceLineNo">100</span><a name="line.100"></a>
-<span class="sourceLineNo">101</span>        boolean isLingerOn() {<a name="line.101"></a>
-<span class="sourceLineNo">102</span>                return timeout &gt; 0;<a name="line.102"></a>
-<span class="sourceLineNo">103</span>        }<a name="line.103"></a>
-<span class="sourceLineNo">104</span><a name="line.104"></a>
-<span class="sourceLineNo">105</span>        int timeout() {<a name="line.105"></a>
-<span class="sourceLineNo">106</span>                return timeout;<a name="line.106"></a>
-<span class="sourceLineNo">107</span>        }<a name="line.107"></a>
-<span class="sourceLineNo">108</span><a name="line.108"></a>
-<span class="sourceLineNo">109</span>        @Override<a name="line.109"></a>
-<span class="sourceLineNo">110</span>        public boolean equals(Object otherLinger) {<a name="line.110"></a>
-<span class="sourceLineNo">111</span>                if (otherLinger instanceof LingerUDT) {<a name="line.111"></a>
-<span class="sourceLineNo">112</span>                        LingerUDT other = (LingerUDT) otherLinger;<a name="line.112"></a>
-<span class="sourceLineNo">113</span>                        return other.timeout == this.timeout;<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                }<a name="line.114"></a>
-<span class="sourceLineNo">115</span>                return false;<a name="line.115"></a>
-<span class="sourceLineNo">116</span>        }<a name="line.116"></a>
-<span class="sourceLineNo">117</span><a name="line.117"></a>
-<span class="sourceLineNo">118</span>        @Override<a name="line.118"></a>
-<span class="sourceLineNo">119</span>        public int hashCode() {<a name="line.119"></a>
-<span class="sourceLineNo">120</span>                return timeout;<a name="line.120"></a>
-<span class="sourceLineNo">121</span>        }<a name="line.121"></a>
-<span class="sourceLineNo">122</span><a name="line.122"></a>
-<span class="sourceLineNo">123</span>        @Override<a name="line.123"></a>
-<span class="sourceLineNo">124</span>        public int compareTo(LingerUDT other) {<a name="line.124"></a>
-<span class="sourceLineNo">125</span>                return other.timeout - this.timeout;<a name="line.125"></a>
-<span class="sourceLineNo">126</span>        }<a name="line.126"></a>
-<span class="sourceLineNo">127</span><a name="line.127"></a>
-<span class="sourceLineNo">128</span>        @Override<a name="line.128"></a>
-<span class="sourceLineNo">129</span>        public String toString() {<a name="line.129"></a>
-<span class="sourceLineNo">130</span>                return String.valueOf(timeout);<a name="line.130"></a>
-<span class="sourceLineNo">131</span>        }<a name="line.131"></a>
-<span class="sourceLineNo">132</span><a name="line.132"></a>
-<span class="sourceLineNo">133</span>}<a name="line.133"></a>
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /**<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright (C) 2009-2012 Barchart, Inc. &lt;http://www.barchart.com/&gt;<a name="line.2"></a>
+<FONT color="green">003</FONT>     *<a name="line.3"></a>
+<FONT color="green">004</FONT>     * All rights reserved. Licensed under the OSI BSD License.<a name="line.4"></a>
+<FONT color="green">005</FONT>     *<a name="line.5"></a>
+<FONT color="green">006</FONT>     * http://www.opensource.org/licenses/bsd-license.php<a name="line.6"></a>
+<FONT color="green">007</FONT>     */<a name="line.7"></a>
+<FONT color="green">008</FONT>    package com.barchart.udt;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    public class LingerUDT extends Number implements Comparable&lt;LingerUDT&gt; {<a name="line.10"></a>
+<FONT color="green">011</FONT>    <a name="line.11"></a>
+<FONT color="green">012</FONT>            public static final LingerUDT LINGER_ZERO = new LingerUDT(0);<a name="line.12"></a>
+<FONT color="green">013</FONT>    <a name="line.13"></a>
+<FONT color="green">014</FONT>            // measured in seconds<a name="line.14"></a>
+<FONT color="green">015</FONT>            final int timeout;<a name="line.15"></a>
+<FONT color="green">016</FONT>    <a name="line.16"></a>
+<FONT color="green">017</FONT>            /**<a name="line.17"></a>
+<FONT color="green">018</FONT>             * Default constructor. NOTE: linger value is "u_short" on windows and "int"<a name="line.18"></a>
+<FONT color="green">019</FONT>             * on linux:&lt;br&gt;<a name="line.19"></a>
+<FONT color="green">020</FONT>             * Windows: &lt;a<a name="line.20"></a>
+<FONT color="green">021</FONT>             * href="http://msdn.microsoft.com/en-us/library/ms739165(VS.85).aspx"&gt;<a name="line.21"></a>
+<FONT color="green">022</FONT>             * linger Structure on Windows&lt;/a&gt;&lt;br&gt;<a name="line.22"></a>
+<FONT color="green">023</FONT>             * Linux: &lt;a href=<a name="line.23"></a>
+<FONT color="green">024</FONT>             * "http://www.gnu.org/s/libc/manual/html_node/Socket_002dLevel-Options.html"<a name="line.24"></a>
+<FONT color="green">025</FONT>             * &gt;GCC Socket-Level Options&lt;/a&gt;&lt;br&gt;<a name="line.25"></a>
+<FONT color="green">026</FONT>             * Therefore select smallest range: 0 &lt;= linger &lt;= 65535 &lt;br&gt;<a name="line.26"></a>
+<FONT color="green">027</FONT>             * <a name="line.27"></a>
+<FONT color="green">028</FONT>             * @param lingerSeconds<a name="line.28"></a>
+<FONT color="green">029</FONT>             *            the seconds to linger; "0" means "do not linger"<a name="line.29"></a>
+<FONT color="green">030</FONT>             * <a name="line.30"></a>
+<FONT color="green">031</FONT>             * @throws IllegalArgumentException<a name="line.31"></a>
+<FONT color="green">032</FONT>             *             when lingerSeconds is out of range<a name="line.32"></a>
+<FONT color="green">033</FONT>             */<a name="line.33"></a>
+<FONT color="green">034</FONT>            public LingerUDT(int lingerSeconds) throws IllegalArgumentException {<a name="line.34"></a>
+<FONT color="green">035</FONT>                    if (65535 &lt; lingerSeconds) {<a name="line.35"></a>
+<FONT color="green">036</FONT>                            throw new IllegalArgumentException(<a name="line.36"></a>
+<FONT color="green">037</FONT>                                            "lingerSeconds is out of range: 0 &lt;= linger &lt;= 65535");<a name="line.37"></a>
+<FONT color="green">038</FONT>                    }<a name="line.38"></a>
+<FONT color="green">039</FONT>                    this.timeout = lingerSeconds &gt; 0 ? lingerSeconds : 0;<a name="line.39"></a>
+<FONT color="green">040</FONT>            }<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>            private static final long serialVersionUID = 3414455799823407217L;<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>            @Override<a name="line.44"></a>
+<FONT color="green">045</FONT>            public double doubleValue() {<a name="line.45"></a>
+<FONT color="green">046</FONT>                    return timeout;<a name="line.46"></a>
+<FONT color="green">047</FONT>            }<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>            /*<a name="line.49"></a>
+<FONT color="green">050</FONT>             * (non-Javadoc)<a name="line.50"></a>
+<FONT color="green">051</FONT>             * <a name="line.51"></a>
+<FONT color="green">052</FONT>             * @see java.lang.Number#floatValue()<a name="line.52"></a>
+<FONT color="green">053</FONT>             */<a name="line.53"></a>
+<FONT color="green">054</FONT>            @Override<a name="line.54"></a>
+<FONT color="green">055</FONT>            public float floatValue() {<a name="line.55"></a>
+<FONT color="green">056</FONT>                    return timeout;<a name="line.56"></a>
+<FONT color="green">057</FONT>            }<a name="line.57"></a>
+<FONT color="green">058</FONT>    <a name="line.58"></a>
+<FONT color="green">059</FONT>            @Override<a name="line.59"></a>
+<FONT color="green">060</FONT>            public int intValue() {<a name="line.60"></a>
+<FONT color="green">061</FONT>                    return timeout;<a name="line.61"></a>
+<FONT color="green">062</FONT>            }<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>            @Override<a name="line.64"></a>
+<FONT color="green">065</FONT>            public long longValue() {<a name="line.65"></a>
+<FONT color="green">066</FONT>                    return timeout;<a name="line.66"></a>
+<FONT color="green">067</FONT>            }<a name="line.67"></a>
+<FONT color="green">068</FONT>    <a name="line.68"></a>
+<FONT color="green">069</FONT>            boolean isLingerOn() {<a name="line.69"></a>
+<FONT color="green">070</FONT>                    return timeout &gt; 0;<a name="line.70"></a>
+<FONT color="green">071</FONT>            }<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>            int timeout() {<a name="line.73"></a>
+<FONT color="green">074</FONT>                    return timeout;<a name="line.74"></a>
+<FONT color="green">075</FONT>            }<a name="line.75"></a>
+<FONT color="green">076</FONT>    <a name="line.76"></a>
+<FONT color="green">077</FONT>            @Override<a name="line.77"></a>
+<FONT color="green">078</FONT>            public boolean equals(Object otherLinger) {<a name="line.78"></a>
+<FONT color="green">079</FONT>                    if (otherLinger instanceof LingerUDT) {<a name="line.79"></a>
+<FONT color="green">080</FONT>                            LingerUDT other = (LingerUDT) otherLinger;<a name="line.80"></a>
+<FONT color="green">081</FONT>                            return other.timeout == this.timeout;<a name="line.81"></a>
+<FONT color="green">082</FONT>                    }<a name="line.82"></a>
+<FONT color="green">083</FONT>                    return false;<a name="line.83"></a>
+<FONT color="green">084</FONT>            }<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>            @Override<a name="line.86"></a>
+<FONT color="green">087</FONT>            public int hashCode() {<a name="line.87"></a>
+<FONT color="green">088</FONT>                    return timeout;<a name="line.88"></a>
+<FONT color="green">089</FONT>            }<a name="line.89"></a>
+<FONT color="green">090</FONT>    <a name="line.90"></a>
+<FONT color="green">091</FONT>            @Override<a name="line.91"></a>
+<FONT color="green">092</FONT>            public int compareTo(LingerUDT other) {<a name="line.92"></a>
+<FONT color="green">093</FONT>                    return other.timeout - this.timeout;<a name="line.93"></a>
+<FONT color="green">094</FONT>            }<a name="line.94"></a>
+<FONT color="green">095</FONT>    <a name="line.95"></a>
+<FONT color="green">096</FONT>            @Override<a name="line.96"></a>
+<FONT color="green">097</FONT>            public String toString() {<a name="line.97"></a>
+<FONT color="green">098</FONT>                    return String.valueOf(timeout);<a name="line.98"></a>
+<FONT color="green">099</FONT>            }<a name="line.99"></a>
+<FONT color="green">100</FONT>    <a name="line.100"></a>
+<FONT color="green">101</FONT>    }<a name="line.101"></a>
 
 
 
@@ -199,7 +162,6 @@
 
 
 
-</pre>
-</div>
-</body>
-</html>
+</PRE>
+</BODY>
+</HTML>

@@ -1,725 +1,688 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
-<head>
-<title>Source code</title>
-<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
-</head>
-<body>
-<div class="sourceContainer">
-<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
-<span class="sourceLineNo">002</span> * =================================================================================<a name="line.2"></a>
-<span class="sourceLineNo">003</span> *<a name="line.3"></a>
-<span class="sourceLineNo">004</span> * BSD LICENCE (http://en.wikipedia.org/wiki/BSD_licenses)<a name="line.4"></a>
-<span class="sourceLineNo">005</span> *<a name="line.5"></a>
-<span class="sourceLineNo">006</span> * ARTIFACT='barchart-udt4';VERSION='1.0.2-SNAPSHOT';TIMESTAMP='2011-01-11_09-30-59';<a name="line.6"></a>
-<span class="sourceLineNo">007</span> *<a name="line.7"></a>
-<span class="sourceLineNo">008</span> * Copyright (C) 2009-2011, Barchart, Inc. (http://www.barchart.com/)<a name="line.8"></a>
-<span class="sourceLineNo">009</span> *<a name="line.9"></a>
-<span class="sourceLineNo">010</span> * All rights reserved.<a name="line.10"></a>
-<span class="sourceLineNo">011</span> *<a name="line.11"></a>
-<span class="sourceLineNo">012</span> * Redistribution and use in source and binary forms, with or without modification,<a name="line.12"></a>
-<span class="sourceLineNo">013</span> * are permitted provided that the following conditions are met:<a name="line.13"></a>
-<span class="sourceLineNo">014</span> *<a name="line.14"></a>
-<span class="sourceLineNo">015</span> *     * Redistributions of source code must retain the above copyright notice,<a name="line.15"></a>
-<span class="sourceLineNo">016</span> *     this list of conditions and the following disclaimer.<a name="line.16"></a>
-<span class="sourceLineNo">017</span> *<a name="line.17"></a>
-<span class="sourceLineNo">018</span> *     * Redistributions in binary form must reproduce the above copyright notice,<a name="line.18"></a>
-<span class="sourceLineNo">019</span> *     this list of conditions and the following disclaimer in the documentation<a name="line.19"></a>
-<span class="sourceLineNo">020</span> *     and/or other materials provided with the distribution.<a name="line.20"></a>
-<span class="sourceLineNo">021</span> *<a name="line.21"></a>
-<span class="sourceLineNo">022</span> *     * Neither the name of the Barchart, Inc. nor the names of its contributors<a name="line.22"></a>
-<span class="sourceLineNo">023</span> *     may be used to endorse or promote products derived from this software<a name="line.23"></a>
-<span class="sourceLineNo">024</span> *     without specific prior written permission.<a name="line.24"></a>
-<span class="sourceLineNo">025</span> *<a name="line.25"></a>
-<span class="sourceLineNo">026</span> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"<a name="line.26"></a>
-<span class="sourceLineNo">027</span> * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED<a name="line.27"></a>
-<span class="sourceLineNo">028</span> * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.<a name="line.28"></a>
-<span class="sourceLineNo">029</span> * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,<a name="line.29"></a>
-<span class="sourceLineNo">030</span> * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,<a name="line.30"></a>
-<span class="sourceLineNo">031</span> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,<a name="line.31"></a>
-<span class="sourceLineNo">032</span> * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,<a name="line.32"></a>
-<span class="sourceLineNo">033</span> * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING<a name="line.33"></a>
-<span class="sourceLineNo">034</span> * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<a name="line.34"></a>
-<span class="sourceLineNo">035</span> *<a name="line.35"></a>
-<span class="sourceLineNo">036</span> * Developers: Andrei Pozolotin;<a name="line.36"></a>
-<span class="sourceLineNo">037</span> *<a name="line.37"></a>
-<span class="sourceLineNo">038</span> * =================================================================================<a name="line.38"></a>
-<span class="sourceLineNo">039</span> */<a name="line.39"></a>
-<span class="sourceLineNo">040</span>package com.barchart.udt.nio;<a name="line.40"></a>
-<span class="sourceLineNo">041</span><a name="line.41"></a>
-<span class="sourceLineNo">042</span>import static com.barchart.udt.SocketUDT.*;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>import static java.nio.channels.SelectionKey.*;<a name="line.43"></a>
-<span class="sourceLineNo">044</span><a name="line.44"></a>
-<span class="sourceLineNo">045</span>import java.io.IOException;<a name="line.45"></a>
-<span class="sourceLineNo">046</span>import java.net.InetSocketAddress;<a name="line.46"></a>
-<span class="sourceLineNo">047</span>import java.nio.IntBuffer;<a name="line.47"></a>
-<span class="sourceLineNo">048</span>import java.nio.channels.ClosedSelectorException;<a name="line.48"></a>
-<span class="sourceLineNo">049</span>import java.nio.channels.IllegalSelectorException;<a name="line.49"></a>
-<span class="sourceLineNo">050</span>import java.nio.channels.SelectionKey;<a name="line.50"></a>
-<span class="sourceLineNo">051</span>import java.nio.channels.Selector;<a name="line.51"></a>
-<span class="sourceLineNo">052</span>import java.nio.channels.spi.AbstractSelectableChannel;<a name="line.52"></a>
-<span class="sourceLineNo">053</span>import java.nio.channels.spi.AbstractSelector;<a name="line.53"></a>
-<span class="sourceLineNo">054</span>import java.nio.channels.spi.SelectorProvider;<a name="line.54"></a>
-<span class="sourceLineNo">055</span>import java.util.Collections;<a name="line.55"></a>
-<span class="sourceLineNo">056</span>import java.util.HashMap;<a name="line.56"></a>
-<span class="sourceLineNo">057</span>import java.util.HashSet;<a name="line.57"></a>
-<span class="sourceLineNo">058</span>import java.util.Map;<a name="line.58"></a>
-<span class="sourceLineNo">059</span>import java.util.Queue;<a name="line.59"></a>
-<span class="sourceLineNo">060</span>import java.util.Set;<a name="line.60"></a>
-<span class="sourceLineNo">061</span><a name="line.61"></a>
-<span class="sourceLineNo">062</span>import org.slf4j.Logger;<a name="line.62"></a>
-<span class="sourceLineNo">063</span>import org.slf4j.LoggerFactory;<a name="line.63"></a>
-<span class="sourceLineNo">064</span><a name="line.64"></a>
-<span class="sourceLineNo">065</span>import com.barchart.udt.ExceptionUDT;<a name="line.65"></a>
-<span class="sourceLineNo">066</span>import com.barchart.udt.SocketUDT;<a name="line.66"></a>
-<span class="sourceLineNo">067</span>import com.barchart.udt.TypeUDT;<a name="line.67"></a>
-<span class="sourceLineNo">068</span><a name="line.68"></a>
-<span class="sourceLineNo">069</span>/**<a name="line.69"></a>
-<span class="sourceLineNo">070</span> * you must use {@link SelectorProviderUDT#openSelector()} to obtain instance of<a name="line.70"></a>
-<span class="sourceLineNo">071</span> * this class; do not use JDK {@link java.nio.channels.Selector#open()}<a name="line.71"></a>
-<span class="sourceLineNo">072</span> */<a name="line.72"></a>
-<span class="sourceLineNo">073</span>// NOTE: 'final' is used with hopes to force JVM function inlining<a name="line.73"></a>
-<span class="sourceLineNo">074</span>public class SelectorUDT extends AbstractSelector {<a name="line.74"></a>
-<span class="sourceLineNo">075</span><a name="line.75"></a>
-<span class="sourceLineNo">076</span>        private static final Logger log = LoggerFactory<a name="line.76"></a>
-<span class="sourceLineNo">077</span>                        .getLogger(SelectorUDT.class);<a name="line.77"></a>
-<span class="sourceLineNo">078</span><a name="line.78"></a>
-<span class="sourceLineNo">079</span>        /**<a name="line.79"></a>
-<span class="sourceLineNo">080</span>         * use this call to instantiate a selector for UDT<a name="line.80"></a>
-<span class="sourceLineNo">081</span>         */<a name="line.81"></a>
-<span class="sourceLineNo">082</span>        protected static Selector open(TypeUDT type) throws IOException {<a name="line.82"></a>
-<span class="sourceLineNo">083</span>                final SelectorProviderUDT provider;<a name="line.83"></a>
-<span class="sourceLineNo">084</span>                switch (type) {<a name="line.84"></a>
-<span class="sourceLineNo">085</span>                case DATAGRAM:<a name="line.85"></a>
-<span class="sourceLineNo">086</span>                        provider = SelectorProviderUDT.DATAGRAM;<a name="line.86"></a>
-<span class="sourceLineNo">087</span>                        break;<a name="line.87"></a>
-<span class="sourceLineNo">088</span>                case STREAM:<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                        provider = SelectorProviderUDT.STREAM;<a name="line.89"></a>
-<span class="sourceLineNo">090</span>                        break;<a name="line.90"></a>
-<span class="sourceLineNo">091</span>                default:<a name="line.91"></a>
-<span class="sourceLineNo">092</span>                        log.error("unsupported type={}", type);<a name="line.92"></a>
-<span class="sourceLineNo">093</span>                        throw new IOException("unsupported type");<a name="line.93"></a>
-<span class="sourceLineNo">094</span>                }<a name="line.94"></a>
-<span class="sourceLineNo">095</span>                return provider.openSelector();<a name="line.95"></a>
-<span class="sourceLineNo">096</span>        }<a name="line.96"></a>
-<span class="sourceLineNo">097</span><a name="line.97"></a>
-<span class="sourceLineNo">098</span>        //<a name="line.98"></a>
-<span class="sourceLineNo">099</span><a name="line.99"></a>
-<span class="sourceLineNo">100</span>        @Override<a name="line.100"></a>
-<span class="sourceLineNo">101</span>        protected void implCloseSelector() throws IOException {<a name="line.101"></a>
-<span class="sourceLineNo">102</span>                wakeup();<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                synchronized (this) {<a name="line.103"></a>
-<span class="sourceLineNo">104</span>                        synchronized (publicRegisteredKeySet) {<a name="line.104"></a>
-<span class="sourceLineNo">105</span>                                synchronized (publicSelectedKeySet) {<a name="line.105"></a>
-<span class="sourceLineNo">106</span><a name="line.106"></a>
-<span class="sourceLineNo">107</span>                                        selectedKeySet.clear();<a name="line.107"></a>
-<span class="sourceLineNo">108</span><a name="line.108"></a>
-<span class="sourceLineNo">109</span>                                        for (final SelectionKey key : registeredKeySet) {<a name="line.109"></a>
-<span class="sourceLineNo">110</span>                                                try {<a name="line.110"></a>
-<span class="sourceLineNo">111</span>                                                        key.channel().close();<a name="line.111"></a>
-<span class="sourceLineNo">112</span>                                                } catch (Throwable e) {<a name="line.112"></a>
-<span class="sourceLineNo">113</span>                                                        log.error("unexpected", e);<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                                                }<a name="line.114"></a>
-<span class="sourceLineNo">115</span>                                        }<a name="line.115"></a>
-<span class="sourceLineNo">116</span><a name="line.116"></a>
-<span class="sourceLineNo">117</span>                                        registeredKeySet.clear();<a name="line.117"></a>
-<span class="sourceLineNo">118</span><a name="line.118"></a>
-<span class="sourceLineNo">119</span>                                }<a name="line.119"></a>
-<span class="sourceLineNo">120</span>                        }<a name="line.120"></a>
-<span class="sourceLineNo">121</span>                }<a name="line.121"></a>
-<span class="sourceLineNo">122</span>        }<a name="line.122"></a>
-<span class="sourceLineNo">123</span><a name="line.123"></a>
-<span class="sourceLineNo">124</span>        // NOE: register() and select() are blocking each other<a name="line.124"></a>
-<span class="sourceLineNo">125</span>        @Override<a name="line.125"></a>
-<span class="sourceLineNo">126</span>        protected SelectionKey register(AbstractSelectableChannel channel,<a name="line.126"></a>
-<span class="sourceLineNo">127</span>                        int interestOps, Object attachment) {<a name="line.127"></a>
-<span class="sourceLineNo">128</span><a name="line.128"></a>
-<span class="sourceLineNo">129</span>                if (!(channel instanceof ChannelUDT)) {<a name="line.129"></a>
-<span class="sourceLineNo">130</span>                        // also takes care of null<a name="line.130"></a>
-<span class="sourceLineNo">131</span>                        log.error("!(channel instanceof ChannelUDT)");<a name="line.131"></a>
-<span class="sourceLineNo">132</span>                        throw new IllegalSelectorException();<a name="line.132"></a>
-<span class="sourceLineNo">133</span>                }<a name="line.133"></a>
-<span class="sourceLineNo">134</span><a name="line.134"></a>
-<span class="sourceLineNo">135</span>                synchronized (publicRegisteredKeySet) {<a name="line.135"></a>
-<span class="sourceLineNo">136</span><a name="line.136"></a>
-<span class="sourceLineNo">137</span>                        if (publicRegisteredKeySet.size() == maximimSelectorSize) {<a name="line.137"></a>
-<span class="sourceLineNo">138</span>                                log.error("reached maximimSelectorSize)");<a name="line.138"></a>
-<span class="sourceLineNo">139</span>                                throw new IllegalSelectorException();<a name="line.139"></a>
-<span class="sourceLineNo">140</span>                        }<a name="line.140"></a>
-<span class="sourceLineNo">141</span><a name="line.141"></a>
-<span class="sourceLineNo">142</span>                        ChannelUDT channelUDT = (ChannelUDT) channel;<a name="line.142"></a>
-<span class="sourceLineNo">143</span><a name="line.143"></a>
-<span class="sourceLineNo">144</span>                        SocketUDT socketUDT = channelUDT.getSocketUDT();<a name="line.144"></a>
-<span class="sourceLineNo">145</span><a name="line.145"></a>
-<span class="sourceLineNo">146</span>                        SelectionKeyUDT keyUDT = new SelectionKeyUDT(//<a name="line.146"></a>
-<span class="sourceLineNo">147</span>                                        this, channelUDT, attachment, interestOps);<a name="line.147"></a>
-<span class="sourceLineNo">148</span><a name="line.148"></a>
-<span class="sourceLineNo">149</span>                        // XXX the only place with "add/put"<a name="line.149"></a>
-<span class="sourceLineNo">150</span>                        registeredKeyMap.put(socketUDT.getSocketId(), keyUDT);<a name="line.150"></a>
-<span class="sourceLineNo">151</span>                        registeredKeySet.add(keyUDT);<a name="line.151"></a>
-<span class="sourceLineNo">152</span><a name="line.152"></a>
-<span class="sourceLineNo">153</span>                        return keyUDT;<a name="line.153"></a>
-<span class="sourceLineNo">154</span><a name="line.154"></a>
-<span class="sourceLineNo">155</span>                }<a name="line.155"></a>
-<span class="sourceLineNo">156</span><a name="line.156"></a>
-<span class="sourceLineNo">157</span>        }<a name="line.157"></a>
-<span class="sourceLineNo">158</span><a name="line.158"></a>
-<span class="sourceLineNo">159</span>        @SuppressWarnings("unchecked")<a name="line.159"></a>
-<span class="sourceLineNo">160</span>        @Override<a name="line.160"></a>
-<span class="sourceLineNo">161</span>        public Set&lt;SelectionKey&gt; keys() {<a name="line.161"></a>
-<span class="sourceLineNo">162</span>                if (!isOpen()) {<a name="line.162"></a>
-<span class="sourceLineNo">163</span>                        throw new ClosedSelectorException();<a name="line.163"></a>
-<span class="sourceLineNo">164</span>                }<a name="line.164"></a>
-<span class="sourceLineNo">165</span>                return (Set&lt;SelectionKey&gt;) publicRegisteredKeySet;<a name="line.165"></a>
-<span class="sourceLineNo">166</span>        }<a name="line.166"></a>
-<span class="sourceLineNo">167</span><a name="line.167"></a>
-<span class="sourceLineNo">168</span>        @SuppressWarnings("unchecked")<a name="line.168"></a>
-<span class="sourceLineNo">169</span>        @Override<a name="line.169"></a>
-<span class="sourceLineNo">170</span>        public Set&lt;SelectionKey&gt; selectedKeys() {<a name="line.170"></a>
-<span class="sourceLineNo">171</span>                if (!isOpen()) {<a name="line.171"></a>
-<span class="sourceLineNo">172</span>                        throw new ClosedSelectorException();<a name="line.172"></a>
-<span class="sourceLineNo">173</span>                }<a name="line.173"></a>
-<span class="sourceLineNo">174</span>                return (Set&lt;SelectionKey&gt;) publicSelectedKeySet;<a name="line.174"></a>
-<span class="sourceLineNo">175</span>        }<a name="line.175"></a>
-<span class="sourceLineNo">176</span><a name="line.176"></a>
-<span class="sourceLineNo">177</span>        @Override<a name="line.177"></a>
-<span class="sourceLineNo">178</span>        public int select() throws IOException {<a name="line.178"></a>
-<span class="sourceLineNo">179</span>                return select(0);<a name="line.179"></a>
-<span class="sourceLineNo">180</span>        }<a name="line.180"></a>
-<span class="sourceLineNo">181</span><a name="line.181"></a>
-<span class="sourceLineNo">182</span>        @Override<a name="line.182"></a>
-<span class="sourceLineNo">183</span>        // per java.nio.Selector contract 0 input means infinite<a name="line.183"></a>
-<span class="sourceLineNo">184</span>        public int select(long timeout) throws IOException {<a name="line.184"></a>
-<span class="sourceLineNo">185</span>                if (timeout &lt; 0) {<a name="line.185"></a>
-<span class="sourceLineNo">186</span>                        throw new IllegalArgumentException("Negative timeout");<a name="line.186"></a>
-<span class="sourceLineNo">187</span>                }<a name="line.187"></a>
-<span class="sourceLineNo">188</span>                long timeoutUDT = (timeout == 0) ? UDT_TIMEOUT_INFINITE : timeout;<a name="line.188"></a>
-<span class="sourceLineNo">189</span>                return doSelectInsideLock(timeoutUDT);<a name="line.189"></a>
-<span class="sourceLineNo">190</span>        }<a name="line.190"></a>
-<span class="sourceLineNo">191</span><a name="line.191"></a>
-<span class="sourceLineNo">192</span>        @Override<a name="line.192"></a>
-<span class="sourceLineNo">193</span>        public int selectNow() throws IOException {<a name="line.193"></a>
-<span class="sourceLineNo">194</span>                return doSelectInsideLock(UDT_TIMEOUT_NONE);<a name="line.194"></a>
-<span class="sourceLineNo">195</span>        }<a name="line.195"></a>
-<span class="sourceLineNo">196</span><a name="line.196"></a>
-<span class="sourceLineNo">197</span>        /**<a name="line.197"></a>
-<span class="sourceLineNo">198</span>         * Wakeup the selector. NOTE: it is recommended to user timed<a name="line.198"></a>
-<span class="sourceLineNo">199</span>         * {@link #select(long)} (say, timeout = 100 milliseconds) to avoid missed<a name="line.199"></a>
-<span class="sourceLineNo">200</span>         * {@link #wakeup()} calls which are rare but possible in current<a name="line.200"></a>
-<span class="sourceLineNo">201</span>         * implementation (accepted in favor of design simplicity / performance)<a name="line.201"></a>
-<span class="sourceLineNo">202</span>         */<a name="line.202"></a>
-<span class="sourceLineNo">203</span>        @Override<a name="line.203"></a>
-<span class="sourceLineNo">204</span>        public Selector wakeup() {<a name="line.204"></a>
-<span class="sourceLineNo">205</span>                // publisher for volatile<a name="line.205"></a>
-<span class="sourceLineNo">206</span>                wakeupStepCount++;<a name="line.206"></a>
-<span class="sourceLineNo">207</span>                return this;<a name="line.207"></a>
-<span class="sourceLineNo">208</span>        }<a name="line.208"></a>
-<span class="sourceLineNo">209</span><a name="line.209"></a>
-<span class="sourceLineNo">210</span>        private volatile int wakeupStepCount;<a name="line.210"></a>
-<span class="sourceLineNo">211</span><a name="line.211"></a>
-<span class="sourceLineNo">212</span>        // guarded by doSelectInsideLock<a name="line.212"></a>
-<span class="sourceLineNo">213</span>        private int wakeupBaseCount;<a name="line.213"></a>
-<span class="sourceLineNo">214</span><a name="line.214"></a>
-<span class="sourceLineNo">215</span>        private final void saveWakeupBase() {<a name="line.215"></a>
-<span class="sourceLineNo">216</span>                wakeupBaseCount = wakeupStepCount;<a name="line.216"></a>
-<span class="sourceLineNo">217</span>        }<a name="line.217"></a>
-<span class="sourceLineNo">218</span><a name="line.218"></a>
-<span class="sourceLineNo">219</span>        private final boolean isWakeupPending() {<a name="line.219"></a>
-<span class="sourceLineNo">220</span>                return wakeupBaseCount != wakeupStepCount;<a name="line.220"></a>
-<span class="sourceLineNo">221</span>        }<a name="line.221"></a>
-<span class="sourceLineNo">222</span><a name="line.222"></a>
-<span class="sourceLineNo">223</span>        // #######################################################################<a name="line.223"></a>
-<span class="sourceLineNo">224</span><a name="line.224"></a>
-<span class="sourceLineNo">225</span>        /**<a name="line.225"></a>
-<span class="sourceLineNo">226</span>         * Private views of the key sets<a name="line.226"></a>
-<span class="sourceLineNo">227</span>         */<a name="line.227"></a>
-<span class="sourceLineNo">228</span><a name="line.228"></a>
-<span class="sourceLineNo">229</span>        /**<a name="line.229"></a>
-<span class="sourceLineNo">230</span>         * The set of keys with data ready for an operation<a name="line.230"></a>
-<span class="sourceLineNo">231</span>         */<a name="line.231"></a>
-<span class="sourceLineNo">232</span>        private final Set&lt;SelectionKeyUDT&gt; selectedKeySet;<a name="line.232"></a>
-<span class="sourceLineNo">233</span>        /**<a name="line.233"></a>
-<span class="sourceLineNo">234</span>         * The set of keys registered with this Selector<a name="line.234"></a>
-<span class="sourceLineNo">235</span>         */<a name="line.235"></a>
-<span class="sourceLineNo">236</span>        private final Set&lt;SelectionKeyUDT&gt; registeredKeySet;<a name="line.236"></a>
-<span class="sourceLineNo">237</span><a name="line.237"></a>
-<span class="sourceLineNo">238</span>        // Public views of the key sets<a name="line.238"></a>
-<span class="sourceLineNo">239</span><a name="line.239"></a>
-<span class="sourceLineNo">240</span>        // totally immutable<a name="line.240"></a>
-<span class="sourceLineNo">241</span>        private final Set&lt;? extends SelectionKey&gt; publicRegisteredKeySet;<a name="line.241"></a>
-<span class="sourceLineNo">242</span>        // partially immutable: removal allowed, but not addition<a name="line.242"></a>
-<span class="sourceLineNo">243</span>        private final Set&lt;? extends SelectionKey&gt; publicSelectedKeySet;<a name="line.243"></a>
-<span class="sourceLineNo">244</span>        // mutable: requests for cancel<a name="line.244"></a>
-<span class="sourceLineNo">245</span>        private final Set&lt;SelectionKey&gt; cancelledKeySet;<a name="line.245"></a>
-<span class="sourceLineNo">246</span><a name="line.246"></a>
-<span class="sourceLineNo">247</span>        private final Map&lt;Integer, SelectionKeyUDT&gt; registeredKeyMap;<a name="line.247"></a>
-<span class="sourceLineNo">248</span><a name="line.248"></a>
-<span class="sourceLineNo">249</span>        /**<a name="line.249"></a>
-<span class="sourceLineNo">250</span>         * used by SocketUDT.select(); performance optimization: use final arrays<a name="line.250"></a>
-<span class="sourceLineNo">251</span>         */<a name="line.251"></a>
-<span class="sourceLineNo">252</span>        public final int maximimSelectorSize;<a name="line.252"></a>
-<span class="sourceLineNo">253</span>        //<a name="line.253"></a>
-<span class="sourceLineNo">254</span>        private final int[] readArray;<a name="line.254"></a>
-<span class="sourceLineNo">255</span>        private final int[] writeArray;<a name="line.255"></a>
-<span class="sourceLineNo">256</span>        private final int[] exceptArray;<a name="line.256"></a>
-<span class="sourceLineNo">257</span>        private final int[] sizeArray;<a name="line.257"></a>
-<span class="sourceLineNo">258</span>        //<a name="line.258"></a>
-<span class="sourceLineNo">259</span>        private final IntBuffer readBuffer;<a name="line.259"></a>
-<span class="sourceLineNo">260</span>        private final IntBuffer writeBuffer;<a name="line.260"></a>
-<span class="sourceLineNo">261</span>        private final IntBuffer exceptBuffer;<a name="line.261"></a>
-<span class="sourceLineNo">262</span>        private final IntBuffer sizeBuffer;<a name="line.262"></a>
-<span class="sourceLineNo">263</span><a name="line.263"></a>
-<span class="sourceLineNo">264</span>        /**<a name="line.264"></a>
-<span class="sourceLineNo">265</span>         * connector thread pool limit<a name="line.265"></a>
-<span class="sourceLineNo">266</span>         */<a name="line.266"></a>
-<span class="sourceLineNo">267</span>        public final int maximumConnectorSize;<a name="line.267"></a>
-<span class="sourceLineNo">268</span>        private final ConnectorThreadPoolUDT connectorPool;<a name="line.268"></a>
-<span class="sourceLineNo">269</span><a name="line.269"></a>
-<span class="sourceLineNo">270</span>        SelectorUDT(SelectorProvider provider, //<a name="line.270"></a>
-<span class="sourceLineNo">271</span>                        int maximumSelectorSize, int maximumConnectorSize) {<a name="line.271"></a>
-<span class="sourceLineNo">272</span><a name="line.272"></a>
-<span class="sourceLineNo">273</span>                super(provider);<a name="line.273"></a>
-<span class="sourceLineNo">274</span><a name="line.274"></a>
-<span class="sourceLineNo">275</span>                registeredKeyMap = new HashMap&lt;Integer, SelectionKeyUDT&gt;();<a name="line.275"></a>
-<span class="sourceLineNo">276</span><a name="line.276"></a>
-<span class="sourceLineNo">277</span>                registeredKeySet = new HashSet&lt;SelectionKeyUDT&gt;();<a name="line.277"></a>
-<span class="sourceLineNo">278</span>                selectedKeySet = new HashSet&lt;SelectionKeyUDT&gt;();<a name="line.278"></a>
-<span class="sourceLineNo">279</span>                cancelledKeySet = cancelledKeys();<a name="line.279"></a>
-<span class="sourceLineNo">280</span><a name="line.280"></a>
-<span class="sourceLineNo">281</span>                publicRegisteredKeySet = Collections.unmodifiableSet(registeredKeySet);<a name="line.281"></a>
-<span class="sourceLineNo">282</span>                publicSelectedKeySet = HelperNIOUDT.ungrowableSet(selectedKeySet);<a name="line.282"></a>
-<span class="sourceLineNo">283</span><a name="line.283"></a>
-<span class="sourceLineNo">284</span>                this.maximimSelectorSize = maximumSelectorSize;<a name="line.284"></a>
-<span class="sourceLineNo">285</span>                if (isBufferBased) {<a name="line.285"></a>
-<span class="sourceLineNo">286</span>                        readBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);<a name="line.286"></a>
-<span class="sourceLineNo">287</span>                        writeBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);<a name="line.287"></a>
-<span class="sourceLineNo">288</span>                        exceptBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);<a name="line.288"></a>
-<span class="sourceLineNo">289</span>                        sizeBuffer = SocketUDT.newDirectIntBufer(UDT_SIZE_COUNT);<a name="line.289"></a>
-<span class="sourceLineNo">290</span>                        readArray = null;<a name="line.290"></a>
-<span class="sourceLineNo">291</span>                        writeArray = null;<a name="line.291"></a>
-<span class="sourceLineNo">292</span>                        exceptArray = null;<a name="line.292"></a>
-<span class="sourceLineNo">293</span>                        sizeArray = null;<a name="line.293"></a>
-<span class="sourceLineNo">294</span>                } else {<a name="line.294"></a>
-<span class="sourceLineNo">295</span>                        readBuffer = null;<a name="line.295"></a>
-<span class="sourceLineNo">296</span>                        writeBuffer = null;<a name="line.296"></a>
-<span class="sourceLineNo">297</span>                        exceptBuffer = null;<a name="line.297"></a>
-<span class="sourceLineNo">298</span>                        sizeBuffer = null;<a name="line.298"></a>
-<span class="sourceLineNo">299</span>                        readArray = new int[maximumSelectorSize];<a name="line.299"></a>
-<span class="sourceLineNo">300</span>                        writeArray = new int[maximumSelectorSize];<a name="line.300"></a>
-<span class="sourceLineNo">301</span>                        exceptArray = new int[maximumSelectorSize];<a name="line.301"></a>
-<span class="sourceLineNo">302</span>                        sizeArray = new int[UDT_SIZE_COUNT];<a name="line.302"></a>
-<span class="sourceLineNo">303</span>                }<a name="line.303"></a>
-<span class="sourceLineNo">304</span><a name="line.304"></a>
-<span class="sourceLineNo">305</span>                this.maximumConnectorSize = maximumConnectorSize;<a name="line.305"></a>
-<span class="sourceLineNo">306</span>                connectorPool = new ConnectorThreadPoolUDT(maximumConnectorSize);<a name="line.306"></a>
-<span class="sourceLineNo">307</span><a name="line.307"></a>
-<span class="sourceLineNo">308</span>        }<a name="line.308"></a>
-<span class="sourceLineNo">309</span><a name="line.309"></a>
-<span class="sourceLineNo">310</span>        public static int UDT_TIMEOUT_INFINITE = -1;<a name="line.310"></a>
-<span class="sourceLineNo">311</span><a name="line.311"></a>
-<span class="sourceLineNo">312</span>        public static int UDT_TIMEOUT_NONE = 0;<a name="line.312"></a>
-<span class="sourceLineNo">313</span><a name="line.313"></a>
-<span class="sourceLineNo">314</span>        private final int doSelectInsideLock(long millisTimeout) throws IOException {<a name="line.314"></a>
-<span class="sourceLineNo">315</span>                if (!isOpen()) {<a name="line.315"></a>
-<span class="sourceLineNo">316</span>                        throw new ClosedSelectorException();<a name="line.316"></a>
-<span class="sourceLineNo">317</span>                }<a name="line.317"></a>
-<span class="sourceLineNo">318</span>                synchronized (this) {<a name="line.318"></a>
-<span class="sourceLineNo">319</span>                        synchronized (publicRegisteredKeySet) {<a name="line.319"></a>
-<span class="sourceLineNo">320</span>                                synchronized (publicSelectedKeySet) {<a name="line.320"></a>
-<span class="sourceLineNo">321</span>                                        return doSelectReally(millisTimeout);<a name="line.321"></a>
-<span class="sourceLineNo">322</span>                                }<a name="line.322"></a>
-<span class="sourceLineNo">323</span>                        }<a name="line.323"></a>
-<span class="sourceLineNo">324</span>                }<a name="line.324"></a>
-<span class="sourceLineNo">325</span>        }<a name="line.325"></a>
-<span class="sourceLineNo">326</span><a name="line.326"></a>
-<span class="sourceLineNo">327</span>        //<a name="line.327"></a>
-<span class="sourceLineNo">328</span><a name="line.328"></a>
-<span class="sourceLineNo">329</span>        public static final String KEY_IS_ARRAY_BASED = //<a name="line.329"></a>
-<span class="sourceLineNo">330</span>        SelectorUDT.class.getName() + ".isArrayBased";<a name="line.330"></a>
-<span class="sourceLineNo">331</span><a name="line.331"></a>
-<span class="sourceLineNo">332</span>        private static final boolean isBufferBased;<a name="line.332"></a>
-<span class="sourceLineNo">333</span><a name="line.333"></a>
-<span class="sourceLineNo">334</span>        static {<a name="line.334"></a>
-<span class="sourceLineNo">335</span>                String isArrayBased = System.getProperty(KEY_IS_ARRAY_BASED);<a name="line.335"></a>
-<span class="sourceLineNo">336</span>                if (isArrayBased == null) {<a name="line.336"></a>
-<span class="sourceLineNo">337</span>                        isBufferBased = true;<a name="line.337"></a>
-<span class="sourceLineNo">338</span>                } else {<a name="line.338"></a>
-<span class="sourceLineNo">339</span>                        isBufferBased = false;<a name="line.339"></a>
-<span class="sourceLineNo">340</span>                }<a name="line.340"></a>
-<span class="sourceLineNo">341</span>                log.debug("isBufferBased={}", isBufferBased);<a name="line.341"></a>
-<span class="sourceLineNo">342</span>        }<a name="line.342"></a>
-<span class="sourceLineNo">343</span><a name="line.343"></a>
-<span class="sourceLineNo">344</span>        private final void setReadInterest(int index, int socketID) {<a name="line.344"></a>
-<span class="sourceLineNo">345</span>                if (isBufferBased) {<a name="line.345"></a>
-<span class="sourceLineNo">346</span>                        readBuffer.put(index, socketID);<a name="line.346"></a>
-<span class="sourceLineNo">347</span>                } else {<a name="line.347"></a>
-<span class="sourceLineNo">348</span>                        readArray[index] = socketID;<a name="line.348"></a>
-<span class="sourceLineNo">349</span>                }<a name="line.349"></a>
-<span class="sourceLineNo">350</span>        }<a name="line.350"></a>
-<span class="sourceLineNo">351</span><a name="line.351"></a>
-<span class="sourceLineNo">352</span>        private final int getReadInterest(int index) {<a name="line.352"></a>
-<span class="sourceLineNo">353</span>                if (isBufferBased) {<a name="line.353"></a>
-<span class="sourceLineNo">354</span>                        return readBuffer.get(index);<a name="line.354"></a>
-<span class="sourceLineNo">355</span>                } else {<a name="line.355"></a>
-<span class="sourceLineNo">356</span>                        return readArray[index];<a name="line.356"></a>
-<span class="sourceLineNo">357</span>                }<a name="line.357"></a>
-<span class="sourceLineNo">358</span>        }<a name="line.358"></a>
-<span class="sourceLineNo">359</span><a name="line.359"></a>
-<span class="sourceLineNo">360</span>        private final void setWriteInterest(int index, int socketID) {<a name="line.360"></a>
-<span class="sourceLineNo">361</span>                if (isBufferBased) {<a name="line.361"></a>
-<span class="sourceLineNo">362</span>                        writeBuffer.put(index, socketID);<a name="line.362"></a>
-<span class="sourceLineNo">363</span>                } else {<a name="line.363"></a>
-<span class="sourceLineNo">364</span>                        writeArray[index] = socketID;<a name="line.364"></a>
-<span class="sourceLineNo">365</span>                }<a name="line.365"></a>
-<span class="sourceLineNo">366</span>        }<a name="line.366"></a>
-<span class="sourceLineNo">367</span><a name="line.367"></a>
-<span class="sourceLineNo">368</span>        private final int getWriteInterest(int index) {<a name="line.368"></a>
-<span class="sourceLineNo">369</span>                if (isBufferBased) {<a name="line.369"></a>
-<span class="sourceLineNo">370</span>                        return writeBuffer.get(index);<a name="line.370"></a>
-<span class="sourceLineNo">371</span>                } else {<a name="line.371"></a>
-<span class="sourceLineNo">372</span>                        return writeArray[index];<a name="line.372"></a>
-<span class="sourceLineNo">373</span>                }<a name="line.373"></a>
-<span class="sourceLineNo">374</span>        }<a name="line.374"></a>
-<span class="sourceLineNo">375</span><a name="line.375"></a>
-<span class="sourceLineNo">376</span>        private final void setExceptInterest(int index, int socketID) {<a name="line.376"></a>
-<span class="sourceLineNo">377</span>                if (isBufferBased) {<a name="line.377"></a>
-<span class="sourceLineNo">378</span>                        exceptBuffer.put(index, socketID);<a name="line.378"></a>
-<span class="sourceLineNo">379</span>                } else {<a name="line.379"></a>
-<span class="sourceLineNo">380</span>                        exceptArray[index] = socketID;<a name="line.380"></a>
-<span class="sourceLineNo">381</span>                }<a name="line.381"></a>
-<span class="sourceLineNo">382</span>        }<a name="line.382"></a>
-<span class="sourceLineNo">383</span><a name="line.383"></a>
-<span class="sourceLineNo">384</span>        private final int getExceptInterest(int index) {<a name="line.384"></a>
-<span class="sourceLineNo">385</span>                if (isBufferBased) {<a name="line.385"></a>
-<span class="sourceLineNo">386</span>                        return exceptBuffer.get(index);<a name="line.386"></a>
-<span class="sourceLineNo">387</span>                } else {<a name="line.387"></a>
-<span class="sourceLineNo">388</span>                        return exceptArray[index];<a name="line.388"></a>
-<span class="sourceLineNo">389</span>                }<a name="line.389"></a>
-<span class="sourceLineNo">390</span>        }<a name="line.390"></a>
-<span class="sourceLineNo">391</span><a name="line.391"></a>
-<span class="sourceLineNo">392</span>        private final int doSelectSocketUDT(long timeout) throws ExceptionUDT {<a name="line.392"></a>
-<span class="sourceLineNo">393</span>                if (isBufferBased) {<a name="line.393"></a>
-<span class="sourceLineNo">394</span>                        return SocketUDT.select(readBuffer, writeBuffer, exceptBuffer,<a name="line.394"></a>
-<span class="sourceLineNo">395</span>                                        sizeBuffer, timeout);<a name="line.395"></a>
-<span class="sourceLineNo">396</span>                } else {<a name="line.396"></a>
-<span class="sourceLineNo">397</span>                        return SocketUDT.select(readArray, writeArray, exceptArray,<a name="line.397"></a>
-<span class="sourceLineNo">398</span>                                        sizeArray, timeout);<a name="line.398"></a>
-<span class="sourceLineNo">399</span>                }<a name="line.399"></a>
-<span class="sourceLineNo">400</span>        }<a name="line.400"></a>
-<span class="sourceLineNo">401</span><a name="line.401"></a>
-<span class="sourceLineNo">402</span>        private final void setInterestSize(int readSize, int writeSize,<a name="line.402"></a>
-<span class="sourceLineNo">403</span>                        int exceptSize) {<a name="line.403"></a>
-<span class="sourceLineNo">404</span>                if (isBufferBased) {<a name="line.404"></a>
-<span class="sourceLineNo">405</span>                        sizeBuffer.put(UDT_READ_INDEX, readSize);<a name="line.405"></a>
-<span class="sourceLineNo">406</span>                        sizeBuffer.put(UDT_WRITE_INDEX, writeSize);<a name="line.406"></a>
-<span class="sourceLineNo">407</span>                        sizeBuffer.put(UDT_EXCEPT_INDEX, exceptSize);<a name="line.407"></a>
-<span class="sourceLineNo">408</span>                } else {<a name="line.408"></a>
-<span class="sourceLineNo">409</span>                        sizeArray[UDT_READ_INDEX] = readSize;<a name="line.409"></a>
-<span class="sourceLineNo">410</span>                        sizeArray[UDT_WRITE_INDEX] = writeSize;<a name="line.410"></a>
-<span class="sourceLineNo">411</span>                        sizeArray[UDT_EXCEPT_INDEX] = exceptSize;<a name="line.411"></a>
-<span class="sourceLineNo">412</span>                }<a name="line.412"></a>
-<span class="sourceLineNo">413</span>        }<a name="line.413"></a>
-<span class="sourceLineNo">414</span><a name="line.414"></a>
-<span class="sourceLineNo">415</span>        private final int getReadInterestSize() {<a name="line.415"></a>
-<span class="sourceLineNo">416</span>                if (isBufferBased) {<a name="line.416"></a>
-<span class="sourceLineNo">417</span>                        return sizeBuffer.get(UDT_READ_INDEX);<a name="line.417"></a>
-<span class="sourceLineNo">418</span>                } else {<a name="line.418"></a>
-<span class="sourceLineNo">419</span>                        return sizeArray[UDT_READ_INDEX];<a name="line.419"></a>
-<span class="sourceLineNo">420</span>                }<a name="line.420"></a>
-<span class="sourceLineNo">421</span>        }<a name="line.421"></a>
-<span class="sourceLineNo">422</span><a name="line.422"></a>
-<span class="sourceLineNo">423</span>        private final int getWriteInterestSize() {<a name="line.423"></a>
-<span class="sourceLineNo">424</span>                if (isBufferBased) {<a name="line.424"></a>
-<span class="sourceLineNo">425</span>                        return sizeBuffer.get(UDT_WRITE_INDEX);<a name="line.425"></a>
-<span class="sourceLineNo">426</span>                } else {<a name="line.426"></a>
-<span class="sourceLineNo">427</span>                        return sizeArray[UDT_WRITE_INDEX];<a name="line.427"></a>
-<span class="sourceLineNo">428</span>                }<a name="line.428"></a>
-<span class="sourceLineNo">429</span>        }<a name="line.429"></a>
-<span class="sourceLineNo">430</span><a name="line.430"></a>
-<span class="sourceLineNo">431</span>        private final int getExceptInterestSize() {<a name="line.431"></a>
-<span class="sourceLineNo">432</span>                if (isBufferBased) {<a name="line.432"></a>
-<span class="sourceLineNo">433</span>                        return sizeBuffer.get(UDT_EXCEPT_INDEX);<a name="line.433"></a>
-<span class="sourceLineNo">434</span>                } else {<a name="line.434"></a>
-<span class="sourceLineNo">435</span>                        return sizeArray[UDT_EXCEPT_INDEX];<a name="line.435"></a>
-<span class="sourceLineNo">436</span>                }<a name="line.436"></a>
-<span class="sourceLineNo">437</span>        }<a name="line.437"></a>
-<span class="sourceLineNo">438</span><a name="line.438"></a>
-<span class="sourceLineNo">439</span>        private final void prepareInterest() {<a name="line.439"></a>
-<span class="sourceLineNo">440</span><a name="line.440"></a>
-<span class="sourceLineNo">441</span>                int readSize = 0;<a name="line.441"></a>
-<span class="sourceLineNo">442</span>                int writeSize = 0;<a name="line.442"></a>
-<span class="sourceLineNo">443</span>                int exceptSize = 0;<a name="line.443"></a>
-<span class="sourceLineNo">444</span><a name="line.444"></a>
-<span class="sourceLineNo">445</span>                for (final SelectionKeyUDT keyUDT : registeredKeySet) {<a name="line.445"></a>
-<span class="sourceLineNo">446</span><a name="line.446"></a>
-<span class="sourceLineNo">447</span>                        final ChannelUDT channelUDT = keyUDT.channelUDT;<a name="line.447"></a>
-<span class="sourceLineNo">448</span>                        keyUDT.readyOps = 0; // publisher for volatile<a name="line.448"></a>
-<span class="sourceLineNo">449</span><a name="line.449"></a>
-<span class="sourceLineNo">450</span>                        if (channelUDT.isOpenSocketUDT()) {<a name="line.450"></a>
-<span class="sourceLineNo">451</span><a name="line.451"></a>
-<span class="sourceLineNo">452</span>                                final int interestOps = keyUDT.interestOps;<a name="line.452"></a>
-<span class="sourceLineNo">453</span>                                final int socketID = keyUDT.socketID;<a name="line.453"></a>
-<span class="sourceLineNo">454</span>                                final KindUDT channelType = channelUDT.getChannelKind();<a name="line.454"></a>
-<span class="sourceLineNo">455</span><a name="line.455"></a>
-<span class="sourceLineNo">456</span>                                if ((interestOps &amp; (OP_ACCEPT)) != 0) {<a name="line.456"></a>
-<span class="sourceLineNo">457</span>                                        assert channelType == KindUDT.ACCEPTOR;<a name="line.457"></a>
-<span class="sourceLineNo">458</span>                                        setReadInterest(readSize, socketID);<a name="line.458"></a>
-<span class="sourceLineNo">459</span>                                        readSize++;<a name="line.459"></a>
-<span class="sourceLineNo">460</span>                                }<a name="line.460"></a>
-<span class="sourceLineNo">461</span>                                if ((interestOps &amp; (OP_READ)) != 0) {<a name="line.461"></a>
-<span class="sourceLineNo">462</span>                                        assert channelType == KindUDT.CONNECTOR;<a name="line.462"></a>
-<span class="sourceLineNo">463</span>                                        setReadInterest(readSize, socketID);<a name="line.463"></a>
-<span class="sourceLineNo">464</span>                                        readSize++;<a name="line.464"></a>
-<span class="sourceLineNo">465</span>                                }<a name="line.465"></a>
-<span class="sourceLineNo">466</span>                                if ((interestOps &amp; (OP_WRITE)) != 0) {<a name="line.466"></a>
-<span class="sourceLineNo">467</span>                                        assert channelType == KindUDT.CONNECTOR;<a name="line.467"></a>
-<span class="sourceLineNo">468</span>                                        setWriteInterest(writeSize, socketID);<a name="line.468"></a>
-<span class="sourceLineNo">469</span>                                        writeSize++;<a name="line.469"></a>
-<span class="sourceLineNo">470</span>                                }<a name="line.470"></a>
-<span class="sourceLineNo">471</span>                                if ((interestOps &amp; (OP_CONNECT)) != 0) {<a name="line.471"></a>
-<span class="sourceLineNo">472</span>                                        assert channelType == KindUDT.CONNECTOR;<a name="line.472"></a>
-<span class="sourceLineNo">473</span>                                        assert (interestOps &amp; (OP_READ | OP_WRITE | OP_ACCEPT)) == 0;<a name="line.473"></a>
-<span class="sourceLineNo">474</span>                                        /*<a name="line.474"></a>
-<span class="sourceLineNo">475</span>                                         * UDT does not support select() for connect() operation as<a name="line.475"></a>
-<span class="sourceLineNo">476</span>                                         * yet; using thread pool instead<a name="line.476"></a>
-<span class="sourceLineNo">477</span>                                         */<a name="line.477"></a>
-<span class="sourceLineNo">478</span>                                }<a name="line.478"></a>
-<span class="sourceLineNo">479</span>                        } else {<a name="line.479"></a>
-<span class="sourceLineNo">480</span>                                synchronized (cancelledKeySet) {<a name="line.480"></a>
-<span class="sourceLineNo">481</span>                                        cancelledKeySet.add(keyUDT);<a name="line.481"></a>
-<span class="sourceLineNo">482</span>                                }<a name="line.482"></a>
-<span class="sourceLineNo">483</span>                        }<a name="line.483"></a>
-<span class="sourceLineNo">484</span>                }<a name="line.484"></a>
-<span class="sourceLineNo">485</span><a name="line.485"></a>
-<span class="sourceLineNo">486</span>                // set sizes<a name="line.486"></a>
-<span class="sourceLineNo">487</span>                setInterestSize(readSize, writeSize, exceptSize);<a name="line.487"></a>
-<span class="sourceLineNo">488</span><a name="line.488"></a>
-<span class="sourceLineNo">489</span>        }<a name="line.489"></a>
-<span class="sourceLineNo">490</span><a name="line.490"></a>
-<span class="sourceLineNo">491</span>        private final void processInterest() {<a name="line.491"></a>
-<span class="sourceLineNo">492</span><a name="line.492"></a>
-<span class="sourceLineNo">493</span>                // add ready to selected<a name="line.493"></a>
-<span class="sourceLineNo">494</span>                updateRead();<a name="line.494"></a>
-<span class="sourceLineNo">495</span>                updateWrite();<a name="line.495"></a>
-<span class="sourceLineNo">496</span>                updateExcept();<a name="line.496"></a>
-<span class="sourceLineNo">497</span><a name="line.497"></a>
-<span class="sourceLineNo">498</span>        }<a name="line.498"></a>
-<span class="sourceLineNo">499</span><a name="line.499"></a>
-<span class="sourceLineNo">500</span>        /**<a name="line.500"></a>
-<span class="sourceLineNo">501</span>         * note: millisTimeout input values contract:<a name="line.501"></a>
-<span class="sourceLineNo">502</span>         * <a name="line.502"></a>
-<span class="sourceLineNo">503</span>         * -1 : infinite<a name="line.503"></a>
-<span class="sourceLineNo">504</span>         * <a name="line.504"></a>
-<span class="sourceLineNo">505</span>         * =0 : immediate (but really up to 10 ms UDT resolution slice)<a name="line.505"></a>
-<span class="sourceLineNo">506</span>         * <a name="line.506"></a>
-<span class="sourceLineNo">507</span>         * &gt;0 : finite<a name="line.507"></a>
-<span class="sourceLineNo">508</span>         */<a name="line.508"></a>
-<span class="sourceLineNo">509</span>        private final int performSelect(long millisTimeout) throws ExceptionUDT {<a name="line.509"></a>
-<span class="sourceLineNo">510</span>                int readyCount = 0;<a name="line.510"></a>
-<span class="sourceLineNo">511</span>                saveWakeupBase();<a name="line.511"></a>
-<span class="sourceLineNo">512</span>                if (millisTimeout &lt; 0) {<a name="line.512"></a>
-<span class="sourceLineNo">513</span>                        /* infinite: do select in slices; check for wakeup; */<a name="line.513"></a>
-<span class="sourceLineNo">514</span>                        do {<a name="line.514"></a>
-<span class="sourceLineNo">515</span>                                readyCount = doSelectSocketUDT(DEFAULT_MIN_SELECTOR_TIMEOUT);<a name="line.515"></a>
-<span class="sourceLineNo">516</span>                                if (readyCount &gt; 0 || isWakeupPending()) {<a name="line.516"></a>
-<span class="sourceLineNo">517</span>                                        break;<a name="line.517"></a>
-<span class="sourceLineNo">518</span>                                }<a name="line.518"></a>
-<span class="sourceLineNo">519</span>                        } while (true);<a name="line.519"></a>
-<span class="sourceLineNo">520</span>                } else if (millisTimeout &gt; 0) {<a name="line.520"></a>
-<span class="sourceLineNo">521</span>                        /* finite: do select in slices; check for wakeup; count down */<a name="line.521"></a>
-<span class="sourceLineNo">522</span>                        do {<a name="line.522"></a>
-<span class="sourceLineNo">523</span>                                readyCount = doSelectSocketUDT(DEFAULT_MIN_SELECTOR_TIMEOUT);<a name="line.523"></a>
-<span class="sourceLineNo">524</span>                                if (readyCount &gt; 0 || isWakeupPending()) {<a name="line.524"></a>
-<span class="sourceLineNo">525</span>                                        break;<a name="line.525"></a>
-<span class="sourceLineNo">526</span>                                }<a name="line.526"></a>
-<span class="sourceLineNo">527</span>                                millisTimeout -= DEFAULT_MIN_SELECTOR_TIMEOUT;<a name="line.527"></a>
-<span class="sourceLineNo">528</span>                        } while (millisTimeout &gt; 0);<a name="line.528"></a>
-<span class="sourceLineNo">529</span>                } else { // millisTimeout == 0<a name="line.529"></a>
-<span class="sourceLineNo">530</span>                        /* immediate: one shot select */<a name="line.530"></a>
-<span class="sourceLineNo">531</span>                        readyCount = doSelectSocketUDT(0);<a name="line.531"></a>
-<span class="sourceLineNo">532</span>                }<a name="line.532"></a>
-<span class="sourceLineNo">533</span>                return readyCount;<a name="line.533"></a>
-<span class="sourceLineNo">534</span>        }<a name="line.534"></a>
-<span class="sourceLineNo">535</span><a name="line.535"></a>
-<span class="sourceLineNo">536</span>        /**<a name="line.536"></a>
-<span class="sourceLineNo">537</span>         * note: return value contract:<a name="line.537"></a>
-<span class="sourceLineNo">538</span>         * <a name="line.538"></a>
-<span class="sourceLineNo">539</span>         * &lt;0 : should not happen<a name="line.539"></a>
-<span class="sourceLineNo">540</span>         * <a name="line.540"></a>
-<span class="sourceLineNo">541</span>         * =0 : means nothing was selected/timeout<a name="line.541"></a>
-<span class="sourceLineNo">542</span>         * <a name="line.542"></a>
-<span class="sourceLineNo">543</span>         * &gt;0 : number of pending r/w ops, NOT number of selected keys<a name="line.543"></a>
-<span class="sourceLineNo">544</span>         */<a name="line.544"></a>
-<span class="sourceLineNo">545</span>        private final int doSelectReally(long millisTimeout) throws IOException {<a name="line.545"></a>
-<span class="sourceLineNo">546</span><a name="line.546"></a>
-<span class="sourceLineNo">547</span>                selectedKeySet.clear();<a name="line.547"></a>
-<span class="sourceLineNo">548</span><a name="line.548"></a>
-<span class="sourceLineNo">549</span>                processCancelled();<a name="line.549"></a>
-<span class="sourceLineNo">550</span><a name="line.550"></a>
-<span class="sourceLineNo">551</span>                int readyCount = 0;<a name="line.551"></a>
-<span class="sourceLineNo">552</span><a name="line.552"></a>
-<span class="sourceLineNo">553</span>                trySelect: try {<a name="line.553"></a>
-<span class="sourceLineNo">554</span>                        // java.nio.Selector contract for wakeup()<a name="line.554"></a>
-<span class="sourceLineNo">555</span>                        begin();<a name="line.555"></a>
-<span class="sourceLineNo">556</span>                        // pre select<a name="line.556"></a>
-<span class="sourceLineNo">557</span>                        prepareInterest();<a name="line.557"></a>
-<span class="sourceLineNo">558</span>                        // into select<a name="line.558"></a>
-<span class="sourceLineNo">559</span>                        readyCount = performSelect(millisTimeout);<a name="line.559"></a>
-<span class="sourceLineNo">560</span>                        if (readyCount == 0) {<a name="line.560"></a>
-<span class="sourceLineNo">561</span>                                // timeout, nothing is ready; no need to process post select<a name="line.561"></a>
-<span class="sourceLineNo">562</span>                                break trySelect;<a name="line.562"></a>
-<span class="sourceLineNo">563</span>                        }<a name="line.563"></a>
-<span class="sourceLineNo">564</span>                        // post select<a name="line.564"></a>
-<span class="sourceLineNo">565</span>                        processInterest();<a name="line.565"></a>
-<span class="sourceLineNo">566</span>                } finally {<a name="line.566"></a>
-<span class="sourceLineNo">567</span>                        // java.nio.Selector contract for wakeup()<a name="line.567"></a>
-<span class="sourceLineNo">568</span>                        end();<a name="line.568"></a>
-<span class="sourceLineNo">569</span>                }<a name="line.569"></a>
-<span class="sourceLineNo">570</span><a name="line.570"></a>
-<span class="sourceLineNo">571</span>                // using thread pool based connect() processor<a name="line.571"></a>
-<span class="sourceLineNo">572</span>                readyCount += updateConnect();<a name="line.572"></a>
-<span class="sourceLineNo">573</span><a name="line.573"></a>
-<span class="sourceLineNo">574</span>                assert readyCount &gt;= 0;<a name="line.574"></a>
-<span class="sourceLineNo">575</span><a name="line.575"></a>
-<span class="sourceLineNo">576</span>                return readyCount;<a name="line.576"></a>
-<span class="sourceLineNo">577</span><a name="line.577"></a>
-<span class="sourceLineNo">578</span>        }<a name="line.578"></a>
-<span class="sourceLineNo">579</span><a name="line.579"></a>
-<span class="sourceLineNo">580</span>        private final int updateConnect() {<a name="line.580"></a>
-<span class="sourceLineNo">581</span>                final Queue&lt;SelectionKeyUDT&gt; readyQueue = connectorPool.readyQueue;<a name="line.581"></a>
-<span class="sourceLineNo">582</span>                if (readyQueue.isEmpty()) {<a name="line.582"></a>
-<span class="sourceLineNo">583</span>                        return 0;<a name="line.583"></a>
-<span class="sourceLineNo">584</span>                }<a name="line.584"></a>
-<span class="sourceLineNo">585</span>                int updateCount = 0;<a name="line.585"></a>
-<span class="sourceLineNo">586</span>                SelectionKeyUDT keyUDT;<a name="line.586"></a>
-<span class="sourceLineNo">587</span>                while ((keyUDT = readyQueue.poll()) != null) {<a name="line.587"></a>
-<span class="sourceLineNo">588</span>                        // contract:<a name="line.588"></a>
-<span class="sourceLineNo">589</span>                        assert keyUDT.channelUDT.getChannelKind() == KindUDT.CONNECTOR;<a name="line.589"></a>
-<span class="sourceLineNo">590</span>                        assert registeredKeySet.contains(keyUDT);<a name="line.590"></a>
-<span class="sourceLineNo">591</span>                        assert (keyUDT.interestOps &amp; OP_CONNECT) != 0;<a name="line.591"></a>
-<span class="sourceLineNo">592</span>                        assert (keyUDT.interestOps &amp; (OP_READ | OP_WRITE | OP_ACCEPT)) == 0;<a name="line.592"></a>
-<span class="sourceLineNo">593</span>                        //<a name="line.593"></a>
-<span class="sourceLineNo">594</span>                        keyUDT.readyOps |= OP_CONNECT;<a name="line.594"></a>
-<span class="sourceLineNo">595</span>                        selectedKeySet.add(keyUDT);<a name="line.595"></a>
-<span class="sourceLineNo">596</span>                        updateCount++;<a name="line.596"></a>
-<span class="sourceLineNo">597</span>                }<a name="line.597"></a>
-<span class="sourceLineNo">598</span>                return updateCount;<a name="line.598"></a>
-<span class="sourceLineNo">599</span>        }<a name="line.599"></a>
-<span class="sourceLineNo">600</span><a name="line.600"></a>
-<span class="sourceLineNo">601</span>        private final void updateRead() {<a name="line.601"></a>
-<span class="sourceLineNo">602</span>                final int readSize = getReadInterestSize();<a name="line.602"></a>
-<span class="sourceLineNo">603</span>                for (int index = 0; index &lt; readSize; index++) {<a name="line.603"></a>
-<span class="sourceLineNo">604</span>                        final int socketId = getReadInterest(index);<a name="line.604"></a>
-<span class="sourceLineNo">605</span>                        final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);<a name="line.605"></a>
-<span class="sourceLineNo">606</span>                        assert keyUDT != null;<a name="line.606"></a>
-<span class="sourceLineNo">607</span>                        switch (keyUDT.channelUDT.getChannelKind()) {<a name="line.607"></a>
-<span class="sourceLineNo">608</span>                        case ACCEPTOR:<a name="line.608"></a>
-<span class="sourceLineNo">609</span>                                keyUDT.readyOps |= OP_ACCEPT;<a name="line.609"></a>
-<span class="sourceLineNo">610</span>                                break;<a name="line.610"></a>
-<span class="sourceLineNo">611</span>                        case CONNECTOR:<a name="line.611"></a>
-<span class="sourceLineNo">612</span>                                keyUDT.readyOps |= OP_READ;<a name="line.612"></a>
-<span class="sourceLineNo">613</span>                                break;<a name="line.613"></a>
-<span class="sourceLineNo">614</span>                        default:<a name="line.614"></a>
-<span class="sourceLineNo">615</span>                                assert false : "unexpected default";<a name="line.615"></a>
-<span class="sourceLineNo">616</span>                                continue;<a name="line.616"></a>
-<span class="sourceLineNo">617</span>                        }<a name="line.617"></a>
-<span class="sourceLineNo">618</span>                        selectedKeySet.add(keyUDT);<a name="line.618"></a>
-<span class="sourceLineNo">619</span>                }<a name="line.619"></a>
-<span class="sourceLineNo">620</span>        }<a name="line.620"></a>
-<span class="sourceLineNo">621</span><a name="line.621"></a>
-<span class="sourceLineNo">622</span>        private final void updateWrite() {<a name="line.622"></a>
-<span class="sourceLineNo">623</span>                final int writeSize = getWriteInterestSize();<a name="line.623"></a>
-<span class="sourceLineNo">624</span>                for (int index = 0; index &lt; writeSize; index++) {<a name="line.624"></a>
-<span class="sourceLineNo">625</span>                        final int socketId = getWriteInterest(index);<a name="line.625"></a>
-<span class="sourceLineNo">626</span>                        final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);<a name="line.626"></a>
-<span class="sourceLineNo">627</span>                        assert keyUDT != null;<a name="line.627"></a>
-<span class="sourceLineNo">628</span>                        switch (keyUDT.channelUDT.getChannelKind()) {<a name="line.628"></a>
-<span class="sourceLineNo">629</span>                        case ACCEPTOR:<a name="line.629"></a>
-<span class="sourceLineNo">630</span>                                assert false : "unexpected ACCEPTOR";<a name="line.630"></a>
-<span class="sourceLineNo">631</span>                                continue;<a name="line.631"></a>
-<span class="sourceLineNo">632</span>                        case CONNECTOR:<a name="line.632"></a>
-<span class="sourceLineNo">633</span>                                keyUDT.readyOps |= OP_WRITE;<a name="line.633"></a>
-<span class="sourceLineNo">634</span>                                break;<a name="line.634"></a>
-<span class="sourceLineNo">635</span>                        default:<a name="line.635"></a>
-<span class="sourceLineNo">636</span>                                assert false : "unexpected default";<a name="line.636"></a>
-<span class="sourceLineNo">637</span>                                continue;<a name="line.637"></a>
-<span class="sourceLineNo">638</span>                        }<a name="line.638"></a>
-<span class="sourceLineNo">639</span>                        selectedKeySet.add(keyUDT);<a name="line.639"></a>
-<span class="sourceLineNo">640</span>                }<a name="line.640"></a>
-<span class="sourceLineNo">641</span>        }<a name="line.641"></a>
-<span class="sourceLineNo">642</span><a name="line.642"></a>
-<span class="sourceLineNo">643</span>        private final void updateExcept() {<a name="line.643"></a>
-<span class="sourceLineNo">644</span>                final int exceptSize = getExceptInterestSize();<a name="line.644"></a>
-<span class="sourceLineNo">645</span>                for (int k = 0; k &lt; exceptSize; k++) {<a name="line.645"></a>
-<span class="sourceLineNo">646</span>                        final int socketId = getExceptInterest(k);<a name="line.646"></a>
-<span class="sourceLineNo">647</span>                        final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);<a name="line.647"></a>
-<span class="sourceLineNo">648</span>                        assert keyUDT != null;<a name="line.648"></a>
-<span class="sourceLineNo">649</span>                        switch (keyUDT.channelUDT.getChannelKind()) {<a name="line.649"></a>
-<span class="sourceLineNo">650</span>                        case ACCEPTOR:<a name="line.650"></a>
-<span class="sourceLineNo">651</span>                        case CONNECTOR:<a name="line.651"></a>
-<span class="sourceLineNo">652</span>                                // set all ready OPS to throw on any operation<a name="line.652"></a>
-<span class="sourceLineNo">653</span>                                keyUDT.readyOps |= keyUDT.channel().validOps();<a name="line.653"></a>
-<span class="sourceLineNo">654</span>                                break;<a name="line.654"></a>
-<span class="sourceLineNo">655</span>                        default:<a name="line.655"></a>
-<span class="sourceLineNo">656</span>                                assert false : "unexpected default";<a name="line.656"></a>
-<span class="sourceLineNo">657</span>                                continue;<a name="line.657"></a>
-<span class="sourceLineNo">658</span>                        }<a name="line.658"></a>
-<span class="sourceLineNo">659</span>                        selectedKeySet.add(keyUDT);<a name="line.659"></a>
-<span class="sourceLineNo">660</span>                }<a name="line.660"></a>
-<span class="sourceLineNo">661</span>        }<a name="line.661"></a>
-<span class="sourceLineNo">662</span><a name="line.662"></a>
-<span class="sourceLineNo">663</span>        private final void processCancelled() throws IOException {<a name="line.663"></a>
-<span class="sourceLineNo">664</span>                /*<a name="line.664"></a>
-<span class="sourceLineNo">665</span>                 * Precondition: Synchronized on this, publicRegisteredKeySet,<a name="line.665"></a>
-<span class="sourceLineNo">666</span>                 * publicSelectedKeySet<a name="line.666"></a>
-<span class="sourceLineNo">667</span>                 */<a name="line.667"></a>
-<span class="sourceLineNo">668</span>                synchronized (cancelledKeySet) {<a name="line.668"></a>
-<span class="sourceLineNo">669</span>                        if (!cancelledKeySet.isEmpty()) {<a name="line.669"></a>
-<span class="sourceLineNo">670</span>                                for (final SelectionKey key : cancelledKeySet) {<a name="line.670"></a>
-<span class="sourceLineNo">671</span><a name="line.671"></a>
-<span class="sourceLineNo">672</span>                                        final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;<a name="line.672"></a>
-<span class="sourceLineNo">673</span><a name="line.673"></a>
-<span class="sourceLineNo">674</span>                                        // XXX the only place with "remove"<a name="line.674"></a>
-<span class="sourceLineNo">675</span><a name="line.675"></a>
-<span class="sourceLineNo">676</span>                                        final SelectionKeyUDT removed = //<a name="line.676"></a>
-<span class="sourceLineNo">677</span>                                        registeredKeyMap.remove(keyUDT.socketID);<a name="line.677"></a>
-<span class="sourceLineNo">678</span>                                        assert removed != null;<a name="line.678"></a>
-<span class="sourceLineNo">679</span><a name="line.679"></a>
-<span class="sourceLineNo">680</span>                                        final boolean isRemoved = //<a name="line.680"></a>
-<span class="sourceLineNo">681</span>                                        registeredKeySet.remove(keyUDT);<a name="line.681"></a>
-<span class="sourceLineNo">682</span>                                        assert isRemoved;<a name="line.682"></a>
-<span class="sourceLineNo">683</span><a name="line.683"></a>
-<span class="sourceLineNo">684</span>                                }<a name="line.684"></a>
-<span class="sourceLineNo">685</span>                                cancelledKeySet.clear();<a name="line.685"></a>
-<span class="sourceLineNo">686</span>                        }<a name="line.686"></a>
-<span class="sourceLineNo">687</span>                }<a name="line.687"></a>
-<span class="sourceLineNo">688</span>        }<a name="line.688"></a>
-<span class="sourceLineNo">689</span><a name="line.689"></a>
-<span class="sourceLineNo">690</span>        final void submitConnectRequest(SelectionKeyUDT keyUDT,<a name="line.690"></a>
-<span class="sourceLineNo">691</span>                        InetSocketAddress remote) throws IOException {<a name="line.691"></a>
-<span class="sourceLineNo">692</span><a name="line.692"></a>
-<span class="sourceLineNo">693</span>                // TODO think again if lack of sync is OK?<a name="line.693"></a>
-<span class="sourceLineNo">694</span><a name="line.694"></a>
-<span class="sourceLineNo">695</span>                if (!registeredKeySet.contains(keyUDT)) {<a name="line.695"></a>
-<span class="sourceLineNo">696</span>                        throw new IOException(//<a name="line.696"></a>
-<span class="sourceLineNo">697</span>                                        "connect request while not registered");<a name="line.697"></a>
-<span class="sourceLineNo">698</span>                }<a name="line.698"></a>
-<span class="sourceLineNo">699</span><a name="line.699"></a>
-<span class="sourceLineNo">700</span>                if ((keyUDT.interestOps &amp; OP_CONNECT) == 0) {<a name="line.700"></a>
-<span class="sourceLineNo">701</span>                        throw new IOException("connect request while not interested;"<a name="line.701"></a>
-<span class="sourceLineNo">702</span>                                        + " key=" + keyUDT);<a name="line.702"></a>
-<span class="sourceLineNo">703</span>                }<a name="line.703"></a>
-<span class="sourceLineNo">704</span><a name="line.704"></a>
-<span class="sourceLineNo">705</span>                if ((keyUDT.interestOps &amp; (OP_ACCEPT | OP_READ | OP_WRITE)) != 0) {<a name="line.705"></a>
-<span class="sourceLineNo">706</span>                        throw new IOException("connect request while is not sole interest;"<a name="line.706"></a>
-<span class="sourceLineNo">707</span>                                        + " key=" + keyUDT);<a name="line.707"></a>
-<span class="sourceLineNo">708</span>                }<a name="line.708"></a>
-<span class="sourceLineNo">709</span><a name="line.709"></a>
-<span class="sourceLineNo">710</span>                connectorPool.submitRequest(keyUDT, remote);<a name="line.710"></a>
-<span class="sourceLineNo">711</span><a name="line.711"></a>
-<span class="sourceLineNo">712</span>        }<a name="line.712"></a>
-<span class="sourceLineNo">713</span><a name="line.713"></a>
-<span class="sourceLineNo">714</span>}<a name="line.714"></a>
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /**<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright (C) 2009-2012 Barchart, Inc. &lt;http://www.barchart.com/&gt;<a name="line.2"></a>
+<FONT color="green">003</FONT>     *<a name="line.3"></a>
+<FONT color="green">004</FONT>     * All rights reserved. Licensed under the OSI BSD License.<a name="line.4"></a>
+<FONT color="green">005</FONT>     *<a name="line.5"></a>
+<FONT color="green">006</FONT>     * http://www.opensource.org/licenses/bsd-license.php<a name="line.6"></a>
+<FONT color="green">007</FONT>     */<a name="line.7"></a>
+<FONT color="green">008</FONT>    package com.barchart.udt.nio;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    import static com.barchart.udt.SocketUDT.*;<a name="line.10"></a>
+<FONT color="green">011</FONT>    import static java.nio.channels.SelectionKey.*;<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>    import java.io.IOException;<a name="line.13"></a>
+<FONT color="green">014</FONT>    import java.net.InetSocketAddress;<a name="line.14"></a>
+<FONT color="green">015</FONT>    import java.nio.IntBuffer;<a name="line.15"></a>
+<FONT color="green">016</FONT>    import java.nio.channels.ClosedSelectorException;<a name="line.16"></a>
+<FONT color="green">017</FONT>    import java.nio.channels.IllegalSelectorException;<a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.nio.channels.SelectionKey;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.nio.channels.Selector;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.nio.channels.spi.AbstractSelectableChannel;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.nio.channels.spi.AbstractSelector;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.nio.channels.spi.SelectorProvider;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Collections;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.HashMap;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.HashSet;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.util.Map;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import java.util.Queue;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import java.util.Set;<a name="line.28"></a>
+<FONT color="green">029</FONT>    <a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.slf4j.Logger;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.slf4j.LoggerFactory;<a name="line.31"></a>
+<FONT color="green">032</FONT>    <a name="line.32"></a>
+<FONT color="green">033</FONT>    import com.barchart.udt.ExceptionUDT;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import com.barchart.udt.SocketUDT;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import com.barchart.udt.TypeUDT;<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>    /**<a name="line.37"></a>
+<FONT color="green">038</FONT>     * you must use {@link SelectorProviderUDT#openSelector()} to obtain instance of<a name="line.38"></a>
+<FONT color="green">039</FONT>     * this class; do not use JDK {@link java.nio.channels.Selector#open()}<a name="line.39"></a>
+<FONT color="green">040</FONT>     */<a name="line.40"></a>
+<FONT color="green">041</FONT>    // NOTE: 'final' is used with hopes to force JVM function inlining<a name="line.41"></a>
+<FONT color="green">042</FONT>    public class SelectorUDT extends AbstractSelector {<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>            private static final Logger log = LoggerFactory<a name="line.44"></a>
+<FONT color="green">045</FONT>                            .getLogger(SelectorUDT.class);<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>            /**<a name="line.47"></a>
+<FONT color="green">048</FONT>             * use this call to instantiate a selector for UDT<a name="line.48"></a>
+<FONT color="green">049</FONT>             */<a name="line.49"></a>
+<FONT color="green">050</FONT>            protected static Selector open(TypeUDT type) throws IOException {<a name="line.50"></a>
+<FONT color="green">051</FONT>                    final SelectorProviderUDT provider;<a name="line.51"></a>
+<FONT color="green">052</FONT>                    switch (type) {<a name="line.52"></a>
+<FONT color="green">053</FONT>                    case DATAGRAM:<a name="line.53"></a>
+<FONT color="green">054</FONT>                            provider = SelectorProviderUDT.DATAGRAM;<a name="line.54"></a>
+<FONT color="green">055</FONT>                            break;<a name="line.55"></a>
+<FONT color="green">056</FONT>                    case STREAM:<a name="line.56"></a>
+<FONT color="green">057</FONT>                            provider = SelectorProviderUDT.STREAM;<a name="line.57"></a>
+<FONT color="green">058</FONT>                            break;<a name="line.58"></a>
+<FONT color="green">059</FONT>                    default:<a name="line.59"></a>
+<FONT color="green">060</FONT>                            log.error("unsupported type={}", type);<a name="line.60"></a>
+<FONT color="green">061</FONT>                            throw new IOException("unsupported type");<a name="line.61"></a>
+<FONT color="green">062</FONT>                    }<a name="line.62"></a>
+<FONT color="green">063</FONT>                    return provider.openSelector();<a name="line.63"></a>
+<FONT color="green">064</FONT>            }<a name="line.64"></a>
+<FONT color="green">065</FONT>    <a name="line.65"></a>
+<FONT color="green">066</FONT>            //<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>            @Override<a name="line.68"></a>
+<FONT color="green">069</FONT>            protected void implCloseSelector() throws IOException {<a name="line.69"></a>
+<FONT color="green">070</FONT>                    wakeup();<a name="line.70"></a>
+<FONT color="green">071</FONT>                    synchronized (this) {<a name="line.71"></a>
+<FONT color="green">072</FONT>                            synchronized (publicRegisteredKeySet) {<a name="line.72"></a>
+<FONT color="green">073</FONT>                                    synchronized (publicSelectedKeySet) {<a name="line.73"></a>
+<FONT color="green">074</FONT>    <a name="line.74"></a>
+<FONT color="green">075</FONT>                                            selectedKeySet.clear();<a name="line.75"></a>
+<FONT color="green">076</FONT>    <a name="line.76"></a>
+<FONT color="green">077</FONT>                                            for (final SelectionKey key : registeredKeySet) {<a name="line.77"></a>
+<FONT color="green">078</FONT>                                                    try {<a name="line.78"></a>
+<FONT color="green">079</FONT>                                                            key.channel().close();<a name="line.79"></a>
+<FONT color="green">080</FONT>                                                    } catch (Throwable e) {<a name="line.80"></a>
+<FONT color="green">081</FONT>                                                            log.error("unexpected", e);<a name="line.81"></a>
+<FONT color="green">082</FONT>                                                    }<a name="line.82"></a>
+<FONT color="green">083</FONT>                                            }<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>                                            registeredKeySet.clear();<a name="line.85"></a>
+<FONT color="green">086</FONT>    <a name="line.86"></a>
+<FONT color="green">087</FONT>                                    }<a name="line.87"></a>
+<FONT color="green">088</FONT>                            }<a name="line.88"></a>
+<FONT color="green">089</FONT>                    }<a name="line.89"></a>
+<FONT color="green">090</FONT>            }<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>            // NOE: register() and select() are blocking each other<a name="line.92"></a>
+<FONT color="green">093</FONT>            @Override<a name="line.93"></a>
+<FONT color="green">094</FONT>            protected SelectionKey register(AbstractSelectableChannel channel,<a name="line.94"></a>
+<FONT color="green">095</FONT>                            int interestOps, Object attachment) {<a name="line.95"></a>
+<FONT color="green">096</FONT>    <a name="line.96"></a>
+<FONT color="green">097</FONT>                    if (!(channel instanceof ChannelUDT)) {<a name="line.97"></a>
+<FONT color="green">098</FONT>                            // also takes care of null<a name="line.98"></a>
+<FONT color="green">099</FONT>                            log.error("!(channel instanceof ChannelUDT)");<a name="line.99"></a>
+<FONT color="green">100</FONT>                            throw new IllegalSelectorException();<a name="line.100"></a>
+<FONT color="green">101</FONT>                    }<a name="line.101"></a>
+<FONT color="green">102</FONT>    <a name="line.102"></a>
+<FONT color="green">103</FONT>                    synchronized (publicRegisteredKeySet) {<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>                            if (publicRegisteredKeySet.size() == maximimSelectorSize) {<a name="line.105"></a>
+<FONT color="green">106</FONT>                                    log.error("reached maximimSelectorSize)");<a name="line.106"></a>
+<FONT color="green">107</FONT>                                    throw new IllegalSelectorException();<a name="line.107"></a>
+<FONT color="green">108</FONT>                            }<a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>                            ChannelUDT channelUDT = (ChannelUDT) channel;<a name="line.110"></a>
+<FONT color="green">111</FONT>    <a name="line.111"></a>
+<FONT color="green">112</FONT>                            SocketUDT socketUDT = channelUDT.getSocketUDT();<a name="line.112"></a>
+<FONT color="green">113</FONT>    <a name="line.113"></a>
+<FONT color="green">114</FONT>                            SelectionKeyUDT keyUDT = new SelectionKeyUDT(//<a name="line.114"></a>
+<FONT color="green">115</FONT>                                            this, channelUDT, attachment, interestOps);<a name="line.115"></a>
+<FONT color="green">116</FONT>    <a name="line.116"></a>
+<FONT color="green">117</FONT>                            // XXX the only place with "add/put"<a name="line.117"></a>
+<FONT color="green">118</FONT>                            registeredKeyMap.put(socketUDT.getSocketId(), keyUDT);<a name="line.118"></a>
+<FONT color="green">119</FONT>                            registeredKeySet.add(keyUDT);<a name="line.119"></a>
+<FONT color="green">120</FONT>    <a name="line.120"></a>
+<FONT color="green">121</FONT>                            return keyUDT;<a name="line.121"></a>
+<FONT color="green">122</FONT>    <a name="line.122"></a>
+<FONT color="green">123</FONT>                    }<a name="line.123"></a>
+<FONT color="green">124</FONT>    <a name="line.124"></a>
+<FONT color="green">125</FONT>            }<a name="line.125"></a>
+<FONT color="green">126</FONT>    <a name="line.126"></a>
+<FONT color="green">127</FONT>            @SuppressWarnings("unchecked")<a name="line.127"></a>
+<FONT color="green">128</FONT>            @Override<a name="line.128"></a>
+<FONT color="green">129</FONT>            public Set&lt;SelectionKey&gt; keys() {<a name="line.129"></a>
+<FONT color="green">130</FONT>                    if (!isOpen()) {<a name="line.130"></a>
+<FONT color="green">131</FONT>                            throw new ClosedSelectorException();<a name="line.131"></a>
+<FONT color="green">132</FONT>                    }<a name="line.132"></a>
+<FONT color="green">133</FONT>                    return (Set&lt;SelectionKey&gt;) publicRegisteredKeySet;<a name="line.133"></a>
+<FONT color="green">134</FONT>            }<a name="line.134"></a>
+<FONT color="green">135</FONT>    <a name="line.135"></a>
+<FONT color="green">136</FONT>            @SuppressWarnings("unchecked")<a name="line.136"></a>
+<FONT color="green">137</FONT>            @Override<a name="line.137"></a>
+<FONT color="green">138</FONT>            public Set&lt;SelectionKey&gt; selectedKeys() {<a name="line.138"></a>
+<FONT color="green">139</FONT>                    if (!isOpen()) {<a name="line.139"></a>
+<FONT color="green">140</FONT>                            throw new ClosedSelectorException();<a name="line.140"></a>
+<FONT color="green">141</FONT>                    }<a name="line.141"></a>
+<FONT color="green">142</FONT>                    return (Set&lt;SelectionKey&gt;) publicSelectedKeySet;<a name="line.142"></a>
+<FONT color="green">143</FONT>            }<a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>            @Override<a name="line.145"></a>
+<FONT color="green">146</FONT>            public int select() throws IOException {<a name="line.146"></a>
+<FONT color="green">147</FONT>                    return select(0);<a name="line.147"></a>
+<FONT color="green">148</FONT>            }<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>            @Override<a name="line.150"></a>
+<FONT color="green">151</FONT>            // per java.nio.Selector contract 0 input means infinite<a name="line.151"></a>
+<FONT color="green">152</FONT>            public int select(long timeout) throws IOException {<a name="line.152"></a>
+<FONT color="green">153</FONT>                    if (timeout &lt; 0) {<a name="line.153"></a>
+<FONT color="green">154</FONT>                            throw new IllegalArgumentException("Negative timeout");<a name="line.154"></a>
+<FONT color="green">155</FONT>                    }<a name="line.155"></a>
+<FONT color="green">156</FONT>                    long timeoutUDT = (timeout == 0) ? UDT_TIMEOUT_INFINITE : timeout;<a name="line.156"></a>
+<FONT color="green">157</FONT>                    return doSelectInsideLock(timeoutUDT);<a name="line.157"></a>
+<FONT color="green">158</FONT>            }<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>            @Override<a name="line.160"></a>
+<FONT color="green">161</FONT>            public int selectNow() throws IOException {<a name="line.161"></a>
+<FONT color="green">162</FONT>                    return doSelectInsideLock(UDT_TIMEOUT_NONE);<a name="line.162"></a>
+<FONT color="green">163</FONT>            }<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>            /**<a name="line.165"></a>
+<FONT color="green">166</FONT>             * Wakeup the selector. NOTE: it is recommended to user timed<a name="line.166"></a>
+<FONT color="green">167</FONT>             * {@link #select(long)} (say, timeout = 100 milliseconds) to avoid missed<a name="line.167"></a>
+<FONT color="green">168</FONT>             * {@link #wakeup()} calls which are rare but possible in current<a name="line.168"></a>
+<FONT color="green">169</FONT>             * implementation (accepted in favor of design simplicity / performance)<a name="line.169"></a>
+<FONT color="green">170</FONT>             */<a name="line.170"></a>
+<FONT color="green">171</FONT>            @Override<a name="line.171"></a>
+<FONT color="green">172</FONT>            public Selector wakeup() {<a name="line.172"></a>
+<FONT color="green">173</FONT>                    // publisher for volatile<a name="line.173"></a>
+<FONT color="green">174</FONT>                    wakeupStepCount++;<a name="line.174"></a>
+<FONT color="green">175</FONT>                    return this;<a name="line.175"></a>
+<FONT color="green">176</FONT>            }<a name="line.176"></a>
+<FONT color="green">177</FONT>    <a name="line.177"></a>
+<FONT color="green">178</FONT>            private volatile int wakeupStepCount;<a name="line.178"></a>
+<FONT color="green">179</FONT>    <a name="line.179"></a>
+<FONT color="green">180</FONT>            // guarded by doSelectInsideLock<a name="line.180"></a>
+<FONT color="green">181</FONT>            private int wakeupBaseCount;<a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>            private final void saveWakeupBase() {<a name="line.183"></a>
+<FONT color="green">184</FONT>                    wakeupBaseCount = wakeupStepCount;<a name="line.184"></a>
+<FONT color="green">185</FONT>            }<a name="line.185"></a>
+<FONT color="green">186</FONT>    <a name="line.186"></a>
+<FONT color="green">187</FONT>            private final boolean isWakeupPending() {<a name="line.187"></a>
+<FONT color="green">188</FONT>                    return wakeupBaseCount != wakeupStepCount;<a name="line.188"></a>
+<FONT color="green">189</FONT>            }<a name="line.189"></a>
+<FONT color="green">190</FONT>    <a name="line.190"></a>
+<FONT color="green">191</FONT>            // #######################################################################<a name="line.191"></a>
+<FONT color="green">192</FONT>    <a name="line.192"></a>
+<FONT color="green">193</FONT>            /**<a name="line.193"></a>
+<FONT color="green">194</FONT>             * Private views of the key sets<a name="line.194"></a>
+<FONT color="green">195</FONT>             */<a name="line.195"></a>
+<FONT color="green">196</FONT>    <a name="line.196"></a>
+<FONT color="green">197</FONT>            /**<a name="line.197"></a>
+<FONT color="green">198</FONT>             * The set of keys with data ready for an operation<a name="line.198"></a>
+<FONT color="green">199</FONT>             */<a name="line.199"></a>
+<FONT color="green">200</FONT>            private final Set&lt;SelectionKeyUDT&gt; selectedKeySet;<a name="line.200"></a>
+<FONT color="green">201</FONT>            /**<a name="line.201"></a>
+<FONT color="green">202</FONT>             * The set of keys registered with this Selector<a name="line.202"></a>
+<FONT color="green">203</FONT>             */<a name="line.203"></a>
+<FONT color="green">204</FONT>            private final Set&lt;SelectionKeyUDT&gt; registeredKeySet;<a name="line.204"></a>
+<FONT color="green">205</FONT>    <a name="line.205"></a>
+<FONT color="green">206</FONT>            // Public views of the key sets<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>            // totally immutable<a name="line.208"></a>
+<FONT color="green">209</FONT>            private final Set&lt;? extends SelectionKey&gt; publicRegisteredKeySet;<a name="line.209"></a>
+<FONT color="green">210</FONT>            // partially immutable: removal allowed, but not addition<a name="line.210"></a>
+<FONT color="green">211</FONT>            private final Set&lt;? extends SelectionKey&gt; publicSelectedKeySet;<a name="line.211"></a>
+<FONT color="green">212</FONT>            // mutable: requests for cancel<a name="line.212"></a>
+<FONT color="green">213</FONT>            private final Set&lt;SelectionKey&gt; cancelledKeySet;<a name="line.213"></a>
+<FONT color="green">214</FONT>    <a name="line.214"></a>
+<FONT color="green">215</FONT>            private final Map&lt;Integer, SelectionKeyUDT&gt; registeredKeyMap;<a name="line.215"></a>
+<FONT color="green">216</FONT>    <a name="line.216"></a>
+<FONT color="green">217</FONT>            /**<a name="line.217"></a>
+<FONT color="green">218</FONT>             * used by SocketUDT.select(); performance optimization: use final arrays<a name="line.218"></a>
+<FONT color="green">219</FONT>             */<a name="line.219"></a>
+<FONT color="green">220</FONT>            public final int maximimSelectorSize;<a name="line.220"></a>
+<FONT color="green">221</FONT>            //<a name="line.221"></a>
+<FONT color="green">222</FONT>            private final int[] readArray;<a name="line.222"></a>
+<FONT color="green">223</FONT>            private final int[] writeArray;<a name="line.223"></a>
+<FONT color="green">224</FONT>            private final int[] exceptArray;<a name="line.224"></a>
+<FONT color="green">225</FONT>            private final int[] sizeArray;<a name="line.225"></a>
+<FONT color="green">226</FONT>            //<a name="line.226"></a>
+<FONT color="green">227</FONT>            private final IntBuffer readBuffer;<a name="line.227"></a>
+<FONT color="green">228</FONT>            private final IntBuffer writeBuffer;<a name="line.228"></a>
+<FONT color="green">229</FONT>            private final IntBuffer exceptBuffer;<a name="line.229"></a>
+<FONT color="green">230</FONT>            private final IntBuffer sizeBuffer;<a name="line.230"></a>
+<FONT color="green">231</FONT>    <a name="line.231"></a>
+<FONT color="green">232</FONT>            /**<a name="line.232"></a>
+<FONT color="green">233</FONT>             * connector thread pool limit<a name="line.233"></a>
+<FONT color="green">234</FONT>             */<a name="line.234"></a>
+<FONT color="green">235</FONT>            public final int maximumConnectorSize;<a name="line.235"></a>
+<FONT color="green">236</FONT>            private final ConnectorThreadPoolUDT connectorPool;<a name="line.236"></a>
+<FONT color="green">237</FONT>    <a name="line.237"></a>
+<FONT color="green">238</FONT>            SelectorUDT(SelectorProvider provider, //<a name="line.238"></a>
+<FONT color="green">239</FONT>                            int maximumSelectorSize, int maximumConnectorSize) {<a name="line.239"></a>
+<FONT color="green">240</FONT>    <a name="line.240"></a>
+<FONT color="green">241</FONT>                    super(provider);<a name="line.241"></a>
+<FONT color="green">242</FONT>    <a name="line.242"></a>
+<FONT color="green">243</FONT>                    registeredKeyMap = new HashMap&lt;Integer, SelectionKeyUDT&gt;();<a name="line.243"></a>
+<FONT color="green">244</FONT>    <a name="line.244"></a>
+<FONT color="green">245</FONT>                    registeredKeySet = new HashSet&lt;SelectionKeyUDT&gt;();<a name="line.245"></a>
+<FONT color="green">246</FONT>                    selectedKeySet = new HashSet&lt;SelectionKeyUDT&gt;();<a name="line.246"></a>
+<FONT color="green">247</FONT>                    cancelledKeySet = cancelledKeys();<a name="line.247"></a>
+<FONT color="green">248</FONT>    <a name="line.248"></a>
+<FONT color="green">249</FONT>                    publicRegisteredKeySet = Collections.unmodifiableSet(registeredKeySet);<a name="line.249"></a>
+<FONT color="green">250</FONT>                    publicSelectedKeySet = HelperNIOUDT.ungrowableSet(selectedKeySet);<a name="line.250"></a>
+<FONT color="green">251</FONT>    <a name="line.251"></a>
+<FONT color="green">252</FONT>                    this.maximimSelectorSize = maximumSelectorSize;<a name="line.252"></a>
+<FONT color="green">253</FONT>                    if (isBufferBased) {<a name="line.253"></a>
+<FONT color="green">254</FONT>                            readBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);<a name="line.254"></a>
+<FONT color="green">255</FONT>                            writeBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);<a name="line.255"></a>
+<FONT color="green">256</FONT>                            exceptBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);<a name="line.256"></a>
+<FONT color="green">257</FONT>                            sizeBuffer = SocketUDT.newDirectIntBufer(UDT_SIZE_COUNT);<a name="line.257"></a>
+<FONT color="green">258</FONT>                            readArray = null;<a name="line.258"></a>
+<FONT color="green">259</FONT>                            writeArray = null;<a name="line.259"></a>
+<FONT color="green">260</FONT>                            exceptArray = null;<a name="line.260"></a>
+<FONT color="green">261</FONT>                            sizeArray = null;<a name="line.261"></a>
+<FONT color="green">262</FONT>                    } else {<a name="line.262"></a>
+<FONT color="green">263</FONT>                            readBuffer = null;<a name="line.263"></a>
+<FONT color="green">264</FONT>                            writeBuffer = null;<a name="line.264"></a>
+<FONT color="green">265</FONT>                            exceptBuffer = null;<a name="line.265"></a>
+<FONT color="green">266</FONT>                            sizeBuffer = null;<a name="line.266"></a>
+<FONT color="green">267</FONT>                            readArray = new int[maximumSelectorSize];<a name="line.267"></a>
+<FONT color="green">268</FONT>                            writeArray = new int[maximumSelectorSize];<a name="line.268"></a>
+<FONT color="green">269</FONT>                            exceptArray = new int[maximumSelectorSize];<a name="line.269"></a>
+<FONT color="green">270</FONT>                            sizeArray = new int[UDT_SIZE_COUNT];<a name="line.270"></a>
+<FONT color="green">271</FONT>                    }<a name="line.271"></a>
+<FONT color="green">272</FONT>    <a name="line.272"></a>
+<FONT color="green">273</FONT>                    this.maximumConnectorSize = maximumConnectorSize;<a name="line.273"></a>
+<FONT color="green">274</FONT>                    connectorPool = new ConnectorThreadPoolUDT(maximumConnectorSize);<a name="line.274"></a>
+<FONT color="green">275</FONT>    <a name="line.275"></a>
+<FONT color="green">276</FONT>            }<a name="line.276"></a>
+<FONT color="green">277</FONT>    <a name="line.277"></a>
+<FONT color="green">278</FONT>            public static int UDT_TIMEOUT_INFINITE = -1;<a name="line.278"></a>
+<FONT color="green">279</FONT>    <a name="line.279"></a>
+<FONT color="green">280</FONT>            public static int UDT_TIMEOUT_NONE = 0;<a name="line.280"></a>
+<FONT color="green">281</FONT>    <a name="line.281"></a>
+<FONT color="green">282</FONT>            private final int doSelectInsideLock(long millisTimeout) throws IOException {<a name="line.282"></a>
+<FONT color="green">283</FONT>                    if (!isOpen()) {<a name="line.283"></a>
+<FONT color="green">284</FONT>                            throw new ClosedSelectorException();<a name="line.284"></a>
+<FONT color="green">285</FONT>                    }<a name="line.285"></a>
+<FONT color="green">286</FONT>                    synchronized (this) {<a name="line.286"></a>
+<FONT color="green">287</FONT>                            synchronized (publicRegisteredKeySet) {<a name="line.287"></a>
+<FONT color="green">288</FONT>                                    synchronized (publicSelectedKeySet) {<a name="line.288"></a>
+<FONT color="green">289</FONT>                                            return doSelectReally(millisTimeout);<a name="line.289"></a>
+<FONT color="green">290</FONT>                                    }<a name="line.290"></a>
+<FONT color="green">291</FONT>                            }<a name="line.291"></a>
+<FONT color="green">292</FONT>                    }<a name="line.292"></a>
+<FONT color="green">293</FONT>            }<a name="line.293"></a>
+<FONT color="green">294</FONT>    <a name="line.294"></a>
+<FONT color="green">295</FONT>            //<a name="line.295"></a>
+<FONT color="green">296</FONT>    <a name="line.296"></a>
+<FONT color="green">297</FONT>            public static final String KEY_IS_ARRAY_BASED = //<a name="line.297"></a>
+<FONT color="green">298</FONT>            SelectorUDT.class.getName() + ".isArrayBased";<a name="line.298"></a>
+<FONT color="green">299</FONT>    <a name="line.299"></a>
+<FONT color="green">300</FONT>            private static final boolean isBufferBased;<a name="line.300"></a>
+<FONT color="green">301</FONT>    <a name="line.301"></a>
+<FONT color="green">302</FONT>            static {<a name="line.302"></a>
+<FONT color="green">303</FONT>                    String isArrayBased = System.getProperty(KEY_IS_ARRAY_BASED);<a name="line.303"></a>
+<FONT color="green">304</FONT>                    if (isArrayBased == null) {<a name="line.304"></a>
+<FONT color="green">305</FONT>                            isBufferBased = true;<a name="line.305"></a>
+<FONT color="green">306</FONT>                    } else {<a name="line.306"></a>
+<FONT color="green">307</FONT>                            isBufferBased = false;<a name="line.307"></a>
+<FONT color="green">308</FONT>                    }<a name="line.308"></a>
+<FONT color="green">309</FONT>                    log.debug("isBufferBased={}", isBufferBased);<a name="line.309"></a>
+<FONT color="green">310</FONT>            }<a name="line.310"></a>
+<FONT color="green">311</FONT>    <a name="line.311"></a>
+<FONT color="green">312</FONT>            private final void setReadInterest(int index, int socketID) {<a name="line.312"></a>
+<FONT color="green">313</FONT>                    if (isBufferBased) {<a name="line.313"></a>
+<FONT color="green">314</FONT>                            readBuffer.put(index, socketID);<a name="line.314"></a>
+<FONT color="green">315</FONT>                    } else {<a name="line.315"></a>
+<FONT color="green">316</FONT>                            readArray[index] = socketID;<a name="line.316"></a>
+<FONT color="green">317</FONT>                    }<a name="line.317"></a>
+<FONT color="green">318</FONT>            }<a name="line.318"></a>
+<FONT color="green">319</FONT>    <a name="line.319"></a>
+<FONT color="green">320</FONT>            private final int getReadInterest(int index) {<a name="line.320"></a>
+<FONT color="green">321</FONT>                    if (isBufferBased) {<a name="line.321"></a>
+<FONT color="green">322</FONT>                            return readBuffer.get(index);<a name="line.322"></a>
+<FONT color="green">323</FONT>                    } else {<a name="line.323"></a>
+<FONT color="green">324</FONT>                            return readArray[index];<a name="line.324"></a>
+<FONT color="green">325</FONT>                    }<a name="line.325"></a>
+<FONT color="green">326</FONT>            }<a name="line.326"></a>
+<FONT color="green">327</FONT>    <a name="line.327"></a>
+<FONT color="green">328</FONT>            private final void setWriteInterest(int index, int socketID) {<a name="line.328"></a>
+<FONT color="green">329</FONT>                    if (isBufferBased) {<a name="line.329"></a>
+<FONT color="green">330</FONT>                            writeBuffer.put(index, socketID);<a name="line.330"></a>
+<FONT color="green">331</FONT>                    } else {<a name="line.331"></a>
+<FONT color="green">332</FONT>                            writeArray[index] = socketID;<a name="line.332"></a>
+<FONT color="green">333</FONT>                    }<a name="line.333"></a>
+<FONT color="green">334</FONT>            }<a name="line.334"></a>
+<FONT color="green">335</FONT>    <a name="line.335"></a>
+<FONT color="green">336</FONT>            private final int getWriteInterest(int index) {<a name="line.336"></a>
+<FONT color="green">337</FONT>                    if (isBufferBased) {<a name="line.337"></a>
+<FONT color="green">338</FONT>                            return writeBuffer.get(index);<a name="line.338"></a>
+<FONT color="green">339</FONT>                    } else {<a name="line.339"></a>
+<FONT color="green">340</FONT>                            return writeArray[index];<a name="line.340"></a>
+<FONT color="green">341</FONT>                    }<a name="line.341"></a>
+<FONT color="green">342</FONT>            }<a name="line.342"></a>
+<FONT color="green">343</FONT>    <a name="line.343"></a>
+<FONT color="green">344</FONT>            private final void setExceptInterest(int index, int socketID) {<a name="line.344"></a>
+<FONT color="green">345</FONT>                    if (isBufferBased) {<a name="line.345"></a>
+<FONT color="green">346</FONT>                            exceptBuffer.put(index, socketID);<a name="line.346"></a>
+<FONT color="green">347</FONT>                    } else {<a name="line.347"></a>
+<FONT color="green">348</FONT>                            exceptArray[index] = socketID;<a name="line.348"></a>
+<FONT color="green">349</FONT>                    }<a name="line.349"></a>
+<FONT color="green">350</FONT>            }<a name="line.350"></a>
+<FONT color="green">351</FONT>    <a name="line.351"></a>
+<FONT color="green">352</FONT>            private final int getExceptInterest(int index) {<a name="line.352"></a>
+<FONT color="green">353</FONT>                    if (isBufferBased) {<a name="line.353"></a>
+<FONT color="green">354</FONT>                            return exceptBuffer.get(index);<a name="line.354"></a>
+<FONT color="green">355</FONT>                    } else {<a name="line.355"></a>
+<FONT color="green">356</FONT>                            return exceptArray[index];<a name="line.356"></a>
+<FONT color="green">357</FONT>                    }<a name="line.357"></a>
+<FONT color="green">358</FONT>            }<a name="line.358"></a>
+<FONT color="green">359</FONT>    <a name="line.359"></a>
+<FONT color="green">360</FONT>            private final int doSelectSocketUDT(long timeout) throws ExceptionUDT {<a name="line.360"></a>
+<FONT color="green">361</FONT>                    if (isBufferBased) {<a name="line.361"></a>
+<FONT color="green">362</FONT>                            return SocketUDT.select(readBuffer, writeBuffer, exceptBuffer,<a name="line.362"></a>
+<FONT color="green">363</FONT>                                            sizeBuffer, timeout);<a name="line.363"></a>
+<FONT color="green">364</FONT>                    } else {<a name="line.364"></a>
+<FONT color="green">365</FONT>                            return SocketUDT.select(readArray, writeArray, exceptArray,<a name="line.365"></a>
+<FONT color="green">366</FONT>                                            sizeArray, timeout);<a name="line.366"></a>
+<FONT color="green">367</FONT>                    }<a name="line.367"></a>
+<FONT color="green">368</FONT>            }<a name="line.368"></a>
+<FONT color="green">369</FONT>    <a name="line.369"></a>
+<FONT color="green">370</FONT>            private final void setInterestSize(int readSize, int writeSize,<a name="line.370"></a>
+<FONT color="green">371</FONT>                            int exceptSize) {<a name="line.371"></a>
+<FONT color="green">372</FONT>                    if (isBufferBased) {<a name="line.372"></a>
+<FONT color="green">373</FONT>                            sizeBuffer.put(UDT_READ_INDEX, readSize);<a name="line.373"></a>
+<FONT color="green">374</FONT>                            sizeBuffer.put(UDT_WRITE_INDEX, writeSize);<a name="line.374"></a>
+<FONT color="green">375</FONT>                            sizeBuffer.put(UDT_EXCEPT_INDEX, exceptSize);<a name="line.375"></a>
+<FONT color="green">376</FONT>                    } else {<a name="line.376"></a>
+<FONT color="green">377</FONT>                            sizeArray[UDT_READ_INDEX] = readSize;<a name="line.377"></a>
+<FONT color="green">378</FONT>                            sizeArray[UDT_WRITE_INDEX] = writeSize;<a name="line.378"></a>
+<FONT color="green">379</FONT>                            sizeArray[UDT_EXCEPT_INDEX] = exceptSize;<a name="line.379"></a>
+<FONT color="green">380</FONT>                    }<a name="line.380"></a>
+<FONT color="green">381</FONT>            }<a name="line.381"></a>
+<FONT color="green">382</FONT>    <a name="line.382"></a>
+<FONT color="green">383</FONT>            private final int getReadInterestSize() {<a name="line.383"></a>
+<FONT color="green">384</FONT>                    if (isBufferBased) {<a name="line.384"></a>
+<FONT color="green">385</FONT>                            return sizeBuffer.get(UDT_READ_INDEX);<a name="line.385"></a>
+<FONT color="green">386</FONT>                    } else {<a name="line.386"></a>
+<FONT color="green">387</FONT>                            return sizeArray[UDT_READ_INDEX];<a name="line.387"></a>
+<FONT color="green">388</FONT>                    }<a name="line.388"></a>
+<FONT color="green">389</FONT>            }<a name="line.389"></a>
+<FONT color="green">390</FONT>    <a name="line.390"></a>
+<FONT color="green">391</FONT>            private final int getWriteInterestSize() {<a name="line.391"></a>
+<FONT color="green">392</FONT>                    if (isBufferBased) {<a name="line.392"></a>
+<FONT color="green">393</FONT>                            return sizeBuffer.get(UDT_WRITE_INDEX);<a name="line.393"></a>
+<FONT color="green">394</FONT>                    } else {<a name="line.394"></a>
+<FONT color="green">395</FONT>                            return sizeArray[UDT_WRITE_INDEX];<a name="line.395"></a>
+<FONT color="green">396</FONT>                    }<a name="line.396"></a>
+<FONT color="green">397</FONT>            }<a name="line.397"></a>
+<FONT color="green">398</FONT>    <a name="line.398"></a>
+<FONT color="green">399</FONT>            private final int getExceptInterestSize() {<a name="line.399"></a>
+<FONT color="green">400</FONT>                    if (isBufferBased) {<a name="line.400"></a>
+<FONT color="green">401</FONT>                            return sizeBuffer.get(UDT_EXCEPT_INDEX);<a name="line.401"></a>
+<FONT color="green">402</FONT>                    } else {<a name="line.402"></a>
+<FONT color="green">403</FONT>                            return sizeArray[UDT_EXCEPT_INDEX];<a name="line.403"></a>
+<FONT color="green">404</FONT>                    }<a name="line.404"></a>
+<FONT color="green">405</FONT>            }<a name="line.405"></a>
+<FONT color="green">406</FONT>    <a name="line.406"></a>
+<FONT color="green">407</FONT>            private final void prepareInterest() {<a name="line.407"></a>
+<FONT color="green">408</FONT>    <a name="line.408"></a>
+<FONT color="green">409</FONT>                    int readSize = 0;<a name="line.409"></a>
+<FONT color="green">410</FONT>                    int writeSize = 0;<a name="line.410"></a>
+<FONT color="green">411</FONT>                    int exceptSize = 0;<a name="line.411"></a>
+<FONT color="green">412</FONT>    <a name="line.412"></a>
+<FONT color="green">413</FONT>                    for (final SelectionKeyUDT keyUDT : registeredKeySet) {<a name="line.413"></a>
+<FONT color="green">414</FONT>    <a name="line.414"></a>
+<FONT color="green">415</FONT>                            final ChannelUDT channelUDT = keyUDT.channelUDT;<a name="line.415"></a>
+<FONT color="green">416</FONT>                            keyUDT.readyOps = 0; // publisher for volatile<a name="line.416"></a>
+<FONT color="green">417</FONT>    <a name="line.417"></a>
+<FONT color="green">418</FONT>                            if (channelUDT.isOpenSocketUDT()) {<a name="line.418"></a>
+<FONT color="green">419</FONT>    <a name="line.419"></a>
+<FONT color="green">420</FONT>                                    final int interestOps = keyUDT.interestOps;<a name="line.420"></a>
+<FONT color="green">421</FONT>                                    final int socketID = keyUDT.socketID;<a name="line.421"></a>
+<FONT color="green">422</FONT>                                    final KindUDT channelType = channelUDT.getChannelKind();<a name="line.422"></a>
+<FONT color="green">423</FONT>    <a name="line.423"></a>
+<FONT color="green">424</FONT>                                    if ((interestOps &amp; (OP_ACCEPT)) != 0) {<a name="line.424"></a>
+<FONT color="green">425</FONT>                                            assert channelType == KindUDT.ACCEPTOR;<a name="line.425"></a>
+<FONT color="green">426</FONT>                                            setReadInterest(readSize, socketID);<a name="line.426"></a>
+<FONT color="green">427</FONT>                                            readSize++;<a name="line.427"></a>
+<FONT color="green">428</FONT>                                    }<a name="line.428"></a>
+<FONT color="green">429</FONT>                                    if ((interestOps &amp; (OP_READ)) != 0) {<a name="line.429"></a>
+<FONT color="green">430</FONT>                                            assert channelType == KindUDT.CONNECTOR;<a name="line.430"></a>
+<FONT color="green">431</FONT>                                            setReadInterest(readSize, socketID);<a name="line.431"></a>
+<FONT color="green">432</FONT>                                            readSize++;<a name="line.432"></a>
+<FONT color="green">433</FONT>                                    }<a name="line.433"></a>
+<FONT color="green">434</FONT>                                    if ((interestOps &amp; (OP_WRITE)) != 0) {<a name="line.434"></a>
+<FONT color="green">435</FONT>                                            assert channelType == KindUDT.CONNECTOR;<a name="line.435"></a>
+<FONT color="green">436</FONT>                                            setWriteInterest(writeSize, socketID);<a name="line.436"></a>
+<FONT color="green">437</FONT>                                            writeSize++;<a name="line.437"></a>
+<FONT color="green">438</FONT>                                    }<a name="line.438"></a>
+<FONT color="green">439</FONT>                                    if ((interestOps &amp; (OP_CONNECT)) != 0) {<a name="line.439"></a>
+<FONT color="green">440</FONT>                                            assert channelType == KindUDT.CONNECTOR;<a name="line.440"></a>
+<FONT color="green">441</FONT>                                            assert (interestOps &amp; (OP_READ | OP_WRITE | OP_ACCEPT)) == 0;<a name="line.441"></a>
+<FONT color="green">442</FONT>                                            /*<a name="line.442"></a>
+<FONT color="green">443</FONT>                                             * UDT does not support select() for connect() operation as<a name="line.443"></a>
+<FONT color="green">444</FONT>                                             * yet; using thread pool instead<a name="line.444"></a>
+<FONT color="green">445</FONT>                                             */<a name="line.445"></a>
+<FONT color="green">446</FONT>                                    }<a name="line.446"></a>
+<FONT color="green">447</FONT>                            } else {<a name="line.447"></a>
+<FONT color="green">448</FONT>                                    synchronized (cancelledKeySet) {<a name="line.448"></a>
+<FONT color="green">449</FONT>                                            cancelledKeySet.add(keyUDT);<a name="line.449"></a>
+<FONT color="green">450</FONT>                                    }<a name="line.450"></a>
+<FONT color="green">451</FONT>                            }<a name="line.451"></a>
+<FONT color="green">452</FONT>                    }<a name="line.452"></a>
+<FONT color="green">453</FONT>    <a name="line.453"></a>
+<FONT color="green">454</FONT>                    // set sizes<a name="line.454"></a>
+<FONT color="green">455</FONT>                    setInterestSize(readSize, writeSize, exceptSize);<a name="line.455"></a>
+<FONT color="green">456</FONT>    <a name="line.456"></a>
+<FONT color="green">457</FONT>            }<a name="line.457"></a>
+<FONT color="green">458</FONT>    <a name="line.458"></a>
+<FONT color="green">459</FONT>            private final void processInterest() {<a name="line.459"></a>
+<FONT color="green">460</FONT>    <a name="line.460"></a>
+<FONT color="green">461</FONT>                    // add ready to selected<a name="line.461"></a>
+<FONT color="green">462</FONT>                    updateRead();<a name="line.462"></a>
+<FONT color="green">463</FONT>                    updateWrite();<a name="line.463"></a>
+<FONT color="green">464</FONT>                    updateExcept();<a name="line.464"></a>
+<FONT color="green">465</FONT>    <a name="line.465"></a>
+<FONT color="green">466</FONT>            }<a name="line.466"></a>
+<FONT color="green">467</FONT>    <a name="line.467"></a>
+<FONT color="green">468</FONT>            /**<a name="line.468"></a>
+<FONT color="green">469</FONT>             * note: millisTimeout input values contract:<a name="line.469"></a>
+<FONT color="green">470</FONT>             * <a name="line.470"></a>
+<FONT color="green">471</FONT>             * -1 : infinite<a name="line.471"></a>
+<FONT color="green">472</FONT>             * <a name="line.472"></a>
+<FONT color="green">473</FONT>             * =0 : immediate (but really up to 10 ms UDT resolution slice)<a name="line.473"></a>
+<FONT color="green">474</FONT>             * <a name="line.474"></a>
+<FONT color="green">475</FONT>             * &gt;0 : finite<a name="line.475"></a>
+<FONT color="green">476</FONT>             */<a name="line.476"></a>
+<FONT color="green">477</FONT>            private final int performSelect(long millisTimeout) throws ExceptionUDT {<a name="line.477"></a>
+<FONT color="green">478</FONT>                    int readyCount = 0;<a name="line.478"></a>
+<FONT color="green">479</FONT>                    saveWakeupBase();<a name="line.479"></a>
+<FONT color="green">480</FONT>                    if (millisTimeout &lt; 0) {<a name="line.480"></a>
+<FONT color="green">481</FONT>                            /* infinite: do select in slices; check for wakeup; */<a name="line.481"></a>
+<FONT color="green">482</FONT>                            do {<a name="line.482"></a>
+<FONT color="green">483</FONT>                                    readyCount = doSelectSocketUDT(DEFAULT_MIN_SELECTOR_TIMEOUT);<a name="line.483"></a>
+<FONT color="green">484</FONT>                                    if (readyCount &gt; 0 || isWakeupPending()) {<a name="line.484"></a>
+<FONT color="green">485</FONT>                                            break;<a name="line.485"></a>
+<FONT color="green">486</FONT>                                    }<a name="line.486"></a>
+<FONT color="green">487</FONT>                            } while (true);<a name="line.487"></a>
+<FONT color="green">488</FONT>                    } else if (millisTimeout &gt; 0) {<a name="line.488"></a>
+<FONT color="green">489</FONT>                            /* finite: do select in slices; check for wakeup; count down */<a name="line.489"></a>
+<FONT color="green">490</FONT>                            do {<a name="line.490"></a>
+<FONT color="green">491</FONT>                                    readyCount = doSelectSocketUDT(DEFAULT_MIN_SELECTOR_TIMEOUT);<a name="line.491"></a>
+<FONT color="green">492</FONT>                                    if (readyCount &gt; 0 || isWakeupPending()) {<a name="line.492"></a>
+<FONT color="green">493</FONT>                                            break;<a name="line.493"></a>
+<FONT color="green">494</FONT>                                    }<a name="line.494"></a>
+<FONT color="green">495</FONT>                                    millisTimeout -= DEFAULT_MIN_SELECTOR_TIMEOUT;<a name="line.495"></a>
+<FONT color="green">496</FONT>                            } while (millisTimeout &gt; 0);<a name="line.496"></a>
+<FONT color="green">497</FONT>                    } else { // millisTimeout == 0<a name="line.497"></a>
+<FONT color="green">498</FONT>                            /* immediate: one shot select */<a name="line.498"></a>
+<FONT color="green">499</FONT>                            readyCount = doSelectSocketUDT(0);<a name="line.499"></a>
+<FONT color="green">500</FONT>                    }<a name="line.500"></a>
+<FONT color="green">501</FONT>                    return readyCount;<a name="line.501"></a>
+<FONT color="green">502</FONT>            }<a name="line.502"></a>
+<FONT color="green">503</FONT>    <a name="line.503"></a>
+<FONT color="green">504</FONT>            /**<a name="line.504"></a>
+<FONT color="green">505</FONT>             * note: return value contract:<a name="line.505"></a>
+<FONT color="green">506</FONT>             * <a name="line.506"></a>
+<FONT color="green">507</FONT>             * &lt;0 : should not happen<a name="line.507"></a>
+<FONT color="green">508</FONT>             * <a name="line.508"></a>
+<FONT color="green">509</FONT>             * =0 : means nothing was selected/timeout<a name="line.509"></a>
+<FONT color="green">510</FONT>             * <a name="line.510"></a>
+<FONT color="green">511</FONT>             * &gt;0 : number of pending r/w ops, NOT number of selected keys<a name="line.511"></a>
+<FONT color="green">512</FONT>             */<a name="line.512"></a>
+<FONT color="green">513</FONT>            private final int doSelectReally(long millisTimeout) throws IOException {<a name="line.513"></a>
+<FONT color="green">514</FONT>    <a name="line.514"></a>
+<FONT color="green">515</FONT>                    selectedKeySet.clear();<a name="line.515"></a>
+<FONT color="green">516</FONT>    <a name="line.516"></a>
+<FONT color="green">517</FONT>                    processCancelled();<a name="line.517"></a>
+<FONT color="green">518</FONT>    <a name="line.518"></a>
+<FONT color="green">519</FONT>                    int readyCount = 0;<a name="line.519"></a>
+<FONT color="green">520</FONT>    <a name="line.520"></a>
+<FONT color="green">521</FONT>                    trySelect: try {<a name="line.521"></a>
+<FONT color="green">522</FONT>                            // java.nio.Selector contract for wakeup()<a name="line.522"></a>
+<FONT color="green">523</FONT>                            begin();<a name="line.523"></a>
+<FONT color="green">524</FONT>                            // pre select<a name="line.524"></a>
+<FONT color="green">525</FONT>                            prepareInterest();<a name="line.525"></a>
+<FONT color="green">526</FONT>                            // into select<a name="line.526"></a>
+<FONT color="green">527</FONT>                            readyCount = performSelect(millisTimeout);<a name="line.527"></a>
+<FONT color="green">528</FONT>                            if (readyCount == 0) {<a name="line.528"></a>
+<FONT color="green">529</FONT>                                    // timeout, nothing is ready; no need to process post select<a name="line.529"></a>
+<FONT color="green">530</FONT>                                    break trySelect;<a name="line.530"></a>
+<FONT color="green">531</FONT>                            }<a name="line.531"></a>
+<FONT color="green">532</FONT>                            // post select<a name="line.532"></a>
+<FONT color="green">533</FONT>                            processInterest();<a name="line.533"></a>
+<FONT color="green">534</FONT>                    } finally {<a name="line.534"></a>
+<FONT color="green">535</FONT>                            // java.nio.Selector contract for wakeup()<a name="line.535"></a>
+<FONT color="green">536</FONT>                            end();<a name="line.536"></a>
+<FONT color="green">537</FONT>                    }<a name="line.537"></a>
+<FONT color="green">538</FONT>    <a name="line.538"></a>
+<FONT color="green">539</FONT>                    // using thread pool based connect() processor<a name="line.539"></a>
+<FONT color="green">540</FONT>                    readyCount += updateConnect();<a name="line.540"></a>
+<FONT color="green">541</FONT>    <a name="line.541"></a>
+<FONT color="green">542</FONT>                    assert readyCount &gt;= 0;<a name="line.542"></a>
+<FONT color="green">543</FONT>    <a name="line.543"></a>
+<FONT color="green">544</FONT>                    return readyCount;<a name="line.544"></a>
+<FONT color="green">545</FONT>    <a name="line.545"></a>
+<FONT color="green">546</FONT>            }<a name="line.546"></a>
+<FONT color="green">547</FONT>    <a name="line.547"></a>
+<FONT color="green">548</FONT>            private final int updateConnect() {<a name="line.548"></a>
+<FONT color="green">549</FONT>                    final Queue&lt;SelectionKeyUDT&gt; readyQueue = connectorPool.readyQueue;<a name="line.549"></a>
+<FONT color="green">550</FONT>                    if (readyQueue.isEmpty()) {<a name="line.550"></a>
+<FONT color="green">551</FONT>                            return 0;<a name="line.551"></a>
+<FONT color="green">552</FONT>                    }<a name="line.552"></a>
+<FONT color="green">553</FONT>                    int updateCount = 0;<a name="line.553"></a>
+<FONT color="green">554</FONT>                    SelectionKeyUDT keyUDT;<a name="line.554"></a>
+<FONT color="green">555</FONT>                    while ((keyUDT = readyQueue.poll()) != null) {<a name="line.555"></a>
+<FONT color="green">556</FONT>                            // contract:<a name="line.556"></a>
+<FONT color="green">557</FONT>                            assert keyUDT.channelUDT.getChannelKind() == KindUDT.CONNECTOR;<a name="line.557"></a>
+<FONT color="green">558</FONT>                            assert registeredKeySet.contains(keyUDT);<a name="line.558"></a>
+<FONT color="green">559</FONT>                            assert (keyUDT.interestOps &amp; OP_CONNECT) != 0;<a name="line.559"></a>
+<FONT color="green">560</FONT>                            assert (keyUDT.interestOps &amp; (OP_READ | OP_WRITE | OP_ACCEPT)) == 0;<a name="line.560"></a>
+<FONT color="green">561</FONT>                            //<a name="line.561"></a>
+<FONT color="green">562</FONT>                            keyUDT.readyOps |= OP_CONNECT;<a name="line.562"></a>
+<FONT color="green">563</FONT>                            selectedKeySet.add(keyUDT);<a name="line.563"></a>
+<FONT color="green">564</FONT>                            updateCount++;<a name="line.564"></a>
+<FONT color="green">565</FONT>                    }<a name="line.565"></a>
+<FONT color="green">566</FONT>                    return updateCount;<a name="line.566"></a>
+<FONT color="green">567</FONT>            }<a name="line.567"></a>
+<FONT color="green">568</FONT>    <a name="line.568"></a>
+<FONT color="green">569</FONT>            private final void updateRead() {<a name="line.569"></a>
+<FONT color="green">570</FONT>                    final int readSize = getReadInterestSize();<a name="line.570"></a>
+<FONT color="green">571</FONT>                    for (int index = 0; index &lt; readSize; index++) {<a name="line.571"></a>
+<FONT color="green">572</FONT>                            final int socketId = getReadInterest(index);<a name="line.572"></a>
+<FONT color="green">573</FONT>                            final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);<a name="line.573"></a>
+<FONT color="green">574</FONT>                            assert keyUDT != null;<a name="line.574"></a>
+<FONT color="green">575</FONT>                            switch (keyUDT.channelUDT.getChannelKind()) {<a name="line.575"></a>
+<FONT color="green">576</FONT>                            case ACCEPTOR:<a name="line.576"></a>
+<FONT color="green">577</FONT>                                    keyUDT.readyOps |= OP_ACCEPT;<a name="line.577"></a>
+<FONT color="green">578</FONT>                                    break;<a name="line.578"></a>
+<FONT color="green">579</FONT>                            case CONNECTOR:<a name="line.579"></a>
+<FONT color="green">580</FONT>                                    keyUDT.readyOps |= OP_READ;<a name="line.580"></a>
+<FONT color="green">581</FONT>                                    break;<a name="line.581"></a>
+<FONT color="green">582</FONT>                            default:<a name="line.582"></a>
+<FONT color="green">583</FONT>                                    assert false : "unexpected default";<a name="line.583"></a>
+<FONT color="green">584</FONT>                                    continue;<a name="line.584"></a>
+<FONT color="green">585</FONT>                            }<a name="line.585"></a>
+<FONT color="green">586</FONT>                            selectedKeySet.add(keyUDT);<a name="line.586"></a>
+<FONT color="green">587</FONT>                    }<a name="line.587"></a>
+<FONT color="green">588</FONT>            }<a name="line.588"></a>
+<FONT color="green">589</FONT>    <a name="line.589"></a>
+<FONT color="green">590</FONT>            private final void updateWrite() {<a name="line.590"></a>
+<FONT color="green">591</FONT>                    final int writeSize = getWriteInterestSize();<a name="line.591"></a>
+<FONT color="green">592</FONT>                    for (int index = 0; index &lt; writeSize; index++) {<a name="line.592"></a>
+<FONT color="green">593</FONT>                            final int socketId = getWriteInterest(index);<a name="line.593"></a>
+<FONT color="green">594</FONT>                            final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);<a name="line.594"></a>
+<FONT color="green">595</FONT>                            assert keyUDT != null;<a name="line.595"></a>
+<FONT color="green">596</FONT>                            switch (keyUDT.channelUDT.getChannelKind()) {<a name="line.596"></a>
+<FONT color="green">597</FONT>                            case ACCEPTOR:<a name="line.597"></a>
+<FONT color="green">598</FONT>                                    assert false : "unexpected ACCEPTOR";<a name="line.598"></a>
+<FONT color="green">599</FONT>                                    continue;<a name="line.599"></a>
+<FONT color="green">600</FONT>                            case CONNECTOR:<a name="line.600"></a>
+<FONT color="green">601</FONT>                                    keyUDT.readyOps |= OP_WRITE;<a name="line.601"></a>
+<FONT color="green">602</FONT>                                    break;<a name="line.602"></a>
+<FONT color="green">603</FONT>                            default:<a name="line.603"></a>
+<FONT color="green">604</FONT>                                    assert false : "unexpected default";<a name="line.604"></a>
+<FONT color="green">605</FONT>                                    continue;<a name="line.605"></a>
+<FONT color="green">606</FONT>                            }<a name="line.606"></a>
+<FONT color="green">607</FONT>                            selectedKeySet.add(keyUDT);<a name="line.607"></a>
+<FONT color="green">608</FONT>                    }<a name="line.608"></a>
+<FONT color="green">609</FONT>            }<a name="line.609"></a>
+<FONT color="green">610</FONT>    <a name="line.610"></a>
+<FONT color="green">611</FONT>            private final void updateExcept() {<a name="line.611"></a>
+<FONT color="green">612</FONT>                    final int exceptSize = getExceptInterestSize();<a name="line.612"></a>
+<FONT color="green">613</FONT>                    for (int k = 0; k &lt; exceptSize; k++) {<a name="line.613"></a>
+<FONT color="green">614</FONT>                            final int socketId = getExceptInterest(k);<a name="line.614"></a>
+<FONT color="green">615</FONT>                            final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);<a name="line.615"></a>
+<FONT color="green">616</FONT>                            assert keyUDT != null;<a name="line.616"></a>
+<FONT color="green">617</FONT>                            switch (keyUDT.channelUDT.getChannelKind()) {<a name="line.617"></a>
+<FONT color="green">618</FONT>                            case ACCEPTOR:<a name="line.618"></a>
+<FONT color="green">619</FONT>                            case CONNECTOR:<a name="line.619"></a>
+<FONT color="green">620</FONT>                                    // set all ready OPS to throw on any operation<a name="line.620"></a>
+<FONT color="green">621</FONT>                                    keyUDT.readyOps |= keyUDT.channel().validOps();<a name="line.621"></a>
+<FONT color="green">622</FONT>                                    break;<a name="line.622"></a>
+<FONT color="green">623</FONT>                            default:<a name="line.623"></a>
+<FONT color="green">624</FONT>                                    assert false : "unexpected default";<a name="line.624"></a>
+<FONT color="green">625</FONT>                                    continue;<a name="line.625"></a>
+<FONT color="green">626</FONT>                            }<a name="line.626"></a>
+<FONT color="green">627</FONT>                            selectedKeySet.add(keyUDT);<a name="line.627"></a>
+<FONT color="green">628</FONT>                    }<a name="line.628"></a>
+<FONT color="green">629</FONT>            }<a name="line.629"></a>
+<FONT color="green">630</FONT>    <a name="line.630"></a>
+<FONT color="green">631</FONT>            private final void processCancelled() throws IOException {<a name="line.631"></a>
+<FONT color="green">632</FONT>                    /*<a name="line.632"></a>
+<FONT color="green">633</FONT>                     * Precondition: Synchronized on this, publicRegisteredKeySet,<a name="line.633"></a>
+<FONT color="green">634</FONT>                     * publicSelectedKeySet<a name="line.634"></a>
+<FONT color="green">635</FONT>                     */<a name="line.635"></a>
+<FONT color="green">636</FONT>                    synchronized (cancelledKeySet) {<a name="line.636"></a>
+<FONT color="green">637</FONT>                            if (!cancelledKeySet.isEmpty()) {<a name="line.637"></a>
+<FONT color="green">638</FONT>                                    for (final SelectionKey key : cancelledKeySet) {<a name="line.638"></a>
+<FONT color="green">639</FONT>    <a name="line.639"></a>
+<FONT color="green">640</FONT>                                            final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;<a name="line.640"></a>
+<FONT color="green">641</FONT>    <a name="line.641"></a>
+<FONT color="green">642</FONT>                                            // XXX the only place with "remove"<a name="line.642"></a>
+<FONT color="green">643</FONT>    <a name="line.643"></a>
+<FONT color="green">644</FONT>                                            final SelectionKeyUDT removed = //<a name="line.644"></a>
+<FONT color="green">645</FONT>                                            registeredKeyMap.remove(keyUDT.socketID);<a name="line.645"></a>
+<FONT color="green">646</FONT>                                            assert removed != null;<a name="line.646"></a>
+<FONT color="green">647</FONT>    <a name="line.647"></a>
+<FONT color="green">648</FONT>                                            final boolean isRemoved = //<a name="line.648"></a>
+<FONT color="green">649</FONT>                                            registeredKeySet.remove(keyUDT);<a name="line.649"></a>
+<FONT color="green">650</FONT>                                            assert isRemoved;<a name="line.650"></a>
+<FONT color="green">651</FONT>    <a name="line.651"></a>
+<FONT color="green">652</FONT>                                    }<a name="line.652"></a>
+<FONT color="green">653</FONT>                                    cancelledKeySet.clear();<a name="line.653"></a>
+<FONT color="green">654</FONT>                            }<a name="line.654"></a>
+<FONT color="green">655</FONT>                    }<a name="line.655"></a>
+<FONT color="green">656</FONT>            }<a name="line.656"></a>
+<FONT color="green">657</FONT>    <a name="line.657"></a>
+<FONT color="green">658</FONT>            final void submitConnectRequest(SelectionKeyUDT keyUDT,<a name="line.658"></a>
+<FONT color="green">659</FONT>                            InetSocketAddress remote) throws IOException {<a name="line.659"></a>
+<FONT color="green">660</FONT>    <a name="line.660"></a>
+<FONT color="green">661</FONT>                    // TODO think again if lack of sync is OK?<a name="line.661"></a>
+<FONT color="green">662</FONT>    <a name="line.662"></a>
+<FONT color="green">663</FONT>                    if (!registeredKeySet.contains(keyUDT)) {<a name="line.663"></a>
+<FONT color="green">664</FONT>                            throw new IOException(//<a name="line.664"></a>
+<FONT color="green">665</FONT>                                            "connect request while not registered");<a name="line.665"></a>
+<FONT color="green">666</FONT>                    }<a name="line.666"></a>
+<FONT color="green">667</FONT>    <a name="line.667"></a>
+<FONT color="green">668</FONT>                    if ((keyUDT.interestOps &amp; OP_CONNECT) == 0) {<a name="line.668"></a>
+<FONT color="green">669</FONT>                            throw new IOException("connect request while not interested;"<a name="line.669"></a>
+<FONT color="green">670</FONT>                                            + " key=" + keyUDT);<a name="line.670"></a>
+<FONT color="green">671</FONT>                    }<a name="line.671"></a>
+<FONT color="green">672</FONT>    <a name="line.672"></a>
+<FONT color="green">673</FONT>                    if ((keyUDT.interestOps &amp; (OP_ACCEPT | OP_READ | OP_WRITE)) != 0) {<a name="line.673"></a>
+<FONT color="green">674</FONT>                            throw new IOException("connect request while is not sole interest;"<a name="line.674"></a>
+<FONT color="green">675</FONT>                                            + " key=" + keyUDT);<a name="line.675"></a>
+<FONT color="green">676</FONT>                    }<a name="line.676"></a>
+<FONT color="green">677</FONT>    <a name="line.677"></a>
+<FONT color="green">678</FONT>                    connectorPool.submitRequest(keyUDT, remote);<a name="line.678"></a>
+<FONT color="green">679</FONT>    <a name="line.679"></a>
+<FONT color="green">680</FONT>            }<a name="line.680"></a>
+<FONT color="green">681</FONT>    <a name="line.681"></a>
+<FONT color="green">682</FONT>    }<a name="line.682"></a>
 
 
 
@@ -780,7 +743,6 @@
 
 
 
-</pre>
-</div>
-</body>
-</html>
+</PRE>
+</BODY>
+</HTML>
