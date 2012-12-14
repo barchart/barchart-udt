@@ -513,7 +513,7 @@
 								<optimize>none</optimize>
 								<exceptions>true</exceptions>
 								<multiThreaded>true</multiThreaded>
-								
+
 								<clearDefaultOptions>false</clearDefaultOptions>
 								<clearDefaultDefines>false</clearDefaultDefines>
 								<clearDefaultUndefines>false</clearDefaultUndefines>
@@ -563,6 +563,36 @@
 						</executions>
 					</plugin>
 
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- apply default formatting -->
+		<profile>
+			<id>format-source</id>
+			<properties>
+				<!-- stored in source repository -->
+				<formatterPreferences>${basedir}/.settings/org.eclipse.jdt.core.prefs</formatterPreferences>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.kuali.maven.plugins</groupId>
+						<artifactId>maven-eclipse-formatter-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<id>format-java</id>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>format</goal>
+								</goals>
+								<configuration>
+									<formatterPreferences>${formatterPreferences}</formatterPreferences>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
