@@ -9,7 +9,7 @@
 -->
 <project default="default" basedir="./..">
 
-	<property name="tag" value="barchart-udt-archon-2.0.0" />
+	<property name="tag" value="barchart-udt-2.0.0" />
 
 	<basename property="project" file="${basedir}" />
 
