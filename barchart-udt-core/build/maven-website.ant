@@ -22,12 +22,6 @@
 			<os family="windows" />
 		</condition>
 
-		<echo message="select tag" />
-		<exec executable="git">
-			<arg value="checkout" />
-			<arg value="${tag}" />
-		</exec>
-
 		<exec executable="${mvn}">
 
 			<arg value="validate" />
@@ -36,12 +30,6 @@
 			<arg value="--activate-profiles" />
 			<arg value="website" />
 
-		</exec>
-
-		<echo message="select master" />
-		<exec executable="git">
-			<arg value="checkout" />
-			<arg value="master" />
 		</exec>
 
 	</target>
