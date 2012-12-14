@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="$classCTimer.html" title="CTimer" alt="" coords="5,6,72,37"/>
-<area shape="rect" id="node4" href="$classCSndQueue.html" title="CSndQueue" alt="" coords="96,6,192,37"/>
-<area shape="rect" id="node6" href="$classCChannel.html" title="CChannel" alt="" coords="227,6,309,37"/>
-<area shape="rect" id="node8" href="$classCRcvQueue.html" title="CRcvQueue" alt="" coords="333,6,427,37"/>
-</map>
