@@ -233,8 +233,8 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			// see contract for receive()
 
 			if (sizeReceived < 0) {
-				log.trace("nothing was received; socketID={}",
-						socket.getSocketId());
+				log.trace("nothing was received; socketID={}", socket
+						.getSocketId());
 				return 0;
 			}
 
@@ -334,8 +334,8 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			// see contract for send()
 
 			if (sizeSent < 0) {
-				log.trace("no buffer space for send; socketID={}",
-						socket.getSocketId());
+				log.trace("no buffer space for send; socketID={}", socket
+						.getSocketId());
 				// logStatus();
 				// log.info("writeCount={} writeSize={}", writeCount,
 				// writeSize);

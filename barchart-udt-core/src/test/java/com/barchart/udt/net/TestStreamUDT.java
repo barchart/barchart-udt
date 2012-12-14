@@ -267,8 +267,8 @@ public class TestStreamUDT {
 	}
 
 	private void runTestServer(final InetSocketAddress serverAddress,
-			final ReadStrategy readStrategy, 
-			final AtomicBoolean readyToAccept) throws Exception {
+			final ReadStrategy readStrategy, final AtomicBoolean readyToAccept)
+			throws Exception {
 
 		log.info("STARTED");
 
@@ -282,7 +282,7 @@ public class TestStreamUDT {
 				StatusUDT.LISTENING);
 
 		readyToAccept.set(true);
-		synchronized(readyToAccept) {
+		synchronized (readyToAccept) {
 			readyToAccept.notifyAll();
 		}
 		final SocketUDT connectorSocket = acceptorSocket.accept();

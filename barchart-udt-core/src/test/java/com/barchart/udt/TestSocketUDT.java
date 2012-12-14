@@ -41,11 +41,9 @@ public class TestSocketUDT {
 
 		try {
 
-			InetSocketAddress localAddress1 = TestHelp
-					.getLocalSocketAddress();
+			InetSocketAddress localAddress1 = TestHelp.getLocalSocketAddress();
 
-			InetSocketAddress localAddress2 = TestHelp
-					.getLocalSocketAddress();
+			InetSocketAddress localAddress2 = TestHelp.getLocalSocketAddress();
 
 			SocketUDT socketServer = new SocketUDT(TypeUDT.DATAGRAM);
 			socketServer.setOption(OptionUDT.UDT_RCVSYN, false);

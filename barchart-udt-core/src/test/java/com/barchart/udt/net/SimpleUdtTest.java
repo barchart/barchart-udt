@@ -86,7 +86,7 @@ public class SimpleUdtTest {
 
 	private void startThreadedServer(final InetSocketAddress serverAddress,
 			final AtomicReference<String> ref) throws InterruptedException {
-		
+
 		final AtomicBoolean readyToAccept = new AtomicBoolean(false);
 		final Runnable runner = new Runnable() {
 
@@ -118,8 +118,8 @@ public class SimpleUdtTest {
 	}
 
 	private void startUdtServer(final InetSocketAddress serverAddress,
-			final AtomicReference<String> ref, 
-			final AtomicBoolean readyToAccept) throws IOException {
+			final AtomicReference<String> ref, final AtomicBoolean readyToAccept)
+			throws IOException {
 
 		final ServerSocket acceptorSocket = new NetServerSocketUDT();
 
@@ -127,7 +127,7 @@ public class SimpleUdtTest {
 		assert acceptorSocket.isBound();
 
 		readyToAccept.set(true);
-		synchronized(readyToAccept) {
+		synchronized (readyToAccept) {
 			readyToAccept.notifyAll();
 		}
 		final Socket connectorSocket = acceptorSocket.accept();

@@ -122,8 +122,8 @@ enum LibraryUDT {
 				RES.systemLoad(sourcePath, targetPath);
 				continue;
 			} catch (final Exception e) {
-				log.warn("\n\t {} {}", e.getClass().getSimpleName(),
-						e.getMessage());
+				log.warn("\n\t {} {}", e.getClass().getSimpleName(), e
+						.getMessage());
 			}
 
 			try {
@@ -132,8 +132,8 @@ enum LibraryUDT {
 				RES.systemLoad(sourcePath, targetPath);
 				continue;
 			} catch (final Exception e) {
-				log.warn("\n\t {} {}", e.getClass().getSimpleName(),
-						e.getMessage());
+				log.warn("\n\t {} {}", e.getClass().getSimpleName(), e
+						.getMessage());
 			}
 
 			throw new Exception("dependency library load failed");
@@ -152,7 +152,9 @@ enum LibraryUDT {
 			RES.systemLoad(sourcePath, targetPath);
 			return;
 		} catch (final Exception e) {
-			log.warn("\n\t {} {}", e.getClass().getSimpleName(), e.getMessage());
+			log
+					.warn("\n\t {} {}", e.getClass().getSimpleName(), e
+							.getMessage());
 		}
 
 		try {
@@ -161,7 +163,9 @@ enum LibraryUDT {
 			RES.systemLoad(sourcePath, targetPath);
 			return;
 		} catch (final Exception e) {
-			log.warn("\n\t {} {}", e.getClass().getSimpleName(), e.getMessage());
+			log
+					.warn("\n\t {} {}", e.getClass().getSimpleName(), e
+							.getMessage());
 		}
 
 		try {
@@ -170,7 +174,9 @@ enum LibraryUDT {
 			RES.systemLoad(sourcePath, targetPath);
 			return;
 		} catch (final Exception e) {
-			log.warn("\n\t {} {}", e.getClass().getSimpleName(), e.getMessage());
+			log
+					.warn("\n\t {} {}", e.getClass().getSimpleName(), e
+							.getMessage());
 		}
 
 		throw new Exception("core library load failed");
