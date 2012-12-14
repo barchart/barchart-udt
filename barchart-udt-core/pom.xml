@@ -616,7 +616,7 @@
 									<merge>true</merge>
 									<server>github</server>
 									<path>site/${project.artifactId}</path>
-									<message>maven site ${project.artifactId}-${project.version}</message>
+									<message>site ${project.artifactId}-${project.version}</message>
 								</configuration>
 							</execution>
 						</executions>
