@@ -21,6 +21,8 @@
 	<artifactId>barchart-udt-bundle</artifactId>
 	<packaging>bundle</packaging>
 
+	<description>${project.parent.description} [ BUNDLE ] </description>
+
 	<scm>
 		<url>https://github.com/barchart/barchart-udt</url>
 		<connection>scm:git:git://github.com/barchart/barchart-udt.git</connection>

@@ -7,7 +7,8 @@
     http://www.opensource.org/licenses/bsd-license.php
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -30,7 +31,7 @@
 		<tag>HEAD</tag>
 	</scm>
 
-	<description>Java wrapper around native C++ UDT protocol implementation UDT version: 4.9</description>
+	<description>Java wrapper around native C++ UDT protocol</description>
 
 	<url>https://github.com/barchart/barchart-udt</url>
 
@@ -84,7 +85,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<!-- fork so we can switch jdk -->
+						<!-- fork so we can switch jdk with maven option -->
 						<fork>true</fork>
 					</configuration>
 				</plugin>
@@ -93,7 +94,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
-						<!-- do not fork to enforce java bits during tests -->
+						<!-- do not fork to enforce java bits (32/64) during tests -->
 						<forkMode>never</forkMode>
 					</configuration>
 				</plugin>
@@ -200,60 +201,10 @@
 					</configuration>
 				</plugin>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-invoker-plugin</artifactId>
-					<version>1.8</version>
-				</plugin>
-
 			</plugins>
 		</pluginManagement>
 
 		<plugins>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>set-maven-version-property</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>maven-version</goal>
-						</goals>
-						<configuration>
-							<versionProperty>maven.version</versionProperty>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>enforce-barchart</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireJavaVersion>
-									<message>### You must run Java version ${projectJavaVersion};
-										you are running now: ${build.java.runtime.version} ###</message>
-									<version>${projectJavaVersion}</version>
-								</requireJavaVersion>
-								<requireMavenVersion>
-									<message>### You must run Maven version ${projectMavenVersion};
-										you are running now: ${maven.version} ###</message>
-									<version>${projectMavenVersion}</version>
-								</requireMavenVersion>
-							</rules>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -272,16 +223,16 @@
 
 	<profiles>
 
-		<!-- "think different": macosx provides tools.jar classes already in classes.jar 
-			and does not provide tools.jar as sun does -->
+		<!-- "thinking different": macosx provides tools.jar classes already in 
+			classes.jar and does not provide tools.jar as sun does -->
 		<profile>
 			<id>jdk-tools-jar</id>
 			<activation>
 				<property>
-					<!-- jdk 1.6 -->
-					<!-- linux: java.vendor=Sun Microsystems Inc. -->
-					<!-- macosx: java.vendor=Apple, Inc. -->
-					<!-- windows: java.vendor=Sun Microsystems Inc. -->
+					<!-- jdk 1.6 vendor property -->
+					<!-- linux: java.vendor="Sun Microsystems Inc." -->
+					<!-- macosx: java.vendor="Apple, Inc." -->
+					<!-- windows: java.vendor="Sun Microsystems Inc." -->
 					<name>java.vendor</name>
 					<value>Sun Microsystems Inc.</value>
 				</property>
@@ -307,7 +258,7 @@
 			</build>
 		</profile>
 
-		<!-- ${archosClassifier} selector profiles -->
+		<!-- ${archosClassifier} arch/os selector profiles -->
 		<profile>
 			<id>nar_i386-Linux-gpp</id>
 			<activation>
@@ -430,7 +381,7 @@
 			</build>
 		</profile>
 
-		<!-- activate modules -->
+		<!-- activate modules explicitly -->
 		<profile>
 			<id>modules</id>
 			<modules>
