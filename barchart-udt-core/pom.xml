@@ -570,16 +570,12 @@
 		<!-- apply default formatting -->
 		<profile>
 			<id>format-source</id>
-			<properties>
-				<!-- stored in source repository -->
-				<formatterPreferences>${basedir}/.settings/org.eclipse.jdt.core.prefs</formatterPreferences>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.kuali.maven.plugins</groupId>
-						<artifactId>maven-eclipse-formatter-plugin</artifactId>
-						<version>1.1</version>
+						<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+						<artifactId>maven-java-formatter-plugin</artifactId>
+						<version>0.3.1</version>
 						<executions>
 							<execution>
 								<id>format-java</id>
@@ -588,7 +584,10 @@
 									<goal>format</goal>
 								</goals>
 								<configuration>
-									<formatterPreferences>${formatterPreferences}</formatterPreferences>
+									<compilerSource>${projectJavaVersion}</compilerSource>
+									<compilerCompliance>${projectJavaVersion}</compilerCompliance>
+									<compilerTargetPlatform>${projectJavaVersion}</compilerTargetPlatform>
+									<configFile>${basedir}/build/jdt/eclipse-format.xml</configFile>
 								</configuration>
 							</execution>
 						</executions>
