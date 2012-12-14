@@ -12,6 +12,8 @@
 
 clean validate --update-snapshots --show-version  --activate-profiles modules
 
+clean deploy  --define skipTests --update-snapshots --activate-profiles modules,artifact-version,release-attach,package-bundle
+
 ### Release goals and options
 
 -Dresume=false release:prepare release:perform --activate-profiles modules
