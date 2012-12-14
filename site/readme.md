@@ -1,1 +1,2 @@
-location of maven sites
+
+location of auto generated maven sites
