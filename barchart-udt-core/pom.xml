@@ -596,6 +596,34 @@
 			</build>
 		</profile>
 
+		<!-- publish maven site to github -->
+		<profile>
+			<id>website</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.github.github</groupId>
+						<artifactId>site-maven-plugin</artifactId>
+						<version>0.7</version>
+						<executions>
+							<execution>
+								<id>maven-iste</id>
+								<phase>site</phase>
+								<goals>
+									<goal>site</goal>
+								</goals>
+								<configuration>
+									<merge>false</merge>
+									<server>github</server>
+									<message>maven site ${project.artifactId}-${project.version}</message>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 	</profiles>
 
 </project>

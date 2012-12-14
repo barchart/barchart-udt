@@ -30,7 +30,6 @@
 
 			<arg value="--debug" />
 
-
 			<arg value="--define" />
 			<arg value="label=macosx" />
 

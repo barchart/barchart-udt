@@ -24,9 +24,17 @@
 
 			<arg value="validate" />
 			<arg value="clean" />
+			<arg value="package" />
 			<arg value="site" />
 
+			<arg value="--define" />
+			<arg value="skipTests" />
+
+			<arg value="--activate-profiles" />
+			<arg value="website" />
+
 		</exec>
+
 	</target>
 
 </project>
