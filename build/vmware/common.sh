@@ -99,13 +99,13 @@ function vmware_jenkins_image {
 	local NAME="$1"
 	case $NAME in
 		"linux" )
-			echo "$VMWARE_HOME/jenkins-ubuntu/jenkins-ubuntu.vmx"
+			echo "$VMWARE_HOME/image/ubuntu-10.04-x64/ubuntu-x64.vmx"
 			;;
 		"macosx" )
-			echo "$VMWARE_HOME/jenkins-macosx/Mac_OS_X_10.6.X.vmx"
+			echo "$VMWARE_HOME/image/macosx-10.6.X/Mac_OS_X_10.6.X.vmx"
 			;;
 		"windows" )
-			echo "$VMWARE_HOME/jenkins-windows/jenkins-windows.vmx"
+			echo "$VMWARE_HOME/image/windows-7-x64/win-7-x64-build.vmx"
 			;;
 				"*" )
 			log "invalid VM_ACTION=$VM_ACTION"
