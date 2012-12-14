@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>TCP</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text4.html">Back</a> <a href="text6.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img5.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">TCP</b></font></h1>
+<ul><li style="direction:ltr;"><h2>Reliable, data streaming, unicast</h2></li>
+<li style="direction:ltr;"><h2>Congestion control</h2></li>
+<ul><li style="direction:ltr;">Increase congestion window size (<i>cwnd</i>) one full sized packet per RTT</li>
+<li style="direction:ltr;">Halve the <i>cwnd</i> per loss event</li>
+</ul></ul><br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">The most common transport protocol is TCP, or transmission control protocol, which was developed in the early 70s. TCP provides reliable data streaming services in a unicast way. But here we are more interested in how TCP performs congestion control, in order to understand why it is not efficient in high bandwidth wide area networks.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">TCP's congestion control mechanism is called AIMD, or additive increase multiplicative decrease, because it increases the congestion window size about one full-sized packet per RTT, and halves the size once a packet loss is detected.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">Longer RTT means TCP needs a longer time to reach the maximum throughput, or the available network bandwidth. If there is a packet loss during this period, then TCP will never realize the optimal throughput.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">Because TCP's performance relies on RTT, different concurrent flows with different RTTs will have different throughput. This is another problem of TCP, also known as RTT bias.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Protocol Architecture</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text16.html">Back</a> <a href="text18.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img17.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">Protocol Architecture</b></font></h1>
+<br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">So this is an abstract view of a UDT instance. The timer is used to trigger various timeout events. In order to send user data to another UDT instance, a single UDP channel is set up. (Note that this channel only exists logically, as UDP is not connection-oriented.)</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">Sender A sends user data in UDP packets to Receiver B. Each UDP packet is assigned a unique sequence number and a timestamp. Receiver B will periodically feedback acknowledgments and loss reports as well.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+</body>
+</html>

@@ -277,8 +277,8 @@
 <a class="jxr_linenumber" name="267" href="#267">267</a> 	}
 <a class="jxr_linenumber" name="268" href="#268">268</a> 
 <a class="jxr_linenumber" name="269" href="#269">269</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> runTestServer(<strong class="jxr_keyword">final</strong> InetSocketAddress serverAddress,
-<a class="jxr_linenumber" name="270" href="#270">270</a> 			<strong class="jxr_keyword">final</strong> <a href="../../../../com/barchart/udt/net/TestStreamUDT.html">ReadStrategy</a> readStrategy, <strong class="jxr_keyword">final</strong> AtomicBoolean readyToAccept)
-<a class="jxr_linenumber" name="271" href="#271">271</a> 			<strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="270" href="#270">270</a> 			<strong class="jxr_keyword">final</strong> <a href="../../../../com/barchart/udt/net/TestStreamUDT.html">ReadStrategy</a> readStrategy, 
+<a class="jxr_linenumber" name="271" href="#271">271</a> 			<strong class="jxr_keyword">final</strong> AtomicBoolean readyToAccept) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="272" href="#272">272</a> 
 <a class="jxr_linenumber" name="273" href="#273">273</a> 		log.info(<span class="jxr_string">"STARTED"</span>);
 <a class="jxr_linenumber" name="274" href="#274">274</a> 
@@ -292,7 +292,7 @@
 <a class="jxr_linenumber" name="282" href="#282">282</a> 				StatusUDT.LISTENING);
 <a class="jxr_linenumber" name="283" href="#283">283</a> 
 <a class="jxr_linenumber" name="284" href="#284">284</a> 		readyToAccept.set(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="285" href="#285">285</a> 		<strong class="jxr_keyword">synchronized</strong> (readyToAccept) {
+<a class="jxr_linenumber" name="285" href="#285">285</a> 		<strong class="jxr_keyword">synchronized</strong>(readyToAccept) {
 <a class="jxr_linenumber" name="286" href="#286">286</a> 			readyToAccept.notifyAll();
 <a class="jxr_linenumber" name="287" href="#287">287</a> 		}
 <a class="jxr_linenumber" name="288" href="#288">288</a> 		<strong class="jxr_keyword">final</strong> SocketUDT connectorSocket = acceptorSocket.accept();

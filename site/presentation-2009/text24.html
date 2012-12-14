@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Slide 25</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text23.html">Back</a> <a href="text25.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img24.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">AIMD with Decreasing Increases</b></font></h1>
+<br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">This figure illustrates the difference between several AIMD algorithms used in some TCP variants and UDT.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">The standard AIMD used in TCP is a straight line because alpha(x) is a constant value. In several high speed TCP variants, the data sending rate increases faster and faster, and the intuition is that a higher sending rate may indicate that the network bandwidth is higher so the sending rate should increase faster.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">However, this scheme has two problems. The network bandwidth is fixed. As the sending rate becomes faster, the available bandwidth actually becomes smaller. A high increase parameter may cause large oscillations around the optimal bandwidth utilization. The second problem is related to fairness: if the flow with higher sending rate increases faster, the system may never converge to a fairness equilibrium.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">This discussion leads us to use a totally different scheme. On the one hand, at the beginning when the data sending rate of a flow is slow, it should increase faster to approach the network bandwidth and catch up with those flows that have already a higher sending rate. On the other hand, when the data sending rate of a flow is high,  it should increase slower to avoid large oscillations.</font></p>
+</body>
+</html>

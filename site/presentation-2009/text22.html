@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Overview</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text21.html">Back</a> <a href="text23.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img22.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">Overview</b></font></h1>
+<ul><li style="direction:ltr;"><h2>Congestion control vs. flow control</h2></li>
+<ul><li style="direction:ltr;">Congestion control: effectively utilize the network bandwidth</li>
+<li style="direction:ltr;">Flow control: prevent the receiver from being overwhelmed by incoming packets</li>
+</ul><li style="direction:ltr;"><h2>Window-based vs. rate-based</h2></li>
+<ul><li style="direction:ltr;">Window-based: tune the maximum number of on-flight packets (TCP)</li>
+<li style="direction:ltr;">Rate-based: tune the inter-packet sending time (UDT)</li>
+</ul><li style="direction:ltr;"><h2>AIMD: additive increases multiplicative decreases</h2></li>
+<li style="direction:ltr;"><h2>Feedback</h2></li>
+<ul><li style="direction:ltr;">Packet loss (Most TCP variants, UDT)</li>
+<li style="direction:ltr;">Delay (Vegas, FAST)</li>
+</ul></ul><br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">Before we go into the details, let me clarify several issues about UDT's congestion control algorithm.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">When we say &quot;congestion control&quot; here, we mean the mechanism to effectively utilize the network bandwidth. Another term, &quot;flow control&quot;, is usually used to name the approach to prevent incoming traffic overwhelming the receiver. Congestion control is a more difficult problem.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">Congestion control can tune the data sending rate in two ways: limit the number of on-flight packets and set the inter-packet time. TCP uses the window-based approach, whereas UDT uses the rate-based approach.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">The most common congestion control algorithm is TCP's AIMD algorithm. We have already discussed AIMD.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">Another important factor in congestion control is how to indicate a network congestion. Most protocols uses packet loss information, including both TCP and UDT. The increase in round trip time delay can also indicate congestion somewhere along the network.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+</body>
+</html>

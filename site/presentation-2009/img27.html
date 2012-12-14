@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Dealing with Packet Loss</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="img0.html">First page</a> <a href="img26.html">Back</a> <a href="img28.html">Continue</a> <a href="img49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="text27.html">Text</a></center><br>
+<center><img src="img27.png" alt=""></center>
+<h3>Notes:</h3><br>
+
+<p><p style="direction:ltr;"><font color="#000000">Now we know how UDT increases its sending rate. Let's now check how it decrease its sending rate. Because UDT uses packet loss as the indication of network congestion, it is very important to carefully deal with these packet losses.</font></p>
+<p style="direction:ltr;"><font color="#000000">There are three special situations to deal with. The first one is the loss synchronization. Once the congestion occurs, all flows may experience packet loss at the same time, therefore they will decrease the sending rate at the same time and then start to increase at the same time. As a consequence, the aggregate throughput has much larger oscillations than the individual flow.</font></p>
+<p style="direction:ltr;"><font color="#000000">The second situation is those packet losses not caused by network congestion. </font></p>
+<p style="direction:ltr;"><font color="#000000">We can use a randomization method to remove the loss synchronization. In this figure each dot is a loss event, and the red dot represents the first loss event in a congestion (there can be multiple loss events during one congestion). Suppose the number of loss events in one congestion is M, then we choose a random number between 1 and M, say N. Then every N packets, the sending rate is decreased by 1/9.</font></p>
+<p style="direction:ltr;"><font color="#000000">To address the non-congestion loss problem, the sending rate is not decreased for the first loss. So if it is a non-congestion loss, then it will not affect UDT. If it is due to congestion, further loss will come if the sending rate is not decreased.</font></p>
+<p style="direction:ltr;"><font color="#000000">The third situation is packet reordering. To deal with this situation, the loss report can be delayed to check more incoming packets. The length of this delay can be determined by historical data.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+
+</p>
+</body>
+</html>

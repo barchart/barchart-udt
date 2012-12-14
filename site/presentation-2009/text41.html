@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Similarity and Overhead</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text40.html">Back</a> <a href="text42.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img41.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">Similarity and Overhead</b></font></h1>
+<ul><li style="direction:ltr;"><h2>Similarity</h2></li>
+<ul><li style="direction:ltr;">How Composable UDT based implementations can simulate their native implementations</li>
+</ul><li style="direction:ltr;"><h2>CTCP vs. Linux TCP</h2></li>
+</ul><br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">We check the similarity of Composable UDT by comparing CTCP and Linux TCP. Over a 1Gb/s link, we start 1 to 64 flows of CTCP and Linux TCP respectively. We record the throughput, fairness index, and stability index, which covers the majority of a transport protocol's performance properties.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">This table lists these values for both CTCP and Linux TCP. We can see that both implementations have similar performance. However, CTCP does have a CPU usage overhead, as we can see that at 64 parallel flows, CTCP has smaller throughput than Linux TCP.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">The overhead comes from additional memory copies, context switches, and user thread synchronizations. This is especially significant at the sender side.</font></p>
+<p style="direction:ltr;"><font color="#000000">This is one shortcoming of Composable UDT, but we argue that in many situations, this is not a problem. For example, this overhead only exists when comparing it to kernel implementations; other user space implementations have the same overhead too.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+</body>
+</html>

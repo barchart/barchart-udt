@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Software Architecture</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="img0.html">First page</a> <a href="img17.html">Back</a> <a href="img19.html">Continue</a> <a href="img49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="text18.html">Text</a></center><br>
+<center><img src="img18.png" alt=""></center>
+<h3>Notes:</h3><br>
+
+<p><p style="direction:ltr;"><font color="#000000">The protocol architecture naturally evolves into the software architecture of the UDT implementation. This diagram illustrates the structure inside one UDT instance. In addition to the sender and the receiver, an API module is used to interact with applications, and a UDP channel module is used to transfer packets over UDP. Furthermore, buffer management modules are necessary at both the sender and the receiver sides.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">At this point a traffic flow can be set up between two UDT instances.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">However, to add reliability control and congestion control onto UDP, we have two modules to manage packet loss information at both sides, and a congestion control module at the sender side to tune packet sending rate. Now this is an almost complete UDT instance. Control information is passed among these modules.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">Applications can set and read UDT options through the API module, whereas such configuration commands are further passed to the other related modules.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">A listener is needed to support the listen/accept server mode. Finally, applications will be able to control the congestion control module to configure specific control algorithms. We will describe this in the Composable UDT section.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+
+</p>
+</body>
+</html>

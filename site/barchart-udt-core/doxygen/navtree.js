@@ -1,6 +1,6 @@
 var NAVTREE =
 [
-  [ "barchart-udt-core-2.0.1-SNAPSHOT", "index.html", [
+  [ "barchart-udt-core-2.0.0", "index.html", [
     [ "Classes", null, [
       [ "Class List", "annotated.html", "annotated" ],
       [ "Class Index", "classes.html", null ],

@@ -243,8 +243,8 @@
 <a class="jxr_linenumber" name="233" href="#233">233</a> 			<em class="jxr_comment">// see contract for receive()</em>
 <a class="jxr_linenumber" name="234" href="#234">234</a> 
 <a class="jxr_linenumber" name="235" href="#235">235</a> 			<strong class="jxr_keyword">if</strong> (sizeReceived &lt; 0) {
-<a class="jxr_linenumber" name="236" href="#236">236</a> 				log.trace(<span class="jxr_string">"nothing was received; socketID={}"</span>, socket
-<a class="jxr_linenumber" name="237" href="#237">237</a> 						.getSocketId());
+<a class="jxr_linenumber" name="236" href="#236">236</a> 				log.trace(<span class="jxr_string">"nothing was received; socketID={}"</span>,
+<a class="jxr_linenumber" name="237" href="#237">237</a> 						socket.getSocketId());
 <a class="jxr_linenumber" name="238" href="#238">238</a> 				<strong class="jxr_keyword">return</strong> 0;
 <a class="jxr_linenumber" name="239" href="#239">239</a> 			}
 <a class="jxr_linenumber" name="240" href="#240">240</a> 
@@ -344,8 +344,8 @@
 <a class="jxr_linenumber" name="334" href="#334">334</a> 			<em class="jxr_comment">// see contract for send()</em>
 <a class="jxr_linenumber" name="335" href="#335">335</a> 
 <a class="jxr_linenumber" name="336" href="#336">336</a> 			<strong class="jxr_keyword">if</strong> (sizeSent &lt; 0) {
-<a class="jxr_linenumber" name="337" href="#337">337</a> 				log.trace(<span class="jxr_string">"no buffer space for send; socketID={}"</span>, socket
-<a class="jxr_linenumber" name="338" href="#338">338</a> 						.getSocketId());
+<a class="jxr_linenumber" name="337" href="#337">337</a> 				log.trace(<span class="jxr_string">"no buffer space for send; socketID={}"</span>,
+<a class="jxr_linenumber" name="338" href="#338">338</a> 						socket.getSocketId());
 <a class="jxr_linenumber" name="339" href="#339">339</a> 				<em class="jxr_comment">// logStatus();</em>
 <a class="jxr_linenumber" name="340" href="#340">340</a> 				<em class="jxr_comment">// log.info("writeCount={} writeSize={}", writeCount,</em>
 <a class="jxr_linenumber" name="341" href="#341">341</a> 				<em class="jxr_comment">// writeSize);</em>

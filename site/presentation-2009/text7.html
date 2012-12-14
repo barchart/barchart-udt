@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Related Work</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text6.html">Back</a> <a href="text8.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img7.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">Related Work</b></font></h1>
+<ul><li style="direction:ltr;"><h2>TCP variants</h2></li>
+<ul><li style="direction:ltr;">HighSpeed, Scalable, BiC, FAST, H-TCP, L-TCP</li>
+</ul><li style="direction:ltr;"><h2>Parallel TCP</h2></li>
+<ul><li style="direction:ltr;">PSockets, GridFTP</li>
+</ul><li style="direction:ltr;"><h2>Rate-based reliable UDP</h2></li>
+<ul><li style="direction:ltr;">RBUDP, Tsunami, FOBS, FRTP (based on SABUL), Hurricane (based on UDT)</li>
+</ul><li style="direction:ltr;"><h2>XCP</h2></li>
+<li style="direction:ltr;"><h2>SABUL</h2></li>
+</ul><br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">People have developed several solutions to address the problem.</font></p>
+<p style="direction:ltr;"><font color="#000000">The first kind of solution is quite straightforward. Since the original AIMD algorithm does not work well, a direct solution is to modify TCP using greater increase parameters and smaller decrease factors. Almost all of these high speed TCP variants fall into this category.</font></p>
+<p style="direction:ltr;"><font color="#000000">Modifying TCP is not easy in practice. It is very hard in closed source OS such as Windows. Even in open source OS such as Linux it will require recompilation of the kernel. In the past three decades only 4 versions of TCP have been widely deployed.</font></p>
+<p style="direction:ltr;"><font color="#000000">Because of this deployment problem, user space solutions emerge as a favorite in real world applications. Parallel TCP connections are often used to obtain high throughput. The other user space solution is to add reliability and congestion control mechanisms to UDP.</font></p>
+<p style="direction:ltr;"><font color="#000000">XCP is a radical change to the Internet congestion control, as it requires changes in the routers. Due to the additional information from routers, XCP could work better than the other protocols, but it is also more difficult to deploy.</font></p>
+<p style="direction:ltr;"><font color="#000000">SABUL is actually a reliable UDP-based protocol. It is the early prototype of UDT.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+</body>
+</html>

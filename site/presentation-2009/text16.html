@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Functionality</title>
+</head>
+<body text="#5F5F5F" bgcolor="#FFFFFF" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text15.html">Back</a> <a href="text17.html">Continue</a> <a href="text49.html">Last page</a> <a href="udt-2009.html">Overview</a> <a href="img16.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><b><font color="#808000">Functionality</b></font></h1>
+<ul><li style="direction:ltr;"><h2>Reliability</h2></li>
+<ul><li style="direction:ltr;">Packet-based sequencing</li>
+<li style="direction:ltr;">Acknowledgment and loss report from receiver</li>
+<li style="direction:ltr;">ACK sub-sequencing</li>
+<li style="direction:ltr;">Retransmission (based on loss report and timeout)</li>
+</ul><li style="direction:ltr;"><h2>Streaming and Messaging</h2></li>
+<ul><li style="direction:ltr;">Buffer/memory management</li>
+</ul><li style="direction:ltr;"><h2>Connection maintenance</h2></li>
+<ul><li style="direction:ltr;">Handshake, keep-alive message, teardown message</li>
+</ul><li style="direction:ltr;"><h2>Duplex</h2></li>
+<ul><li style="direction:ltr;">Each UDT instance contains both a sender and a receiver</li>
+</ul></ul><br>
+<h3>Notes:</h3>
+<p style="direction:ltr;"><font color="#000000">Let's review the functionalities first.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">The reliability control is provided by sequencing and acknowledgment. Each UDT packet is assigned a unique increasing sequence number. The receiver will send back acknowledgments and loss reports according to packet arrival. Lost packets will be retransmitted.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">The streaming service is implemented in buffer management.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">UDT also has a series of mechanisms to set up, maintain, and tear down a UDT connection.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+<p style="direction:ltr;"><font color="#000000">Finally, each UDT instance has both a sender and receiver, in order to provide duplex data transfer service.</font></p>
+<p style="direction:ltr;"><font color="#000000"></font></p>
+</body>
+</html>
