@@ -39,7 +39,7 @@ public class SocketUDT {
 	 * do not use automatic signature based on time stamp until all platforms
 	 * are built at once by hudson
 	 */
-	public static final int SIGNATURE_JNI = 20110501; // VersionUDT.BUILDTIME;
+	public static final int SIGNATURE_JNI = 20121214; // VersionUDT.BUILDTIME;
 
 	/**
 	 * infinite message time to live;
