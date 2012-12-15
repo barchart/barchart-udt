@@ -20,7 +20,7 @@
 	</parent>
 
 	<artifactId>barchart-udt-core</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 
 	<description>${project.parent.description} [ CORE ] </description>
 
