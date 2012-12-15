@@ -1,3 +1,31 @@
 <map id="G" name="G">
-<area shape="rect" id="node2" href="$classCUDT.html" title="CUDT" alt="" coords="13,6,72,37"/>
+<area shape="rect" id="node2" href="$classCUDT.html" title="CUDT" alt="" coords="1988,608,2047,637"/>
+<area shape="rect" id="node46" href="$classCSndUList.html" title="CSndUList" alt="" coords="1256,321,1341,351"/>
+<area shape="rect" id="node53" href="$classCRcvQueue.html" title="CRcvQueue" alt="" coords="2940,607,3033,636"/>
+<area shape="rect" id="node74" href="$structCRNode.html" title="CRNode" alt="" coords="2269,460,2341,489"/>
+<area shape="rect" id="node87" href="$classCUDTSocket.html" title="CUDTSocket" alt="" coords="2936,851,3037,880"/>
+<area shape="rect" id="node4" href="$classCACKWindow.html" title="CACKWindow" alt="" coords="1635,559,1741,588"/>
+<area shape="rect" id="node8" href="$classCPktTimeWindow.html" title="CPktTimeWindow" alt="" coords="1624,665,1752,695"/>
+<area shape="rect" id="node10" href="$classCSndBuffer.html" title="CSndBuffer" alt="" coords="1643,963,1733,992"/>
+<area shape="rect" id="node18" href="$classCSndLossList.html" title="CSndLossList" alt="" coords="1636,823,1740,852"/>
+<area shape="rect" id="node20" href="$classCCCVirtualFactory.html" title="CCCVirtualFactory" alt="" coords="1621,401,1755,431"/>
+<area shape="rect" id="node22" href="$classCRcvBuffer.html" title="CRcvBuffer" alt="" coords="1643,769,1733,799"/>
+<area shape="rect" id="node24" href="$structCUnit.html" title="CUnit" alt="" coords="269,895,325,924"/>
+<area shape="rect" id="node28" href="$classCUnitQueue.html" title="CUnitQueue" alt="" coords="1252,820,1345,849"/>
+<area shape="rect" id="node26" href="$classCPacket.html" title="CPacket" alt="" coords="17,941,89,971"/>
+<area shape="rect" id="node35" href="$classCUDTUnited.html" title="CUDTUnited" alt="" coords="4232,815,4331,844"/>
+<area shape="rect" id="node39" href="$structCMultiplexer.html" title="CMultiplexer" alt="" coords="3431,281,3524,311"/>
+<area shape="rect" id="node41" href="$classCTimer.html" title="CTimer" alt="" coords="597,284,661,313"/>
+<area shape="rect" id="node43" href="$classCSndQueue.html" title="CSndQueue" alt="" coords="1641,293,1735,323"/>
+<area shape="rect" id="node50" href="$classCChannel.html" title="CChannel" alt="" coords="1259,203,1339,232"/>
+<area shape="rect" id="node62" href="$classCRendezvousQueue.html" title="CRendezvousQueue" alt="" coords="2592,987,2733,1016"/>
+<area shape="rect" id="node72" href="$classCRcvUList.html" title="CRcvUList" alt="" coords="2620,491,2705,520"/>
+<area shape="rect" id="node78" href="$classCHash.html" title="CHash" alt="" coords="2632,555,2693,584"/>
+<area shape="rect" id="node99" href="$structCEPollDesc.html" title="CEPollDesc" alt="" coords="2940,1041,3033,1071"/>
+<area shape="rect" id="node95" href="$classCEPoll.html" title="CEPoll" alt="" coords="3964,917,4025,947"/>
+<area shape="rect" id="node104" href="$classCCache.html" title="CCache" alt="" coords="1653,59,1723,88"/>
+<area shape="rect" id="node112" href="$classCCacheItem.html" title="CCacheItem" alt="" coords="5,36,101,65"/>
+<area shape="rect" id="node116" href="$classCRcvLossList.html" title="CRcvLossList" alt="" coords="1636,455,1740,484"/>
+<area shape="rect" id="node122" href="$classCCC.html" title="CCC" alt="" coords="1663,1027,1713,1056"/>
+<area shape="rect" id="node124" href="$structCPerfMon.html" title="CPerfMon" alt="" coords="1259,1063,1339,1092"/>
 </map>
