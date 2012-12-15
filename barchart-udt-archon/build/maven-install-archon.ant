@@ -22,15 +22,6 @@
 
 		<exec executable="${maven-command}">
 
-			<arg value="package" />
-
-			<arg value="--define" />
-			<arg value="skipTests" />
-
-		</exec>
-
-		<exec executable="${maven-command}">
-
 			<arg value="clean" />
 			<arg value="install" />
 

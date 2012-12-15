@@ -7,8 +7,6 @@
     http://www.opensource.org/licenses/bsd-license.php
 
 -->
-<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
-	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -35,8 +33,8 @@
 
 	<properties>
 
-		<!-- should be set by user during interactive development -->
-		<versionEclipse>2.0.0-SNAPSHOT</versionEclipse>
+		<!-- should be set by developer during interactive work -->
+		<versionEclipse>2.0.1-SNAPSHOT</versionEclipse>
 
 		<!-- will be set by maven-invoker-plugin during jenkins build -->
 		<versionJenkins>@project.version@</versionJenkins>

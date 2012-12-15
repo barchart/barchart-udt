@@ -8,6 +8,8 @@
 
 -->
 
+final release stage jenkins project settings
+
 ### Goals and options
 
 clean validate --update-snapshots --show-version  --activate-profiles modules

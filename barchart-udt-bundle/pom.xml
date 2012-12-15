@@ -52,8 +52,7 @@
 
 	<profiles>
 
-		<!-- TODO generate javadocs -->
-
+		<!-- collect jar and multi arch/os nar into single bundle -->
 		<profile>
 
 			<id>package-bundle</id>
@@ -72,7 +71,7 @@
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>bundle-unpack</id>
+								<id>bundle-unpack-items</id>
 								<phase>generate-sources</phase>
 								<goals>
 									<goal>unpack</goal>
@@ -143,7 +142,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>bundle-copy</id>
+								<id>bundle-copy-docs</id>
 								<phase>generate-resources</phase>
 								<goals>
 									<goal>copy</goal>
@@ -181,7 +180,7 @@
 						<artifactId>build-helper-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>bundle-attach</id>
+								<id>bundle-attach-docs</id>
 								<phase>package</phase>
 								<goals>
 									<goal>attach-artifact</goal>

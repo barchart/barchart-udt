@@ -11,7 +11,7 @@
 
 	<echo message="basedir : ${basedir}" />
 
-	<property name="tag" value="barchart-karaf-app-1.1.1-SNAPSHOT" />
+	<property name="tag" value="barchart-udt-2.0.0" />
 	<property name="note" value="fake release for testing" />
 
 	<target name="git">

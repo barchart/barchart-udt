@@ -1,5 +1,12 @@
-<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
-	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
+<!--
+
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -9,6 +16,10 @@
 	<artifactId>barchart-udt-demo</artifactId>
 	<version>0.0.0</version>
 	<packaging>jar</packaging>
+
+	<description>
+		demonstration of dependency configuration
+	</description>
 
 	<repositories>
 
@@ -29,12 +40,14 @@
 
 	<dependencies>
 
+		<!-- contains wrapper and native libraries for all arch/os -->
 		<dependency>
 			<groupId>com.barchart.udt</groupId>
 			<artifactId>barchart-udt-bundle</artifactId>
 			<version>2.0.0</version>
 		</dependency>
 
+		<!-- logging framework -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -45,7 +58,7 @@
 			<artifactId>logback-classic</artifactId>
 			<version>1.0.9</version>
 		</dependency>
-		
+
 	</dependencies>
 
 </project>
