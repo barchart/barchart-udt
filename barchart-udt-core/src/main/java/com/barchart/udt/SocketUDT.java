@@ -224,7 +224,7 @@ public class SocketUDT {
 	 * Call this after loading native library.
 	 * 
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/startup.htm">UDT::startup()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/startup.htm">UDT::startup()</a>
 	 */
 	protected static native void initClass0() throws ExceptionUDT;
 
@@ -232,7 +232,7 @@ public class SocketUDT {
 	 * Call this before unloading native library.
 	 * 
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/cleanup.htm.htm">UDT::cleanup()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/cleanup.htm.htm">UDT::cleanup()</a>
 	 */
 	protected static native void stopClass0() throws ExceptionUDT;
 
@@ -248,7 +248,7 @@ public class SocketUDT {
 
 	/**
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/accept.htm">UDT::accept()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/accept.htm">UDT::accept()</a>
 	 */
 	protected native SocketUDT accept0() throws ExceptionUDT;
 
@@ -273,7 +273,8 @@ public class SocketUDT {
 	}
 
 	/**
-	 * @see <a href="http://www.cs.uic.edu/~ygu1/doc/bind.htm">UDT::bind()</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/bind.htm">UDT::bind()</a>
 	 */
 	protected native void bind0(final InetSocketAddress localSocketAddress)
 			throws ExceptionUDT;
@@ -285,7 +286,8 @@ public class SocketUDT {
 	}
 
 	/**
-	 * @see <a href="http://www.cs.uic.edu/~ygu1/doc/close.htm">UDT::close()</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/close.htm">UDT::close()</a>
 	 */
 	protected native void close0() throws ExceptionUDT;
 
@@ -314,7 +316,8 @@ public class SocketUDT {
 	}
 
 	/**
-	 * @see <a http://www.cs.uic.edu/~ygu1/doc/connect.htm">UDT::connect()</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/connect.htm">UDT::connect()</a>
 	 */
 	protected native void connect0(final InetSocketAddress remoteSocketAddress)
 			throws ExceptionUDT;
@@ -334,7 +337,7 @@ public class SocketUDT {
 	 * Load {@link #remoteSocketAddress} value.
 	 * 
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/peername.htm">UDT::peername()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/peername.htm">UDT::peername()</a>
 	 */
 	protected native boolean hasLoadedRemoteSocketAddress();
 
@@ -356,7 +359,7 @@ public class SocketUDT {
 	 * Load {@link #localSocketAddress} value.
 	 * 
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/sockname.htm">UDT::sockname()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/sockname.htm">UDT::sockname()</a>
 	 */
 	protected native boolean hasLoadedLocalSocketAddress();
 
@@ -376,7 +379,7 @@ public class SocketUDT {
 
 	/**
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/opt.htm">UDT::getsockopt()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/opt.htm">UDT::getsockopt()</a>
 	 */
 	protected native Object getOption0(final int code, final Class<?> klaz)
 			throws ExceptionUDT;
@@ -393,7 +396,7 @@ public class SocketUDT {
 
 	/**
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/opt.htm">UDT::setsockopt()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/opt.htm">UDT::setsockopt()</a>
 	 */
 	protected native void setOption0(final int code, final Class<?> klaz,
 			final Object value) throws ExceptionUDT;
@@ -419,7 +422,7 @@ public class SocketUDT {
 
 	/**
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/listen.htm">UDT::listen()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/listen.htm">UDT::listen()</a>
 	 */
 	protected native void listen0(final int queueSize) throws ExceptionUDT;
 
@@ -430,8 +433,6 @@ public class SocketUDT {
 	 * @see #accept()
 	 */
 	protected volatile int listenQueueSize;
-
-	private final static int JAVA_INT_SIZE_IN_BYTES = 4;
 
 	/**
 	 * @param queueSize
@@ -458,9 +459,10 @@ public class SocketUDT {
 	/**
 	 * receive into a complete byte array
 	 * 
-	 * @see <a href="http://www.cs.uic.edu/~ygu1/doc/recv.htm">UDT::recv()</a>
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/recv.htm">UDT::recvmsg()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recv()</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recvmsg()</a>
 	 */
 	protected native int receive0(final int socketID, final int socketType, //
 			final byte[] array) throws ExceptionUDT;
@@ -468,9 +470,10 @@ public class SocketUDT {
 	/**
 	 * receive into a portion of a byte array
 	 * 
-	 * @see <a href="http://www.cs.uic.edu/~ygu1/doc/recv.htm">UDT::recv()</a>
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/recv.htm">UDT::recvmsg()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recv()</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recvmsg()</a>
 	 */
 	protected native int receive1(final int socketID, final int socketType, //
 			final byte[] array, final int position, final int limit)
@@ -479,9 +482,10 @@ public class SocketUDT {
 	/**
 	 * receive into a {@link java.nio.channels.DirectByteBuffer}
 	 * 
-	 * @see <a href="http://www.cs.uic.edu/~ygu1/doc/recv.htm">UDT::recv()</a>
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/recv.htm">UDT::recvmsg()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recv()</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recvmsg()</a>
 	 */
 	protected native int receive2(final int socketID, final int socketType, //
 			final ByteBuffer buffer, final int position, final int limit)
@@ -546,7 +550,7 @@ public class SocketUDT {
 	 * WRAPPER_UNIMPLEMENTED
 	 * 
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/recvfile.htm">UDT::recvfile()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/recvfile.htm">UDT::recvfile()</a>
 	 */
 	public final int receiveFile(final ByteBuffer buffer) throws ExceptionUDT {
 		throw new ExceptionUDT(//
@@ -556,7 +560,7 @@ public class SocketUDT {
 	/**
 	 * @see com.barchart.udt.nio.SelectorUDT#select()
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/select.htm">UDT::select()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/select.htm">UDT::select()</a>
 	 */
 	protected static native int select0( //
 			final int[] readArray, //
@@ -604,7 +608,7 @@ public class SocketUDT {
 	/**
 	 * @see com.barchart.udt.nio.SelectorUDT#select()
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/select.htm">UDT::select()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/select.htm">UDT::select()</a>
 	 */
 	protected static native int select1( //
 			final IntBuffer readBuffer, //
@@ -658,7 +662,7 @@ public class SocketUDT {
 	 * @return <code><0</code> : should not happen<br>
 	 *         <code>=0</code> : timeout, no ready sockets<br>
 	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
-	 * @see #epollWait0(int, IntBuffer, IntBuffer, IntBuffer, IntBuffer, long)
+	 * @see #epollWait(int, IntBuffer, IntBuffer, IntBuffer, IntBuffer, long)
 	 */
 	// asserts are contracts
 	public final static int selectEpoll( //
@@ -733,9 +737,10 @@ public class SocketUDT {
 	 * 
 	 * wrapper for <em>UDT::send()</em>, <em>UDT::sendmsg()</em>
 	 * 
-	 * @see <a href="http://www.cs.uic.edu/~ygu1/doc/send.htm">UDT::send()</a>
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/sendmsg.htm">UDT::sendmsg()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/send.htm">UDT::send()</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
 	protected native int send0(final int socketID, final int socketType, //
 			final int timeToLive, final boolean isOrdered, //
@@ -746,9 +751,10 @@ public class SocketUDT {
 	 * 
 	 * wrapper for <em>UDT::send()</em>, <em>UDT::sendmsg()</em>
 	 * 
-	 * @see <a href="http://www.cs.uic.edu/~ygu1/doc/send.htm">UDT::send()</a>
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/sendmsg.htm">UDT::sendmsg()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/send.htm">UDT::send()</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
 	protected native int send1(final int socketID, final int socketType, //
 			final int timeToLive, final boolean isOrdered, //
@@ -760,9 +766,10 @@ public class SocketUDT {
 	 * 
 	 * wrapper for <em>UDT::send()</em>, <em>UDT::sendmsg()</em>
 	 * 
-	 * @see <a href="http://www.cs.uic.edu/~ygu1/doc/send.htm">UDT::send()</a>
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/sendmsg.htm">UDT::sendmsg()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/send.htm">UDT::send()</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
 	protected native int send2(final int socketID,
 			final int socketType, //
@@ -845,7 +852,7 @@ public class SocketUDT {
 	 * default timeToLive value used by sendmsg mode
 	 * 
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/sendmsg.htm">UDT::sendmsg()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
 	public final void setMessageTimeTolLive(final int timeToLive) {
 		// publisher to volatile
@@ -856,7 +863,7 @@ public class SocketUDT {
 	 * default isOrdered value used by sendmsg mode
 	 * 
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/sendmsg.htm">UDT::sendmsg()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
 	public final void setMessageIsOdered(final boolean isOrdered) {
 		// publisher to volatile
@@ -867,7 +874,7 @@ public class SocketUDT {
 	 * WRAPPER_UNIMPLEMENTED
 	 * 
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/sendfile.htm">UDT::sendfile()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/sendfile.htm">UDT::sendfile()</a>
 	 */
 	public final int sendFile(final ByteBuffer buffer) throws ExceptionUDT {
 		throw new ExceptionUDT(//
@@ -876,7 +883,7 @@ public class SocketUDT {
 
 	/**
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/perfmon.htm">perfmon.htm</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/trace.htm">UDT::perfmon</a>
 	 */
 	protected native void updateMonitor0(final boolean makeClear)
 			throws ExceptionUDT;
@@ -896,24 +903,24 @@ public class SocketUDT {
 	}
 
 	/**
-	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/t-error.htm">t-error.htm</a>
+	 * @see <a href="http://udt.sourceforge.net/udt4/doc/t-error.htm">UDT Error
+	 *      Handling</a>
 	 */
 	protected native int getErrorCode0();
 
 	/**
 	 * Error code set by last operation on a socket.
 	 * 
-	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/t-error.htm">t-error.htm</a>
+	 * @see <a href="http://udt.sourceforge.net/udt4/doc/t-error.htm">UDT Error
+	 *      Handling</a>
 	 */
 	public final int getErrorCode() {
 		return getErrorCode0();
 	}
 
 	/**
-	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/t-error.htm">t-error.htm</a>
+	 * @see <a href="http://udt.sourceforge.net/udt4/doc/t-error.htm">UDT Error
+	 *      Handling</a>
 	 */
 	protected native String getErrorMessage0();
 
@@ -921,23 +928,23 @@ public class SocketUDT {
 	 * Native error message set by last operation on a socket.
 	 * 
 	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/t-error.htm">t-error.htm</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/t-error.htm">t-error.htm</a>
 	 */
 	public final String getErrorMessage() {
 		return getErrorMessage0();
 	}
 
 	/**
-	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/t-error.htm">t-error.htm</a>
+	 * @see <a href="http://udt.sourceforge.net/udt4/doc/t-error.htm">UDT Error
+	 *      Handling</a>
 	 */
 	protected native void clearError0();
 
 	/**
 	 * Clear error status on a socket, if any.
 	 * 
-	 * @see <a
-	 *      href="http://www.cs.uic.edu/~ygu1/doc/t-error.htm">t-error.htm</a>
+	 * @see <a href="http://udt.sourceforge.net/udt4/doc/t-error.htm">UDT Error
+	 *      Handling</a>
 	 */
 	public final void clearError() {
 		clearError0();
@@ -1424,30 +1431,35 @@ public class SocketUDT {
 	/**
 	 * @return epoll id
 	 * 
-	 * @see <a http://udt.sourceforge.net/udt4/doc/epoll.htm</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_create()</a>
 	 */
 	protected static native int epollCreate() throws ExceptionUDT;
 
 	/**
-	 * @see <a http://udt.sourceforge.net/udt4/doc/epoll.htm</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_release()</a>
 	 */
 	protected static native void epollRelease(final int epollID)
 			throws ExceptionUDT;
 
 	/**
-	 * @see <a http://udt.sourceforge.net/udt4/doc/epoll.htm</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_add_ssock()</a>
 	 */
-	protected static native void epollAdd(//
+	protected static native void epollAdd( //
 			final int epollID, final int socketID) throws ExceptionUDT;
 
 	/**
-	 * @see <a http://udt.sourceforge.net/udt4/doc/epoll.htm</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_remove_usock()</a>
 	 */
-	protected static native void epollRemove(//
+	protected static native void epollRemove( //
 			final int epollID, final int socketID) throws ExceptionUDT;
 
 	/**
-	 * @see <a http://udt.sourceforge.net/udt4/doc/epoll.htm</a>
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_wait()</a>
 	 */
 	protected static native int epollWait( //
 			final int epollID, //
@@ -1456,6 +1468,17 @@ public class SocketUDT {
 			final IntBuffer exceptBuffer, //
 			final IntBuffer sizeBuffer, //
 			final long millisTimeout) throws ExceptionUDT;
+
+	//
+
+	private final static int JAVA_INT_SIZE_IN_BYTES = 4;
+
+	public static final IntBuffer newDirectIntBufer(final int capacity) {
+		return ByteBuffer. //
+				allocateDirect(capacity * SocketUDT.JAVA_INT_SIZE_IN_BYTES). //
+				order(ByteOrder.nativeOrder()). //
+				asIntBuffer();
+	}
 
 	// ###########################################
 	// ### used for development & testing only
@@ -1486,13 +1509,6 @@ public class SocketUDT {
 	native void testSocketStatus0();
 
 	native void testEpoll0(); //
-
-	public static final IntBuffer newDirectIntBufer(final int capacity) {
-		return ByteBuffer. //
-				allocateDirect(capacity * SocketUDT.JAVA_INT_SIZE_IN_BYTES). //
-				order(ByteOrder.nativeOrder()). //
-				asIntBuffer();
-	}
 
 	// ###
 	// ### used for development & testing only

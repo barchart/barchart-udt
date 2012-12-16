@@ -22,6 +22,7 @@
 	<artifactId>barchart-udt-core</artifactId>
 	<packaging>jar</packaging>
 
+	<url>https://github.com/barchart/barchart-udt</url>
 	<description>${project.parent.description} [ CORE ] </description>
 
 	<scm>

@@ -1,0 +1,36 @@
+<!--
+
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project default="maven" basedir="./..">
+
+	<echo message="basedir : ${basedir}" />
+
+	<target name="maven">
+
+		<property name="tag" value="barchart-udt-2.0.0" />
+
+		<condition property="mvn" value="mvn">
+			<os family="unix" />
+		</condition>
+		<condition property="mvn" value="mvn.bat">
+			<os family="windows" />
+		</condition>
+
+		<exec executable="${mvn}">
+
+			<arg value="validate" />
+			<arg value="site:site" />
+
+			<arg value="--errors" />
+
+		</exec>
+
+	</target>
+
+</project>

@@ -7,10 +7,12 @@
  */
 package com.barchart.udt;
 
-/** status of underlying UDT native socket */
+/**
+ * status of underlying UDT native socket
+ */
 public enum StatusUDT {
 
-	/* non UDT value */
+	/** non UDT value */
 	UNKNOWN(0), //
 
 	//

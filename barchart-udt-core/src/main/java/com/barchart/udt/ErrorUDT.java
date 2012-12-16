@@ -10,7 +10,8 @@ package com.barchart.udt;
 /**
  * keep code values in sync with
  * 
- * http://www.cs.uic.edu/~ygu1/doc/ecode.htm
+ * @see <a href="http://udt.sourceforge.net/udt4/doc/ecode.htm">UDT Error Codes
+ *      List</a>
  */
 public enum ErrorUDT {
 
@@ -125,7 +126,7 @@ public enum ErrorUDT {
 	//
 
 	public static String descriptionFrom(final int socketID,
-			final int errorCode, String errorComment) {
+			final int errorCode, final String errorComment) {
 		final ErrorUDT error = ErrorUDT.errorFrom(errorCode);
 		return String.format("UDT Error : %d : %s : %s (socketID=%d)", //
 				errorCode, error.description, errorComment, socketID);

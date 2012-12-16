@@ -10,8 +10,8 @@ package com.barchart.udt.nio;
 /**
  * UDT channel role type.
  * 
- * NOTE: {@link #TypeUDT} means stream vs datagram;
- * {@link com.barchart.udt.nio.Kind} means server vs client.
+ * NOTE: {@link com.barchart.udt#TypeUDT} means stream vs datagram;
+ * {@link KindUDT} means server vs client.
  * <p>
  */
 public enum KindUDT {
