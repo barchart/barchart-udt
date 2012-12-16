@@ -9,6 +9,10 @@ package com.barchart.udt;
 
 /**
  * status of underlying UDT native socket
+ * <p>
+ * keep in sync with udt.h UDTSTATUS enum; see:
+ * <p>
+ * "enum UDTSTATUS { INIT = 1, OPENED = 2, LISTENING = 3, CONNECTING = 4, CONNECTED = 5, BROKEN = 6, CLOSING = 7, CLOSED = 8, NONEXIST = 9 };"
  */
 public enum StatusUDT {
 
@@ -16,8 +20,6 @@ public enum StatusUDT {
 	UNKNOWN(0), //
 
 	//
-
-	/* keep in sync with udt.h UDTSTATUS enum */
 
 	/** newly created socket; both connector and acceptor */
 	INIT(1), //
@@ -28,17 +30,23 @@ public enum StatusUDT {
 	/** bound + listening acceptor socket */
 	LISTENING(3), //
 
+	/** connector socket trytin to connect */
+	CONNECTING(4), //
+
 	/** connected connector socket */
-	CONNECTED(4), //
+	CONNECTED(5), //
 
 	/** acceptor socket after close() */
-	BROKEN(5), //
+	BROKEN(6), //
 
-	/** connector socket after close() */
-	CLOSED(6), //
+	/** connector socket after close() is in progress */
+	CLOSING(7), //
+
+	/** connector socket after close() is done */
+	CLOSED(8), //
 
 	/** trying to check status on socket that was closed and removed */
-	NONEXIST(7), //
+	NONEXIST(9), //
 
 	;
 
