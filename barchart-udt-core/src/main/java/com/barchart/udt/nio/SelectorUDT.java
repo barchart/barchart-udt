@@ -177,7 +177,7 @@ public class SelectorUDT extends AbstractSelector {
 
 	private volatile int wakeupStepCount;
 
-	// guarded by doSelectInsideLock
+	/** guarded by doSelectInsideLock */
 	private int wakeupBaseCount;
 
 	private final void saveWakeupBase() {
@@ -278,30 +278,6 @@ public class SelectorUDT extends AbstractSelector {
 
 	//
 
-	private final void setReadInterest(final int index, final int socketID) {
-		readBuffer.put(index, socketID);
-	}
-
-	private final int getReadInterest(final int index) {
-		return readBuffer.get(index);
-	}
-
-	private final void setWriteInterest(final int index, final int socketID) {
-		writeBuffer.put(index, socketID);
-	}
-
-	private final int getWriteInterest(final int index) {
-		return writeBuffer.get(index);
-	}
-
-	private final void setExceptInterest(final int index, final int socketID) {
-		exceptBuffer.put(index, socketID);
-	}
-
-	private final int getExceptInterest(final int index) {
-		return exceptBuffer.get(index);
-	}
-
 	private final int doSelectSocketUDT(final long timeout) throws ExceptionUDT {
 		return SocketUDT.select(readBuffer, writeBuffer, exceptBuffer,
 				sizeBuffer, timeout);
@@ -312,18 +288,6 @@ public class SelectorUDT extends AbstractSelector {
 		sizeBuffer.put(UDT_READ_INDEX, readSize);
 		sizeBuffer.put(UDT_WRITE_INDEX, writeSize);
 		sizeBuffer.put(UDT_EXCEPT_INDEX, exceptSize);
-	}
-
-	private final int getReadInterestSize() {
-		return sizeBuffer.get(UDT_READ_INDEX);
-	}
-
-	private final int getWriteInterestSize() {
-		return sizeBuffer.get(UDT_WRITE_INDEX);
-	}
-
-	private final int getExceptInterestSize() {
-		return sizeBuffer.get(UDT_EXCEPT_INDEX);
 	}
 
 	private final void prepareInterest() {
@@ -345,17 +309,17 @@ public class SelectorUDT extends AbstractSelector {
 
 				if ((interestOps & (OP_ACCEPT)) != 0) {
 					assert channelType == KindUDT.ACCEPTOR;
-					setReadInterest(readSize, socketID);
+					readBuffer.put(readSize, socketID);
 					readSize++;
 				}
 				if ((interestOps & (OP_READ)) != 0) {
 					assert channelType == KindUDT.CONNECTOR;
-					setReadInterest(readSize, socketID);
+					readBuffer.put(readSize, socketID);
 					readSize++;
 				}
 				if ((interestOps & (OP_WRITE)) != 0) {
 					assert channelType == KindUDT.CONNECTOR;
-					setWriteInterest(writeSize, socketID);
+					writeBuffer.put(writeSize, socketID);
 					writeSize++;
 				}
 				if ((interestOps & (OP_CONNECT)) != 0) {
@@ -502,9 +466,9 @@ public class SelectorUDT extends AbstractSelector {
 	}
 
 	private final void updateRead() {
-		final int readSize = getReadInterestSize();
+		final int readSize = sizeBuffer.get(UDT_READ_INDEX);
 		for (int index = 0; index < readSize; index++) {
-			final int socketId = getReadInterest(index);
+			final int socketId = readBuffer.get(index);
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 			assert keyUDT != null;
 			switch (keyUDT.channelUDT.getChannelKind()) {
@@ -523,9 +487,9 @@ public class SelectorUDT extends AbstractSelector {
 	}
 
 	private final void updateWrite() {
-		final int writeSize = getWriteInterestSize();
+		final int writeSize = sizeBuffer.get(UDT_WRITE_INDEX);
 		for (int index = 0; index < writeSize; index++) {
-			final int socketId = getWriteInterest(index);
+			final int socketId = writeBuffer.get(index);
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 			assert keyUDT != null;
 			switch (keyUDT.channelUDT.getChannelKind()) {
@@ -544,9 +508,9 @@ public class SelectorUDT extends AbstractSelector {
 	}
 
 	private final void updateExcept() {
-		final int exceptSize = getExceptInterestSize();
-		for (int k = 0; k < exceptSize; k++) {
-			final int socketId = getExceptInterest(k);
+		final int exceptSize = sizeBuffer.get(UDT_EXCEPT_INDEX);
+		for (int index = 0; index < exceptSize; index++) {
+			final int socketId = exceptBuffer.get(index);
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 			assert keyUDT != null;
 			switch (keyUDT.channelUDT.getChannelKind()) {
