@@ -2023,7 +2023,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_getStatus0(JNIEnv *env,
 
 //
 
-JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollCreate( //
+JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollCreate0( //
 		JNIEnv *env, //
 		jclass clsSocketUDT //
 		) {
@@ -2043,7 +2043,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollCreate( //
 
 }
 
-JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRelease( //
+JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRelease0( //
 		JNIEnv *env, //
 		jclass clsSocketUDT, //
 		const jint pollID) {
@@ -2061,7 +2061,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRelease( //
 
 }
 
-JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd( //
+JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd0( //
 		JNIEnv *env, //
 		jclass clsSocketUDT, //
 		const jint pollID, //
@@ -2081,7 +2081,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd( //
 
 }
 
-JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove( //
+JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove0( //
 		JNIEnv *env, //
 		jclass clsSocketUDT, //
 		const jint pollID, //
@@ -2102,7 +2102,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove( //
 
 }
 
-JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait( //
+JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		JNIEnv *env, //
 		jclass clsSocketUDT, //
 		const jint pollID, //

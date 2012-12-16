@@ -662,7 +662,7 @@ public class SocketUDT {
 	 * @return <code><0</code> : should not happen<br>
 	 *         <code>=0</code> : timeout, no ready sockets<br>
 	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
-	 * @see #epollWait(int, IntBuffer, IntBuffer, IntBuffer, IntBuffer, long)
+	 * @see #epollWait0(int, IntBuffer, IntBuffer, IntBuffer, IntBuffer, long)
 	 */
 	// asserts are contracts
 	public final static int selectEpoll( //
@@ -1434,34 +1434,34 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_create()</a>
 	 */
-	protected static native int epollCreate() throws ExceptionUDT;
+	protected static native int epollCreate0() throws ExceptionUDT;
 
 	/**
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_release()</a>
 	 */
-	protected static native void epollRelease(final int epollID)
+	protected static native void epollRelease0(final int epollID)
 			throws ExceptionUDT;
 
 	/**
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_add_ssock()</a>
 	 */
-	protected static native void epollAdd( //
+	protected static native void epollAdd0( //
 			final int epollID, final int socketID) throws ExceptionUDT;
 
 	/**
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_remove_usock()</a>
 	 */
-	protected static native void epollRemove( //
+	protected static native void epollRemove0( //
 			final int epollID, final int socketID) throws ExceptionUDT;
 
 	/**
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_wait()</a>
 	 */
-	protected static native int epollWait( //
+	protected static native int epollWait0( //
 			final int epollID, //
 			final IntBuffer readBuffer, //
 			final IntBuffer writeBuffer, //

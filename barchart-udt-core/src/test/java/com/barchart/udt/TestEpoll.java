@@ -46,7 +46,7 @@ public class TestEpoll {
 
 			log.info("testEpoll");
 
-			int epollID = SocketUDT.epollCreate();
+			int epollID = SocketUDT.epollCreate0();
 
 			InetSocketAddress bindServer = TestHelp.getLocalSocketAddress();
 
@@ -75,14 +75,14 @@ public class TestEpoll {
 
 			//
 
-			SocketUDT.epollAdd(epollID, socketServer.socketID);
-			SocketUDT.epollAdd(epollID, socketClient.socketID);
+			SocketUDT.epollAdd0(epollID, socketServer.socketID);
+			SocketUDT.epollAdd0(epollID, socketClient.socketID);
 
 			socketClient.connect(bindServer);
 
 			long timeStart = System.currentTimeMillis();
 
-			int result = SocketUDT.epollWait(epollID, readBuffer, writeBuffer,
+			int result = SocketUDT.epollWait0(epollID, readBuffer, writeBuffer,
 					exceptBuffer, sizeBuffer, millisTimeout);
 
 			long timeFinish = System.currentTimeMillis();
@@ -115,7 +115,7 @@ public class TestEpoll {
 			socketServer.close();
 			socketClient.close();
 
-			SocketUDT.epollRelease(epollID);
+			SocketUDT.epollRelease0(epollID);
 
 		} catch (Throwable e) {
 
@@ -140,7 +140,7 @@ public class TestEpoll {
 				.newDirectIntBufer(SocketUDT.UDT_SIZE_COUNT);
 		long millisTimeout = 1 * 1000;
 
-		int result = SocketUDT.epollWait(epollID, readBuffer, writeBuffer,
+		int result = SocketUDT.epollWait0(epollID, readBuffer, writeBuffer,
 				exceptBuffer, sizeBuffer, millisTimeout);
 
 	}

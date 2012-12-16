@@ -168,37 +168,37 @@ public class TestSocketUDT {
 
 	/** no exceptions is pass */
 	@Test
-	public void testEpollCreate() throws Exception {
+	public void testEpollCreate0() throws Exception {
 
-		final int epollID = SocketUDT.epollCreate();
-		SocketUDT.epollRelease(epollID);
+		final int epollID = SocketUDT.epollCreate0();
+		SocketUDT.epollRelease0(epollID);
 
 	}
 
 	@Test(expected = ExceptionUDT.class)
-	public void testEpollRelease() throws Exception {
+	public void testEpollRelease0() throws Exception {
 
-		SocketUDT.epollRelease(-1);
+		SocketUDT.epollRelease0(-1);
 
 	}
 
 	/** no exceptions is pass */
 	@Test
-	public void testEpollAddRemove() throws Exception {
+	public void testEpollAdd0Remove() throws Exception {
 
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
 		//
 
-		final int epollID = SocketUDT.epollCreate();
+		final int epollID = SocketUDT.epollCreate0();
 
 		assertTrue(epollID > 0);
 
-		SocketUDT.epollAdd(epollID, socket.socketID);
+		SocketUDT.epollAdd0(epollID, socket.socketID);
 
-		SocketUDT.epollRemove(epollID, socket.socketID);
+		SocketUDT.epollRemove0(epollID, socket.socketID);
 
-		SocketUDT.epollRelease(epollID);
+		SocketUDT.epollRelease0(epollID);
 
 	}
 
@@ -212,21 +212,21 @@ public class TestSocketUDT {
 	 * 
 	 * */
 	@Test
-	public void testEpollAddAgainSocketException() throws Exception {
+	public void testEpollAdd0AgainSocketException() throws Exception {
 
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
 		//
 
-		final int epollID = SocketUDT.epollCreate();
+		final int epollID = SocketUDT.epollCreate0();
 
 		assertTrue(epollID > 0);
 
-		SocketUDT.epollAdd(epollID, socket.socketID);
-		SocketUDT.epollAdd(epollID, socket.socketID);
-		SocketUDT.epollAdd(epollID, socket.socketID);
+		SocketUDT.epollAdd0(epollID, socket.socketID);
+		SocketUDT.epollAdd0(epollID, socket.socketID);
+		SocketUDT.epollAdd0(epollID, socket.socketID);
 
-		SocketUDT.epollRelease(epollID);
+		SocketUDT.epollRelease0(epollID);
 
 	}
 
@@ -239,13 +239,13 @@ public class TestSocketUDT {
 	 * removed."
 	 */
 	@Test(expected = ExceptionUDT.class)
-	public void testEpollAddInvalidSocketException() throws Exception {
+	public void testEpollAdd0InvalidSocketException() throws Exception {
 
-		final int epollID = SocketUDT.epollCreate();
+		final int epollID = SocketUDT.epollCreate0();
 
-		SocketUDT.epollAdd(epollID, -1);
+		SocketUDT.epollAdd0(epollID, -1);
 
-		SocketUDT.epollRelease(epollID);
+		SocketUDT.epollRelease0(epollID);
 
 	}
 
@@ -258,15 +258,15 @@ public class TestSocketUDT {
 	 * removed."
 	 */
 	@Test
-	public void testEpollRemoveIvalidSocketException() throws Exception {
+	public void testEpollRemove0IvalidSocketException() throws Exception {
 
-		final int epollID = SocketUDT.epollCreate();
+		final int epollID = SocketUDT.epollCreate0();
 
-		SocketUDT.epollRemove(epollID, -1);
-		SocketUDT.epollRemove(epollID, -1);
-		SocketUDT.epollRemove(epollID, -1);
+		SocketUDT.epollRemove0(epollID, -1);
+		SocketUDT.epollRemove0(epollID, -1);
+		SocketUDT.epollRemove0(epollID, -1);
 
-		SocketUDT.epollRelease(epollID);
+		SocketUDT.epollRelease0(epollID);
 
 	}
 
