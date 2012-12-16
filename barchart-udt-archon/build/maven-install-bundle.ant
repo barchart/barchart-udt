@@ -28,6 +28,8 @@
 			<arg value="--activate-profiles" />
 			<arg value="modules,nar,artifact-version,package-bundle" />
 
+			<arg value="--update-snapshots" />
+
 		</exec>
 
 	</target>
