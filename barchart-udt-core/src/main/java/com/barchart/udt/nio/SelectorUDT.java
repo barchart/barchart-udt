@@ -221,11 +221,6 @@ public class SelectorUDT extends AbstractSelector {
 	 */
 	public final int maximimSelectorSize;
 	//
-	private final int[] readArray;
-	private final int[] writeArray;
-	private final int[] exceptArray;
-	private final int[] sizeArray;
-	//
 	private final IntBuffer readBuffer;
 	private final IntBuffer writeBuffer;
 	private final IntBuffer exceptBuffer;
@@ -252,25 +247,11 @@ public class SelectorUDT extends AbstractSelector {
 		publicSelectedKeySet = HelperNIOUDT.ungrowableSet(selectedKeySet);
 
 		this.maximimSelectorSize = maximumSelectorSize;
-		if (isBufferBased) {
-			readBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
-			writeBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
-			exceptBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
-			sizeBuffer = SocketUDT.newDirectIntBufer(UDT_SIZE_COUNT);
-			readArray = null;
-			writeArray = null;
-			exceptArray = null;
-			sizeArray = null;
-		} else {
-			readBuffer = null;
-			writeBuffer = null;
-			exceptBuffer = null;
-			sizeBuffer = null;
-			readArray = new int[maximumSelectorSize];
-			writeArray = new int[maximumSelectorSize];
-			exceptArray = new int[maximumSelectorSize];
-			sizeArray = new int[UDT_SIZE_COUNT];
-		}
+
+		readBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
+		writeBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
+		exceptBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
+		sizeBuffer = SocketUDT.newDirectIntBufer(UDT_SIZE_COUNT);
 
 		this.maximumConnectorSize = maximumConnectorSize;
 		connectorPool = new ConnectorThreadPoolUDT(maximumConnectorSize);
@@ -297,114 +278,52 @@ public class SelectorUDT extends AbstractSelector {
 
 	//
 
-	public static final String KEY_IS_ARRAY_BASED = //
-	SelectorUDT.class.getName() + ".isArrayBased";
-
-	private static final boolean isBufferBased;
-
-	static {
-		final String isArrayBased = System.getProperty(KEY_IS_ARRAY_BASED);
-		if (isArrayBased == null) {
-			isBufferBased = true;
-		} else {
-			isBufferBased = false;
-		}
-		log.debug("isBufferBased={}", isBufferBased);
-	}
-
 	private final void setReadInterest(final int index, final int socketID) {
-		if (isBufferBased) {
-			readBuffer.put(index, socketID);
-		} else {
-			readArray[index] = socketID;
-		}
+		readBuffer.put(index, socketID);
 	}
 
 	private final int getReadInterest(final int index) {
-		if (isBufferBased) {
-			return readBuffer.get(index);
-		} else {
-			return readArray[index];
-		}
+		return readBuffer.get(index);
 	}
 
 	private final void setWriteInterest(final int index, final int socketID) {
-		if (isBufferBased) {
-			writeBuffer.put(index, socketID);
-		} else {
-			writeArray[index] = socketID;
-		}
+		writeBuffer.put(index, socketID);
 	}
 
 	private final int getWriteInterest(final int index) {
-		if (isBufferBased) {
-			return writeBuffer.get(index);
-		} else {
-			return writeArray[index];
-		}
+		return writeBuffer.get(index);
 	}
 
 	private final void setExceptInterest(final int index, final int socketID) {
-		if (isBufferBased) {
-			exceptBuffer.put(index, socketID);
-		} else {
-			exceptArray[index] = socketID;
-		}
+		exceptBuffer.put(index, socketID);
 	}
 
 	private final int getExceptInterest(final int index) {
-		if (isBufferBased) {
-			return exceptBuffer.get(index);
-		} else {
-			return exceptArray[index];
-		}
+		return exceptBuffer.get(index);
 	}
 
 	private final int doSelectSocketUDT(final long timeout) throws ExceptionUDT {
-		if (isBufferBased) {
-			return SocketUDT.select(readBuffer, writeBuffer, exceptBuffer,
-					sizeBuffer, timeout);
-		} else {
-			return SocketUDT.select(readArray, writeArray, exceptArray,
-					sizeArray, timeout);
-		}
+		return SocketUDT.select(readBuffer, writeBuffer, exceptBuffer,
+				sizeBuffer, timeout);
 	}
 
 	private final void setInterestSize(final int readSize, final int writeSize,
 			final int exceptSize) {
-		if (isBufferBased) {
-			sizeBuffer.put(UDT_READ_INDEX, readSize);
-			sizeBuffer.put(UDT_WRITE_INDEX, writeSize);
-			sizeBuffer.put(UDT_EXCEPT_INDEX, exceptSize);
-		} else {
-			sizeArray[UDT_READ_INDEX] = readSize;
-			sizeArray[UDT_WRITE_INDEX] = writeSize;
-			sizeArray[UDT_EXCEPT_INDEX] = exceptSize;
-		}
+		sizeBuffer.put(UDT_READ_INDEX, readSize);
+		sizeBuffer.put(UDT_WRITE_INDEX, writeSize);
+		sizeBuffer.put(UDT_EXCEPT_INDEX, exceptSize);
 	}
 
 	private final int getReadInterestSize() {
-		if (isBufferBased) {
-			return sizeBuffer.get(UDT_READ_INDEX);
-		} else {
-			return sizeArray[UDT_READ_INDEX];
-		}
+		return sizeBuffer.get(UDT_READ_INDEX);
 	}
 
 	private final int getWriteInterestSize() {
-		if (isBufferBased) {
-			return sizeBuffer.get(UDT_WRITE_INDEX);
-		} else {
-			return sizeArray[UDT_WRITE_INDEX];
-		}
+		return sizeBuffer.get(UDT_WRITE_INDEX);
 	}
 
 	private final int getExceptInterestSize() {
-		if (isBufferBased) {
-			return sizeBuffer.get(UDT_EXCEPT_INDEX);
-		} else {
-			return sizeArray[UDT_EXCEPT_INDEX];
-		}
+		return sizeBuffer.get(UDT_EXCEPT_INDEX);
 	}
 
 	private final void prepareInterest() {
