@@ -82,9 +82,7 @@ public class SocketUDT {
 	 */
 	public static final int DEFAULT_MIN_SELECTOR_TIMEOUT = 10;
 
-	// native library extractor and loader
-
-	/** native loader */
+	/** native library extractor and loader */
 	static {
 
 		try {
@@ -303,8 +301,11 @@ public class SocketUDT {
 		}
 	}
 
-	// NOTE: catch all exceptions; else prevents GC
-	// NOTE: do not leak "this" references; else prevents GC
+	/**
+	 * NOTE: catch all exceptions; else prevents GC
+	 * <p>
+	 * NOTE: do not leak "this" references; else prevents GC
+	 */
 	@Override
 	protected void finalize() {
 		try {
@@ -659,6 +660,17 @@ public class SocketUDT {
 	 * {@link java.nio.DirectIntBuffer} info exchange.Timeout is in
 	 * milliseconds.
 	 * 
+	 * @param millisTimeout
+	 * 
+	 *            http://udt.sourceforge.net/udt4/doc/epoll.htm
+	 * 
+	 *            "Finally, for epoll_wait, negative timeout value will make the
+	 *            function to wait until an event happens. If the timeout value
+	 *            is 0, then the function returns immediately with any sockets
+	 *            associated an IO event. If timeout occurs before any event
+	 *            happens, the function returns 0".
+	 * 
+	 * 
 	 * @return <code><0</code> : should not happen<br>
 	 *         <code>=0</code> : timeout, no ready sockets<br>
 	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
@@ -670,33 +682,45 @@ public class SocketUDT {
 			final IntBuffer writeBuffer, //
 			final IntBuffer exceptBuffer, //
 			final IntBuffer sizeBuffer, //
-			/* var */long millisTimeout) throws ExceptionUDT {
-
-		if (millisTimeout < 0) {
-			millisTimeout = Long.MAX_VALUE;
-		}
+			final long millisTimeout) throws ExceptionUDT {
 
 		assert readBuffer != null && readBuffer.isDirect();
 		assert writeBuffer != null && writeBuffer.isDirect();
 		assert exceptBuffer != null && exceptBuffer.isDirect();
 		assert sizeBuffer != null && sizeBuffer.isDirect();
 
-		// TODO
+		assert readBuffer.capacity() >= sizeBuffer.get(UDT_READ_INDEX);
+		assert writeBuffer.capacity() >= sizeBuffer.get(UDT_WRITE_INDEX);
+		assert exceptBuffer.capacity() >= readBuffer.capacity();
+		assert exceptBuffer.capacity() >= writeBuffer.capacity();
 
-		// assert readBuffer.capacity() >= sizeBuffer.get(UDT_READ_INDEX);
-		// assert writeBuffer.capacity() >= sizeBuffer.get(UDT_WRITE_INDEX);
-		// assert exceptBuffer.capacity() >= readBuffer.capacity();
-		// assert exceptBuffer.capacity() >= writeBuffer.capacity();
-		// assert millisTimeout >= DEFAULT_MIN_SELECTOR_TIMEOUT
-		// || millisTimeout <= 0;
+		final int epollID = defaultEpollID();
 
-		final int epollID = 0; // XXX
+		return epollWait0( //
+				epollID, //
+				readBuffer, //
+				writeBuffer, //
+				exceptBuffer, //
+				sizeBuffer, //
+				millisTimeout //
+		);
 
-		// return epollWait(epollID, readBuffer, writeBuffer, exceptBuffer,
-		// sizeBuffer, millisTimeout);
+	}
 
-		throw new RuntimeException("TODO");
+	private static volatile int defaultEpollID = 0;
 
+	/** lazy init */
+	private static int defaultEpollID() throws ExceptionUDT {
+		int current = defaultEpollID;
+		if (current == 0) {
+			synchronized (SocketUDT.class) {
+				current = defaultEpollID;
+				if (current == 0) {
+					defaultEpollID = current = epollCreate0();
+				}
+			}
+		}
+		return current;
 	}
 
 	// ###

@@ -7,6 +7,9 @@
     http://www.opensource.org/licenses/bsd-license.php
 
 -->
+<!-- 
+	produce prodoction library and run integration test
+-->
 <project default="maven" basedir="./..">
 
 	<echo message="basedir : ${basedir}" />
