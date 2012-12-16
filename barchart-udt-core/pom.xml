@@ -1,12 +1,5 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -217,6 +210,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-patch-plugin</artifactId>
+						 <version>1.1.1</version>
 						<executions>
 							<execution>
 								<id>apply-local-patches</id>
@@ -225,12 +219,9 @@
 									<goal>apply</goal>
 								</goals>
 								<configuration>
-									<targetDirectory>${basedir}</targetDirectory>
-									<patchDirectory>${basedir}/src/main/patches</patchDirectory>
-									<patchTrackingFile>${target}/patches/patches-applied.txt</patchTrackingFile>
 									<naturalOrderProcessing>true</naturalOrderProcessing>
-									<patches>
-									</patches>
+									<patchFile>${basedir}/src/main/patches/current.patch</patchFile>
+									<patchTrackingFile>${target}/patches/patches-applied.txt</patchTrackingFile>
 								</configuration>
 							</execution>
 						</executions>
