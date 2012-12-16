@@ -24,14 +24,14 @@ public class TestSocketUDT {
 	static final Logger log = LoggerFactory.getLogger(TestSocketUDT.class);
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 
 		log.info("started {}", System.getProperty("os.arch"));
 
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void done() throws Exception {
 	}
 
 	@Test
@@ -41,38 +41,40 @@ public class TestSocketUDT {
 
 		try {
 
-			InetSocketAddress localAddress1 = TestHelp.getLocalSocketAddress();
+			final InetSocketAddress localAddress1 = TestHelp
+					.getLocalSocketAddress();
 
-			InetSocketAddress localAddress2 = TestHelp.getLocalSocketAddress();
+			final InetSocketAddress localAddress2 = TestHelp
+					.getLocalSocketAddress();
 
-			SocketUDT socketServer = new SocketUDT(TypeUDT.DATAGRAM);
+			final SocketUDT socketServer = new SocketUDT(TypeUDT.DATAGRAM);
 			socketServer.setOption(OptionUDT.UDT_RCVSYN, false);
 			socketServer.setOption(OptionUDT.UDT_SNDSYN, false);
 			socketServer.bind(localAddress1);
 			socketServer.listen(1);
 			// socketServer.accept();
 
-			SocketUDT socketClient = new SocketUDT(TypeUDT.DATAGRAM);
+			final SocketUDT socketClient = new SocketUDT(TypeUDT.DATAGRAM);
 			socketClient.setOption(OptionUDT.UDT_RCVSYN, false);
 			socketClient.setOption(OptionUDT.UDT_SNDSYN, false);
 			socketClient.bind(localAddress2);
 			socketClient.listen(1);
 			// socketClient.accept();
 
-			long timeout = 1 * 1000 * 1000;
+			final long timeout = 1 * 1000 * 1000;
 
-			SocketUDT[] selectArray = new SocketUDT[] { socketServer,
+			final SocketUDT[] selectArray = new SocketUDT[] { socketServer,
 					socketClient };
 
 			socketServer.clearError();
 
-			long timeStart = System.currentTimeMillis();
+			final long timeStart = System.currentTimeMillis();
 
 			// SocketUDT.selectExtended(selectArray, timeout);
 
-			long timeFinish = System.currentTimeMillis();
+			final long timeFinish = System.currentTimeMillis();
 
-			long timeDiff = timeFinish - timeStart;
+			final long timeDiff = timeFinish - timeStart;
 			log.info("timeDiff={}", timeDiff);
 
 			// log.info("isSelectedRead={}", socketServer.isSelectedRead());
@@ -87,7 +89,7 @@ public class TestSocketUDT {
 			socketServer.close();
 			socketClient.close();
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail("SocketException; " + e.getMessage());
 		}
 
@@ -102,7 +104,7 @@ public class TestSocketUDT {
 
 			socket = new SocketUDT(TypeUDT.DATAGRAM);
 
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 
 			fail("SocketException; " + e.getMessage());
 
@@ -122,7 +124,7 @@ public class TestSocketUDT {
 	@Test
 	public void testIsOpen() throws Exception {
 
-		SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 		assertTrue(socket.isOpen());
 
 		socket.setOption(OptionUDT.Is_Receive_Synchronous, false);
@@ -164,11 +166,11 @@ public class TestSocketUDT {
 
 	}
 
+	/** no exceptions is pass */
 	@Test
-	// no exceptions is pass
 	public void testEpollCreate() throws Exception {
 
-		int epollID = SocketUDT.epollCreate();
+		final int epollID = SocketUDT.epollCreate();
 		SocketUDT.epollRelease(epollID);
 
 	}
@@ -180,11 +182,11 @@ public class TestSocketUDT {
 
 	}
 
+	/** no exceptions is pass */
 	@Test
-	// no exceptions is pass
 	public void testEpollAddRemove() throws Exception {
 
-		SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
 		//
 
