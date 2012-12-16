@@ -22,6 +22,8 @@
 
 		<exec executable="${maven-command}">
 
+			<arg value="--errors" />
+
 			<arg value="--activate-profiles" />
 			<arg value="checkout" />
 
