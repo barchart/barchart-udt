@@ -42,10 +42,10 @@ public class TestSocketUDT {
 		try {
 
 			final InetSocketAddress localAddress1 = TestHelp
-					.getLocalSocketAddress();
+					.localSocketAddress();
 
 			final InetSocketAddress localAddress2 = TestHelp
-					.getLocalSocketAddress();
+					.localSocketAddress();
 
 			final SocketUDT socketServer = new SocketUDT(TypeUDT.DATAGRAM);
 			socketServer.setOption(OptionUDT.UDT_RCVSYN, false);
@@ -132,7 +132,7 @@ public class TestSocketUDT {
 		assertTrue(socket.isOpen());
 
 		final InetSocketAddress localSocketAddress = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		socket.bind(localSocketAddress);
 		assertTrue(socket.isOpen());

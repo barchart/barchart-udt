@@ -31,8 +31,8 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 	final int socketID;
 	final SocketUDT socketUDT;
 
-	SelectionKeyUDT(SelectorUDT selector, ChannelUDT channel,
-			Object attachment, int ops) {
+	SelectionKeyUDT(final SelectorUDT selector, final ChannelUDT channel,
+			final Object attachment, final int ops) {
 
 		this.channelUDT = channel;
 		this.selectorUDT = selector;
@@ -44,7 +44,7 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 
 		if (channel.getChannelKind() == KindUDT.CONNECTOR) {
 			// special relationship for connectors
-			ChannelSocketUDT socketChannel = (ChannelSocketUDT) channel;
+			final ChannelSocketUDT socketChannel = (ChannelSocketUDT) channel;
 			socketChannel.setRegistredKey(this);
 		}
 
@@ -69,7 +69,7 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 	}
 
 	@Override
-	public SelectionKey interestOps(int ops) {
+	public SelectionKey interestOps(final int ops) {
 		if (!isValid()) {
 			throw new CancelledKeyException();
 		}
@@ -104,9 +104,9 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 	}
 
 	@Override
-	public boolean equals(Object otherKey) {
+	public boolean equals(final Object otherKey) {
 		if (otherKey instanceof SelectionKeyUDT) {
-			SelectionKeyUDT other = (SelectionKeyUDT) otherKey;
+			final SelectionKeyUDT other = (SelectionKeyUDT) otherKey;
 			return other.socketID == this.socketID;
 		}
 		return false;
@@ -119,13 +119,13 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 		InetSocketAddress local;
 		try {
 			local = socketUDT.getLocalSocketAddress();
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 			local = null;
 		}
 		InetSocketAddress remote;
 		try {
 			remote = socketUDT.getRemoteSocketAddress();
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 			remote = null;
 		}
 
@@ -142,11 +142,11 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 				"";
 	}
 
-	public static final String toStringOps(int keyOps) {
-		char R = (OP_READ & keyOps) != 0 ? 'R' : '-';
-		char W = (OP_WRITE & keyOps) != 0 ? 'W' : '-';
-		char C = (OP_CONNECT & keyOps) != 0 ? 'C' : '-';
-		char A = (OP_ACCEPT & keyOps) != 0 ? 'A' : '-';
+	public static final String toStringOps(final int keyOps) {
+		final char R = (OP_READ & keyOps) != 0 ? 'R' : '-';
+		final char W = (OP_WRITE & keyOps) != 0 ? 'W' : '-';
+		final char C = (OP_CONNECT & keyOps) != 0 ? 'C' : '-';
+		final char A = (OP_ACCEPT & keyOps) != 0 ? 'A' : '-';
 		return String.format("%c%c%c%c", A, C, W, R);
 	}
 

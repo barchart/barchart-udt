@@ -159,7 +159,7 @@ public abstract class TestSendRecvAbstract<T> {
 	};
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 
 		log.info("started {}", System.getProperty("os.arch"));
 
@@ -172,8 +172,8 @@ public abstract class TestSendRecvAbstract<T> {
 		server.configureBlocking(true);
 		client.configureBlocking(true);
 
-		serverAddress = TestHelp.getLocalSocketAddress();
-		clientAddress = TestHelp.getLocalSocketAddress();
+		serverAddress = TestHelp.localSocketAddress();
+		clientAddress = TestHelp.localSocketAddress();
 
 		log.info("serverAddress={} clientAddress={}", serverAddress,
 				clientAddress);
@@ -185,7 +185,7 @@ public abstract class TestSendRecvAbstract<T> {
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void done() throws Exception {
 
 		client.close();
 

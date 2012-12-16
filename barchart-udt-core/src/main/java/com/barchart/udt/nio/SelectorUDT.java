@@ -47,7 +47,7 @@ public class SelectorUDT extends AbstractSelector {
 	/**
 	 * use this call to instantiate a selector for UDT
 	 */
-	protected static Selector open(TypeUDT type) throws IOException {
+	protected static Selector open(final TypeUDT type) throws IOException {
 		final SelectorProviderUDT provider;
 		switch (type) {
 		case DATAGRAM:
@@ -77,7 +77,7 @@ public class SelectorUDT extends AbstractSelector {
 					for (final SelectionKey key : registeredKeySet) {
 						try {
 							key.channel().close();
-						} catch (Throwable e) {
+						} catch (final Throwable e) {
 							log.error("unexpected", e);
 						}
 					}
@@ -91,8 +91,8 @@ public class SelectorUDT extends AbstractSelector {
 
 	// NOE: register() and select() are blocking each other
 	@Override
-	protected SelectionKey register(AbstractSelectableChannel channel,
-			int interestOps, Object attachment) {
+	protected SelectionKey register(final AbstractSelectableChannel channel,
+			final int interestOps, final Object attachment) {
 
 		if (!(channel instanceof ChannelUDT)) {
 			// also takes care of null
@@ -107,11 +107,11 @@ public class SelectorUDT extends AbstractSelector {
 				throw new IllegalSelectorException();
 			}
 
-			ChannelUDT channelUDT = (ChannelUDT) channel;
+			final ChannelUDT channelUDT = (ChannelUDT) channel;
 
-			SocketUDT socketUDT = channelUDT.getSocketUDT();
+			final SocketUDT socketUDT = channelUDT.getSocketUDT();
 
-			SelectionKeyUDT keyUDT = new SelectionKeyUDT(//
+			final SelectionKeyUDT keyUDT = new SelectionKeyUDT(//
 					this, channelUDT, attachment, interestOps);
 
 			// XXX the only place with "add/put"
@@ -147,13 +147,13 @@ public class SelectorUDT extends AbstractSelector {
 		return select(0);
 	}
 
+	/** per java.nio.Selector contract 0 input means infinite */
 	@Override
-	// per java.nio.Selector contract 0 input means infinite
-	public int select(long timeout) throws IOException {
+	public int select(final long timeout) throws IOException {
 		if (timeout < 0) {
 			throw new IllegalArgumentException("Negative timeout");
 		}
-		long timeoutUDT = (timeout == 0) ? UDT_TIMEOUT_INFINITE : timeout;
+		final long timeoutUDT = (timeout == 0) ? UDT_TIMEOUT_INFINITE : timeout;
 		return doSelectInsideLock(timeoutUDT);
 	}
 
@@ -205,11 +205,13 @@ public class SelectorUDT extends AbstractSelector {
 
 	// Public views of the key sets
 
-	// totally immutable
+	/** totally immutable */
 	private final Set<? extends SelectionKey> publicRegisteredKeySet;
-	// partially immutable: removal allowed, but not addition
+
+	/** partially immutable: removal allowed, but not addition */
 	private final Set<? extends SelectionKey> publicSelectedKeySet;
-	// mutable: requests for cancel
+
+	/** mutable: requests for cancel */
 	private final Set<SelectionKey> cancelledKeySet;
 
 	private final Map<Integer, SelectionKeyUDT> registeredKeyMap;
@@ -235,8 +237,8 @@ public class SelectorUDT extends AbstractSelector {
 	public final int maximumConnectorSize;
 	private final ConnectorThreadPoolUDT connectorPool;
 
-	SelectorUDT(SelectorProvider provider, //
-			int maximumSelectorSize, int maximumConnectorSize) {
+	SelectorUDT(final SelectorProvider provider, //
+			final int maximumSelectorSize, final int maximumConnectorSize) {
 
 		super(provider);
 
@@ -275,11 +277,12 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	public static int UDT_TIMEOUT_INFINITE = -1;
-
 	public static int UDT_TIMEOUT_NONE = 0;
 
-	private final int doSelectInsideLock(long millisTimeout) throws IOException {
+	public static int UDT_TIMEOUT_INFINITE = -1;
+
+	private final int doSelectInsideLock(final long millisTimeout)
+			throws IOException {
 		if (!isOpen()) {
 			throw new ClosedSelectorException();
 		}
@@ -300,7 +303,7 @@ public class SelectorUDT extends AbstractSelector {
 	private static final boolean isBufferBased;
 
 	static {
-		String isArrayBased = System.getProperty(KEY_IS_ARRAY_BASED);
+		final String isArrayBased = System.getProperty(KEY_IS_ARRAY_BASED);
 		if (isArrayBased == null) {
 			isBufferBased = true;
 		} else {
@@ -309,7 +312,7 @@ public class SelectorUDT extends AbstractSelector {
 		log.debug("isBufferBased={}", isBufferBased);
 	}
 
-	private final void setReadInterest(int index, int socketID) {
+	private final void setReadInterest(final int index, final int socketID) {
 		if (isBufferBased) {
 			readBuffer.put(index, socketID);
 		} else {
@@ -317,7 +320,7 @@ public class SelectorUDT extends AbstractSelector {
 		}
 	}
 
-	private final int getReadInterest(int index) {
+	private final int getReadInterest(final int index) {
 		if (isBufferBased) {
 			return readBuffer.get(index);
 		} else {
@@ -325,7 +328,7 @@ public class SelectorUDT extends AbstractSelector {
 		}
 	}
 
-	private final void setWriteInterest(int index, int socketID) {
+	private final void setWriteInterest(final int index, final int socketID) {
 		if (isBufferBased) {
 			writeBuffer.put(index, socketID);
 		} else {
@@ -333,7 +336,7 @@ public class SelectorUDT extends AbstractSelector {
 		}
 	}
 
-	private final int getWriteInterest(int index) {
+	private final int getWriteInterest(final int index) {
 		if (isBufferBased) {
 			return writeBuffer.get(index);
 		} else {
@@ -341,7 +344,7 @@ public class SelectorUDT extends AbstractSelector {
 		}
 	}
 
-	private final void setExceptInterest(int index, int socketID) {
+	private final void setExceptInterest(final int index, final int socketID) {
 		if (isBufferBased) {
 			exceptBuffer.put(index, socketID);
 		} else {
@@ -349,7 +352,7 @@ public class SelectorUDT extends AbstractSelector {
 		}
 	}
 
-	private final int getExceptInterest(int index) {
+	private final int getExceptInterest(final int index) {
 		if (isBufferBased) {
 			return exceptBuffer.get(index);
 		} else {
@@ -357,7 +360,7 @@ public class SelectorUDT extends AbstractSelector {
 		}
 	}
 
-	private final int doSelectSocketUDT(long timeout) throws ExceptionUDT {
+	private final int doSelectSocketUDT(final long timeout) throws ExceptionUDT {
 		if (isBufferBased) {
 			return SocketUDT.select(readBuffer, writeBuffer, exceptBuffer,
 					sizeBuffer, timeout);
@@ -367,8 +370,8 @@ public class SelectorUDT extends AbstractSelector {
 		}
 	}
 
-	private final void setInterestSize(int readSize, int writeSize,
-			int exceptSize) {
+	private final void setInterestSize(final int readSize, final int writeSize,
+			final int exceptSize) {
 		if (isBufferBased) {
 			sizeBuffer.put(UDT_READ_INDEX, readSize);
 			sizeBuffer.put(UDT_WRITE_INDEX, writeSize);
@@ -408,7 +411,7 @@ public class SelectorUDT extends AbstractSelector {
 
 		int readSize = 0;
 		int writeSize = 0;
-		int exceptSize = 0;
+		final int exceptSize = 0;
 
 		for (final SelectionKeyUDT keyUDT : registeredKeySet) {
 
@@ -510,7 +513,8 @@ public class SelectorUDT extends AbstractSelector {
 	 * 
 	 * >0 : number of pending r/w ops, NOT number of selected keys
 	 */
-	private final int doSelectReally(long millisTimeout) throws IOException {
+	private final int doSelectReally(final long millisTimeout)
+			throws IOException {
 
 		selectedKeySet.clear();
 
@@ -519,24 +523,29 @@ public class SelectorUDT extends AbstractSelector {
 		int readyCount = 0;
 
 		trySelect: try {
-			// java.nio.Selector contract for wakeup()
+
+			/** java.nio.Selector contract for wakeup() */
 			begin();
-			// pre select
+
+			/** pre select */
 			prepareInterest();
-			// into select
+
+			/** into select */
 			readyCount = performSelect(millisTimeout);
 			if (readyCount == 0) {
-				// timeout, nothing is ready; no need to process post select
+				/** timeout, nothing is ready; no need to process post select */
 				break trySelect;
 			}
-			// post select
+
+			/** post select */
 			processInterest();
+
 		} finally {
-			// java.nio.Selector contract for wakeup()
+			/** java.nio.Selector contract for wakeup() */
 			end();
 		}
 
-		// using thread pool based connect() processor
+		/** using thread pool based connect() processor */
 		readyCount += updateConnect();
 
 		assert readyCount >= 0;
@@ -546,12 +555,17 @@ public class SelectorUDT extends AbstractSelector {
 	}
 
 	private final int updateConnect() {
+
 		final Queue<SelectionKeyUDT> readyQueue = connectorPool.readyQueue;
+
 		if (readyQueue.isEmpty()) {
 			return 0;
 		}
+
 		int updateCount = 0;
+
 		SelectionKeyUDT keyUDT;
+
 		while ((keyUDT = readyQueue.poll()) != null) {
 			// contract:
 			assert keyUDT.channelUDT.getChannelKind() == KindUDT.CONNECTOR;
@@ -563,7 +577,9 @@ public class SelectorUDT extends AbstractSelector {
 			selectedKeySet.add(keyUDT);
 			updateCount++;
 		}
+
 		return updateCount;
+
 	}
 
 	private final void updateRead() {
@@ -629,34 +645,43 @@ public class SelectorUDT extends AbstractSelector {
 	}
 
 	private final void processCancelled() throws IOException {
-		/*
-		 * Precondition: Synchronized on this, publicRegisteredKeySet,
-		 * publicSelectedKeySet
+
+		/**
+		 * Precondition: Synchronized on:
+		 * <p>
+		 * this, publicRegisteredKeySet, publicSelectedKeySet
 		 */
+
 		synchronized (cancelledKeySet) {
-			if (!cancelledKeySet.isEmpty()) {
-				for (final SelectionKey key : cancelledKeySet) {
 
-					final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
-
-					// XXX the only place with "remove"
-
-					final SelectionKeyUDT removed = //
-					registeredKeyMap.remove(keyUDT.socketID);
-					assert removed != null;
-
-					final boolean isRemoved = //
-					registeredKeySet.remove(keyUDT);
-					assert isRemoved;
-
-				}
-				cancelledKeySet.clear();
+			if (cancelledKeySet.isEmpty()) {
+				return;
 			}
+
+			for (final SelectionKey key : cancelledKeySet) {
+
+				final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
+
+				/** XXX the only place with "remove" */
+
+				final SelectionKeyUDT removed = //
+				registeredKeyMap.remove(keyUDT.socketID);
+				assert removed != null;
+
+				final boolean isRemoved = //
+				registeredKeySet.remove(keyUDT);
+				assert isRemoved;
+
+			}
+
+			cancelledKeySet.clear();
+
 		}
+
 	}
 
-	final void submitConnectRequest(SelectionKeyUDT keyUDT,
-			InetSocketAddress remote) throws IOException {
+	final void submitConnectRequest(final SelectionKeyUDT keyUDT,
+			final InetSocketAddress remote) throws IOException {
 
 		// TODO think again if lack of sync is OK?
 

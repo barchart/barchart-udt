@@ -324,7 +324,8 @@ public class SocketUDT {
 			throws ExceptionUDT;
 
 	/**
-	 * Note: this is always a blocking call.
+	 * can be blocking or non blocking call; see
+	 * {@link OptionUDT#Is_Receive_Synchronous}
 	 * 
 	 * @see #connect0(InetSocketAddress)
 	 */

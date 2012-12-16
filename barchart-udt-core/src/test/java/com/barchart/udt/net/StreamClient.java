@@ -28,7 +28,7 @@ abstract class StreamClient extends StreamBase implements Runnable {
 	StreamClient(final TypeUDT type, final InetSocketAddress remoteAddress)
 			throws Exception {
 
-		super(new SocketUDT(type), TestHelp.getLocalSocketAddress(),
+		super(new SocketUDT(type), TestHelp.localSocketAddress(),
 				remoteAddress);
 
 		this.executor = Executors.newCachedThreadPool();

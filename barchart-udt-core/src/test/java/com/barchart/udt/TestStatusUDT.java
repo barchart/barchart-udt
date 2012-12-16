@@ -53,7 +53,7 @@ public class TestStatusUDT {
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
 		final InetSocketAddress localAddress1 = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		socket.bind(localAddress1);
 		assertEquals(StatusUDT.OPENED, socket.getStatus());
@@ -71,7 +71,7 @@ public class TestStatusUDT {
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
 		final InetSocketAddress localAddress1 = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		socket.bind(localAddress1);
 		assertEquals(StatusUDT.OPENED, socket.getStatus());
@@ -88,10 +88,10 @@ public class TestStatusUDT {
 	public void testSocketStatus3() throws Exception {
 
 		final InetSocketAddress clientAddress = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		final InetSocketAddress serverAddress = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		//
 

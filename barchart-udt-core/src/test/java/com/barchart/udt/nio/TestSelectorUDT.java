@@ -62,14 +62,14 @@ public class TestSelectorUDT {
 
 		acceptorChannel = provider.openServerSocketChannel();
 		acceptorChannel.configureBlocking(false);
-		acceptorAddress = getLocalSocketAddress();
+		acceptorAddress = localSocketAddress();
 		acceptorChannel.socket().bind(acceptorAddress);
 
 		acceptorKey = acceptorChannel.register(selector, OP_ACCEPT);
 
 		clientChannel = provider.openSocketChannel();
 		clientChannel.configureBlocking(false);
-		clientAddress = getLocalSocketAddress();
+		clientAddress = localSocketAddress();
 		clientChannel.socket().bind(clientAddress);
 
 		clientKey = clientChannel.register(selector, OP_CONNECT);
