@@ -2023,8 +2023,10 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_getStatus0(JNIEnv *env,
 
 //
 
-JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollCreate(JNIEnv *env,
-		jclass clsSocketUDT) {
+JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollCreate( //
+		JNIEnv *env, //
+		jclass clsSocketUDT //
+		) {
 
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
@@ -2041,8 +2043,10 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollCreate(JNIEnv *env,
 
 }
 
-JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRelease(JNIEnv *env,
-		jclass clsSocketUDT, const jint pollID) {
+JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRelease( //
+		JNIEnv *env, //
+		jclass clsSocketUDT, //
+		const jint pollID) {
 
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
@@ -2057,8 +2061,12 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRelease(JNIEnv *env,
 
 }
 
-JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd(JNIEnv *env,
-		jclass clsSocketUDT, const jint pollID, const jint socketID) {
+JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd( //
+		JNIEnv *env, //
+		jclass clsSocketUDT, //
+		const jint pollID, //
+		const jint socketID //
+		) {
 
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
@@ -2073,8 +2081,12 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd(JNIEnv *env,
 
 }
 
-JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove(JNIEnv *env,
-		jclass clsSocketUDT, const jint pollID, const jint socketID) {
+JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove( //
+		JNIEnv *env, //
+		jclass clsSocketUDT, //
+		const jint pollID, //
+		const jint socketID //
+		) {
 
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
@@ -2098,7 +2110,8 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait( //
 		const jobject objWriteBuffer, //
 		const jobject objExceptBuffer, //
 		const jobject objSizeBuffer, //
-		const jlong millisTimeout) {
+		const jlong millisTimeout //
+		) {
 
 	UNUSED(clsSocketUDT);
 	UNUSED(objExceptBuffer);
@@ -2156,7 +2169,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait( //
 
 }
 
-// #########################################3
+// #########################################
 // start - used for development only
 
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testEmptyCall0(

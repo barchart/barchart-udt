@@ -192,6 +192,8 @@ public class TestSocketUDT {
 
 		final int epollID = SocketUDT.epollCreate();
 
+		assertTrue(epollID > 0);
+
 		SocketUDT.epollAdd(epollID, socket.socketID);
 
 		SocketUDT.epollRemove(epollID, socket.socketID);
@@ -200,8 +202,44 @@ public class TestSocketUDT {
 
 	}
 
+	/**
+	 * NO exception
+	 * <p>
+	 * "If a socket is already in the epoll set, it will be ignored if being
+	 * added again. Adding invalid or closed sockets will cause error. However,
+	 * they will simply be ignored without any error returned when being
+	 * removed."
+	 * 
+	 * */
+	@Test
+	public void testEpollAddAgainSocketException() throws Exception {
+
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+
+		//
+
+		final int epollID = SocketUDT.epollCreate();
+
+		assertTrue(epollID > 0);
+
+		SocketUDT.epollAdd(epollID, socket.socketID);
+		SocketUDT.epollAdd(epollID, socket.socketID);
+		SocketUDT.epollAdd(epollID, socket.socketID);
+
+		SocketUDT.epollRelease(epollID);
+
+	}
+
+	/**
+	 * YES exception; see http://udt.sourceforge.net/udt4/index.htm
+	 * <p>
+	 * "If a socket is already in the epoll set, it will be ignored if being
+	 * added again. Adding invalid or closed sockets will cause error. However,
+	 * they will simply be ignored without any error returned when being
+	 * removed."
+	 */
 	@Test(expected = ExceptionUDT.class)
-	public void testEpollAddRemoveException1() throws Exception {
+	public void testEpollAddInvalidSocketException() throws Exception {
 
 		final int epollID = SocketUDT.epollCreate();
 
@@ -211,12 +249,21 @@ public class TestSocketUDT {
 
 	}
 
+	/**
+	 * NO exception; see http://udt.sourceforge.net/udt4/index.htm
+	 * <p>
+	 * "If a socket is already in the epoll set, it will be ignored if being
+	 * added again. Adding invalid or closed sockets will cause error. However,
+	 * they will simply be ignored without any error returned when being
+	 * removed."
+	 */
 	@Test
-	// (expected = ExceptionUDT.class)
-	public void testEpollAddRemoveException2() throws Exception {
+	public void testEpollRemoveIvalidSocketException() throws Exception {
 
 		final int epollID = SocketUDT.epollCreate();
 
+		SocketUDT.epollRemove(epollID, -1);
+		SocketUDT.epollRemove(epollID, -1);
 		SocketUDT.epollRemove(epollID, -1);
 
 		SocketUDT.epollRelease(epollID);
