@@ -1,12 +1,3 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -84,6 +75,11 @@ cannot be sent before the timer expires.</p>
     <td>6001</td>
     <td><i>u</i> is non-blocking (UDT_SNDSYN = false) but no buffer space is available.</td>
   </tr>
+  <tr>
+    <td>ETIMEOUT</td>
+    <td>6003</td>
+    <td>Timeout on UDT_SNDTIMEO .</td>
+  </tr>
 </table>
 
 <h5>Description</h5>
@@ -93,7 +89,7 @@ either to completely sent or it is not sent at all.</p>
 <p>In blocking mode (default), <strong>sendmsg</strong></strong> waits until there is enough space to hold the whole message. In non-blocking mode, <strong>sendmsg</strong> 
 returns immediately and returns error if no buffer space available.</p>
 <p>If UDT_SNDTIMEO is set and the socket is in blocking mode, <strong>sendmsg</strong> only waits a limited time specified by UDT_SNDTIMEO option. If there is still 
-no buffer space available when the timer expires, zero will be returned. UDT_SNDTIMEO has no effect for non-blocking socket.</p>
+no buffer space available when the timer expires, error will be returned. UDT_SNDTIMEO has no effect for non-blocking socket.</p>
 <p>The <i>ttl</i> parameter gives the message a limited life time, which starts counting once the first packet of the message is sent out. If the message has not 
 been delivered to the receiver after the TTL timer expires and each packet in the message has been sent out at least once,  the message will be discarded. Lost packets in the message will be retransmitted before TTL expires. </p>
 <p>On the other hand, the <i>inorder</i> option decides if this message should be delivered in order. That is, the message should not be delivered to the receiver 
@@ -102,7 +98,7 @@ side application unless all messages prior to it are either delivered or discard
 part that can be hold in the receiver buffer may be read and the rest will be discarded.</p>
 
 <h5>See Also</h5>
-<p><strong><a href="select.htm">select</a>, <a href="recvmsg.htm">send</a></strong></p>
+<p><strong><a href="recvmsg.htm">send</a></strong>, <a href="recv.htm"><strong>recv</strong></a>, <a href="recvmsg.htm"><strong>recvmsg</strong></a> </p>
 
 <p>&nbsp;</p>
 

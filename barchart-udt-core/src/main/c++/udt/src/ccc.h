@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*****************************************************************************
 written by
-   Yunhong Gu, last updated 05/05/2009
+   Yunhong Gu, last updated 02/28/2012
 *****************************************************************************/
 
 
@@ -87,7 +87,7 @@ public:
       // Returned value:
       //    None.
 
-   virtual void onACK(const int32_t&) {}
+   virtual void onACK(int32_t) {}
 
       // Functionality:
       //    Callback function to be called when a loss report is received.
@@ -97,7 +97,7 @@ public:
       // Returned value:
       //    None.
 
-   virtual void onLoss(const int32_t*, const int&) {}
+   virtual void onLoss(const int32_t*, int) {}
 
       // Functionality:
       //    Callback function to be called when a timeout event occurs.
@@ -146,7 +146,7 @@ protected:
       // Returned value:
       //    None.
 
-   void setACKTimer(const int& msINT);
+   void setACKTimer(int msINT);
 
       // Functionality:
       //    Set packet-based acknowldging and the number of packets to send an ACK.
@@ -155,7 +155,7 @@ protected:
       // Returned value:
       //    None.
 
-   void setACKInterval(const int& pktINT);
+   void setACKInterval(int pktINT);
 
       // Functionality:
       //    Set RTO value.
@@ -164,7 +164,7 @@ protected:
       // Returned value:
       //    None.
 
-   void setRTO(const int& usRTO);
+   void setRTO(int usRTO);
 
       // Functionality:
       //    Send a user defined control packet.
@@ -192,15 +192,15 @@ protected:
       // Returned value:
       //    None.
 
-   void setUserParam(const char* param, const int& size);
+   void setUserParam(const char* param, int size);
 
 private:
-   void setMSS(const int& mss);
-   void setMaxCWndSize(const int& cwnd);
-   void setBandwidth(const int& bw);
-   void setSndCurrSeqNo(const int32_t& seqno);
-   void setRcvRate(const int& rcvrate);
-   void setRTT(const int& rtt);
+   void setMSS(int mss);
+   void setMaxCWndSize(int cwnd);
+   void setBandwidth(int bw);
+   void setSndCurrSeqNo(int32_t seqno);
+   void setRcvRate(int rcvrate);
+   void setRTT(int rtt);
 
 protected:
    const int32_t& m_iSYNInterval;	// UDT constant parameter, SYN
@@ -257,8 +257,8 @@ public:
 
 public:
    virtual void init();
-   virtual void onACK(const int32_t&);
-   virtual void onLoss(const int32_t*, const int&);
+   virtual void onACK(int32_t);
+   virtual void onLoss(const int32_t*, int);
    virtual void onTimeout();
 
 private:

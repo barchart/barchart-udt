@@ -45,7 +45,7 @@ written by
 
 using namespace std;
 
-CACKWindow::CACKWindow(const int& size):
+CACKWindow::CACKWindow(int size):
 m_piACKSeqNo(NULL),
 m_piACK(NULL),
 m_pTimeStamp(NULL),
@@ -67,7 +67,7 @@ CACKWindow::~CACKWindow()
    delete [] m_pTimeStamp;
 }
 
-void CACKWindow::store(const int32_t& seq, const int32_t& ack)
+void CACKWindow::store(int32_t seq, int32_t ack)
 {
    m_piACKSeqNo[m_iHead] = seq;
    m_piACK[m_iHead] = ack;
@@ -80,7 +80,7 @@ void CACKWindow::store(const int32_t& seq, const int32_t& ack)
       m_iTail = (m_iTail + 1) % m_iSize;
 }
 
-int CACKWindow::acknowledge(const int32_t& seq, int32_t& ack)
+int CACKWindow::acknowledge(int32_t seq, int32_t& ack)
 {
    if (m_iHead >= m_iTail)
    {
@@ -144,7 +144,7 @@ int CACKWindow::acknowledge(const int32_t& seq, int32_t& ack)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CPktTimeWindow::CPktTimeWindow(const int& asize, const int& psize):
+CPktTimeWindow::CPktTimeWindow(int asize, int psize):
 m_iAWSize(asize),
 m_piPktWindow(NULL),
 m_iPktWindowPtr(0),
@@ -242,7 +242,7 @@ int CPktTimeWindow::getBandwidth() const
    return (int)ceil(1000000.0 / (double(sum) / double(count)));
 }
 
-void CPktTimeWindow::onPktSent(const int& currtime)
+void CPktTimeWindow::onPktSent(int currtime)
 {
    int interval = currtime - m_iLastSentTime;
 

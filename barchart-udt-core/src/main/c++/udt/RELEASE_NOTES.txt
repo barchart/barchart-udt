@@ -1,14 +1,14 @@
-====
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+version 4.10
 
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-====
+added UDT_SNDDATA and UDT_RCVDATA options
+fixed a bug that causes unnecessary connection timeout
+improved epoll UDT event handling
 
 version 4.9
 
-some bug fixes
+asynchronous close
+asynchronous connect
+some bug fixes, especially on EPOLL
 improved cache code
 removed unnecessary NAK (reduced loss retransmission)
 receiver side error can unblock a blocked sender

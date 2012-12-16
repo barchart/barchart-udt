@@ -44,7 +44,7 @@ written by
 
 using namespace std;
 
-CSndBuffer::CSndBuffer(const int& size, const int& mss):
+CSndBuffer::CSndBuffer(int size, int mss):
 m_BufLock(),
 m_pBlock(NULL),
 m_pFirstBlock(NULL),
@@ -117,7 +117,7 @@ CSndBuffer::~CSndBuffer()
    #endif
 }
 
-void CSndBuffer::addBuffer(const char* data, const int& len, const int& ttl, const bool& order)
+void CSndBuffer::addBuffer(const char* data, int len, int ttl, bool order)
 {
    int size = len / m_iMSS;
    if ((len % m_iMSS) != 0)
@@ -163,7 +163,7 @@ void CSndBuffer::addBuffer(const char* data, const int& len, const int& ttl, con
       m_iNextMsgNo = 1;
 }
 
-int CSndBuffer::addBufferFromFile(fstream& ifs, const int& len)
+int CSndBuffer::addBufferFromFile(fstream& ifs, int len)
 {
    int size = len / m_iMSS;
    if ((len % m_iMSS) != 0)
@@ -265,7 +265,7 @@ int CSndBuffer::readData(char** data, const int offset, int32_t& msgno, int& msg
    return readlen;
 }
 
-void CSndBuffer::ackData(const int& offset)
+void CSndBuffer::ackData(int offset)
 {
    CGuard bufferguard(m_BufLock);
 
@@ -343,7 +343,7 @@ void CSndBuffer::increase()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CRcvBuffer::CRcvBuffer(CUnitQueue* queue, const int& bufsize):
+CRcvBuffer::CRcvBuffer(CUnitQueue* queue, int bufsize):
 m_pUnit(NULL),
 m_iSize(bufsize),
 m_pUnitQueue(queue),
@@ -388,7 +388,7 @@ int CRcvBuffer::addData(CUnit* unit, int offset)
    return 0;
 }
 
-int CRcvBuffer::readBuffer(char* data, const int& len)
+int CRcvBuffer::readBuffer(char* data, int len)
 {
    int p = m_iStartPos;
    int lastack = m_iLastAckPos;
@@ -425,7 +425,7 @@ int CRcvBuffer::readBuffer(char* data, const int& len)
    return len - rs;
 }
 
-int CRcvBuffer::readBufferToFile(fstream& ofs, const int& len)
+int CRcvBuffer::readBufferToFile(fstream& ofs, int len)
 {
    int p = m_iStartPos;
    int lastack = m_iLastAckPos;
@@ -464,7 +464,7 @@ int CRcvBuffer::readBufferToFile(fstream& ofs, const int& len)
    return len - rs;
 }
 
-void CRcvBuffer::ackData(const int& len)
+void CRcvBuffer::ackData(int len)
 {
    m_iLastAckPos = (m_iLastAckPos + len) % m_iSize;
    m_iMaxPos -= len;
@@ -488,14 +488,14 @@ int CRcvBuffer::getRcvDataSize() const
    return m_iSize + m_iLastAckPos - m_iStartPos;
 }
 
-void CRcvBuffer::dropMsg(const int32_t& msgno)
+void CRcvBuffer::dropMsg(int32_t msgno)
 {
    for (int i = m_iStartPos, n = (m_iLastAckPos + m_iMaxPos) % m_iSize; i != n; i = (i + 1) % m_iSize)
       if ((NULL != m_pUnit[i]) && (msgno == m_pUnit[i]->m_Packet.m_iMsgNo))
          m_pUnit[i]->m_iFlag = 3;
 }
 
-int CRcvBuffer::readMsg(char* data, const int& len)
+int CRcvBuffer::readMsg(char* data, int len)
 {
    int p, q;
    bool passack;

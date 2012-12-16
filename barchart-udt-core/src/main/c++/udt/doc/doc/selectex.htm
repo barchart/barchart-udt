@@ -1,18 +1,14 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title> UDT Reference</title>
 <link rel="stylesheet" href="udtdoc.css" type="text/css" />
+<style type="text/css">
+<!--
+.style1 {color: #FF0000}
+-->
+</style>
 </head>
 
 <body>
@@ -20,7 +16,7 @@
 
 <h4 class="func_name"><strong>select</strong>Ex</h4>
 <p>The <b>selectEx</b> method queries a group of of UDT sockets for IO status.</p>
-
+<p><span class="style1">Note: selectEx is deprecated. Please use <a href="epoll.htm"><strong>epoll</strong></a> instead, which is far more efficienct. </span></p>
 <div class="code">int selectEx(<br />
 &nbsp; std::vector&lt;UDTSOCKET&gt; <font color="#FFFFFF">fds</font>,<br />
 &nbsp; std::vector&lt;UDTSOCKET&gt;* <font color="#FFFFFF">readfds</font>,<br />
@@ -69,7 +65,7 @@ returned. If there is any error, UDT::ERROR is returned and the specific error i
 <p>Overall,  <strong>selectEx</strong> is more convinient and more efficient. </p>
 <dl>
   <h5>See Also</h5>
-  <p><strong><a href="select.htm">select</a></strong></p>
+  <p><strong><a href="select.htm">select</a></strong>, <a href="epoll.htm"><strong>epoll</strong> </a></p>
   <dt>&nbsp;</dt>
 </dl>
 

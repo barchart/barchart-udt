@@ -1,13 +1,6 @@
-====
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-====
-
 Copyright (c) 2001 - 2011, The Board of Trustees of the University of Illinois.
 All Rights Reserved.
+Copyright (c) 2011 - 2012, Google, Inc. All Rights Reserved.
 
 UDP-based Data Transfer (UDT) Library - version 4
 Author: Yunhong Gu [yunhong.gu @ gmail.com]
@@ -39,6 +32,7 @@ on 32-bit i386 Linux system, simply use "make".
 
 On Windows systems, use the Visual C++ project files in ./win directory.
 
+Note for BSD users, please use GNU Make.
 
 To use UDT in your application:
 Read index.htm in ./doc. The documentation is in HTML format and requires your

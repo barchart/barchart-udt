@@ -40,7 +40,7 @@ written by
 
 #include "list.h"
 
-CSndLossList::CSndLossList(const int& size):
+CSndLossList::CSndLossList(int size):
 m_piData1(NULL),
 m_piData2(NULL),
 m_piNext(NULL),
@@ -82,7 +82,7 @@ CSndLossList::~CSndLossList()
    #endif
 }
 
-int CSndLossList::insert(const int32_t& seqno1, const int32_t& seqno2)
+int CSndLossList::insert(int32_t seqno1, int32_t seqno2)
 {
    CGuard listguard(m_ListLock);
 
@@ -254,7 +254,7 @@ int CSndLossList::insert(const int32_t& seqno1, const int32_t& seqno2)
    return m_iLength - origlen;
 }
 
-void CSndLossList::remove(const int32_t& seqno)
+void CSndLossList::remove(int32_t seqno)
 {
    CGuard listguard(m_ListLock);
 
@@ -419,7 +419,7 @@ int32_t CSndLossList::getLostSeq()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CRcvLossList::CRcvLossList(const int& size):
+CRcvLossList::CRcvLossList(int size):
 m_piData1(NULL),
 m_piData2(NULL),
 m_piNext(NULL),
@@ -450,7 +450,7 @@ CRcvLossList::~CRcvLossList()
    delete [] m_piPrior;
 }
 
-void CRcvLossList::insert(const int32_t& seqno1, const int32_t& seqno2)
+void CRcvLossList::insert(int32_t seqno1, int32_t seqno2)
 {
    // Data to be inserted must be larger than all those in the list
    // guaranteed by the UDT receiver
@@ -498,7 +498,7 @@ void CRcvLossList::insert(const int32_t& seqno1, const int32_t& seqno2)
    m_iLength += CSeqNo::seqlen(seqno1, seqno2);
 }
 
-bool CRcvLossList::remove(const int32_t& seqno)
+bool CRcvLossList::remove(int32_t seqno)
 {
    if (0 == m_iLength)
       return false; 
@@ -628,7 +628,7 @@ bool CRcvLossList::remove(const int32_t& seqno)
    return true;
 }
 
-bool CRcvLossList::remove(const int32_t& seqno1, const int32_t& seqno2)
+bool CRcvLossList::remove(int32_t seqno1, int32_t seqno2)
 {
    if (seqno1 <= seqno2)
    {
@@ -646,7 +646,7 @@ bool CRcvLossList::remove(const int32_t& seqno1, const int32_t& seqno2)
    return true;
 }
 
-bool CRcvLossList::find(const int32_t& seqno1, const int32_t& seqno2) const
+bool CRcvLossList::find(int32_t seqno1, int32_t seqno2) const
 {
    if (0 == m_iLength)
       return false;
@@ -679,7 +679,7 @@ int CRcvLossList::getFirstLostSeq() const
    return m_piData1[m_iHead];
 }
 
-void CRcvLossList::getLossArray(int32_t* array, int& len, const int& limit)
+void CRcvLossList::getLossArray(int32_t* array, int& len, int limit)
 {
    len = 0;
 

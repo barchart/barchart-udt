@@ -1,12 +1,3 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -36,8 +27,8 @@
   int epoll_create();<br />
   int epoll_add_usock(const int <span class="style1">eid</span>, const UDTSOCKET <span class="style1">usock</span>, const int* <span class="style1">events</span> = NULL);<br />
   int epoll_add_ssock(const int <span class="style1">eid</span>, const UDTSOCKET <span class="style1">ssock</span>, const int* <span class="style1">events</span> = NULL);<br />
-  int epoll_remove_usock(const int <span class="style1">eid</span>, const UDTSOCKET <span class="style1">usock</span>, const int* <span class="style1">events</span> = NULL);<br />
-  int epoll_remove_ssock(const int <span class="style1">eid</span>, const UDTSOCKET <span class="style1">ssock</span>, const int* <span class="style1">events</span> = NULL);<br />
+  int epoll_remove_usock(const int <span class="style1">eid</span>, const UDTSOCKET <span class="style1">usock</span>);<br />
+  int epoll_remove_ssock(const int <span class="style1">eid</span>, const UDTSOCKET <span class="style1">ssock</span>);<br />
   int epoll_wait(const int <span class="style1">eid</span>, std::set&lt;UDTSOCKET&gt;* <span class="style1">readfds</span>, std::set&lt;UDTSOCKET&gt;* <span class="style1">writefds</span>, int64_t msTimeOut, std::set&lt;SYSSOCKET&gt;* <span class="style1">lrfds</span> = NULL, std::set&lt;SYSSOCKET&gt;* <span class="style1">wrfds</span> = NULL);<br />
   int epoll_release(const int <span class="style1">eid</span>);
 </div>
@@ -51,7 +42,7 @@
   <dt><em>ssock</em></dt>
   <dd>[in] the system socket ID to be added to or removed from the epoll.</dd>
   <dt><em>events</em></dt>
-  <dd>[in] events to be watched (ignored for UDT sockets).</dd>
+  <dd>[in] events to be watched.</dd>
   <dt><em>readfds</em></dt>
   <dd>[out] Optional pointer to a set of UDT sockets that are ready to read.</dd>
   <dt><em>writefds</em></dt>
@@ -75,15 +66,26 @@
     <td width="83%" class="table_headline"><strong>Comment</strong></td>
   </tr>
   <tr>
+    <td>EINVPARAM</td>
+    <td>5003</td>
+    <td>Invalid parameters. </td>
+  </tr>
+  <tr>
+    <td>EINVSOCK</td>
+    <td>5004</td>
+    <td>Invalid socket. </td>
+  </tr>
+  <tr>
     <td>EINVPOLLID</td>
     <td>5013</td>
-    <td>poll ID is invalid. </td>
+    <td>EPoll ID is invalid. </td>
   </tr>
 </table>
 
 <h5>Description</h5>
 <p>The <strong>epoll</strong> functions provides a highly scalable and efficient way to wait for UDT sockets IO events. It should be used instead of <a href="select.htm">select</a> and <a href="selectex.htm">selectEx</a> when the application needs to wait for a very large number of sockets. In addition, epoll also offers to wait on system sockets at the same time, which can be convenient when an application uses both UDT and TCP/UDP. </p>
-<p>Applications should use <strong>epoll_create</strong> to create an epoll ID and use <strong>epoll_add_usock/ssock</strong> and <strong>epoll_remove_usock/ssock</strong> to add/remove sockets. If a socket is already in the epoll set, it will be ignored if being added again. Invalid or closed sockets will also be ignored with no errors returned. Multiple epoll entities can be created and there is no upper limits as long as system resource allows. There is also no hard limit on the number of UDT sockets and system descriptors to be watched.</p>
+<p>Applications should use <strong>epoll_create</strong> to create an epoll ID and use <strong>epoll_add_usock/ssock</strong> and <strong>epoll_remove_usock/ssock</strong> to add/remove sockets. If a socket is already in the epoll set, it will be ignored if being added again. Adding invalid or closed sockets will cause error. However, they will simply be ignored without any error returned when being removed. </p>
+<p>Multiple epoll entities can be created and there is no upper limits as long as system resource allows. There is also no hard limit on the number of UDT sockets. The number system descriptors supported by UDT::epoll are platform dependent.</p>
 <p>For system sockets on Linux, developers may choose to watch individual events from EPOLLIN (read), EPOLLOUT (write), and EPOLLERR (exceptions). When using <strong>epoll_remove_ssock</strong>, if the socket is waiting on multiple events, only those specified in <em>events</em> are removed. The events can be a combination (with &quot;|&quot; operation) of any of the following values. </p>
 <p>enum EPOLLOpt<br />
 {<br />
@@ -92,7 +94,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;UDT_EPOLL_ERR = 0x8<br />
 };</p>
 <p>For all other situations, the parameter <em>events</em> is ignored and all events will be watched. </p>
-<p>Note that exceptions are categorized as write events, so when the application choose to write to this socket, it will detect the exception. </p>
+<p>Note that exceptions are categorized as write events, so when the application choose to write to this socket, it will detect the exception.</p>
+<p>Finally, for <strong>epoll_wai</strong>t, negative timeout value will make the function to wait until an event happens. If the timeout value is 0, then the function returns immediately with any sockets associated an IO event. If timeout occurs before any event happens, the function returns 0. </p>
 <dl>
   <h5>See Also</h5>
   <p><strong><a href="select.htm">select</a></strong>, <a href="selectex.htm"><strong>selectEx</strong> </a></p>

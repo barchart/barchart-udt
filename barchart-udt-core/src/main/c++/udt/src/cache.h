@@ -41,11 +41,11 @@ written by
 #ifndef __UDT_CACHE_H__
 #define __UDT_CACHE_H__
 
-#include "udt.h"
-#include "common.h"
 #include <list>
 #include <vector>
 
+#include "common.h"
+#include "udt.h"
 
 class CCacheItem
 {
@@ -53,8 +53,10 @@ public:
    virtual ~CCacheItem() {}
 
 public:
-   virtual CCacheItem& operator=(CCacheItem&) {return *this;}
-   virtual bool operator==(CCacheItem&) {return false;}
+   virtual CCacheItem& operator=(const CCacheItem&) = 0;
+
+   // The "==" operator SHOULD only compare key values.
+   virtual bool operator==(const CCacheItem&) = 0;
 
       // Functionality:
       //    get a deep copy clone of the current item
@@ -63,7 +65,7 @@ public:
       // Returned value:
       //    Pointer to the new item, or NULL if failed.
 
-   virtual CCacheItem* clone() {return NULL;}
+   virtual CCacheItem* clone() = 0;
 
       // Functionality:
       //    get a random key value between 0 and MAX_INT to be used for the hash in cache
@@ -72,17 +74,32 @@ public:
       // Returned value:
       //    A random hash key.
 
-   virtual int getKey() {return 0;}
+   virtual int getKey() = 0;
+
+   // If there is any shared resources between the cache item and its clone,
+   // the shared resource should be released by this function.
+   virtual void release() {}
 };
 
-class CCache
+template<typename T> class CCache
 {
 public:
-   CCache(const int& size = 1024);
-   ~CCache();
+   CCache(int size = 1024):
+   m_iMaxSize(size),
+   m_iHashSize(size * 3),
+   m_iCurrSize(0)
+   {
+      m_vHashPtr.resize(m_iHashSize);
+      CGuard::createMutex(m_Lock);
+   }
+
+   ~CCache()
+   {
+      clear();
+      CGuard::releaseMutex(m_Lock);
+   }
 
 public:
-
       // Functionality:
       //    find the matching item in the cache.
       // Parameters:
@@ -90,20 +107,140 @@ public:
       // Returned value:
       //    0 if found a match, otherwise -1.
 
-   int lookup(CCacheItem* data);
+   int lookup(T* data)
+   {
+      CGuard cacheguard(m_Lock);
+
+      int key = data->getKey();
+      if (key < 0)
+         return -1;
+      if (key >= m_iMaxSize)
+         key %= m_iHashSize;
+
+      const ItemPtrList& item_list = m_vHashPtr[key];
+      for (typename ItemPtrList::const_iterator i = item_list.begin(); i != item_list.end(); ++ i)
+      {
+         if (*data == ***i)
+         {
+            // copy the cached info
+            *data = ***i;
+            return 0;
+         }
+      }
+
+      return -1;
+   }
 
       // Functionality:
-      //    update an item in the cache, or insert on if it doesn't exist; oldest item may be removed
+      //    update an item in the cache, or insert one if it doesn't exist; oldest item may be removed
       // Parameters:
       //    0) [in] data: the new item to updated/inserted to the cache
       // Returned value:
       //    0 if success, otherwise -1.
 
-   int update(CCacheItem* data);
+   int update(T* data)
+   {
+      CGuard cacheguard(m_Lock);
+
+      int key = data->getKey();
+      if (key < 0)
+         return -1;
+      if (key >= m_iMaxSize)
+         key %= m_iHashSize;
+
+      T* curr = NULL;
+
+      ItemPtrList& item_list = m_vHashPtr[key];
+      for (typename ItemPtrList::iterator i = item_list.begin(); i != item_list.end(); ++ i)
+      {
+         if (*data == ***i)
+         {
+            // update the existing entry with the new value
+            ***i = *data;
+            curr = **i;
+
+            // remove the current entry
+            m_StorageList.erase(*i);
+            item_list.erase(i);
+
+            // re-insert to the front
+            m_StorageList.push_front(curr);
+            item_list.push_front(m_StorageList.begin());
+
+            return 0;
+         }
+      }
+
+      // create new entry and insert to front
+      curr = data->clone();
+      m_StorageList.push_front(curr);
+      item_list.push_front(m_StorageList.begin());
+
+      ++ m_iCurrSize;
+      if (m_iCurrSize >= m_iMaxSize)
+      {
+         // Cache overflow, remove oldest entry.
+         T* last_data = m_StorageList.back();
+         int last_key = last_data->getKey() % m_iHashSize;
+
+         item_list = m_vHashPtr[last_key];
+         for (typename ItemPtrList::iterator i = item_list.begin(); i != item_list.end(); ++ i)
+         {
+            if (*last_data == ***i)
+            {
+               item_list.erase(i);
+               break;
+            }
+         }
+
+         last_data->release();
+         delete last_data;
+         m_StorageList.pop_back();
+         -- m_iCurrSize;
+      }
+
+      return 0;
+   }
+
+      // Functionality:
+      //    Specify the cache size (i.e., max number of items).
+      // Parameters:
+      //    0) [in] size: max cache size.
+      // Returned value:
+      //    None.
+
+   void setSizeLimit(int size)
+   {
+      m_iMaxSize = size;
+      m_iHashSize = size * 3;
+      m_vHashPtr.resize(m_iHashSize);
+   }
+
+      // Functionality:
+      //    Clear all entries in the cache, restore to initialization state.
+      // Parameters:
+      //    None.
+      // Returned value:
+      //    None.
+
+   void clear()
+   {
+      for (typename std::list<T*>::iterator i = m_StorageList.begin(); i != m_StorageList.end(); ++ i)
+      {
+         (*i)->release();
+         delete *i;
+      }
+      m_StorageList.clear();
+      for (typename std::vector<ItemPtrList>::iterator i = m_vHashPtr.begin(); i != m_vHashPtr.end(); ++ i)
+         i->clear();
+      m_iCurrSize = 0;
+   }
 
 private:
-   std::list<CCacheItem*> m_StorageList;
-   std::vector< std::list<std::list<CCacheItem*>::iterator> > m_vHashPtr;
+   std::list<T*> m_StorageList;
+   typedef typename std::list<T*>::iterator ItemPtr;
+   typedef std::list<ItemPtr> ItemPtrList;
+   std::vector<ItemPtrList> m_vHashPtr;
 
    int m_iMaxSize;
    int m_iHashSize;
@@ -117,7 +254,7 @@ private:
 };
 
 
-class CInfoBlock: public CCacheItem
+class CInfoBlock
 {
 public:
    uint32_t m_piIP[4];		// IP address, machine read only, not human readable format
@@ -131,10 +268,12 @@ public:
    double m_dCWnd;		// congestion window size, congestion control
 
 public:
-   virtual CInfoBlock& operator=(CCacheItem& obj);
-   virtual bool operator==(CCacheItem& obj);
+   virtual ~CInfoBlock() {}
+   virtual CInfoBlock& operator=(const CInfoBlock& obj);
+   virtual bool operator==(const CInfoBlock& obj);
    virtual CInfoBlock* clone();
    virtual int getKey();
+   virtual void release() {}
 
 public:
 
@@ -147,7 +286,7 @@ public:
       // Returned value:
       //    None.
 
-   static void convert(const sockaddr* addr, const int& ver, uint32_t ip[]);
+   static void convert(const sockaddr* addr, int ver, uint32_t ip[]);
 };
 
 

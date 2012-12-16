@@ -79,7 +79,7 @@ public:
       // Returned value:
       //    None.
 
-   void sleep(const uint64_t& interval);
+   void sleep(uint64_t interval);
 
       // Functionality:
       //    Seelp until CC "nexttime".
@@ -88,7 +88,7 @@ public:
       // Returned value:
       //    None.
 
-   void sleepto(const uint64_t& nexttime);
+   void sleepto(uint64_t nexttime);
 
       // Functionality:
       //    Stop the sleep() or sleepto() methods.
@@ -165,6 +165,9 @@ public:
    static void sleep();
 
 private:
+   uint64_t getTimeInMicroSec();
+
+private:
    uint64_t m_ullSchedTime;             // next schedulled time
 
    pthread_cond_t m_TickCond;
@@ -176,6 +179,7 @@ private:
 private:
    static uint64_t s_ullCPUFrequency;	// CPU frequency : clock cycles per microsecond
    static uint64_t readCPUFrequency();
+   static bool m_bUseMicroSecond;       // No higher resolution timer available, use gettimeofday().
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -219,13 +223,13 @@ private:
 class CSeqNo
 {
 public:
-   inline static int seqcmp(const int32_t& seq1, const int32_t& seq2)
+   inline static int seqcmp(int32_t seq1, int32_t seq2)
    {return (abs(seq1 - seq2) < m_iSeqNoTH) ? (seq1 - seq2) : (seq2 - seq1);}
 
-   inline static int seqlen(const int32_t& seq1, const int32_t& seq2)
+   inline static int seqlen(int32_t seq1, int32_t seq2)
    {return (seq1 <= seq2) ? (seq2 - seq1 + 1) : (seq2 - seq1 + m_iMaxSeqNo + 2);}
 
-   inline static int seqoff(const int32_t& seq1, const int32_t& seq2)
+   inline static int seqoff(int32_t seq1, int32_t seq2)
    {
       if (abs(seq1 - seq2) < m_iSeqNoTH)
          return seq2 - seq1;
@@ -236,13 +240,13 @@ public:
       return seq2 - seq1 + m_iMaxSeqNo + 1;
    }
 
-   inline static int32_t incseq(const int32_t seq)
+   inline static int32_t incseq(int32_t seq)
    {return (seq == m_iMaxSeqNo) ? 0 : seq + 1;}
 
-   inline static int32_t decseq(const int32_t& seq)
+   inline static int32_t decseq(int32_t seq)
    {return (seq == 0) ? m_iMaxSeqNo : seq - 1;}
 
-   inline static int32_t incseq(const int32_t& seq, const int32_t& inc)
+   inline static int32_t incseq(int32_t seq, int32_t inc)
    {return (m_iMaxSeqNo - seq >= inc) ? seq + inc : seq - m_iMaxSeqNo + inc - 1;}
 
 public:
@@ -257,7 +261,7 @@ public:
 class CAckNo
 {
 public:
-   inline static int32_t incack(const int32_t& ackno)
+   inline static int32_t incack(int32_t ackno)
    {return (ackno == m_iMaxAckSeqNo) ? 0 : ackno + 1;}
 
 public:
@@ -271,13 +275,13 @@ public:
 class CMsgNo
 {
 public:
-   inline static int msgcmp(const int32_t& msgno1, const int32_t& msgno2)
+   inline static int msgcmp(int32_t msgno1, int32_t msgno2)
    {return (abs(msgno1 - msgno2) < m_iMsgNoTH) ? (msgno1 - msgno2) : (msgno2 - msgno1);}
 
-   inline static int msglen(const int32_t& msgno1, const int32_t& msgno2)
+   inline static int msglen(int32_t msgno1, int32_t msgno2)
    {return (msgno1 <= msgno2) ? (msgno2 - msgno1 + 1) : (msgno2 - msgno1 + m_iMaxMsgNo + 2);}
 
-   inline static int msgoff(const int32_t& msgno1, const int32_t& msgno2)
+   inline static int msgoff(int32_t msgno1, int32_t msgno2)
    {
       if (abs(msgno1 - msgno2) < m_iMsgNoTH)
          return msgno2 - msgno1;
@@ -288,7 +292,7 @@ public:
       return msgno2 - msgno1 + m_iMaxMsgNo + 1;
    }
 
-   inline static int32_t incmsg(const int32_t& msgno)
+   inline static int32_t incmsg(int32_t msgno)
    {return (msgno == m_iMaxMsgNo) ? 0 : msgno + 1;}
 
 public:
@@ -300,9 +304,9 @@ public:
 
 struct CIPAddress
 {
-   static bool ipcmp(const sockaddr* addr1, const sockaddr* addr2, const int& ver = AF_INET);
-   static void ntop(const sockaddr* addr, uint32_t ip[4], const int& ver = AF_INET);
-   static void pton(sockaddr* addr, const uint32_t ip[4], const int& ver = AF_INET);
+   static bool ipcmp(const sockaddr* addr1, const sockaddr* addr2, int ver = AF_INET);
+   static void ntop(const sockaddr* addr, uint32_t ip[4], int ver = AF_INET);
+   static void pton(sockaddr* addr, const uint32_t ip[4], int ver = AF_INET);
 };
 
 ////////////////////////////////////////////////////////////////////////////////

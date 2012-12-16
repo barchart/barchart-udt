@@ -177,12 +177,12 @@ int CPacket::getLength() const
    return m_PacketVector[1].iov_len;
 }
 
-void CPacket::setLength(const int& len)
+void CPacket::setLength(int len)
 {
    m_PacketVector[1].iov_len = len;
 }
 
-void CPacket::pack(const int& pkttype, void* lparam, void* rparam, const int& size)
+void CPacket::pack(int pkttype, void* lparam, void* rparam, int size)
 {
    // Set (bit-0 = 1) and (bit-1~15 = type)
    m_nHeader[0] = 0x80000000 | (pkttype << 16);
@@ -362,9 +362,10 @@ m_iMSS(0),
 m_iFlightFlagSize(0),
 m_iReqType(0),
 m_iID(0),
-m_iCookie(0),
-m_piPeerIP()
+m_iCookie(0)
 {
+   for (int i = 0; i < 4; ++ i)
+      m_piPeerIP[i] = 0;
 }
 
 int CHandShake::serialize(char* buf, int& size)
@@ -389,7 +390,7 @@ int CHandShake::serialize(char* buf, int& size)
    return 0;
 }
 
-int CHandShake::deserialize(const char* buf, const int& size)
+int CHandShake::deserialize(const char* buf, int size)
 {
    if (size < m_iContentSize)
       return -1;

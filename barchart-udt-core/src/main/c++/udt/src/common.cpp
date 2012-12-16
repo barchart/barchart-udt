@@ -43,6 +43,9 @@ written by
    #include <cstring>
    #include <cerrno>
    #include <unistd.h>
+   #ifdef OSX
+      #include <mach/mach_time.h>
+   #endif
 #else
    #include <winsock2.h>
    #include <ws2tcpip.h>
@@ -50,11 +53,12 @@ written by
       #include <wspiapi.h>
    #endif
 #endif
-#
+
 #include <cmath>
 #include "md5.h"
 #include "common.h"
 
+bool CTimer::m_bUseMicroSecond = false;
 uint64_t CTimer::s_ullCPUFrequency = CTimer::readCPUFrequency();
 #ifndef WIN32
    pthread_mutex_t CTimer::m_EventLock = PTHREAD_MUTEX_INITIALIZER;
@@ -91,16 +95,13 @@ CTimer::~CTimer()
 
 void CTimer::rdtsc(uint64_t &x)
 {
-   #ifdef WIN32
-      //HANDLE hCurThread = ::GetCurrentThread(); 
-      //DWORD_PTR dwOldMask = ::SetThreadAffinityMask(hCurThread, 1); 
-      BOOL ret = QueryPerformanceCounter((LARGE_INTEGER *)&x);
-      //SetThreadAffinityMask(hCurThread, dwOldMask);
+   if (m_bUseMicroSecond)
+   {
+      x = getTime();
+      return;
+   }
 
-      if (!ret)
-         x = getTime() * s_ullCPUFrequency;
-
-   #elif IA32
+   #ifdef IA32
       uint32_t lval, hval;
       //asm volatile ("push %eax; push %ebx; push %ecx; push %edx");
       //asm volatile ("xor %eax, %eax; cpuid");
@@ -108,30 +109,33 @@ void CTimer::rdtsc(uint64_t &x)
       //asm volatile ("pop %edx; pop %ecx; pop %ebx; pop %eax");
       x = hval;
       x = (x << 32) | lval;
-   #elif IA64
+   #elif defined(IA64)
       asm ("mov %0=ar.itc" : "=r"(x) :: "memory");
-   #elif AMD64
+   #elif defined(AMD64)
       uint32_t lval, hval;
       asm ("rdtsc" : "=a" (lval), "=d" (hval));
       x = hval;
       x = (x << 32) | lval;
+   #elif defined(WIN32)
+      //HANDLE hCurThread = ::GetCurrentThread(); 
+      //DWORD_PTR dwOldMask = ::SetThreadAffinityMask(hCurThread, 1); 
+      BOOL ret = QueryPerformanceCounter((LARGE_INTEGER *)&x);
+      //SetThreadAffinityMask(hCurThread, dwOldMask);
+      if (!ret)
+         x = getTime() * s_ullCPUFrequency;
+   #elif defined(OSX)
+      x = mach_absolute_time();
    #else
       // use system call to read time clock for other archs
-      timeval t;
-      gettimeofday(&t, 0);
-      x = (uint64_t)t.tv_sec * (uint64_t)1000000 + (uint64_t)t.tv_usec;
+      x = getTime();
    #endif
 }
 
 uint64_t CTimer::readCPUFrequency()
 {
-   #ifdef WIN32
-      int64_t ccf;
-      if (QueryPerformanceFrequency((LARGE_INTEGER *)&ccf))
-         return ccf / 1000000;
-      else
-         return 1;
-   #elif IA32 || IA64 || AMD64
+   uint64_t frequency = 1;  // 1 tick per microsecond.
+
+   #if defined(IA32) || defined(IA64) || defined(AMD64)
       uint64_t t1, t2;
 
       rdtsc(t1);
@@ -142,10 +146,24 @@ uint64_t CTimer::readCPUFrequency()
       rdtsc(t2);
 
       // CPU clocks per microsecond
-      return (t2 - t1) / 100000;
-   #else
-      return 1;
+      frequency = (t2 - t1) / 100000;
+   #elif defined(WIN32)
+      int64_t ccf;
+      if (QueryPerformanceFrequency((LARGE_INTEGER *)&ccf))
+         frequency = ccf / 1000000;
+   #elif defined(OSX)
+      mach_timebase_info_data_t info;
+      mach_timebase_info(&info);
+      frequency = info.denom * 1000ULL / info.numer;
    #endif
+
+   // Fall back to microsecond if the resolution is not high enough.
+   if (frequency < 10)
+   {
+      frequency = 1;
+      m_bUseMicroSecond = true;
+   }
+   return frequency;
 }
 
 uint64_t CTimer::getCPUFrequency()
@@ -153,7 +171,7 @@ uint64_t CTimer::getCPUFrequency()
    return s_ullCPUFrequency;
 }
 
-void CTimer::sleep(const uint64_t& interval)
+void CTimer::sleep(uint64_t interval)
 {
    uint64_t t;
    rdtsc(t);
@@ -162,7 +180,7 @@ void CTimer::sleep(const uint64_t& interval)
    sleepto(t + interval);
 }
 
-void CTimer::sleepto(const uint64_t& nexttime)
+void CTimer::sleepto(uint64_t nexttime)
 {
    // Use class member such that the method can be interrupted by others
    m_ullSchedTime = nexttime;
@@ -211,7 +229,6 @@ void CTimer::interrupt()
 {
    // schedule the sleepto time to the current CCs, so that it will stop
    rdtsc(m_ullSchedTime);
-
    tick();
 }
 
@@ -230,6 +247,7 @@ uint64_t CTimer::getTime()
    //uint64_t x;
    //rdtsc(x);
    //return x / s_ullCPUFrequency;
+   //Specific fix may be necessary if rdtsc is not available either.
 
    #ifndef WIN32
       timeval t;
@@ -665,12 +683,13 @@ const int CUDTException::EINVPOLLID = 5013;
 const int CUDTException::EASYNCFAIL = 6000;
 const int CUDTException::EASYNCSND = 6001;
 const int CUDTException::EASYNCRCV = 6002;
+const int CUDTException::ETIMEOUT = 6003;
 const int CUDTException::EPEERERR = 7000;
 const int CUDTException::EUNKNOWN = -1;
 
 
 //
-bool CIPAddress::ipcmp(const sockaddr* addr1, const sockaddr* addr2, const int& ver)
+bool CIPAddress::ipcmp(const sockaddr* addr1, const sockaddr* addr2, int ver)
 {
    if (AF_INET == ver)
    {
@@ -698,7 +717,7 @@ bool CIPAddress::ipcmp(const sockaddr* addr1, const sockaddr* addr2, const int& 
    return false;
 }
 
-void CIPAddress::ntop(const sockaddr* addr, uint32_t ip[4], const int& ver)
+void CIPAddress::ntop(const sockaddr* addr, uint32_t ip[4], int ver)
 {
    if (AF_INET == ver)
    {
@@ -715,7 +734,7 @@ void CIPAddress::ntop(const sockaddr* addr, uint32_t ip[4], const int& ver)
    }
 }
 
-void CIPAddress::pton(sockaddr* addr, const uint32_t ip[4], const int& ver)
+void CIPAddress::pton(sockaddr* addr, const uint32_t ip[4], int ver)
 {
    if (AF_INET == ver)
    {

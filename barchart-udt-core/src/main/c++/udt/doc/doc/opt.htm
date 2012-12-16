@@ -1,12 +1,3 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -64,26 +55,26 @@
     <tr>
       <td>UDT_SNDSYN</td>
       <td>bool</td>
-      <td>synchronization mode of data sending.</td>
+      <td>Synchronization mode of data sending.</td>
       <td>true for blocking sending; false for non-blocking sending. Default true.</td>
     </tr>
     <tr>
       <td>UDT_RCVSYN</td>
       <td>bool</td>
-      <td>synchronization mode for receiving.</td>
+      <td>Synchronization mode for receiving.</td>
       <td>true for blocking receiving; false for non-blocking receiving. Default true.</td>
     </tr>
     <tr>
       <td>UDT_CC</td>
       <td>CCCFactory*<br>CCC**</td>
-      <td>user defined congestion control algorithm.</td>
+      <td>User defined congestion control algorithm.</td>
       <td><i>optval</i> is a pointer to a CCC Factory class instance (for setsockopt).<br><i>optval</i> is a pointer of pointer to a CCC class instance (for getsockopt).</td>
     </tr>
     <tr>
       <td>UDT_FC</td>
       <td>int</td>
       <td>Maximum window size (packets)</td>
-      <td>Default 25600.</td>
+      <td>Default 25600. Do NOT change this unless you know what you are doing. Must change this before modifying the buffer sizes. </td>
     </tr>
     <tr>
       <td>UDT_SNDBUF</td>
@@ -124,26 +115,50 @@
     <tr>
       <td>UDT_SNDTIMEO</td>
       <td>int</td>
-      <td>sending call timeout (milliseconds).</td>
+      <td>Sending call timeout (milliseconds).</td>
       <td>Default -1 (infinite).</td>
     </tr>
     <tr>
       <td>UDT_RCVTIMEO</td>
       <td>int</td>
-      <td>receiving call timeout (milliseconds).</td>
+      <td>Receiving call timeout (milliseconds).</td>
       <td>Default -1 (infinite).</td>
     </tr>
     <tr>
       <td>UDT_REUSEADDR</td>
       <td>bool</td>
-      <td>reuse an existing address or create a new one.</td>
+      <td>Reuse an existing address or create a new one.</td>
       <td>Default true (reuse).</td>
     </tr>
     <tr>
       <td>UDT_MAXBW</td>
       <td>int64_t</td>
-      <td>maximum bandwidth that one single UDT connection can use (bytes per second).</td>
+      <td>Maximum bandwidth that one single UDT connection can use (bytes per second).</td>
       <td>Default -1 (no upper limit).</td>
+    </tr>
+    <tr>
+      <td>UDT_STATE</td>
+      <td>int32_t</td>
+      <td>Current status of the UDT socket.</td>
+      <td>Read only.</td>
+    </tr>
+    <tr>
+      <td>UDT_EVENT</td>
+      <td>int32_t</td>
+      <td>The EPOLL events available to this socket.</td>
+      <td>Read only.</td>
+    </tr>
+    <tr>
+      <td>UDT_SNDDATA</td>
+      <td>int32_t</td>
+      <td>Size of pending data in the sending buffer.</td>
+      <td>Read only.</td>
+    </tr>
+    <tr>
+      <td>UDT_RCVDATA</td>
+      <td>int32_t</td>
+      <td>Size of data available to read, in the receiving buffer.</td>
+      <td>Read only.</td>
     </tr>
   </table>
 

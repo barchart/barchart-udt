@@ -2091,7 +2091,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove0( //
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
 
-	const int rv = UDT::epoll_remove_usock(pollID, socketID, NULL);
+	const int rv = UDT::epoll_remove_usock(pollID, socketID);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();

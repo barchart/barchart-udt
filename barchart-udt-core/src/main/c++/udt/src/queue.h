@@ -42,12 +42,13 @@ written by
 #ifndef __UDT_QUEUE_H__
 #define __UDT_QUEUE_H__
 
+#include "channel.h"
 #include "common.h"
 #include "packet.h"
-#include "channel.h"
-#include <vector>
+#include <list>
 #include <map>
 #include <queue>
+#include <vector>
 
 class CUDT;
 
@@ -77,7 +78,7 @@ public:
       // Returned value:
       //    0: success, -1: failure.
 
-   int init(const int& size, const int& mss, const int& version);
+   int init(int size, int mss, int version);
 
       // Functionality:
       //    Increase (double) the unit queue size.
@@ -158,7 +159,7 @@ public:
       // Returned value:
       //    None.
 
-   void insert(const int64_t& ts, const CUDT* u);
+   void insert(int64_t ts, const CUDT* u);
 
       // Functionality:
       //    Update the timestamp of the UDT instance on the list.
@@ -168,7 +169,7 @@ public:
       // Returned value:
       //    None.
 
-   void update(const CUDT* u, const bool& reschedule = true);
+   void update(const CUDT* u, bool reschedule = true);
 
       // Functionality:
       //    Retrieve the next packet and peer address from the first entry, and reschedule it in the queue.
@@ -199,7 +200,7 @@ public:
    uint64_t getNextProcTime();
 
 private:
-   void insert_(const int64_t& ts, const CUDT* u);
+   void insert_(int64_t ts, const CUDT* u);
    void remove_(const CUDT* u);
 
 private:
@@ -291,7 +292,7 @@ public:
       // Returned value:
       //    None.
 
-   void init(const int& size);
+   void init(int size);
 
       // Functionality:
       //    Look for a UDT instance from the hash table.
@@ -300,7 +301,7 @@ public:
       // Returned value:
       //    Pointer to a UDT instance, or NULL if not found.
 
-   CUDT* lookup(const int32_t& id);
+   CUDT* lookup(int32_t id);
 
       // Functionality:
       //    Insert an entry to the hash table.
@@ -310,7 +311,7 @@ public:
       // Returned value:
       //    None.
 
-   void insert(const int32_t& id, const CUDT* u);
+   void insert(int32_t id, CUDT* u);
 
       // Functionality:
       //    Remove an entry from the hash table.
@@ -319,7 +320,7 @@ public:
       // Returned value:
       //    None.
 
-   void remove(const int32_t& id);
+   void remove(int32_t id);
 
 private:
    struct CBucket
@@ -344,18 +345,22 @@ public:
    ~CRendezvousQueue();
 
 public:
-   void insert(const UDTSOCKET& id, const int& ipv, const sockaddr* addr);
+   void insert(const UDTSOCKET& id, CUDT* u, int ipv, const sockaddr* addr, uint64_t ttl);
    void remove(const UDTSOCKET& id);
-   bool retrieve(const sockaddr* addr, UDTSOCKET& id);
+   CUDT* retrieve(const sockaddr* addr, UDTSOCKET& id);
+
+   void updateConnStatus();
 
 private:
    struct CRL
    {
-      UDTSOCKET m_iID;
-      int m_iIPversion;
-      sockaddr* m_pPeerAddr;
+      UDTSOCKET m_iID;			// UDT socket ID (self)
+      CUDT* m_pUDT;			// UDT instance
+      int m_iIPversion;                 // IP version
+      sockaddr* m_pPeerAddr;		// UDT sonnection peer address
+      uint64_t m_ullTTL;			// the time that this request expires
    };
-   std::vector<CRL> m_vRendezvousID;         // The sockets currently in rendezvous mode
+   std::list<CRL> m_lRendezvousID;      // The sockets currently in rendezvous mode
 
    pthread_mutex_t m_RIDVectorLock;
 };
@@ -379,7 +384,7 @@ public:
       // Returned value:
       //    None.
 
-   void init(const CChannel* c, const CTimer* t);
+   void init(CChannel* c, CTimer* t);
 
       // Functionality:
       //    Send out a packet to a given address.
@@ -439,7 +444,7 @@ public:
       // Returned value:
       //    None.
 
-   void init(const int& size, const int& payload, const int& version, const int& hsize, const CChannel* c, const CTimer* t);
+   void init(int size, int payload, int version, int hsize, CChannel* c, CTimer* t);
 
       // Functionality:
       //    Read a packet for a specific UDT socket id.
@@ -449,7 +454,7 @@ public:
       // Returned value:
       //    Data size of the packet
 
-   int recvfrom(const int32_t& id, CPacket& packet);
+   int recvfrom(int32_t id, CPacket& packet);
 
 private:
 #ifndef WIN32
@@ -474,18 +479,21 @@ private:
    pthread_cond_t m_ExitCond;
 
 private:
-   int setListener(const CUDT* u);
+   int setListener(CUDT* u);
    void removeListener(const CUDT* u);
+
+   void registerConnector(const UDTSOCKET& id, CUDT* u, int ipv, const sockaddr* addr, uint64_t ttl);
+   void removeConnector(const UDTSOCKET& id);
 
    void setNewEntry(CUDT* u);
    bool ifNewEntry();
    CUDT* getNewEntry();
 
-   void storePkt(const int32_t& id, CPacket* pkt);
+   void storePkt(int32_t id, CPacket* pkt);
 
 private:
    pthread_mutex_t m_LSLock;
-   volatile CUDT* m_pListener;                          // pointer to the (unique, if any) listening UDT entity
+   CUDT* m_pListener;                                   // pointer to the (unique, if any) listening UDT entity
    CRendezvousQueue* m_pRendezvousQueue;                // The list of sockets in rendezvous mode
 
    std::vector<CUDT*> m_vNewEntry;                      // newly added entries, to be inserted
