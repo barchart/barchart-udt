@@ -229,6 +229,8 @@
 									<patchDirectory>${basedir}/src/main/patches</patchDirectory>
 									<patchTrackingFile>${target}/patches/patches-applied.txt</patchTrackingFile>
 									<naturalOrderProcessing>true</naturalOrderProcessing>
+									<patches>
+									</patches>
 								</configuration>
 							</execution>
 						</executions>
