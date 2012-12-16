@@ -79,6 +79,7 @@ public enum StatusUDT {
 		case INIT:
 		case OPENED:
 		case LISTENING:
+		case CONNECTING:
 		case CONNECTED:
 			return true;
 		default:
