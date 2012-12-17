@@ -20,10 +20,12 @@ import java.nio.channels.spi.AbstractSelectableChannel;
 import java.nio.channels.spi.AbstractSelector;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +74,7 @@ public class SelectorUDT extends AbstractSelector {
 				synchronized (selectedKeySetPublic) {
 
 					selectedKeySet.clear();
-					cancelledKeySet.clear();
+					cancelledKeys().clear();
 					registeredKeyMap.clear();
 
 					for (final SelectionKey key : registeredKeySet) {
@@ -202,30 +204,28 @@ public class SelectorUDT extends AbstractSelector {
 	// #######################################################################
 
 	/**
-	 * Private views of the key sets
-	 */
-
-	/**
 	 * The set of keys with data ready for an operation
 	 */
-	private final Set<SelectionKeyUDT> selectedKeySet;
+	private final Set<SelectionKeyUDT> //
+	selectedKeySet = new HashSet<SelectionKeyUDT>();
+
 	/**
 	 * The set of keys registered with this Selector
 	 */
-	private final Set<SelectionKeyUDT> registeredKeySet;
+	private final Set<SelectionKeyUDT> //
+	registeredKeySet = new HashSet<SelectionKeyUDT>();
 
-	// Public views of the key sets
+	/**
+	 * totally immutable
+	 */
+	private final Set<? extends SelectionKey> //
+	registeredKeySetPublic = Collections.unmodifiableSet(registeredKeySet);
 
-	/** totally immutable */
-	private final Set<? extends SelectionKey> registeredKeySetPublic;
+	private final Map<Integer, SelectionKeyUDT> //
+	registeredKeyMap = new ConcurrentHashMap<Integer, SelectionKeyUDT>();
 
 	/** partially immutable: removal allowed, but not addition */
 	private final Set<? extends SelectionKey> selectedKeySetPublic;
-
-	/** mutable: requests for cancel */
-	private final Set<SelectionKey> cancelledKeySet;
-
-	private final Map<Integer, SelectionKeyUDT> registeredKeyMap;
 
 	/**
 	 * used by SocketUDT.select(); performance optimization: use final arrays
@@ -245,14 +245,6 @@ public class SelectorUDT extends AbstractSelector {
 
 		super(provider);
 
-		registeredKeyMap = new HashMap<Integer, SelectionKeyUDT>();
-
-		cancelledKeySet = cancelledKeys();
-
-		registeredKeySet = new HashSet<SelectionKeyUDT>();
-		selectedKeySet = new HashSet<SelectionKeyUDT>();
-
-		registeredKeySetPublic = Collections.unmodifiableSet(registeredKeySet);
 		selectedKeySetPublic = HelpUDT.ungrowableSet(selectedKeySet);
 
 		this.maximimSelectorSize = maximumSelectorSize;
@@ -271,18 +263,20 @@ public class SelectorUDT extends AbstractSelector {
 	/** block epoll till event arrives */
 	public static long UDT_TIMEOUT_INFINITE = -1;
 
+	private final Lock selectLock = new ReentrantLock();
+
 	private final int stageEnter(final long millisTimeout) throws IOException {
 
 		if (!isOpen()) {
 			throw new ClosedSelectorException();
 		}
 
-		synchronized (this) {
-			synchronized (registeredKeySetPublic) {
-				synchronized (selectedKeySetPublic) {
-					return stageLocked(millisTimeout);
-				}
-			}
+		selectLock.lock();
+
+		try {
+			return stageLocked(millisTimeout);
+		} finally {
+			selectLock.unlock();
 		}
 
 	}
@@ -474,13 +468,13 @@ public class SelectorUDT extends AbstractSelector {
 
 		selectedKeySet.clear();
 
-		synchronized (cancelledKeySet) {
+		synchronized (cancelledKeys()) {
 
-			if (cancelledKeySet.isEmpty()) {
+			if (cancelledKeys().isEmpty()) {
 				return;
 			}
 
-			for (final SelectionKey key : cancelledKeySet) {
+			for (final SelectionKey key : cancelledKeys()) {
 
 				final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
 
@@ -497,7 +491,7 @@ public class SelectorUDT extends AbstractSelector {
 
 			}
 
-			cancelledKeySet.clear();
+			cancelledKeys().clear();
 
 		}
 

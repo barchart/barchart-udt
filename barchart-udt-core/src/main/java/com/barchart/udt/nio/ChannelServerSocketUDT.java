@@ -45,7 +45,7 @@ import com.barchart.udt.SocketUDT;
 public class ChannelServerSocketUDT extends ServerSocketChannel implements
 		ChannelUDT {
 
-	final SocketUDT serverSocketUDT;
+	protected final SocketUDT serverSocketUDT;
 
 	protected ChannelServerSocketUDT(final SelectorProvider provider,
 			final SocketUDT socketUDT) {
@@ -69,8 +69,11 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 		try {
 			begin();
 			final SocketUDT socketUDT = serverSocketUDT.accept();
-			final SelectorProvider provider = provider();
-			return new ChannelSocketUDT(provider, socketUDT);
+			if (socketUDT == null) {
+				return null;
+			} else {
+				return new ChannelSocketUDT(provider(), socketUDT);
+			}
 		} finally {
 			end(true);
 		}

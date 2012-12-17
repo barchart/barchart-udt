@@ -337,7 +337,11 @@ public class TestSocketUDT {
 		accept.configureBlocking(false);
 		accept.bind(localSocketAddress());
 
+		assertEquals(StatusUDT.OPENED, accept.getStatus());
+
 		accept.listen(1);
+
+		assertEquals(StatusUDT.LISTENING, accept.getStatus());
 
 		assertNull(accept.accept());
 

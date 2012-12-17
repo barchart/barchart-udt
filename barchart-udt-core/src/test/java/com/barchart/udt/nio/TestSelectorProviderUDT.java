@@ -165,15 +165,13 @@ public class TestSelectorProviderUDT {
 
 		final Selector selector = provider.openSelector();
 
-		final ServerSocketChannel acceptorChannel = provider
+		final ServerSocketChannel acceptChannel = provider
 				.openServerSocketChannel();
-		acceptorChannel.configureBlocking(false);
-		acceptorChannel.socket().bind(localSocketAddress());
+		acceptChannel.configureBlocking(false);
+		acceptChannel.socket().bind(localSocketAddress());
 
-		final SelectionKeyUDT acceptorKey = (SelectionKeyUDT) acceptorChannel
+		final SelectionKeyUDT acceptKey = (SelectionKeyUDT) acceptChannel
 				.register(selector, OP_ACCEPT);
-
-		assertEquals(StatusUDT.LISTENING, acceptorKey.socketUDT().getStatus());
 
 		final SocketChannel clientChannel = provider.openSocketChannel();
 		clientChannel.configureBlocking(false);
@@ -182,79 +180,66 @@ public class TestSelectorProviderUDT {
 		final SelectionKeyUDT clientKey = (SelectionKeyUDT) clientChannel
 				.register(selector, OP_CONNECT);
 
+		assertEquals(StatusUDT.LISTENING, acceptKey.socketUDT().getStatus());
 		assertEquals(StatusUDT.OPENED, clientKey.socketUDT().getStatus());
 
-		clientChannel.connect(acceptorChannel.socket().getLocalSocketAddress());
+		assertNull(acceptKey.socketUDT().accept());
 
 		{
-			log.info("acceptorKey={}", acceptorKey);
-			log.info("clientKey={}", clientKey);
-		}
-
-		{
-			/** first state */
-
+			log.info("### state 0");
 			Thread.sleep(100);
-
 			final int readyCount = selector.select(100);
-
-			log.info("acceptorKey={}", acceptorKey);
+			log.info("acceptKey={}", acceptKey);
 			log.info("clientKey={}", clientKey);
-
-			assertEquals(2, readyCount);
-
+			assertEquals(0, readyCount);
 			final Set<SelectionKey> readySet = selector.selectedKeys();
-
-			assertEquals(2, readySet.size());
-
+			assertEquals(0, readySet.size());
 			logSet(readySet);
 		}
 
-		assertEquals(StatusUDT.LISTENING, acceptorKey.socketUDT().getStatus());
+		clientChannel.connect(acceptChannel.socket().getLocalSocketAddress());
+
+		{
+			log.info("### state 1");
+			Thread.sleep(100);
+			final int readyCount = selector.select(100);
+			log.info("acceptKey={}", acceptKey);
+			log.info("clientKey={}", clientKey);
+			assertEquals(2, readyCount);
+			final Set<SelectionKey> readySet = selector.selectedKeys();
+			assertEquals(2, readySet.size());
+			logSet(readySet);
+		}
+
+		assertEquals(StatusUDT.LISTENING, acceptKey.socketUDT().getStatus());
 		assertEquals(StatusUDT.CONNECTED, clientKey.socketUDT().getStatus());
 
 		{
-			/** second state, same as first */
-
+			log.info("### state 2");
 			Thread.sleep(100);
-
 			final int readyCount = selector.select(100);
-
-			log.info("acceptorKey={}", acceptorKey);
+			log.info("acceptKey={}", acceptKey);
 			log.info("clientKey={}", clientKey);
-
 			assertEquals(2, readyCount);
-
 			final Set<SelectionKey> readySet = selector.selectedKeys();
-
 			assertEquals(2, readySet.size());
-
 			logSet(readySet);
 		}
 
-		final SocketChannel server = acceptorChannel.accept();
+		final SocketChannel server = acceptChannel.accept();
 		assertNotNull(server);
-
-		Thread.sleep(100);
-		assertNull(acceptorChannel.accept());
-
-		assertEquals(StatusUDT.LISTENING, acceptorKey.socketUDT().getStatus());
-		assertEquals(StatusUDT.CONNECTED, clientKey.socketUDT().getStatus());
+		assertNull(acceptChannel.accept());
 
 		{
+			log.info("### state 3");
+			Thread.sleep(100);
 			final int readyCount = selector.select(100);
-
-			log.info("acceptorKey={}", acceptorKey);
+			log.info("acceptKey={}", acceptKey);
 			log.info("clientKey={}", clientKey);
-
 			assertEquals(2, readyCount);
-
 			final Set<SelectionKey> readySet = selector.selectedKeys();
-
 			assertEquals(2, readySet.size());
-
 			logSet(readySet);
-
 		}
 
 	}
