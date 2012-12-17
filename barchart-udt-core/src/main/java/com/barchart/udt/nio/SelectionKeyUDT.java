@@ -18,34 +18,32 @@ import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.SocketUDT;
 
 /**
- * NOTE: 1<->1 mapping between: SelectionKeyUDT -> ChannelUDT -> SocketUDT
+ * NOTE: 1<->1 mapping between: SelectionKeyUDT - ChannelUDT - SocketUDT
  */
 public class SelectionKeyUDT extends AbstractSelectionKey {
 
-	final SelectorUDT selectorUDT;
-	final ChannelUDT channelUDT;
+	/** bound selector */
+	private final SelectorUDT selectorUDT;
 
-	/**
-	 * used by JNI
-	 */
-	final int socketID;
-	final SocketUDT socketUDT;
+	/** bound channel */
+	private final ChannelUDT channelUDT;
 
-	SelectionKeyUDT(final SelectorUDT selector, final ChannelUDT channel,
-			final Object attachment, final int ops) {
+	protected SelectionKeyUDT( //
+			final SelectorUDT selectorUDT, //
+			final ChannelUDT channelUDT, //
+			final Object attachment, //
+			final int interestOps //
+	) {
 
-		this.channelUDT = channel;
-		this.selectorUDT = selector;
+		this.selectorUDT = selectorUDT;
+		this.channelUDT = channelUDT;
 		super.attach(attachment);
-		this.interestOps = ops;
+		this.interestOps = interestOps;
 
-		this.socketUDT = channel.getSocketUDT();
-		this.socketID = socketUDT.getSocketId();
-
-		if (channel.getChannelKind() == KindUDT.CONNECTOR) {
+		if (channelUDT.kindUDT() == KindUDT.CONNECTOR) {
 			// special relationship for connectors
-			final ChannelSocketUDT socketChannel = (ChannelSocketUDT) channel;
-			socketChannel.setRegistredKey(this);
+			final ChannelSocketUDT socketChannel = (ChannelSocketUDT) channelUDT;
+			socketChannel.bindRegistredKey(this);
 		}
 
 	}
@@ -76,7 +74,7 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 		if ((ops & ~(channel().validOps())) != 0) {
 			throw new IllegalArgumentException("invalid ops");
 		}
-		if (((ops & OP_CONNECT) != 0) && socketUDT.isConnected()) {
+		if (((ops & OP_CONNECT) != 0) && socketUDT().isConnected()) {
 			throw new IllegalArgumentException("already connected");
 		}
 		interestOps = ops;
@@ -91,23 +89,18 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 		return readyOps;
 	}
 
-	@Override
-	public Selector selector() {
-		return selectorUDT;
-	}
-
 	//
 
 	@Override
 	public int hashCode() {
-		return socketID;
+		return socketId();
 	}
 
 	@Override
 	public boolean equals(final Object otherKey) {
 		if (otherKey instanceof SelectionKeyUDT) {
 			final SelectionKeyUDT other = (SelectionKeyUDT) otherKey;
-			return other.socketID == this.socketID;
+			return other.socketId() == this.socketId();
 		}
 		return false;
 	}
@@ -116,38 +109,81 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 
 	@Override
 	public String toString() {
+
 		InetSocketAddress local;
 		try {
-			local = socketUDT.getLocalSocketAddress();
+			local = socketUDT().getLocalSocketAddress();
 		} catch (final ExceptionUDT e) {
 			local = null;
 		}
+
 		InetSocketAddress remote;
 		try {
-			remote = socketUDT.getRemoteSocketAddress();
+			remote = socketUDT().getRemoteSocketAddress();
 		} catch (final ExceptionUDT e) {
 			remote = null;
 		}
 
-		return " socketID=" + socketID
-				+ //
-				" type=" + channelUDT.getChannelKind()
-				+ //
-				" readyOps=" + toStringOps(readyOps) + "(" + readyOps + ")"
-				+ //
-				" ntrstOps=" + toStringOps(interestOps) + "(" + interestOps
-				+ ")" + //
-				" local=" + local + //
-				" remote=" + remote + //
-				"";
+		final StringBuilder text = new StringBuilder(128);
+
+		text.append("{");
+
+		text.append("socketID=");
+		text.append(socketId());
+		text.append(",");
+
+		text.append("kind=");
+		text.append(channelUDT.kindUDT());
+		text.append(",");
+
+		text.append("readyOps=");
+		text.append(toStringOps(readyOps));
+		text.append(",");
+
+		text.append("interestOps=");
+		text.append(toStringOps(interestOps));
+		text.append(",");
+
+		text.append("local=");
+		text.append(local);
+		text.append(",");
+
+		text.append("remote=");
+		text.append(remote);
+
+		text.append("}");
+
+		return text.toString();
+
+	}
+
+	@Override
+	public Selector selector() {
+		return selectorUDT;
+	}
+
+	protected int socketId() {
+		return socketUDT().getSocketId();
+	}
+
+	protected KindUDT kindUDT() {
+		return channelUDT.kindUDT();
+	}
+
+	protected SocketUDT socketUDT() {
+		return channelUDT.socketUDT();
+	}
+
+	public ChannelUDT channelUDT() {
+		return channelUDT;
 	}
 
 	public static final String toStringOps(final int keyOps) {
+		final char A = (OP_ACCEPT & keyOps) != 0 ? 'A' : '-';
+		final char C = (OP_CONNECT & keyOps) != 0 ? 'C' : '-';
 		final char R = (OP_READ & keyOps) != 0 ? 'R' : '-';
 		final char W = (OP_WRITE & keyOps) != 0 ? 'W' : '-';
-		final char C = (OP_CONNECT & keyOps) != 0 ? 'C' : '-';
-		final char A = (OP_ACCEPT & keyOps) != 0 ? 'A' : '-';
-		return String.format("%c%c%c%c", A, C, W, R);
+		return String.format("%c%c%c%c", A, C, R, W);
 	}
 
 }

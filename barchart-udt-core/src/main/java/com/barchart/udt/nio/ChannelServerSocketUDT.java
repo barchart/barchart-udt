@@ -47,7 +47,8 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 
 	final SocketUDT serverSocketUDT;
 
-	ChannelServerSocketUDT(SelectorProvider provider, SocketUDT socketUDT) {
+	protected ChannelServerSocketUDT(final SelectorProvider provider,
+			final SocketUDT socketUDT) {
 		super(provider);
 		this.serverSocketUDT = socketUDT;
 	}
@@ -58,7 +59,8 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	}
 
 	@Override
-	protected void implConfigureBlocking(boolean block) throws IOException {
+	protected void implConfigureBlocking(final boolean block)
+			throws IOException {
 		serverSocketUDT.configureBlocking(block);
 	}
 
@@ -66,8 +68,8 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	public SocketChannel accept() throws IOException {
 		try {
 			begin();
-			SocketUDT socketUDT = serverSocketUDT.accept();
-			SelectorProvider provider = provider();
+			final SocketUDT socketUDT = serverSocketUDT.accept();
+			final SelectorProvider provider = provider();
 			return new ChannelSocketUDT(provider, socketUDT);
 		} finally {
 			end(true);
@@ -84,7 +86,7 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 				try {
 					serverSocketAdapter = new AdapterServerSocketUDT(this,
 							serverSocketUDT);
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					return null;
 				}
 			}
@@ -93,12 +95,12 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	}
 
 	@Override
-	public SocketUDT getSocketUDT() {
+	public SocketUDT socketUDT() {
 		return serverSocketUDT;
 	}
 
 	@Override
-	public KindUDT getChannelKind() {
+	public KindUDT kindUDT() {
 		return KindUDT.ACCEPTOR;
 	}
 
@@ -112,6 +114,16 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	@Override
 	public String toString() {
 		return serverSocketUDT.toString();
+	}
+
+	@Override
+	public boolean isConnectionPending() {
+		return false;
+	}
+
+	@Override
+	public boolean finishConnect() {
+		return false;
 	}
 
 }

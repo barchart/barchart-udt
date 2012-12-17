@@ -86,6 +86,10 @@ public enum ErrorUDT {
 
 	EASYNCRCV(6002, "no data available for read"), //
 
+	ETIMEOUT(6003, "timeout before operation completes"), //
+
+	EPEERERR(7000, "error has happened at the peer side"), //
+
 	// non UDT values:
 
 	WRAPPER_UNKNOWN(-1, "unknown error code"), //

@@ -16,6 +16,10 @@ package com.barchart.udt;
  */
 public enum StatusUDT {
 
+	/** keep the order */
+
+	//
+
 	/** non UDT value */
 	UNKNOWN(0), //
 
@@ -30,7 +34,7 @@ public enum StatusUDT {
 	/** bound + listening acceptor socket */
 	LISTENING(3), //
 
-	/** connector socket trytin to connect */
+	/** connector socket trying to connect */
 	CONNECTING(4), //
 
 	/** connected connector socket */
@@ -39,7 +43,7 @@ public enum StatusUDT {
 	/** acceptor socket after close() */
 	BROKEN(6), //
 
-	/** connector socket after close() is in progress */
+	/** connector socket while close() is in progress */
 	CLOSING(7), //
 
 	/** connector socket after close() is done */
@@ -60,15 +64,33 @@ public enum StatusUDT {
 		return code;
 	}
 
-	private static final StatusUDT[] ENUM_VALS = values();
-
 	public static final StatusUDT fromCode(final int code) {
-		for (final StatusUDT status : ENUM_VALS) {
-			if (status.code == code) {
-				return status;
-			}
+
+		switch (code) {
+		case 0:
+			return UNKNOWN;
+		case 1:
+			return INIT;
+		case 2:
+			return OPENED;
+		case 3:
+			return LISTENING;
+		case 4:
+			return CONNECTING;
+		case 5:
+			return CONNECTED;
+		case 6:
+			return BROKEN;
+		case 7:
+			return CLOSING;
+		case 8:
+			return CLOSED;
+		case 9:
+			return NONEXIST;
+		default:
+			return UNKNOWN;
 		}
-		return UNKNOWN;
+
 	}
 
 	/**

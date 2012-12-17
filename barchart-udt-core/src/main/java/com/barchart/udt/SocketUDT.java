@@ -69,13 +69,6 @@ public class SocketUDT {
 	public static final int DEFAULT_MAX_SELECTOR_SIZE = 1024;
 
 	/**
-	 * Maximum number of threads. That can be doing
-	 * {@link com.barchart.udt.nio.ChannelSocketUDT#connect(java.net.SocketAddress)}
-	 * operation in non-blocking mode
-	 */
-	public static final int DEFAULT_CONNECTOR_POOL_SIZE = 16;
-
-	/**
 	 * Minimum timeout of a {@link com.barchart.udt.nio.SelectorUDT#select()}
 	 * operation. Since UDT :: common.cpp :: void CTimer::waitForEvent() :: is
 	 * using 10 milliseconds resolution; (milliseconds);
@@ -312,7 +305,7 @@ public class SocketUDT {
 			close();
 			super.finalize();
 		} catch (final Throwable e) {
-			log.error("failed to close", e);
+			log.error("failed to close id=" + socketID, e);
 		}
 	}
 
@@ -677,51 +670,44 @@ public class SocketUDT {
 	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
 	 * @see #epollWait0(int, IntBuffer, IntBuffer, IntBuffer, IntBuffer, long)
 	 */
-	// asserts are contracts
 	public final static int selectEpoll( //
+			final int epollId, //
 			final IntBuffer readBuffer, //
 			final IntBuffer writeBuffer, //
-			final IntBuffer exceptBuffer, //
 			final IntBuffer sizeBuffer, //
 			final long millisTimeout) throws ExceptionUDT {
 
+		/** asserts are contracts */
+
 		assert readBuffer != null && readBuffer.isDirect();
 		assert writeBuffer != null && writeBuffer.isDirect();
-		assert exceptBuffer != null && exceptBuffer.isDirect();
 		assert sizeBuffer != null && sizeBuffer.isDirect();
 
 		assert readBuffer.capacity() >= sizeBuffer.get(UDT_READ_INDEX);
 		assert writeBuffer.capacity() >= sizeBuffer.get(UDT_WRITE_INDEX);
-		assert exceptBuffer.capacity() >= readBuffer.capacity();
-		assert exceptBuffer.capacity() >= writeBuffer.capacity();
 
-		final int epollID = defaultEpollID();
+		/** revert to documented behavior - no timeout exception */
 
-		return epollWait0( //
-				epollID, //
-				readBuffer, //
-				writeBuffer, //
-				exceptBuffer, //
-				sizeBuffer, //
-				millisTimeout //
-		);
+		try {
 
-	}
+			return epollWait0( //
+					epollId, //
+					readBuffer, //
+					writeBuffer, //
+					sizeBuffer, //
+					millisTimeout //
+			);
 
-	private static volatile int defaultEpollID = 0;
+		} catch (final ExceptionUDT e) {
 
-	/** lazy init */
-	private static int defaultEpollID() throws ExceptionUDT {
-		int current = defaultEpollID;
-		if (current == 0) {
-			synchronized (SocketUDT.class) {
-				current = defaultEpollID;
-				if (current == 0) {
-					defaultEpollID = current = epollCreate0();
-				}
+			if (e.getError() == ErrorUDT.ETIMEOUT) {
+				return 0;
+			} else {
+				throw e;
 			}
+
 		}
-		return current;
+
 	}
 
 	// ###
@@ -1088,14 +1074,7 @@ public class SocketUDT {
 	 *         false : otherwise<br>
 	 */
 	public final boolean isConnected() {
-		if (isClosed()) {
-			return false;
-		}
-		try {
-			return getRemoteSocketAddress() != null;
-		} catch (final Exception e) {
-			return false;
-		}
+		return getStatus() == StatusUDT.CONNECTED;
 	}
 
 	/**
@@ -1470,7 +1449,7 @@ public class SocketUDT {
 
 	/**
 	 * @see <a
-	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_add_ssock()</a>
+	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_add_usock()</a>
 	 */
 	protected static native void epollAdd0( //
 			final int epollID, final int socketID) throws ExceptionUDT;
@@ -1483,6 +1462,8 @@ public class SocketUDT {
 			final int epollID, final int socketID) throws ExceptionUDT;
 
 	/**
+	 * note: throws {@link ErrorUDT#ETIMEOUT} on timeout, even zero
+	 * 
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_wait()</a>
 	 */
@@ -1490,7 +1471,6 @@ public class SocketUDT {
 			final int epollID, //
 			final IntBuffer readBuffer, //
 			final IntBuffer writeBuffer, //
-			final IntBuffer exceptBuffer, //
 			final IntBuffer sizeBuffer, //
 			final long millisTimeout) throws ExceptionUDT;
 

@@ -7,17 +7,17 @@
  */
 package com.barchart.udt;
 
+import static com.barchart.udt.util.TestHelp.*;
 import static org.junit.Assert.*;
 
 import java.net.InetSocketAddress;
+import java.nio.IntBuffer;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.barchart.udt.util.TestHelp;
 
 public class TestSocketUDT {
 
@@ -41,11 +41,9 @@ public class TestSocketUDT {
 
 		try {
 
-			final InetSocketAddress localAddress1 = TestHelp
-					.localSocketAddress();
+			final InetSocketAddress localAddress1 = localSocketAddress();
 
-			final InetSocketAddress localAddress2 = TestHelp
-					.localSocketAddress();
+			final InetSocketAddress localAddress2 = localSocketAddress();
 
 			final SocketUDT socketServer = new SocketUDT(TypeUDT.DATAGRAM);
 			socketServer.setOption(OptionUDT.UDT_RCVSYN, false);
@@ -131,8 +129,7 @@ public class TestSocketUDT {
 		socket.setOption(OptionUDT.Is_Send_Synchronous, false);
 		assertTrue(socket.isOpen());
 
-		final InetSocketAddress localSocketAddress = TestHelp
-				.localSocketAddress();
+		final InetSocketAddress localSocketAddress = localSocketAddress();
 
 		socket.bind(localSocketAddress);
 		assertTrue(socket.isOpen());
@@ -267,6 +264,96 @@ public class TestSocketUDT {
 		SocketUDT.epollRemove0(epollID, -1);
 
 		SocketUDT.epollRelease0(epollID);
+
+	}
+
+	/**
+	 * NOT TRUE
+	 * 
+	 * "Finally, for epoll_wait, negative timeout value will make the function
+	 * to waituntil an event happens. If the timeout value is 0, then the
+	 * function returns immediately with any sockets associated an IO event. If
+	 * timeout occurs before any event happens, the function returns 0."
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testEpollWaitZero() throws Exception {
+
+		try {
+
+			final int epollID = SocketUDT.epollCreate0();
+
+			final IntBuffer readBuffer = SocketUDT.newDirectIntBufer(10);
+			final IntBuffer writeBuffer = SocketUDT.newDirectIntBufer(10);
+			final IntBuffer sizeBuffer = SocketUDT.newDirectIntBufer(10);
+			final long millisTimeout = 0;
+
+			SocketUDT.epollWait0(epollID, readBuffer, writeBuffer, sizeBuffer,
+					millisTimeout);
+
+			SocketUDT.epollRelease0(epollID);
+
+		} catch (final ExceptionUDT e) {
+
+			if (e.getError() == ErrorUDT.ETIMEOUT) {
+				return;
+			} else {
+				throw e;
+			}
+
+		}
+
+	}
+
+	@Test(expected = ExceptionUDT.class)
+	public void testAcceptNoListen() throws Exception {
+
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+
+		socket.accept();
+
+	}
+
+	@Test
+	public void testAcceptListenNone() throws Exception {
+
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+
+		socket.configureBlocking(false);
+
+		socket.bind(localSocketAddress());
+
+		socket.listen(1);
+
+		assertNull(socket.accept());
+
+	}
+
+	@Test
+	public void testAcceptListenOne() throws Exception {
+
+		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
+		accept.configureBlocking(false);
+		accept.bind(localSocketAddress());
+
+		accept.listen(1);
+
+		assertNull(accept.accept());
+
+		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
+		client.configureBlocking(false);
+		client.bind(localSocketAddress());
+
+		client.connect(accept.getLocalSocketAddress());
+
+		Thread.sleep(100);
+
+		assertNotNull(accept.accept());
+
+		Thread.sleep(100);
+
+		assertNull(accept.accept());
 
 	}
 

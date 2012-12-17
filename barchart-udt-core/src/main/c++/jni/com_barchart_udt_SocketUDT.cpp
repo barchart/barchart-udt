@@ -2108,13 +2108,11 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		const jint pollID, //
 		const jobject objReadBuffer, //
 		const jobject objWriteBuffer, //
-		const jobject objExceptBuffer, //
 		const jobject objSizeBuffer, //
 		const jlong millisTimeout //
 		) {
 
 	UNUSED(clsSocketUDT);
-	UNUSED(objExceptBuffer);
 
 	// make empty sets
 	UDT::UDSET readSet;
@@ -2123,6 +2121,10 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 	// do select
 	const int rv = UDT::epoll_wait( //
 			pollID, &readSet, &writeSet, millisTimeout, NULL, NULL);
+
+//	printf ("function:%s rv=%d \n", __func__, rv);
+//	printf ("function:%s pollID=%d \n", __func__, pollID);
+//	printf ("function:%s millisTimeout=%d \n", __func__, millisTimeout);
 
 	// process timeout & errors
 	if (rv <= 0) { // UDT::ERROR is '-1'; UDT_TIMEOUT is '=0';
@@ -2159,10 +2161,6 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 					env->GetDirectBufferAddress(objWriteBuffer));
 			UDT_CopySetToArray(&writeSet, writeArray, writeSize);
 		}
-	}
-
-	{ // return exceptions report TODO
-		UDT::UDSET exceptSet;
 	}
 
 	return rv;

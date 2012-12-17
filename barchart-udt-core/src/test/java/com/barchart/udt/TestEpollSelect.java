@@ -91,7 +91,7 @@ public class TestEpollSelect {
 		final long timeStart = System.currentTimeMillis();
 
 		final int result = SocketUDT.epollWait0(epollID, readBuffer,
-				writeBuffer, exceptBuffer, sizeBuffer, millisTimeout);
+				writeBuffer, sizeBuffer, millisTimeout);
 
 		final long timeFinish = System.currentTimeMillis();
 
@@ -147,14 +147,13 @@ public class TestEpollSelect {
 
 		final IntBuffer readBuffer = SocketUDT.newDirectIntBufer(10);
 		final IntBuffer writeBuffer = SocketUDT.newDirectIntBufer(10);
-		final IntBuffer exceptBuffer = SocketUDT.newDirectIntBufer(10);
 
 		final IntBuffer sizeBuffer = SocketUDT
 				.newDirectIntBufer(SocketUDT.UDT_SIZE_COUNT);
 		final long millisTimeout = 1 * 1000;
 
 		final int result = SocketUDT.epollWait0(epollID, readBuffer,
-				writeBuffer, exceptBuffer, sizeBuffer, millisTimeout);
+				writeBuffer, sizeBuffer, millisTimeout);
 
 	}
 

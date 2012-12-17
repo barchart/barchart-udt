@@ -31,7 +31,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* basic single thread selector test */
+/**
+ * basic single thread selector test
+ */
 public class TestSelectorUDT {
 
 	protected static final int SIZE = 1460;
@@ -329,25 +331,29 @@ public class TestSelectorUDT {
 
 	private void doRead(final SelectionKey key) {
 
+		log.info("key:\n\t{}", key);
+
 		final Object attachment = key.attachment();
+
 		assertTrue(attachment instanceof Handler);
 
 		final Handler handler = (Handler) attachment;
-		handler.handleRead();
 
-		// log.info("doRead; handler={}", handler);
+		handler.handleRead();
 
 	}
 
 	private void doWrite(final SelectionKey key) {
 
+		log.info("key:\n\t{}", key);
+
 		final Object attachment = key.attachment();
+
 		assertTrue(attachment instanceof Handler);
 
 		final Handler handler = (Handler) attachment;
-		handler.handleWrite();
 
-		// log.info("doWrite; handler={}", handler);
+		handler.handleWrite();
 
 	}
 

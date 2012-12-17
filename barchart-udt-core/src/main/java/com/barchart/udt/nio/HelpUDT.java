@@ -11,88 +11,89 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-class HelperNIOUDT {
+public class HelpUDT {
 
-	static <E> Set<E> ungrowableSet(final Set<E> s) {
+	public static <E> Set<E> ungrowableSet(final Set<E> set) {
+
 		return new Set<E>() {
 
 			@Override
 			public int size() {
-				return s.size();
+				return set.size();
 			}
 
 			@Override
 			public boolean isEmpty() {
-				return s.isEmpty();
+				return set.isEmpty();
 			}
 
 			@Override
-			public boolean contains(Object o) {
-				return s.contains(o);
+			public boolean contains(final Object o) {
+				return set.contains(o);
 			}
 
 			@Override
 			public Object[] toArray() {
-				return s.toArray();
+				return set.toArray();
 			}
 
 			@Override
-			public <T> T[] toArray(T[] a) {
-				return s.toArray(a);
+			public <T> T[] toArray(final T[] a) {
+				return set.toArray(a);
 			}
 
 			@Override
 			public String toString() {
-				return s.toString();
+				return set.toString();
 			}
 
 			@Override
 			public Iterator<E> iterator() {
-				return s.iterator();
+				return set.iterator();
 			}
 
 			@Override
-			public boolean equals(Object o) {
-				return s.equals(o);
+			public boolean equals(final Object o) {
+				return set.equals(o);
 			}
 
 			@Override
 			public int hashCode() {
-				return s.hashCode();
+				return set.hashCode();
 			}
 
 			@Override
 			public void clear() {
-				s.clear();
+				set.clear();
 			}
 
 			@Override
-			public boolean remove(Object o) {
-				return s.remove(o);
+			public boolean remove(final Object o) {
+				return set.remove(o);
 			}
 
 			@Override
-			public boolean containsAll(Collection<?> coll) {
-				return s.containsAll(coll);
+			public boolean containsAll(final Collection<?> coll) {
+				return set.containsAll(coll);
 			}
 
 			@Override
-			public boolean removeAll(Collection<?> coll) {
-				return s.removeAll(coll);
+			public boolean removeAll(final Collection<?> coll) {
+				return set.removeAll(coll);
 			}
 
 			@Override
-			public boolean retainAll(Collection<?> coll) {
-				return s.retainAll(coll);
+			public boolean retainAll(final Collection<?> coll) {
+				return set.retainAll(coll);
 			}
 
 			@Override
-			public boolean add(E o) {
+			public boolean add(final E o) {
 				throw new UnsupportedOperationException();
 			}
 
 			@Override
-			public boolean addAll(Collection<? extends E> coll) {
+			public boolean addAll(final Collection<? extends E> coll) {
 				throw new UnsupportedOperationException();
 			}
 

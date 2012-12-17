@@ -41,7 +41,7 @@ public class SelectorProviderUDT extends SelectorProvider {
 	 */
 	public final TypeUDT type;
 
-	protected SelectorProviderUDT(TypeUDT type) {
+	protected SelectorProviderUDT(final TypeUDT type) {
 		this.type = type;
 	}
 
@@ -51,7 +51,7 @@ public class SelectorProviderUDT extends SelectorProvider {
 		return acceptQueueSize;
 	}
 
-	public void setAcceptQueueSize(int queueSize) {
+	public void setAcceptQueueSize(final int queueSize) {
 		acceptQueueSize = queueSize;
 	}
 
@@ -61,18 +61,8 @@ public class SelectorProviderUDT extends SelectorProvider {
 		return maxSelectorSize;
 	}
 
-	public void setMaxSelectorSize(int selectorSize) {
+	public void setMaxSelectorSize(final int selectorSize) {
 		maxSelectorSize = selectorSize;
-	}
-
-	protected volatile int maxConnectorSize = SocketUDT.DEFAULT_CONNECTOR_POOL_SIZE;
-
-	public int getMaxConnectorSize() {
-		return maxConnectorSize;
-	}
-
-	public void setMaxConnectorSize(int connectorSize) {
-		maxConnectorSize = connectorSize;
 	}
 
 	//
@@ -95,18 +85,18 @@ public class SelectorProviderUDT extends SelectorProvider {
 
 	@Override
 	public AbstractSelector openSelector() throws IOException {
-		return new SelectorUDT(this, maxSelectorSize, maxConnectorSize);
+		return new SelectorUDT(this, maxSelectorSize);
 	}
 
 	@Override
 	public ServerSocketChannel openServerSocketChannel() throws IOException {
-		SocketUDT serverSocketUDT = new SocketUDT(type);
+		final SocketUDT serverSocketUDT = new SocketUDT(type);
 		return new ChannelServerSocketUDT(this, serverSocketUDT);
 	}
 
 	@Override
 	public SocketChannel openSocketChannel() throws IOException {
-		SocketUDT socketUDT = new SocketUDT(type);
+		final SocketUDT socketUDT = new SocketUDT(type);
 		return new ChannelSocketUDT(this, socketUDT);
 	}
 
