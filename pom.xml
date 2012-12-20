@@ -45,6 +45,10 @@
 		
 		<!-- examples -->
 		<module>barchart-udt-demo</module>
+
+		<!-- netty support -->		
+		<module>barchart-udt-netty3</module>
+		<module>barchart-udt-netty4</module>
 		
 	</modules>
 
