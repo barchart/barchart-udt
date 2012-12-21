@@ -39,7 +39,8 @@ public class TestHelp {
 	}
 
 	/** allocate available local address / port */
-	public static InetSocketAddress localSocketAddress() throws Exception {
+	public synchronized static InetSocketAddress localSocketAddress()
+			throws Exception {
 
 		final int port = findLocalPort();
 
@@ -52,15 +53,16 @@ public class TestHelp {
 
 	}
 
-	static int[] randomIntArray(final int length, final int range) {
+	public static int[] randomIntArray(final int length, final int range) {
+
 		final int[] array = new int[length];
-		final Random generator = new Random();
-		// for each item in the list
+
+		final Random generator = new Random(0);
+
 		for (int i = 0; i < array.length; i++) {
-			// create a new random number and populate the
-			// current location in the list with it
 			array[i] = generator.nextInt(range);
 		}
+
 		return array;
 	}
 
@@ -122,7 +124,7 @@ public class TestHelp {
 
 	/**
 	 */
-	public static int findLocalPort() throws Exception {
+	public synchronized static int findLocalPort() throws Exception {
 
 		ServerSocket socket = null;
 
