@@ -154,77 +154,71 @@ public class TestOption {
 	@Test
 	public void testOptionCC() throws Exception {
 
-		try {
+		// UDT has roughly 7% congestion control overhead
+		// so we need to take that into account if you want
+		// to limit wire speed
+		final double maxBW = 50 * 0.93;
+		log.info("Attempting to rate limit using custom CCC UDPBlast class");
 
-			// UDT has roughly 7% congestion control overhead
-			// so we need to take that into account if you want
-			// to limit wire speed
-			final double maxBW = 50 * 0.93;
-			log.info("Attempting to rate limit using custom CCC UDPBlast class");
+		final SocketUDT serverSocket = new SocketUDT(TypeUDT.STREAM);
+		final InetSocketAddress serverAddress = localSocketAddress();
+		serverSocket.bind(serverAddress);
+		serverSocket.listen(1);
+		assertTrue(serverSocket.isBound());
 
-			final SocketUDT serverSocket = new SocketUDT(TypeUDT.STREAM);
-			final InetSocketAddress serverAddress = localSocketAddress();
-			serverSocket.bind(serverAddress);
-			serverSocket.listen(1);
-			assertTrue(serverSocket.isBound());
+		final SocketUDT clientSocket = new SocketUDT(TypeUDT.STREAM);
 
-			final SocketUDT clientSocket = new SocketUDT(TypeUDT.STREAM);
+		clientSocket.setOption(OptionUDT.UDT_CC, new FactoryUDT<UDPBlast>(
+				UDPBlast.class));
 
-			clientSocket.setOption(OptionUDT.UDT_CC, new FactoryUDT<UDPBlast>(
-					UDPBlast.class));
+		final InetSocketAddress clientAddress = localSocketAddress();
 
-			final InetSocketAddress clientAddress = localSocketAddress();
+		clientSocket.bind(clientAddress);
+		clientSocket.setSoLinger(false, 0);
+		assertTrue(clientSocket.isBound());
 
-			clientSocket.bind(clientAddress);
-			clientSocket.setSoLinger(false, 0);
-			assertTrue(clientSocket.isBound());
+		clientSocket.connect(serverAddress);
+		assertTrue(clientSocket.isConnected());
 
-			clientSocket.connect(serverAddress);
-			assertTrue(clientSocket.isConnected());
+		final SocketUDT acceptSocket = serverSocket.accept();
+		assertTrue(acceptSocket.isConnected());
 
-			final SocketUDT acceptSocket = serverSocket.accept();
-			assertTrue(acceptSocket.isConnected());
+		final Object obj = clientSocket.getOption(OptionUDT.UDT_CC);
 
-			final Object obj = clientSocket.getOption(OptionUDT.UDT_CC);
+		assertTrue("UDT_CC Object is of unexpected type",
+				obj instanceof UDPBlast);
 
-			assertTrue("UDT_CC Object is of unexpected type",
-					obj instanceof UDPBlast);
+		final UDPBlast objCCC = (UDPBlast) obj;
+		objCCC.setRate((int) maxBW);
 
-			final UDPBlast objCCC = (UDPBlast) obj;
-			objCCC.setRate((int) maxBW);
+		final byte[] data = new byte[65536];
+		final long start = System.currentTimeMillis();
+		long interval = System.currentTimeMillis();
+		double maxMbs = -1;
 
-			final byte[] data = new byte[65536];
-			final long start = System.currentTimeMillis();
-			long interval = System.currentTimeMillis();
-			double maxMbs = -1;
+		while ((System.currentTimeMillis() - start) < 15000) {
 
-			while ((System.currentTimeMillis() - start) < 15000) {
+			clientSocket.send(data);
+			acceptSocket.receive(data);
 
-				clientSocket.send(data);
-				acceptSocket.receive(data);
+			if (System.currentTimeMillis() - interval > 1000) {
+				interval = System.currentTimeMillis();
+				clientSocket.updateMonitor(true);
+				final MonitorUDT mon = clientSocket.getMonitor();
+				log.info(String.format("Current Rate: %.2f Mbs",
+						mon.mbpsSendRate));
 
-				if (System.currentTimeMillis() - interval > 1000) {
-					interval = System.currentTimeMillis();
-					clientSocket.updateMonitor(true);
-					final MonitorUDT mon = clientSocket.getMonitor();
-					log.info(String.format("Current Rate: %.2f Mbs",
-							mon.mbpsSendRate));
-
-					maxMbs = mon.mbpsSendRate * 0.93;
-				}
+				maxMbs = mon.mbpsSendRate * 0.93;
 			}
-
-			// check we are within 10% of our desired rate
-			assertTrue("Max bandwidth exceeded limit",
-					maxMbs < (maxBW + (maxBW * 0.1)));
-
-			clientSocket.close();
-			acceptSocket.close();
-			serverSocket.close();
-
-		} catch (final ExceptionUDT e) {
-			fail(e.getMessage());
 		}
+
+		// check we are within 10% of our desired rate
+		assertTrue("Max bandwidth exceeded limit",
+				maxMbs < (maxBW + (maxBW * 0.1)));
+
+		clientSocket.close();
+		acceptSocket.close();
+		serverSocket.close();
 
 	}
 
