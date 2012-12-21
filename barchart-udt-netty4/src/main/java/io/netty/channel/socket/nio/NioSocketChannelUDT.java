@@ -9,7 +9,7 @@ import com.barchart.udt.nio.ChannelSocketUDT;
 import com.barchart.udt.nio.SelectorProviderUDT;
 
 /**
- * emulate jdk socket channel
+ * emulate jdk socket channel for netty
  */
 public class NioSocketChannelUDT extends NioSocketChannel {
 
@@ -38,18 +38,18 @@ public class NioSocketChannelUDT extends NioSocketChannel {
 		this(newChannelUDT());
 	}
 
-	public NioSocketChannelUDT(final Channel parent, final Integer id,
-			final SocketChannel channel) {
+	public NioSocketChannelUDT(final SocketChannel channel) {
 
-		super(parent, id, channel);
+		this(null, null, channel);
 
 		assertChannelUDT(channel);
 
 	}
 
-	public NioSocketChannelUDT(final SocketChannel channel) {
+	public NioSocketChannelUDT(final Channel parent, final Integer id,
+			final SocketChannel channel) {
 
-		this(null, null, channel);
+		super(parent, id, channel);
 
 		assertChannelUDT(channel);
 
