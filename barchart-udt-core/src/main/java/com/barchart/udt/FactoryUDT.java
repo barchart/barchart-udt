@@ -11,9 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * NOT implemented; custom protocol factory - "UDT::CCC";
+ * Wrapper around the UDT CCCFactory class
  */
-
 public class FactoryUDT<C> implements FactoryInterfaceUDT {
 
 	C classType;
