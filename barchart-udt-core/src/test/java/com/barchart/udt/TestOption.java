@@ -160,6 +160,7 @@ public class TestOption {
 			// so we need to take that into account if you want
 			// to limit wire speed
 			final double maxBW = 50 * 0.93;
+			log.info("Attempting to rate limit using custom CCC UDPBlast class");
 
 			final SocketUDT serverSocket = new SocketUDT(TypeUDT.STREAM);
 			final InetSocketAddress serverAddress = getLocalSocketAddress();
@@ -175,6 +176,7 @@ public class TestOption {
 			final InetSocketAddress clientAddress = getLocalSocketAddress();
 
 			clientSocket.bind(clientAddress);
+			clientSocket.setSoLinger(false, 0);
 			assertTrue(clientSocket.isBound());
 
 			clientSocket.connect(serverAddress);
