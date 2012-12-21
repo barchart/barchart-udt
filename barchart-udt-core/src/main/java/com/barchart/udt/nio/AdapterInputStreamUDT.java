@@ -17,7 +17,7 @@ import java.nio.channels.SocketChannel;
 /**
  * {@link InputStream} implementation for UDT sockets.
  */
-class AdapterInputStreamUDT extends InputStream {
+public class AdapterInputStreamUDT extends InputStream {
 
 	private final SocketChannel channel;
 
@@ -29,7 +29,8 @@ class AdapterInputStreamUDT extends InputStream {
 	 * @param socketUDT
 	 *            The UDT socket.
 	 */
-	AdapterInputStreamUDT(final SocketChannel channel, final Socket socketUDT) {
+	protected AdapterInputStreamUDT(final SocketChannel channel,
+			final Socket socketUDT) {
 		if (channel == null) {
 			throw new NullPointerException("Null SocketChannel");
 		}

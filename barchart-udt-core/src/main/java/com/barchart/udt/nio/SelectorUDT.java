@@ -121,7 +121,7 @@ public class SelectorUDT extends AbstractSelector {
 
 			/** XXX the only place with "add" */
 			try {
-				epoll.add(keyUDT.socketUDT());
+				epoll.add(keyUDT.socketUDT(), EpollUDT.Opt.ALL);
 			} catch (final ExceptionUDT e) {
 				log.error("epoll add failure", e);
 				throw new IllegalSelectorException();
@@ -393,7 +393,7 @@ public class SelectorUDT extends AbstractSelector {
 
 			final int socketId = readBuffer.get(index);
 
-			log.debug("read socketId={}", socketId);
+			// log.debug("read socketId={}", socketId);
 
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 
@@ -433,14 +433,14 @@ public class SelectorUDT extends AbstractSelector {
 
 			final int socketId = writeBuffer.get(index);
 
-			log.debug("write socketId={}", socketId);
+			// log.debug("write socketId={}", socketId);
 
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 
 			switch (keyUDT.kindUDT()) {
 
 			case ACCEPTOR:
-				keyUDT.readyOps |= OP_ACCEPT;
+				/** udt epoll reports write-ready after accept() : ignore */
 				continue;
 
 			case CONNECTOR:

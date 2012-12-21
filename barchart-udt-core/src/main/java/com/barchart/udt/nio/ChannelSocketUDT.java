@@ -57,10 +57,10 @@ import com.barchart.udt.SocketUDT;
  */
 public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 
-	private static final Logger log = LoggerFactory
+	protected static final Logger log = LoggerFactory
 			.getLogger(ChannelSocketUDT.class);
 
-	final SocketUDT socketUDT;
+	protected SocketUDT socketUDT;
 
 	protected ChannelSocketUDT(//
 			final SelectorProvider provider, //
@@ -429,12 +429,11 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 		return KindUDT.CONNECTOR;
 	}
 
-	// note: 1<->1 mapping of channels and keys
-
+	/** note: 1<->1 mapping of channels and keys */
 	protected volatile SelectionKeyUDT channelKey;
 
-	protected void bindRegistredKey(final SelectionKeyUDT key) {
-		// one time init
+	@Override
+	public void bindKey(final SelectionKeyUDT key) {
 		assert channelKey == null;
 		channelKey = key;
 	}

@@ -15,11 +15,12 @@ import java.nio.channels.SocketChannel;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.net.NetSocketUDT;
 
-class AdapterSocketUDT extends NetSocketUDT {
+public class AdapterSocketUDT extends NetSocketUDT {
 
 	final ChannelSocketUDT channelUDT;
 
-	AdapterSocketUDT(ChannelSocketUDT channelSocketUDT, SocketUDT socketUDT) {
+	protected AdapterSocketUDT(final ChannelSocketUDT channelSocketUDT,
+			final SocketUDT socketUDT) {
 		super(socketUDT);
 		this.channelUDT = channelSocketUDT;
 	}

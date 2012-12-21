@@ -28,4 +28,6 @@ public interface ChannelUDT {
 
 	boolean finishConnect() throws IOException;
 
+	void bindKey(final SelectionKeyUDT key);
+
 }

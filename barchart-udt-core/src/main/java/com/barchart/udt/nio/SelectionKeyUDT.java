@@ -40,16 +40,12 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 		super.attach(attachment);
 		this.interestOps = interestOps;
 
-		if (channelUDT.kindUDT() == KindUDT.CONNECTOR) {
-			// special relationship for connectors
-			final ChannelSocketUDT socketChannel = (ChannelSocketUDT) channelUDT;
-			socketChannel.bindRegistredKey(this);
-		}
+		channelUDT.bindKey(this);
 
 	}
 
-	volatile int interestOps;
-	volatile int readyOps;
+	protected volatile int interestOps;
+	protected volatile int readyOps;
 
 	//
 
@@ -87,6 +83,10 @@ public class SelectionKeyUDT extends AbstractSelectionKey {
 			throw new CancelledKeyException();
 		}
 		return readyOps;
+	}
+
+	protected void readyOps(final int ops) {
+		readyOps = ops;
 	}
 
 	//

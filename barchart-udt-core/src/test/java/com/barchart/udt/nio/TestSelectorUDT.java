@@ -44,11 +44,11 @@ public class TestSelectorUDT {
 
 	final SelectorProvider provider = SelectorProviderUDT.DATAGRAM;
 
-	volatile SelectionKey acceptorKey;
+	volatile SelectionKey acceptKey;
 	volatile SelectionKey serverKey;
 	volatile SelectionKey clientKey;
 
-	volatile ServerSocketChannel acceptorChannel;
+	volatile ServerSocketChannel acceptChannel;
 	volatile SocketChannel serverChannel;
 	volatile SocketChannel clientChannel;
 
@@ -62,12 +62,12 @@ public class TestSelectorUDT {
 
 		selector = provider.openSelector();
 
-		acceptorChannel = provider.openServerSocketChannel();
-		acceptorChannel.configureBlocking(false);
+		acceptChannel = provider.openServerSocketChannel();
+		acceptChannel.configureBlocking(false);
 		acceptorAddress = localSocketAddress();
-		acceptorChannel.socket().bind(acceptorAddress);
+		acceptChannel.socket().bind(acceptorAddress);
 
-		acceptorKey = acceptorChannel.register(selector, OP_ACCEPT);
+		acceptKey = acceptChannel.register(selector, OP_ACCEPT);
 
 		clientChannel = provider.openSocketChannel();
 		clientChannel.configureBlocking(false);
@@ -91,6 +91,7 @@ public class TestSelectorUDT {
 
 	volatile boolean isTestON = true;
 
+	/** single pass state machine */
 	@Test
 	public void testSelect() {
 		try {
@@ -165,17 +166,27 @@ public class TestSelectorUDT {
 		public void handleRead() {
 			try {
 				while (true) {
+
 					readerBuffer.clear();
+
 					final int readSize = serverChannel.read(readerBuffer);
+
 					if (readSize <= 0) {
 						return;
 					}
+
 					assertEquals(readSize, SIZE);
+
 					final byte[] array = new byte[readSize];
+
 					readerBuffer.flip();
 					readerBuffer.get(array);
+
 					serverQueue.offer(array);
-					serverKey.interestOps(serverKey.interestOps() | OP_WRITE);
+
+					serverKey.interestOps( //
+							serverKey.interestOps() | OP_WRITE);
+
 				}
 			} catch (final Exception e) {
 				fail(e.getMessage());
@@ -187,18 +198,27 @@ public class TestSelectorUDT {
 		@Override
 		public void handleWrite() {
 			try {
+
 				byte[] array;
+
 				while ((array = serverQueue.poll()) != null) {
+
 					writerBuffer.clear();
 					writerBuffer.put(array);
 					writerBuffer.flip();
+
 					final int writeSize = serverChannel.write(writerBuffer);
+
 					if (writeSize <= 0) {
 						break;
 					}
+
 					assertEquals(writeSize, SIZE);
+
 				}
+
 				serverKey.interestOps(serverKey.interestOps() & ~OP_WRITE);
+
 			} catch (final Exception e) {
 				fail(e.getMessage());
 			}
@@ -224,26 +244,37 @@ public class TestSelectorUDT {
 		public void handleRead() {
 			try {
 				while (true) {
+
 					readerBuffer.clear();
+
 					final int readSize = clientChannel.read(readerBuffer);
+
 					if (readSize <= 0) {
 						return;
 					}
+
 					assertEquals(readSize, SIZE);
+
 					final byte[] arrayRead = new byte[readSize];
+
 					readerBuffer.flip();
 					readerBuffer.get(arrayRead);
+
 					final byte[] arrayWritten = clientQueue.poll();
+
 					assertNotNull(arrayWritten);
 					assertTrue(Arrays.equals(arrayRead, arrayWritten));
+
 					final int count = readCount.incrementAndGet();
+
 					if (count == COUNT) {
-						clientKey.interestOps(clientKey.interestOps()
-								& ~OP_READ);
+						clientKey.interestOps( //
+								clientKey.interestOps() & ~OP_READ);
 						isTestON = false;
 						log.info("client read done");
 						return;
 					}
+
 				}
 			} catch (final Exception e) {
 				fail(e.getMessage());
@@ -260,23 +291,33 @@ public class TestSelectorUDT {
 		public void handleWrite() {
 			try {
 				while (true) {
+
 					final byte[] array = new byte[SIZE];
+
 					random.nextBytes(array);
+
 					writerBuffer.clear();
 					writerBuffer.put(array);
 					writerBuffer.flip();
+
 					final int writeSize = clientChannel.write(writerBuffer);
+
 					if (writeSize <= 0) {
 						return;
 					}
+
 					assertEquals(writeSize, SIZE);
+
 					clientQueue.offer(array);
+
 					final int count = writeCount.incrementAndGet();
-					// log.info("count={}", count);
+
 					if (count == COUNT) {
-						clientKey.interestOps(clientKey.interestOps()
-								& ~OP_WRITE);
+						clientKey.interestOps(//
+								clientKey.interestOps() & ~OP_WRITE);
+
 						log.info("client write done");
+
 						return;
 					}
 				}
@@ -292,13 +333,13 @@ public class TestSelectorUDT {
 
 			log.info("doAccept; key={}", key);
 
-			assertEquals(key, acceptorKey);
-			assertEquals(acceptorChannel, key.channel());
+			assertEquals(key, acceptKey);
+			assertEquals(acceptChannel, key.channel());
 
 			assertNull(serverChannel);
 			assertNull(serverKey);
 
-			serverChannel = acceptorChannel.accept();
+			serverChannel = acceptChannel.accept();
 			serverChannel.configureBlocking(false);
 
 			serverKey = serverChannel.register(selector, OP_READ);

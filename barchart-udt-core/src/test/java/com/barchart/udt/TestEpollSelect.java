@@ -71,8 +71,10 @@ public class TestEpollSelect {
 
 		//
 
-		SocketUDT.epollAdd0(epollID, socketServer.socketID);
-		SocketUDT.epollAdd0(epollID, socketClient.socketID);
+		SocketUDT.epollAdd0(epollID, socketServer.socketID,
+				EpollUDT.Opt.ALL.code);
+		SocketUDT.epollAdd0(epollID, socketClient.socketID,
+				EpollUDT.Opt.ALL.code);
 
 		socketClient.connect(bindServer);
 

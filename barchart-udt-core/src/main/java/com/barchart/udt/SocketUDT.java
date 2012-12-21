@@ -17,6 +17,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.anno.Native;
 import com.barchart.udt.lib.LibraryLoaderUDT;
 
 /* note: do not change field names; used by JNI */
@@ -33,12 +34,14 @@ public class SocketUDT {
 
 	/**
 	 * JNI Signature that must match between java code and c++ code on all
-	 * platforms; failure to match will abort native library load
+	 * platforms; failure to match will abort native library load, as an
+	 * indication of inconsistent build
 	 */
 	/*
 	 * do not use automatic signature based on time stamp until all platforms
 	 * are built at once by hudson
 	 */
+	@Native
 	public static final int SIGNATURE_JNI = 20121214; // VersionUDT.BUILDTIME;
 
 	/**
@@ -122,6 +125,7 @@ public class SocketUDT {
 	/**
 	 * native descriptor; read by JNI; see udt.h "typedef int UDTSOCKET;"
 	 */
+	@Native
 	protected final int socketID;
 
 	public int getSocketId() {
@@ -131,12 +135,15 @@ public class SocketUDT {
 	/**
 	 * native socket type; SOCK_DGRAM / SOCK_STREAM
 	 */
+	@Native
 	protected final int socketType;
 
 	/**
 	 * native address family; read by JNI
+	 * <p>
+	 * TODO add support for AF_INET6
 	 */
-	// TODO add support for AF_INET6
+	@Native
 	protected final int socketAddressFamily;
 
 	/**
@@ -153,6 +160,7 @@ public class SocketUDT {
 	 * 
 	 * @see #updateMonitor(boolean)
 	 */
+	@Native
 	protected final MonitorUDT monitor;
 
 	public MonitorUDT getMonitor() {
@@ -168,36 +176,45 @@ public class SocketUDT {
 	/**
 	 * local end point; loaded by JNI by {@link #hasLoadedLocalSocketAddress()}
 	 */
+	@Native
 	protected volatile InetSocketAddress localSocketAddress;
 
 	/**
 	 * remote end point; loaded by JNI by
 	 * {@link #hasLoadedRemoteSocketAddress()}
 	 */
+	@Native
 	protected volatile InetSocketAddress remoteSocketAddress;
 
 	/**
 	 * UDT::select() sizeArray/sizeBuffer index offset for READ interest
 	 */
+	@Native
 	public static final int UDT_READ_INDEX = 0;
 	/**
 	 * UDT::select() sizeArray/sizeBuffer index offset for WRITE interest
 	 */
+	@Native
 	public static final int UDT_WRITE_INDEX = 1;
 	/**
 	 * UDT::select() sizeArray/sizeBuffer index offset for EXCEPTION report
 	 */
+	@Native
 	public static final int UDT_EXCEPT_INDEX = 2;
 	/**
 	 * UDT::select() sizeArray/sizeBuffer size count or number of arrays/buffers
 	 */
+	@Native
 	public static final int UDT_SIZE_COUNT = 3;
 
 	/**
 	 * UDT::selectEx() result status
 	 */
+	@Native
 	protected boolean isSelectedRead;
+	@Native
 	protected boolean isSelectedWrite;
+	@Native
 	protected boolean isSelectedException;
 
 	// ###################################################
@@ -557,6 +574,7 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/select.htm">UDT::select()</a>
 	 */
+	@Deprecated
 	protected static native int select0( //
 			final int[] readArray, //
 			final int[] writeArray, //
@@ -574,13 +592,15 @@ public class SocketUDT {
 	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
 	 * @see #select0(int[], int[], int[], int[], long)
 	 */
-	// asserts are contracts
+	@Deprecated
 	public final static int select( //
 			final int[] readArray, //
 			final int[] writeArray, //
 			final int[] exceptArray, //
 			final int[] sizeArray, //
 			final long millisTimeout) throws ExceptionUDT {
+
+		// asserts are contracts
 
 		assert readArray != null;
 		assert writeArray != null;
@@ -605,6 +625,7 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/select.htm">UDT::select()</a>
 	 */
+	@Deprecated
 	protected static native int select1( //
 			final IntBuffer readBuffer, //
 			final IntBuffer writeBuffer, //
@@ -623,13 +644,15 @@ public class SocketUDT {
 	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
 	 * @see #select1(IntBuffer, IntBuffer, IntBuffer, IntBuffer, long)
 	 */
-	// asserts are contracts
+	@Deprecated
 	public final static int select( //
 			final IntBuffer readBuffer, //
 			final IntBuffer writeBuffer, //
 			final IntBuffer exceptBuffer, //
 			final IntBuffer sizeBuffer, //
 			final long millisTimeout) throws ExceptionUDT {
+
+		// asserts are contracts
 
 		assert readBuffer != null && readBuffer.isDirect();
 		assert writeBuffer != null && writeBuffer.isDirect();
@@ -715,6 +738,7 @@ public class SocketUDT {
 	/**
 	 * unimplemented / unused
 	 */
+	@Deprecated
 	protected static native void selectEx0(//
 			final int[] registrationArray, //
 			final int[] readArray, //
@@ -1452,7 +1476,10 @@ public class SocketUDT {
 	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_add_usock()</a>
 	 */
 	protected static native void epollAdd0( //
-			final int epollID, final int socketID) throws ExceptionUDT;
+			final int epollID, //
+			final int socketID, //
+			final int epollOpt //
+	) throws ExceptionUDT;
 
 	/**
 	 * @see <a
@@ -1462,7 +1489,8 @@ public class SocketUDT {
 			final int epollID, final int socketID) throws ExceptionUDT;
 
 	/**
-	 * note: throws {@link ErrorUDT#ETIMEOUT} on timeout, even zero
+	 * note: throws {@link ErrorUDT#ETIMEOUT} on any timeout instead of
+	 * returning 0
 	 * 
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_wait()</a>
@@ -1476,11 +1504,10 @@ public class SocketUDT {
 
 	//
 
-	private final static int JAVA_INT_SIZE_IN_BYTES = 4;
-
 	public static final IntBuffer newDirectIntBufer(final int capacity) {
+		/** java int is 4 bytes */
 		return ByteBuffer. //
-				allocateDirect(capacity * SocketUDT.JAVA_INT_SIZE_IN_BYTES). //
+				allocateDirect(capacity * 4). //
 				order(ByteOrder.nativeOrder()). //
 				asIntBuffer();
 	}

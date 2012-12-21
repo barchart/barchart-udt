@@ -181,7 +181,7 @@ public class TestSocketUDT {
 
 	/** no exceptions is pass */
 	@Test
-	public void testEpollAdd0Remove() throws Exception {
+	public void testEpollAdd0_Remove() throws Exception {
 
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
@@ -191,7 +191,7 @@ public class TestSocketUDT {
 
 		assertTrue(epollID > 0);
 
-		SocketUDT.epollAdd0(epollID, socket.socketID);
+		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.ALL.code);
 
 		SocketUDT.epollRemove0(epollID, socket.socketID);
 
@@ -209,7 +209,7 @@ public class TestSocketUDT {
 	 * 
 	 * */
 	@Test
-	public void testEpollAdd0AgainSocketException() throws Exception {
+	public void testEpollAdd0_AgainSocketException() throws Exception {
 
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
@@ -219,9 +219,9 @@ public class TestSocketUDT {
 
 		assertTrue(epollID > 0);
 
-		SocketUDT.epollAdd0(epollID, socket.socketID);
-		SocketUDT.epollAdd0(epollID, socket.socketID);
-		SocketUDT.epollAdd0(epollID, socket.socketID);
+		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.ALL.code);
+		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.ALL.code);
+		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.ALL.code);
 
 		SocketUDT.epollRelease0(epollID);
 
@@ -236,11 +236,11 @@ public class TestSocketUDT {
 	 * removed."
 	 */
 	@Test(expected = ExceptionUDT.class)
-	public void testEpollAdd0InvalidSocketException() throws Exception {
+	public void testEpollAdd0_InvalidSocketException() throws Exception {
 
 		final int epollID = SocketUDT.epollCreate0();
 
-		SocketUDT.epollAdd0(epollID, -1);
+		SocketUDT.epollAdd0(epollID, -1, EpollUDT.Opt.ALL.code);
 
 		SocketUDT.epollRelease0(epollID);
 
@@ -255,7 +255,7 @@ public class TestSocketUDT {
 	 * removed."
 	 */
 	@Test
-	public void testEpollRemove0IvalidSocketException() throws Exception {
+	public void testEpollRemove0_IvalidSocketException() throws Exception {
 
 		final int epollID = SocketUDT.epollCreate0();
 
@@ -278,7 +278,7 @@ public class TestSocketUDT {
 	 * @throws Exception
 	 */
 	@Test
-	public void testEpollWaitZero() throws Exception {
+	public void testEpollWait0_ZeroTimeout() throws Exception {
 
 		try {
 
@@ -303,6 +303,65 @@ public class TestSocketUDT {
 			}
 
 		}
+
+	}
+
+	@Test
+	public void testEpollWait0_Accept() throws Exception {
+
+		final int epollID = SocketUDT.epollCreate0();
+
+		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
+		accept.configureBlocking(false);
+		accept.bind0(localSocketAddress());
+		accept.listen0(1);
+
+		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
+		client.configureBlocking(false);
+		client.bind0(localSocketAddress());
+
+		final IntBuffer readBuffer = SocketUDT.newDirectIntBufer(10);
+		final IntBuffer writeBuffer = SocketUDT.newDirectIntBufer(10);
+		final IntBuffer sizeBuffer = SocketUDT.newDirectIntBufer(10);
+
+		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.ALL.code);
+		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.ALL.code);
+
+		assertEquals(StatusUDT.LISTENING.getCode(), accept.getStatus0());
+		assertEquals(StatusUDT.OPENED.getCode(), client.getStatus0());
+
+		client.connect0(accept.getLocalSocketAddress());
+
+		final int readyCount1 = SocketUDT.epollWait0( //
+				epollID, readBuffer, writeBuffer, sizeBuffer, 50);
+
+		log.info("readyCount1 : {}", readyCount1);
+
+		assertEquals(2, readyCount1);
+		assertEquals(1, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+		assertEquals(1, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+		assertEquals(accept.socketID, readBuffer.get(0));
+		assertEquals(accept.socketID, writeBuffer.get(0));
+
+		final SocketUDT server = accept.accept0();
+
+		Thread.sleep(50);
+
+		assertEquals(StatusUDT.CONNECTED.getCode(), server.getStatus0());
+		assertEquals(StatusUDT.CONNECTED.getCode(), client.getStatus0());
+
+		final int readyCount2 = SocketUDT.epollWait0( //
+				epollID, readBuffer, writeBuffer, sizeBuffer, 50);
+
+		log.info("readyCount2 : {}", readyCount2);
+
+		assertEquals(2, readyCount2);
+		assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+		assertEquals(2, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+		assertEquals(client.socketID, writeBuffer.get(0));
+		assertEquals(accept.socketID, writeBuffer.get(1));
+
+		SocketUDT.epollRelease0(epollID);
 
 	}
 
