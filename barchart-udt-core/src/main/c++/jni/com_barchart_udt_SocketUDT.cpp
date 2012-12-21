@@ -779,9 +779,23 @@ JNIEXPORT jobject JNICALL Java_com_barchart_udt_SocketUDT_getOption0(
 		//	printf("native: Long\n");
 		return X_NewLong(env, optionValue.longValue);
 	} else if (env->IsSameObject(klaz, udt_clsFactoryUDT)) {
+
 		//	printf("native: FactoryUDT\n");
-		JNICCC* pCCC = reinterpret_cast<JNICCC*>(optionValue.factory);
-		return pCCC->getJavaCCC();
+		CCC* pCCC = reinterpret_cast<CCC*>(optionValue.factory);
+
+		//check to see if they type is as JNICCC class
+		JNICCC* pJNICCC = dynamic_cast<JNICCC*>(pCCC);
+
+		if(pJNICCC!= NULL){
+			//it is, so return the corresponding Java CCC (or derivative) class
+			return pJNICCC->getJavaCCC();
+		}
+		else{
+			//it's a plain CCC class or standard C++ congestion
+			//control class so return NULL instead
+			return NULL;
+		}
+
 	} else {
 		UDT_ThrowExceptionUDT_Message(env, socketID,
 				"unsupported option class in OptionUDT");

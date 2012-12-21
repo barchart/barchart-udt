@@ -7,7 +7,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* Inaccessible static: initOk */
 /*
  * Class:     com_barchart_udt_CCC
  * Method:    initNative
