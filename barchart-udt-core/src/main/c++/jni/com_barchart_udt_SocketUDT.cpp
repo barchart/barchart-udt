@@ -42,14 +42,12 @@
 
 // ### keep outside [extern "C"]
 #include "com_barchart_udt_SocketUDT.h"
+#include "JNICCCFactory.h"
+#include "JNICCC.h"
 
 #include "udt.h"
 
-#include <cassert>
-#include <climits>
-#include <cstring>
-#include <vector>
-#include <algorithm>
+#include "JNIHelpers.h"
 
 // do not use cout; else will introduce GLIBCXX_3.4.9 dependency with 'g++ -O2'
 //#include <iostream>
@@ -69,40 +67,6 @@ extern "C" { /* specify the C calling convention */
 // to turn off compiler warnings
 #define UNUSED(x) ((void)(x))
 
-// ### JNI
-
-#define JNI_UPDATE 0 // jni object release with copy
-//
-
-// ### JDK references
-
-// JDK classes
-static jclass jdk_clsBoolean; // java.lang.Boolean
-static jclass jdk_clsInteger; // java.lang.Integer
-static jclass jdk_clsLong; // java.lang.Long
-static jclass jdk_clsInet4Address; // java.net.Inet4Address
-static jclass jdk_clsInet6Address; // java.net.Inet6Address
-static jclass jdk_clsInetSocketAddress; // java.net.InetSocketAddress
-static jclass jdk_clsSocketException; // java.net.SocketException
-static jclass jdk_clsSet; // java.util.Set
-static jclass jdk_clsIterator; // java.util.Iterator
-
-// JDK fields
-static jfieldID isa_InetAddressID; // java.net.InetSocketAddress#addr
-static jfieldID isa_PortID; // java.net.InetSocketAddress#port
-static jfieldID ia_AddressID; // java.net.InetAddress#address
-
-// JDK methods
-static jmethodID jdk_clsBoolean_initID; // new Boolean(boolean x)
-static jmethodID jdk_clsInteger_initID; // new Integer(int x)
-static jmethodID jdk_clsLong_initID; // new Long(long x)
-static jmethodID jdk_clsInet4Address_initID; // new InetAddress()
-static jmethodID jdk_clsInetSocketAddress_initID; // new InetSocketAddress(InetAddress x)
-static jmethodID jdk_clsSet_iteratorID; // Iterator set.iterator()
-static jmethodID jdk_clsSet_addID; // boolean set.add(Object)
-static jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
-static jmethodID jdk_clsIterator_hasNextID; // boolean iterator.hasNext()
-static jmethodID jdk_clsIterator_nextID; // Object iterator.next()
 
 // ### UDT references
 
@@ -113,6 +77,7 @@ static jclass udt_clsFactoryUDT; // com.barchart.udt.FactoryUDT
 static jclass udt_clsMonitorUDT; // com.barchart.udt.MonitorUDT
 static jclass udt_clsExceptionUDT; // com.barchart.udt.ExceptionUDT
 static jclass udt_clsLingerUDT; // com.barchart.udt.ExceptionUDT
+static jclass udt_clsCCC; // com.barchart.udt.CCC
 
 // UDT fields: com.barchart.udt.SocketUDT
 static jfieldID udts_TypeID;
@@ -173,216 +138,6 @@ static jfieldID udtm_byteAvailRcvBuf; // available UDT receiver buffer size
 
 // ########################################################
 
-//#define EOL "\n"
-
-// special UDT method return value
-#define UDT_TIMEOUT 0
-
-// TODO make more portable mingw / msvc
-#ifdef _MSC_VER
-#define __func__ __FUNCTION__
-#endif
-
-// null pointer safety
-//
-#define CHK_LOG(title,comment) printf ("%s function: %s comment: %s", title, __func__, comment);
-// do not use cout; else will introduce GLIBCXX_3.4.9 dependency with 'g++ -O2'
-//#define CHK_LOG(title,comment) cout << title << " function: " << __func__ << " comment: " << comment << endl;
-//
-#define CHK_NUL_RET_RET(reference,comment) if ((reference) == NULL) \
-	{ CHK_LOG("CHK_NUL_RET_RET;",comment); return; }
-//
-#define CHK_NUL_RET_NUL(reference,comment) if ((reference) == NULL) \
-	{ CHK_LOG("CHK_NUL_RET_NUL;",comment); return NULL; }
-//
-#define CHK_NUL_RET_FLS(reference,comment) if ((reference) == NULL) \
-	{ CHK_LOG("CHK_NUL_RET_FLS;",comment); return false; }
-//
-#define CHK_NUL_RET_ERR(reference,comment) if ((reference) == NULL) \
-	{ CHK_LOG("CHK_NUL_RET_ERR;",comment); return JNI_ERR; }
-//
-// c++ <-> java, bool <-> boolean conversions
-#define BOOL(x) (((x) == JNI_TRUE) ? true : false) // from java to c++
-#define BOOLEAN(x) ((jboolean) ( ((x) == true) ? JNI_TRUE : JNI_FALSE )) // from c++ to java
-//
-// free/malloc convenience
-#define FREE(x) if ((x) != NULL) { free(x); x = NULL; }
-#define MALLOC(var,type,size) type* var = (type*) malloc(sizeof(type) * size);
-
-void X_InitClassReference(JNIEnv *env, jclass *classReference,
-		const char *className) {
-	CHK_NUL_RET_RET(env, "env");
-	CHK_NUL_RET_RET(className, "className");
-	CHK_NUL_RET_RET(classReference, "classReference");
-	jclass klaz = env->FindClass(className);
-	CHK_NUL_RET_RET(klaz, "klaz");
-	*classReference = static_cast<jclass>(env->NewGlobalRef((jobject) klaz));
-	CHK_NUL_RET_RET(*classReference, "*classReference");
-}
-
-// use native bool parameter
-jobject X_NewBoolean(JNIEnv *env, bool value) {
-	CHK_NUL_RET_NUL(env, "env");
-	return env->NewObject(jdk_clsBoolean, jdk_clsBoolean_initID, BOOLEAN(value));
-}
-
-// use native 32 bit int parameter
-jobject X_NewInteger(JNIEnv *env, int value) {
-	CHK_NUL_RET_NUL(env, "env");
-	return env->NewObject(jdk_clsInteger, jdk_clsInteger_initID, (jint) value);
-}
-
-// use native 64 bit long parameter
-jobject X_NewLong(JNIEnv* env, int64_t value) {
-	CHK_NUL_RET_NUL(env, "env");
-	return env->NewObject(jdk_clsLong, jdk_clsLong_initID, (jlong) value);
-}
-
-// NOTE: ipv4 only
-int X_InitSockAddr(sockaddr* sockAddr) {
-	CHK_NUL_RET_ERR(sockAddr, "sockAddr");
-	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
-	sockAddrIn->sin_family = AF_INET;
-	memset(&(sockAddrIn->sin_zero), '\0', 8);
-	return JNI_OK;
-}
-
-inline bool X_IsInRange(jlong min, jlong var, jlong max) {
-	if (min <= var && var <= max) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-inline void X_ConvertMillisIntoTimeValue(const jlong millisTimeout,
-		timeval* timeValue) {
-	if (millisTimeout < 0) { // infinite wait
-		timeValue->tv_sec = INT_MAX;
-		timeValue->tv_usec = 0;
-	} else if (millisTimeout > 0) { // finite wait
-		timeValue->tv_sec = millisTimeout / 1000; // msvc C4244
-		timeValue->tv_usec = (millisTimeout % 1000) * 1000;
-	} else { // immediate return (not less the UDT event slice of 10 ms)
-		timeValue->tv_sec = 0;
-		timeValue->tv_usec = 0;
-	}
-}
-
-// NOTE: ipv4 only
-int X_ConvertInetSocketAddressToSockaddr(JNIEnv* env,
-		jobject objInetSocketAddress, sockaddr* sockAddr) {
-
-	CHK_NUL_RET_ERR(env, "env");
-	CHK_NUL_RET_ERR(sockAddr, "sockAddr");
-	CHK_NUL_RET_ERR(objInetSocketAddress, "objInetSocketAddress");
-
-	jobject objInetAddress = env->GetObjectField(objInetSocketAddress,
-			isa_InetAddressID);
-	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
-
-	jint address = env->GetIntField(objInetAddress, ia_AddressID);
-	jint port = env->GetIntField(objInetSocketAddress, isa_PortID);
-
-	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
-
-	sockAddrIn->sin_addr.s_addr = htonl(address);
-	sockAddrIn->sin_port = htons(port); // msvc C4244
-
-	return JNI_OK;
-
-}
-
-// NOTE: ipv4 only
-int X_ConvertSockaddrToInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
-		jobject objInetSocketAddress) {
-
-	CHK_NUL_RET_ERR(env, "env");
-	CHK_NUL_RET_ERR(sockAddr, "sockAddr");
-	CHK_NUL_RET_ERR(objInetSocketAddress, "objInetSocketAddress");
-
-	jobject objInetAddress = env->GetObjectField(objInetSocketAddress,
-			isa_InetAddressID);
-	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
-
-	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
-
-	jint address = ntohl(sockAddrIn->sin_addr.s_addr);
-	jint port = ntohs(sockAddrIn->sin_port);
-
-	env->SetIntField(objInetAddress, ia_AddressID, address);
-	env->SetIntField(objInetSocketAddress, isa_PortID, port);
-
-	return JNI_OK;
-
-}
-
-// NOTE: only ipv4
-jobject X_NewInetAddress(JNIEnv* env, jint address) {
-
-	CHK_NUL_RET_NUL(env, "env");
-	CHK_NUL_RET_NUL(jdk_clsInet4Address, "jdk_clsInet4Address");
-
-	jobject objInetAddress = env->NewObject(jdk_clsInet4Address,
-			jdk_clsInet4Address_initID);
-
-	CHK_NUL_RET_NUL(objInetAddress, "objInetAddress");
-
-	env->SetIntField(objInetAddress, ia_AddressID, address);
-
-	return objInetAddress;
-
-}
-
-// NOTE: ipv4 only
-jobject X_NewInetSocketAddress(JNIEnv* env, sockaddr* sockAddr) {
-
-	CHK_NUL_RET_NUL(env, "env");
-	CHK_NUL_RET_NUL(sockAddr, "sockAddr");
-
-	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
-	jint address = ntohl(sockAddrIn->sin_addr.s_addr);
-	jint port = ntohs(sockAddrIn->sin_port);
-
-	jobject objInetAddress = X_NewInetAddress(env, address);
-	CHK_NUL_RET_NUL(objInetAddress, "objInetAddress");
-
-	jobject objInetSocketAddress = env->NewObject(jdk_clsInetSocketAddress,
-			jdk_clsInetSocketAddress_initID, objInetAddress, port);
-
-	CHK_NUL_RET_NUL(objInetSocketAddress, "objInetSocketAddress");
-
-	return objInetSocketAddress;
-
-}
-
-bool X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
-		jobject socketAddress) {
-
-	CHK_NUL_RET_FLS(env, "env");
-	CHK_NUL_RET_FLS(sockAddr, "sockAddr");
-	CHK_NUL_RET_FLS(socketAddress, "socketAddress");
-
-	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
-
-	jint address1 = ntohl(sockAddrIn->sin_addr.s_addr);
-	jint port1 = ntohs(sockAddrIn->sin_port);
-
-	jobject objInetAddress = env->GetObjectField(socketAddress,
-			isa_InetAddressID);
-
-	CHK_NUL_RET_FLS(objInetAddress, "objInetAddress");
-
-	jint address2 = env->GetIntField(objInetAddress, ia_AddressID);
-	jint port2 = env->GetIntField(socketAddress, isa_PortID);
-
-	if (address1 == address2 && port1 == port2) {
-		return true;
-	}
-
-	return false;
-
-}
 
 // not used
 void XXX_ThrowSocketExceptionMessage(JNIEnv* env, const char* message) {
@@ -539,6 +294,8 @@ void UDT_InitClassRefAll(JNIEnv* env) {
 			"com/barchart/udt/ExceptionUDT");
 	X_InitClassReference(env, &udt_clsLingerUDT, //
 			"com/barchart/udt/LingerUDT");
+	X_InitClassReference(env, &udt_clsCCC, //
+			"com/barchart/udt/CCC");
 
 }
 
@@ -579,6 +336,9 @@ void UDT_InitFieldRefAll(JNIEnv* env) {
 
 	UDT_InitFieldMonitor(env);
 
+	// UDT CCC
+
+	udt_clsCCC_fld_nativeHandleID = env->GetFieldID(udt_clsCCC ,"nativeHandle","J");
 }
 
 void X_InitMethodRef(JNIEnv* env, jmethodID *methodID, jclass klaz,
@@ -648,6 +408,8 @@ void UDT_InitMethodRefAll(JNIEnv* env) {
 			"<init>", "(I)V");
 	CHK_NUL_RET_RET(udt_clsLingerUDT_initID, "udt_clsLingerUDT_initID");
 
+
+
 }
 
 // ########################################################
@@ -655,8 +417,8 @@ void UDT_InitMethodRefAll(JNIEnv* env) {
 /* signature is a monotonously increasing integer; set in java class SocketUDT */
 
 // validate consistency of java code and native library
-JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_getSignatureJNI0(
-		JNIEnv* env, jclass clsSocketUDT) {
+JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_getSignatureJNI0(JNIEnv* env,
+		jclass clsSocketUDT) {
 
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
@@ -1015,10 +777,23 @@ JNIEXPORT jobject JNICALL Java_com_barchart_udt_SocketUDT_getOption0(
 		//	printf("native: Long\n");
 		return X_NewLong(env, optionValue.longValue);
 	} else if (env->IsSameObject(klaz, udt_clsFactoryUDT)) {
+
 		//	printf("native: FactoryUDT\n");
-		UDT_ThrowExceptionUDT_Message(env, socketID,
-				"not yet implemented: FactoryUDT");
-		return NULL;
+		CCC* pCCC = reinterpret_cast<CCC*>(optionValue.factory);
+
+		//check to see if they type is as JNICCC class
+		JNICCC* pJNICCC = dynamic_cast<JNICCC*>(pCCC);
+
+		if(pJNICCC!= NULL){
+			//it is, so return the corresponding Java CCC (or derivative) class
+			return pJNICCC->getJavaCCC();
+		}
+		else{
+			//it's a plain CCC class or standard C++ congestion
+			//control class so return NULL instead
+			return NULL;
+		}
+
 	} else {
 		UDT_ThrowExceptionUDT_Message(env, socketID,
 				"unsupported option class in OptionUDT");
@@ -1074,9 +849,13 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_setOption0(JNIEnv *env,
 		optionValueSize = sizeof(int64_t);
 	} else if (env->IsSameObject(klaz, udt_clsFactoryUDT)) {
 		//		printf("FactoryUDT\n");
-		UDT_ThrowExceptionUDT_Message(env, socketID,
-				"not yet implemented: FactoryUDT");
-		return;
+
+		optionValue.factory = new JNICCCFactory(env,objValue);
+		optionValueSize = sizeof(void*);
+
+		//UDT_ThrowExceptionUDT_Message(env, socketID,
+		//		"not yet implemented: FactoryUDT");
+
 	} else {
 		UDT_ThrowExceptionUDT_Message(env, socketID,
 				"unsupported option class in OptionUDT");
@@ -1084,7 +863,11 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_setOption0(JNIEnv *env,
 	}
 
 	const int rv = UDT::setsockopt(socketID, 0, optionName,
-			(void*) &optionValue, optionValueSize);
+			(void*) (optionName == UDT_CC ? optionValue.factory : &optionValue), optionValueSize);
+
+	if(optionName == UDT_CC && optionValue.factory != NULL){
+		delete reinterpret_cast<JNICCCFactory*>(optionValue.factory);
+	}
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();

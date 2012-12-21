@@ -38,7 +38,7 @@ public class TestOption {
 
 		try {
 
-			SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+			final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
 			OptionUDT option;
 
@@ -75,7 +75,7 @@ public class TestOption {
 
 			log.info("pass: long");
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail("SocketException; " + e.getMessage());
 		}
 	}
@@ -97,21 +97,21 @@ public class TestOption {
 
 		try {
 
-			SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+			final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
-			OptionUDT option = OptionUDT.UDT_LINGER;
+			final OptionUDT option = OptionUDT.UDT_LINGER;
 
-			LingerUDT linger1 = new LingerUDT(65432);
+			final LingerUDT linger1 = new LingerUDT(65432);
 			socket.setOption(option, linger1);
 			assertEquals(linger1, socket.getOption(option));
 
-			LingerUDT linger2 = new LingerUDT(-12345);
+			final LingerUDT linger2 = new LingerUDT(-12345);
 			socket.setOption(option, linger2);
 			assertEquals(LingerUDT.LINGER_ZERO, socket.getOption(option));
 
 			log.info("pass: linger");
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail("SocketException; " + e.getMessage());
 		}
 
@@ -121,30 +121,109 @@ public class TestOption {
 	public void testOptionsPrint() {
 		try {
 
-			SocketUDT serverSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			InetSocketAddress serverAddress = localSocketAddress();
+			final SocketUDT serverSocket = new SocketUDT(TypeUDT.DATAGRAM);
+			final InetSocketAddress serverAddress = getLocalSocketAddress();
 			serverSocket.bind(serverAddress);
 			serverSocket.listen(1);
 			assertTrue(serverSocket.isBound());
 
-			SocketUDT clientSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			InetSocketAddress clientAddress = localSocketAddress();
+			final SocketUDT clientSocket = new SocketUDT(TypeUDT.DATAGRAM);
+			final InetSocketAddress clientAddress = getLocalSocketAddress();
 			clientSocket.bind(clientAddress);
 			assertTrue(clientSocket.isBound());
 
 			clientSocket.connect(serverAddress);
 			assertTrue(clientSocket.isConnected());
 
-			SocketUDT acceptSocket = serverSocket.accept();
+			final SocketUDT acceptSocket = serverSocket.accept();
 			assertTrue(acceptSocket.isConnected());
 
 			log.info("client options:{}", clientSocket.toStringOptions());
 			log.info("accept options:{}", acceptSocket.toStringOptions());
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail(e.getMessage());
 		}
 
 	}
 
+	/**
+	 * This test uses the UDT_CC option using the UDPBlast custom congestion
+	 * control algorithm limiting bandwidth to 50Mbs between localhost
+	 */
+	@Test
+	public void testOptionCC() {
+
+		try {
+
+			// UDT has roughly 7% congestion control overhead
+			// so we need to take that into account if you want
+			// to limit wire speed
+			final double maxBW = 50 * 0.93;
+			log.info("Attempting to rate limit using custom CCC UDPBlast class");
+
+			final SocketUDT serverSocket = new SocketUDT(TypeUDT.STREAM);
+			final InetSocketAddress serverAddress = getLocalSocketAddress();
+			serverSocket.bind(serverAddress);
+			serverSocket.listen(1);
+			assertTrue(serverSocket.isBound());
+
+			final SocketUDT clientSocket = new SocketUDT(TypeUDT.STREAM);
+
+			clientSocket.setOption(OptionUDT.UDT_CC, new FactoryUDT<UDPBlast>(
+					UDPBlast.class));
+
+			final InetSocketAddress clientAddress = getLocalSocketAddress();
+
+			clientSocket.bind(clientAddress);
+			clientSocket.setSoLinger(false, 0);
+			assertTrue(clientSocket.isBound());
+
+			clientSocket.connect(serverAddress);
+			assertTrue(clientSocket.isConnected());
+
+			final SocketUDT acceptSocket = serverSocket.accept();
+			assertTrue(acceptSocket.isConnected());
+
+			final Object obj = clientSocket.getOption(OptionUDT.UDT_CC);
+
+			assertTrue("UDT_CC Object is of unexpected type",
+					obj instanceof UDPBlast);
+
+			final UDPBlast objCCC = (UDPBlast) obj;
+			objCCC.setRate((int) maxBW);
+
+			final byte[] data = new byte[65536];
+			final long start = System.currentTimeMillis();
+			long interval = System.currentTimeMillis();
+			double maxMbs = -1;
+
+			while ((System.currentTimeMillis() - start) < 15000) {
+
+				clientSocket.send(data);
+				acceptSocket.receive(data);
+
+				if (System.currentTimeMillis() - interval > 1000) {
+					interval = System.currentTimeMillis();
+					clientSocket.updateMonitor(true);
+					final MonitorUDT mon = clientSocket.getMonitor();
+					log.info(String.format("Current Rate: %.2f Mbs",
+							mon.mbpsSendRate));
+
+					maxMbs = mon.mbpsSendRate * 0.93;
+				}
+			}
+
+			// check we are within 10% of our desired rate
+			assertTrue("Max bandwidth exceeded limit",
+					maxMbs < (maxBW + (maxBW * 0.1)));
+
+			clientSocket.close();
+			acceptSocket.close();
+			serverSocket.close();
+
+		} catch (final ExceptionUDT e) {
+			fail(e.getMessage());
+		}
+	}
 }

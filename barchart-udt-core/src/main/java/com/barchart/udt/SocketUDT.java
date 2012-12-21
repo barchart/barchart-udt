@@ -78,6 +78,12 @@ public class SocketUDT {
 	 */
 	public static final int DEFAULT_MIN_SELECTOR_TIMEOUT = 10;
 
+	/**
+	 * Helper value that can be checked from CCC class and force JNI library
+	 * load
+	 */
+	public static final boolean INIT_OK;
+
 	/** native library extractor and loader */
 	static {
 
@@ -116,6 +122,7 @@ public class SocketUDT {
 			System.exit(3);
 		}
 
+		INIT_OK = true;
 		log.debug("native library load & init OK");
 
 	}

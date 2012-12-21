@@ -38,7 +38,7 @@ public enum OptionUDT {
 
 	// custom congestion control algorithm
 	/* TODO not yet implemented: FactoryUDT */
-	// UDT_CC(3, FactoryUDT.class), //
+	UDT_CC(3, FactoryUDT.class, DECIMAL), //
 
 	/** Flight flag size (window size). */
 	UDT_FC(4, Integer.class, BINARY), //
@@ -164,7 +164,7 @@ public enum OptionUDT {
 		text.append(" = ");
 		text.append(socketUDT.socketID);
 
-		for (OptionUDT option : values()) {
+		for (final OptionUDT option : values()) {
 			int optionCode = 0;
 			String optionName = null;
 			String optionValue = null;
@@ -187,7 +187,7 @@ public enum OptionUDT {
 				text.append(" = ");
 				text.append(optionValue);
 
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("unexpected; " + optionName, e);
 			}
 
