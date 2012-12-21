@@ -85,6 +85,7 @@
 		    <groupId>com.yammer.metrics</groupId>
 		    <artifactId>metrics-core</artifactId>
 		    <version>2.2.0</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
