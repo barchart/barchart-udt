@@ -2063,13 +2063,15 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd0( //
 		jclass clsSocketUDT, //
 		const jint pollID, //
 		const jint socketID, //
-		jint pollOpt //
+		const jint pollOpt //
 		) {
 
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
 
-	const int rv = UDT::epoll_add_usock(pollID, socketID, &pollOpt);
+	const int option = pollOpt;
+
+	const int rv = UDT::epoll_add_usock(pollID, socketID, &option);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
