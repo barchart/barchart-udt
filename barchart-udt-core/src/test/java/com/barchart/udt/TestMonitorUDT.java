@@ -40,12 +40,12 @@ public class TestMonitorUDT {
 		try {
 
 			SocketUDT serverSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			InetSocketAddress serverAddress = getLocalSocketAddress();
+			InetSocketAddress serverAddress = localSocketAddress();
 			serverSocket.bind(serverAddress);
 			serverSocket.listen(1);
 
 			SocketUDT clientSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			InetSocketAddress clientAddress = getLocalSocketAddress();
+			InetSocketAddress clientAddress = localSocketAddress();
 			clientSocket.bind(clientAddress);
 
 			clientSocket.connect(serverAddress);

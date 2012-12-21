@@ -22,10 +22,18 @@ ifeq ($(arch), IA64)
    CCFLAGS += -DIA64
 endif
 
+ifeq ($(arch), SPARC)
+   CCFLAGS += -DSPARC
+endif
+
 LDFLAGS = -L../src -ludt -lstdc++ -lpthread -lm
 
 ifeq ($(os), UNIX)
    LDFLAGS += -lsocket
+endif
+
+ifeq ($(os), SUNOS)
+   LDFLAGS += -lrt -lsocket
 endif
 
 DIR = $(shell pwd)

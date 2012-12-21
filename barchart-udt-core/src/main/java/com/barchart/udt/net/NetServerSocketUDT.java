@@ -44,15 +44,13 @@ public class NetServerSocketUDT extends ServerSocket implements IceServerSocket 
 	}
 
 	@Override
-	public void bind(SocketAddress endpoint) throws IOException {
+	public void bind(final SocketAddress endpoint) throws IOException {
 		final int backlog = SocketUDT.DEFAULT_ACCEPT_QUEUE_SIZE;
 		bind(endpoint, backlog);
 	}
 
-	// NOTE: bind() means listen() for UDT server socket
-	/*
-	 * The listen method lets a UDT socket enter listening state. The socket
-	 * must call bind before a listen call.
+	/**
+	 * NOTE: bind() means listen() for UDT server socket
 	 */
 	@Override
 	public void bind(SocketAddress bindpoint, int backlog) throws IOException {
@@ -90,7 +88,7 @@ public class NetServerSocketUDT extends ServerSocket implements IceServerSocket 
 	public SocketAddress getLocalSocketAddress() {
 		try {
 			return serverSocketUDT.getLocalSocketAddress();
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 			return null;
 		}
 	}
@@ -121,25 +119,25 @@ public class NetServerSocketUDT extends ServerSocket implements IceServerSocket 
 	}
 
 	@Override
-	public void setPerformancePreferences(int connectionTime, int latency,
-			int bandwidth) {
+	public void setPerformancePreferences(final int connectionTime,
+			final int latency, final int bandwidth) {
 		throw new RuntimeException("feature not available");
 	}
 
 	// NOTE: set both send and receive, since they are inherited on accept()
 	@Override
-	public void setReceiveBufferSize(int size) throws SocketException {
+	public void setReceiveBufferSize(final int size) throws SocketException {
 		serverSocketUDT.setReceiveBufferSize(size);
 		serverSocketUDT.setSendBufferSize(size);
 	}
 
 	@Override
-	public void setReuseAddress(boolean on) throws SocketException {
+	public void setReuseAddress(final boolean on) throws SocketException {
 		serverSocketUDT.setReuseAddress(on);
 	}
 
 	@Override
-	public void setSoTimeout(int timeout) throws SocketException {
+	public void setSoTimeout(final int timeout) throws SocketException {
 		serverSocketUDT.setSoTimeout(timeout);
 	}
 

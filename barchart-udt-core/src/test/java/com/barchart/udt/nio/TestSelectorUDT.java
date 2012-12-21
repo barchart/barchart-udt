@@ -31,7 +31,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* basic single thread selector test */
+/**
+ * basic single thread selector test
+ */
 public class TestSelectorUDT {
 
 	protected static final int SIZE = 1460;
@@ -42,11 +44,11 @@ public class TestSelectorUDT {
 
 	final SelectorProvider provider = SelectorProviderUDT.DATAGRAM;
 
-	volatile SelectionKey acceptorKey;
+	volatile SelectionKey acceptKey;
 	volatile SelectionKey serverKey;
 	volatile SelectionKey clientKey;
 
-	volatile ServerSocketChannel acceptorChannel;
+	volatile ServerSocketChannel acceptChannel;
 	volatile SocketChannel serverChannel;
 	volatile SocketChannel clientChannel;
 
@@ -56,39 +58,40 @@ public class TestSelectorUDT {
 	volatile SocketAddress clientAddress;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 
 		selector = provider.openSelector();
 
-		acceptorChannel = provider.openServerSocketChannel();
-		acceptorChannel.configureBlocking(false);
-		acceptorAddress = getLocalSocketAddress();
-		acceptorChannel.socket().bind(acceptorAddress);
+		acceptChannel = provider.openServerSocketChannel();
+		acceptChannel.configureBlocking(false);
+		acceptorAddress = localSocketAddress();
+		acceptChannel.socket().bind(acceptorAddress);
 
-		acceptorKey = acceptorChannel.register(selector, OP_ACCEPT);
+		acceptKey = acceptChannel.register(selector, OP_ACCEPT);
 
 		clientChannel = provider.openSocketChannel();
 		clientChannel.configureBlocking(false);
-		clientAddress = getLocalSocketAddress();
+		clientAddress = localSocketAddress();
 		clientChannel.socket().bind(clientAddress);
 
 		clientKey = clientChannel.register(selector, OP_CONNECT);
 
 		clientChannel.connect(acceptorAddress);
 
-		log.info("setUp");
+		log.info("test init");
 
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void done() throws Exception {
 
-		log.info("tearDown");
+		log.info("test done");
 
 	}
 
 	volatile boolean isTestON = true;
 
+	/** single pass state machine */
 	@Test
 	public void testSelect() {
 		try {
@@ -133,7 +136,7 @@ public class TestSelectorUDT {
 
 			log.info("after close");
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail(e.getMessage());
 		}
 
@@ -163,19 +166,29 @@ public class TestSelectorUDT {
 		public void handleRead() {
 			try {
 				while (true) {
+
 					readerBuffer.clear();
+
 					final int readSize = serverChannel.read(readerBuffer);
+
 					if (readSize <= 0) {
 						return;
 					}
+
 					assertEquals(readSize, SIZE);
-					byte[] array = new byte[readSize];
+
+					final byte[] array = new byte[readSize];
+
 					readerBuffer.flip();
 					readerBuffer.get(array);
+
 					serverQueue.offer(array);
-					serverKey.interestOps(serverKey.interestOps() | OP_WRITE);
+
+					serverKey.interestOps( //
+							serverKey.interestOps() | OP_WRITE);
+
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				fail(e.getMessage());
 			}
 		}
@@ -185,19 +198,28 @@ public class TestSelectorUDT {
 		@Override
 		public void handleWrite() {
 			try {
+
 				byte[] array;
+
 				while ((array = serverQueue.poll()) != null) {
+
 					writerBuffer.clear();
 					writerBuffer.put(array);
 					writerBuffer.flip();
+
 					final int writeSize = serverChannel.write(writerBuffer);
+
 					if (writeSize <= 0) {
 						break;
 					}
+
 					assertEquals(writeSize, SIZE);
+
 				}
+
 				serverKey.interestOps(serverKey.interestOps() & ~OP_WRITE);
-			} catch (Exception e) {
+
+			} catch (final Exception e) {
 				fail(e.getMessage());
 			}
 		}
@@ -222,28 +244,39 @@ public class TestSelectorUDT {
 		public void handleRead() {
 			try {
 				while (true) {
+
 					readerBuffer.clear();
+
 					final int readSize = clientChannel.read(readerBuffer);
+
 					if (readSize <= 0) {
 						return;
 					}
+
 					assertEquals(readSize, SIZE);
-					byte[] arrayRead = new byte[readSize];
+
+					final byte[] arrayRead = new byte[readSize];
+
 					readerBuffer.flip();
 					readerBuffer.get(arrayRead);
-					byte[] arrayWritten = clientQueue.poll();
+
+					final byte[] arrayWritten = clientQueue.poll();
+
 					assertNotNull(arrayWritten);
 					assertTrue(Arrays.equals(arrayRead, arrayWritten));
+
 					final int count = readCount.incrementAndGet();
+
 					if (count == COUNT) {
-						clientKey.interestOps(clientKey.interestOps()
-								& ~OP_READ);
+						clientKey.interestOps( //
+								clientKey.interestOps() & ~OP_READ);
 						isTestON = false;
 						log.info("client read done");
 						return;
 					}
+
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				fail(e.getMessage());
 			}
 		}
@@ -258,62 +291,72 @@ public class TestSelectorUDT {
 		public void handleWrite() {
 			try {
 				while (true) {
-					byte[] array = new byte[SIZE];
+
+					final byte[] array = new byte[SIZE];
+
 					random.nextBytes(array);
+
 					writerBuffer.clear();
 					writerBuffer.put(array);
 					writerBuffer.flip();
+
 					final int writeSize = clientChannel.write(writerBuffer);
+
 					if (writeSize <= 0) {
 						return;
 					}
+
 					assertEquals(writeSize, SIZE);
+
 					clientQueue.offer(array);
+
 					final int count = writeCount.incrementAndGet();
-					// log.info("count={}", count);
+
 					if (count == COUNT) {
-						clientKey.interestOps(clientKey.interestOps()
-								& ~OP_WRITE);
+						clientKey.interestOps(//
+								clientKey.interestOps() & ~OP_WRITE);
+
 						log.info("client write done");
+
 						return;
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				fail(e.getMessage());
 			}
 		}
 
 	};
 
-	private void doAccept(SelectionKey key) {
+	private void doAccept(final SelectionKey key) {
 		try {
 
 			log.info("doAccept; key={}", key);
 
-			assertEquals(key, acceptorKey);
-			assertEquals(acceptorChannel, (ServerSocketChannel) key.channel());
+			assertEquals(key, acceptKey);
+			assertEquals(acceptChannel, key.channel());
 
 			assertNull(serverChannel);
 			assertNull(serverKey);
 
-			serverChannel = acceptorChannel.accept();
+			serverChannel = acceptChannel.accept();
 			serverChannel.configureBlocking(false);
 
 			serverKey = serverChannel.register(selector, OP_READ);
 			serverKey.attach(serverHandler);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail(e.getMessage());
 		}
 	}
 
-	private void doConnect(SelectionKey key) {
+	private void doConnect(final SelectionKey key) {
 		try {
 
 			log.info("doConnect; key={}", key);
 
 			assertEquals(key, clientKey);
-			assertEquals(clientChannel, (SocketChannel) key.channel());
+			assertEquals(clientChannel, key.channel());
 
 			assertTrue(clientChannel.finishConnect());
 			assertTrue(clientChannel.isConnected());
@@ -321,33 +364,37 @@ public class TestSelectorUDT {
 			clientKey.interestOps(OP_READ | OP_WRITE);
 			clientKey.attach(clientHandler);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail(e.getMessage());
 		}
 
 	}
 
-	private void doRead(SelectionKey key) {
+	private void doRead(final SelectionKey key) {
 
-		Object attachment = key.attachment();
+		log.info("key:\n\t{}", key);
+
+		final Object attachment = key.attachment();
+
 		assertTrue(attachment instanceof Handler);
 
-		Handler handler = (Handler) attachment;
-		handler.handleRead();
+		final Handler handler = (Handler) attachment;
 
-		// log.info("doRead; handler={}", handler);
+		handler.handleRead();
 
 	}
 
-	private void doWrite(SelectionKey key) {
+	private void doWrite(final SelectionKey key) {
 
-		Object attachment = key.attachment();
+		log.info("key:\n\t{}", key);
+
+		final Object attachment = key.attachment();
+
 		assertTrue(attachment instanceof Handler);
 
-		Handler handler = (Handler) attachment;
-		handler.handleWrite();
+		final Handler handler = (Handler) attachment;
 
-		// log.info("doWrite; handler={}", handler);
+		handler.handleWrite();
 
 	}
 

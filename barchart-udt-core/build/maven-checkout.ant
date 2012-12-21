@@ -22,10 +22,12 @@
 
 		<exec executable="${maven-command}">
 
+			<arg value="--errors" />
+
 			<arg value="--activate-profiles" />
 			<arg value="checkout" />
 
-			<arg value="generate-sources" />
+			<arg value="clean" />
 			<arg value="process-sources" />
 
 		</exec>

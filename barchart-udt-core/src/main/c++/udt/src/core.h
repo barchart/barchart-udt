@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*****************************************************************************
 written by
-   Yunhong Gu, last updated 01/27/2011
+   Yunhong Gu, last updated 02/28/2012
 *****************************************************************************/
 
 #ifndef __UDT_CORE_H__
@@ -62,7 +62,8 @@ friend class CUDTSocket;
 friend class CUDTUnited;
 friend class CCC;
 friend struct CUDTComp;
-friend class CCache;
+friend class CCache<CInfoBlock>;
+friend class CRendezvousQueue;
 friend class CSndQueue;
 friend class CRcvQueue;
 friend class CSndUList;
@@ -92,15 +93,15 @@ public: //API
    static int recv(UDTSOCKET u, char* buf, int len, int flags);
    static int sendmsg(UDTSOCKET u, const char* buf, int len, int ttl = -1, bool inorder = false);
    static int recvmsg(UDTSOCKET u, char* buf, int len);
-   static int64_t sendfile(UDTSOCKET u, std::fstream& ifs, int64_t& offset, const int64_t& size, const int& block = 364000);
-   static int64_t recvfile(UDTSOCKET u, std::fstream& ofs, int64_t& offset, const int64_t& size, const int& block = 7280000);
+   static int64_t sendfile(UDTSOCKET u, std::fstream& ifs, int64_t& offset, int64_t size, int block = 364000);
+   static int64_t recvfile(UDTSOCKET u, std::fstream& ofs, int64_t& offset, int64_t size, int block = 7280000);
    static int select(int nfds, ud_set* readfds, ud_set* writefds, ud_set* exceptfds, const timeval* timeout);
    static int selectEx(const std::vector<UDTSOCKET>& fds, std::vector<UDTSOCKET>* readfds, std::vector<UDTSOCKET>* writefds, std::vector<UDTSOCKET>* exceptfds, int64_t msTimeOut);
    static int epoll_create();
    static int epoll_add_usock(const int eid, const UDTSOCKET u, const int* events = NULL);
    static int epoll_add_ssock(const int eid, const SYSSOCKET s, const int* events = NULL);
-   static int epoll_remove_usock(const int eid, const UDTSOCKET u, const int* events = NULL);
-   static int epoll_remove_ssock(const int eid, const SYSSOCKET s, const int* events = NULL);
+   static int epoll_remove_usock(const int eid, const UDTSOCKET u);
+   static int epoll_remove_ssock(const int eid, const SYSSOCKET s);
    static int epoll_wait(const int eid, std::set<UDTSOCKET>* readfds, std::set<UDTSOCKET>* writefds, int64_t msTimeOut, std::set<SYSSOCKET>* lrfds = NULL, std::set<SYSSOCKET>* wrfds = NULL);
    static int epoll_release(const int eid);
    static CUDTException& getlasterror();
@@ -139,6 +140,15 @@ private:
    void connect(const sockaddr* peer);
 
       // Functionality:
+      //    Process the response handshake packet.
+      // Parameters:
+      //    0) [in] pkt: handshake packet.
+      // Returned value:
+      //    Return 0 if connected, positive value if connection is in progress, otherwise error code.
+
+   int connect(const CPacket& pkt) throw ();
+
+      // Functionality:
       //    Connect to a UDT entity listening at address "peer", which has sent "hs" request.
       // Parameters:
       //    0) [in] peer: The address of the listening UDT entity.
@@ -165,7 +175,7 @@ private:
       // Returned value:
       //    Actual size of data sent.
 
-   int send(const char* data, const int& len);
+   int send(const char* data, int len);
 
       // Functionality:
       //    Request UDT to receive data to a memory block "data" with size of "len".
@@ -175,7 +185,7 @@ private:
       // Returned value:
       //    Actual size of data received.
 
-   int recv(char* data, const int& len);
+   int recv(char* data, int len);
 
       // Functionality:
       //    send a message of a memory block "data" with size of "len".
@@ -187,7 +197,7 @@ private:
       // Returned value:
       //    Actual size of data sent.
 
-   int sendmsg(const char* data, const int& len, const int& ttl, const bool& inorder);
+   int sendmsg(const char* data, int len, int ttl, bool inorder);
 
       // Functionality:
       //    Receive a message to buffer "data".
@@ -197,7 +207,7 @@ private:
       // Returned value:
       //    Actual size of data received.
 
-   int recvmsg(char* data, const int& len);
+   int recvmsg(char* data, int len);
 
       // Functionality:
       //    Request UDT to send out a file described as "fd", starting from "offset", with size of "size".
@@ -209,7 +219,7 @@ private:
       // Returned value:
       //    Actual size of data sent.
 
-   int64_t sendfile(std::fstream& ifs, int64_t& offset, const int64_t& size, const int& block = 366000);
+   int64_t sendfile(std::fstream& ifs, int64_t& offset, int64_t size, int block = 366000);
 
       // Functionality:
       //    Request UDT to receive data into a file described as "fd", starting from "offset", with expected size of "size".
@@ -221,7 +231,7 @@ private:
       // Returned value:
       //    Actual size of data received.
 
-   int64_t recvfile(std::fstream& ofs, int64_t& offset, const int64_t& size, const int& block = 7320000);
+   int64_t recvfile(std::fstream& ofs, int64_t& offset, int64_t size, int block = 7320000);
 
       // Functionality:
       //    Configure UDT options.
@@ -232,7 +242,7 @@ private:
       // Returned value:
       //    None.
 
-   void setOpt(UDTOpt optName, const void* optval, const int& optlen);
+   void setOpt(UDTOpt optName, const void* optval, int optlen);
 
       // Functionality:
       //    Read UDT options.
@@ -292,10 +302,11 @@ private: // Options
 private: // congestion control
    CCCVirtualFactory* m_pCCFactory;             // Factory class to create a specific CC instance
    CCC* m_pCC;                                  // congestion control class
-   CCache* m_pCache;				// network information cache
+   CCache<CInfoBlock>* m_pCache;		// network information cache
 
 private: // Status
    volatile bool m_bListening;                  // If the UDT entit is listening to connection
+   volatile bool m_bConnecting;			// The short phase when connect() is called but not yet completed
    volatile bool m_bConnected;                  // Whether the connection is on or off
    volatile bool m_bClosing;                    // If the UDT entity is closing
    volatile bool m_bShutdown;                   // If the peer side has shutdown the connection
@@ -310,7 +321,11 @@ private: // Status
    int m_iRTTVar;                               // RTT variance
    int m_iDeliveryRate;				// Packet arrival rate at the receiver side
 
-   uint64_t m_ullLingerExpiration;		// Linger expiration time (for GC to close a socket with data in sending buffer) 
+   uint64_t m_ullLingerExpiration;		// Linger expiration time (for GC to close a socket with data in sending buffer)
+
+   CHandShake m_ConnReq;			// connection request
+   CHandShake m_ConnRes;			// connection response
+   int64_t m_llLastReqTime;			// last time when a connection request is sent
 
 private: // Sending related data
    CSndBuffer* m_pSndBuffer;                    // Sender buffer
@@ -331,6 +346,8 @@ private: // Sending related data
    uint64_t m_ullSndLastAck2Time;               // The time when last ACK2 was sent back
 
    int32_t m_iISN;                              // Initial Sequence Number
+
+   void CCUpdate();
 
 private: // Receiving related data
    CRcvBuffer* m_pRcvBuffer;                    // Receiver buffer
@@ -367,7 +384,7 @@ private: // synchronization: mutexes and conditions
    void releaseSynch();
 
 private: // Generation and processing of packets
-   void sendCtrl(const int& pkttype, void* lparam = NULL, void* rparam = NULL, const int& size = 0);
+   void sendCtrl(int pkttype, void* lparam = NULL, void* rparam = NULL, int size = 0);
    void processCtrl(CPacket& ctrlpkt);
    int packData(CPacket& packet, uint64_t& ts);
    int processData(CUnit* unit);
@@ -407,13 +424,11 @@ private: // Timers
 
    uint64_t m_ullNextACKTime;			// Next ACK time, in CPU clock cycles, same below
    uint64_t m_ullNextNAKTime;			// Next NAK time
-   uint64_t m_ullNextEXPTime;			// Next timeout
 
    volatile uint64_t m_ullSYNInt;		// SYN interval
    volatile uint64_t m_ullACKInt;		// ACK interval
    volatile uint64_t m_ullNAKInt;		// NAK interval
-   volatile uint64_t m_ullEXPInt;		// EXP interval
-   volatile int64_t m_llLastRspTime;		// time stamp of last response from the peer
+   volatile uint64_t m_ullLastRspTime;		// time stamp of last response from the peer
 
    uint64_t m_ullMinNakInt;			// NAK timeout lower bound; too small value can cause unnecessary retransmission
    uint64_t m_ullMinExpInt;			// timeout lower bound threshold: too small timeout can cause problem

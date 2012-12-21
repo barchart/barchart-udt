@@ -45,18 +45,13 @@
     <td>5004</td>
     <td><i>u</i> is an invalid UDT socket.</td>
   </tr>
-  <tr>
-    <td>EASYNCSND</td>
-    <td>6001</td>
-    <td><i>u</i> is non-blocking (UDT_RCVSYN = false) but <a href="opt.htm">UDT_LINGER</a> option is set to be a non-zero value.</td>
-  </tr>
 </table>
 
 <h5>Description</h5>
 <p>The <strong>close</strong> method gracefully shutdowns the UDT connection and releases all related data structures associated with the UDT socket. If there is no connection associated 
 with the socket, <strong>close</strong> simply release the socket resources.</p>
 <p>On a blocking socket, if UDT_LINGER is non-zero, the <strong>close</strong> call will wait until all data in the sending buffer are sent out or the waiting time has exceeded the 
-expiration time set by UDT_LINGER. On a non-blocking socket, <strong>close</strong> will return immediately.</p>
+expiration time set by UDT_LINGER. However, if UDT_SYNSND is set to false (i.e., non-blocking sending), <strong>close</strong> will return immediately and any linger data will be sent at background until the linger timer expires.</p>
 <p>The closing UDT socket will send a shutdown message to the peer side so that the peer socket will also be closed. This is a best-effort message. If the message is not successfully 
 delivered, the peer side will also be closed after a time-out. In UDT, <u>shutdown</u> is not supported.</p>
 <p>All sockets should be closed if they are not used any more.</p>

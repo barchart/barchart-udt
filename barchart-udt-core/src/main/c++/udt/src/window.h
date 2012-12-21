@@ -52,7 +52,7 @@ written by
 class CACKWindow
 {
 public:
-   CACKWindow(const int& size = 1024);
+   CACKWindow(int size = 1024);
    ~CACKWindow();
 
       // Functionality:
@@ -63,7 +63,7 @@ public:
       // Returned value:
       //    None.
 
-   void store(const int32_t& seq, const int32_t& ack);
+   void store(int32_t seq, int32_t ack);
 
       // Functionality:
       //    Search the ACK-2 "seq" in the window, find out the DATA "ack" and caluclate RTT .
@@ -73,7 +73,7 @@ public:
       // Returned value:
       //    RTT.
 
-   int acknowledge(const int32_t& seq, int32_t& ack);
+   int acknowledge(int32_t seq, int32_t& ack);
 
 private:
    int32_t* m_piACKSeqNo;       // Seq. No. for the ACK packet
@@ -94,7 +94,7 @@ private:
 class CPktTimeWindow
 {
 public:
-   CPktTimeWindow(const int& asize = 16, const int& psize = 16);
+   CPktTimeWindow(int asize = 16, int psize = 16);
    ~CPktTimeWindow();
 
       // Functionality:
@@ -131,7 +131,7 @@ public:
       // Returned value:
       //    None.
 
-   void onPktSent(const int& currtime);
+   void onPktSent(int currtime);
 
       // Functionality:
       //    Record time information of an arrived packet.

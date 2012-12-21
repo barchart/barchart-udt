@@ -25,27 +25,27 @@ public class MainRunClient {
 		log.info("started CLIENT");
 
 		// specify client sender interface
-		final String bindAddress = getProperty("udt.bind.address");
+		final String bindAddress = property("udt.bind.address");
 
 		// specify server listening address
-		final String remoteAddress = getProperty("udt.remote.address");
+		final String remoteAddress = property("udt.remote.address");
 
 		// specify server listening port
-		final int remotePort = Integer.parseInt(getProperty("udt.remote.port"));
+		final int remotePort = Integer.parseInt(property("udt.remote.port"));
 
 		// specify server bandwidth limit
 		final long maxBandwidth = Integer
-				.parseInt(getProperty("udt.max.bandwidth"));
+				.parseInt(property("udt.max.bandwidth"));
 
 		// specify number of packets sent in a batch
-		final int countBatch = Integer.parseInt(getProperty("udt.count.batch"));
+		final int countBatch = Integer.parseInt(property("udt.count.batch"));
 
 		// specify number of millis to sleep between batches of packets
-		final int countSleep = Integer.parseInt(getProperty("udt.count.sleep"));
+		final int countSleep = Integer.parseInt(property("udt.count.sleep"));
 
 		// specify number of packet batches between stats logging
 		final int countMonitor = Integer
-				.parseInt(getProperty("udt.count.monitor"));
+				.parseInt(property("udt.count.monitor"));
 
 		try {
 

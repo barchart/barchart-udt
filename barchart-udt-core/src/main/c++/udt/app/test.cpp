@@ -1,42 +1,36 @@
-/*
-This is a UDT self-testing program.
-The code in the program may not be cleaned up yet.
-
-for performance testing, use appserver/appclient and sendfile/recvfile.
-*/
-
-
 #ifndef WIN32
-   #include <unistd.h>
    #include <cstdlib>
    #include <cstring>
    #include <netdb.h>
    #include <signal.h>
+   #include <unistd.h>
 #else
    #include <winsock2.h>
    #include <ws2tcpip.h>
    #include <wspiapi.h>
 #endif
-#include <iostream>
 #include <algorithm>
-#include <udt.h>
+#include <iostream>
+
+#include "udt.h"
 
 using namespace std;
 
-int g_IP_Version = AF_INET;
-int g_Socket_Type = SOCK_STREAM;
+
+const int g_IP_Version = AF_INET;
+const int g_Socket_Type = SOCK_STREAM;
+const char g_Localhost[] = "127.0.0.1";
+const int g_Server_Port = 9000;
 
 
-int createUDTSocket(UDTSOCKET& usock, int version = AF_INET, int type = SOCK_STREAM, int port = 0, bool rendezvous = false)
+int createUDTSocket(UDTSOCKET& usock, int port = 0, bool rendezvous = false)
 {
    addrinfo hints;
    addrinfo* res;
-
    memset(&hints, 0, sizeof(struct addrinfo));
-
    hints.ai_flags = AI_PASSIVE;
-   hints.ai_family = version;
-   hints.ai_socktype = type;
+   hints.ai_family = g_IP_Version;
+   hints.ai_socktype = g_Socket_Type;
 
    char service[16];
    sprintf(service, "%d", port);
@@ -49,15 +43,16 @@ int createUDTSocket(UDTSOCKET& usock, int version = AF_INET, int type = SOCK_STR
 
    usock = UDT::socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 
-   int snd_buf = 64000;
-   int rcv_buf = 100000;
+   // since we will start a lot of connections, we set the buffer size to smaller value.
+   int snd_buf = 16000;
+   int rcv_buf = 16000;
    UDT::setsockopt(usock, 0, UDT_SNDBUF, &snd_buf, sizeof(int));
    UDT::setsockopt(usock, 0, UDT_RCVBUF, &rcv_buf, sizeof(int));
-   snd_buf = 64000;
-   rcv_buf = 100000;
+   snd_buf = 8192;
+   rcv_buf = 8192;
    UDT::setsockopt(usock, 0, UDP_SNDBUF, &snd_buf, sizeof(int));
    UDT::setsockopt(usock, 0, UDP_RCVBUF, &rcv_buf, sizeof(int));
-   int fc = 256;
+   int fc = 16;
    UDT::setsockopt(usock, 0, UDT_FC, &fc, sizeof(int));
    bool reuse = true;
    UDT::setsockopt(usock, 0, UDT_REUSEADDR, &reuse, sizeof(bool));
@@ -73,16 +68,14 @@ int createUDTSocket(UDTSOCKET& usock, int version = AF_INET, int type = SOCK_STR
    return 0;
 }
 
-int createTCPSocket(SYSSOCKET& ssock, int version = AF_INET, int type = SOCK_STREAM, int port = 0, bool rendezvous = false)
+int createTCPSocket(SYSSOCKET& ssock, int port = 0, bool rendezvous = false)
 {
    addrinfo hints;
    addrinfo* res;
-
    memset(&hints, 0, sizeof(struct addrinfo));
-
    hints.ai_flags = AI_PASSIVE;
-   hints.ai_family = version;
-   hints.ai_socktype = type;
+   hints.ai_family = g_IP_Version;
+   hints.ai_socktype = g_Socket_Type;
 
    char service[16];
    sprintf(service, "%d", port);
@@ -94,7 +87,6 @@ int createTCPSocket(SYSSOCKET& ssock, int version = AF_INET, int type = SOCK_STR
    }
 
    ssock = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-
    if (bind(ssock, res->ai_addr, res->ai_addrlen) != 0)
    {
       return -1;
@@ -104,56 +96,54 @@ int createTCPSocket(SYSSOCKET& ssock, int version = AF_INET, int type = SOCK_STR
    return 0;
 }
 
-int connect(UDTSOCKET& usock, int port, int version, int type)
+int connect(UDTSOCKET& usock, int port)
 {
    addrinfo hints, *peer;
-
    memset(&hints, 0, sizeof(struct addrinfo));
-
    hints.ai_flags = AI_PASSIVE;
-   hints.ai_family = version;
-   hints.ai_socktype = type;
+   hints.ai_family =  g_IP_Version;
+   hints.ai_socktype = g_Socket_Type;
 
    char buffer[16];
    sprintf(buffer, "%d", port);
 
-   if (0 != getaddrinfo("127.0.0.1", buffer, &hints, &peer))
+   if (0 != getaddrinfo(g_Localhost, buffer, &hints, &peer))
    {
-      return 0;
+      return -1;
    }
 
    UDT::connect(usock, peer->ai_addr, peer->ai_addrlen);
 
    freeaddrinfo(peer);
-
    return 0;
 }
 
-int tcp_connect(SYSSOCKET& ssock, int port, int version, int type)
+int tcp_connect(SYSSOCKET& ssock, int port)
 {
    addrinfo hints, *peer;
-
    memset(&hints, 0, sizeof(struct addrinfo));
-
    hints.ai_flags = AI_PASSIVE;
-   hints.ai_family = version;
-   hints.ai_socktype = type;
+   hints.ai_family = g_IP_Version;
+   hints.ai_socktype = g_Socket_Type;
 
    char buffer[16];
    sprintf(buffer, "%d", port);
 
-   if (0 != getaddrinfo("127.0.0.1", buffer, &hints, &peer))
+   if (0 != getaddrinfo(g_Localhost, buffer, &hints, &peer))
    {
-      return 0;
+      return -1;
    }
 
    connect(ssock, peer->ai_addr, peer->ai_addrlen);
 
    freeaddrinfo(peer);
-
    return 0;
 }
 
+
+// Test basic data transfer.
+
+const int g_TotalNum = 10000;
 
 #ifndef WIN32
 void* Test_1_Srv(void* param)
@@ -161,16 +151,16 @@ void* Test_1_Srv(void* param)
 DWORD WINAPI Test_1_Srv(LPVOID param)
 #endif
 {
+   cout << "Testing simple data transfer.\n";
+
    UDTSOCKET serv;
-   if (createUDTSocket(serv, AF_INET, SOCK_STREAM, 9000) < 0)
+   if (createUDTSocket(serv, g_Server_Port) < 0)
       return NULL;
 
-   UDT::listen(serv, 10);
-
+   UDT::listen(serv, 1024);
    sockaddr_storage clientaddr;
    int addrlen = sizeof(clientaddr);
    UDTSOCKET new_sock = UDT::accept(serv, (sockaddr*)&clientaddr, &addrlen);
-
    UDT::close(serv);
 
    if (new_sock == UDT::INVALID_SOCK)
@@ -178,25 +168,23 @@ DWORD WINAPI Test_1_Srv(LPVOID param)
       return NULL;
    }
 
-   const int size = 10000;
-   int32_t buffer[size];
-   fill_n(buffer, 0, size);
+   int32_t buffer[g_TotalNum];
+   fill_n(buffer, 0, g_TotalNum);
 
-   int torecv = size * sizeof(int32_t);
+   int torecv = g_TotalNum * sizeof(int32_t);
    while (torecv > 0)
    {
-      int rcvd = UDT::recv(new_sock, (char*)buffer + size * sizeof(int32_t) - torecv, torecv, 0);
+      int rcvd = UDT::recv(new_sock, (char*)buffer + g_TotalNum * sizeof(int32_t) - torecv, torecv, 0);
       if (rcvd < 0)
       {
          cout << "recv: " << UDT::getlasterror().getErrorMessage() << endl;
          return NULL;
       }
-
       torecv -= rcvd;
    }
 
    // check data
-   for (int i = 0; i < size; ++ i)
+   for (int i = 0; i < g_TotalNum; ++ i)
    {
       if (buffer[i] != i)
       {
@@ -205,7 +193,22 @@ DWORD WINAPI Test_1_Srv(LPVOID param)
       }
    }
 
-   UDT::close(new_sock);
+   int eid = UDT::epoll_create();
+   UDT::epoll_add_usock(eid, new_sock);
+   /*
+   set<UDTSOCKET> readfds;
+   if (UDT::epoll_wait(eid, &readfds, NULL, -1) > 0)
+   {
+      UDT::close(new_sock);
+   }
+   */
+
+   UDTSOCKET readfds[1];
+   int num = 1;
+   if (UDT::epoll_wait2(eid, readfds, &num, NULL, NULL, -1) > 0)
+   {
+      UDT::close(new_sock);
+   }
 
    return NULL;
 }
@@ -217,26 +220,24 @@ DWORD WINAPI Test_1_Cli(LPVOID param)
 #endif
 {
    UDTSOCKET client;
-   if (createUDTSocket(client, AF_INET, SOCK_STREAM, 0) < 0)
+   if (createUDTSocket(client, 0) < 0)
       return NULL;
 
-   connect(client, 9000, AF_INET, SOCK_STREAM);
+   connect(client, g_Server_Port);
 
-   const int size = 10000;
-   int32_t buffer[size];
-   for (int i = 0; i < size; ++ i)
+   int32_t buffer[g_TotalNum];
+   for (int i = 0; i < g_TotalNum; ++ i)
       buffer[i] = i;
 
-   int tosend = size * sizeof(int32_t);
+   int tosend = g_TotalNum * sizeof(int32_t);
    while (tosend > 0)
    {
-      int sent = UDT::send(client, (char*)buffer + size * sizeof(int32_t) - tosend, tosend, 0);
+      int sent = UDT::send(client, (char*)buffer + g_TotalNum * sizeof(int32_t) - tosend, tosend, 0);
       if (sent < 0)
       {
          cout << "send: " << UDT::getlasterror().getErrorMessage() << endl;
          return NULL;
       }
-
       tosend -= sent;
    }
 
@@ -244,12 +245,22 @@ DWORD WINAPI Test_1_Cli(LPVOID param)
    return NULL;
 }
 
+
+// Test parallel UDT and TCP connections, over shared and dedicated ports.
+
+const int g_UDTNum = 200;
+const int g_IndUDTNum = 100;  // must < g_UDTNum.
+const int g_TCPNum = 10;
+int g_ActualUDTNum = 0;
+
 #ifndef WIN32
 void* Test_2_Srv(void* param)
 #else
 DWORD WINAPI Test_2_Srv(LPVOID param)
 #endif
 {
+   cout << "Test parallel UDT and TCP connections.\n";
+
 #ifndef WIN32
    //ignore SIGPIPE
    sigset_t ps;
@@ -258,19 +269,19 @@ DWORD WINAPI Test_2_Srv(LPVOID param)
    pthread_sigmask(SIG_BLOCK, &ps, NULL);
 #endif
 
-   // create 1000 UDT sockets
+   // create concurrent UDT sockets
    UDTSOCKET serv;
-   if (createUDTSocket(serv, AF_INET, SOCK_STREAM, 9000) < 0)
+   if (createUDTSocket(serv, g_Server_Port) < 0)
       return NULL;
 
-   UDT::listen(serv, 10);
+   UDT::listen(serv, 1024);
 
    vector<UDTSOCKET> new_socks;
-   new_socks.resize(1000);
+   new_socks.resize(g_UDTNum);
 
    int eid = UDT::epoll_create();
 
-   for (int i = 0; i < 1000; ++ i)
+   for (int i = 0; i < g_UDTNum; ++ i)
    {
       sockaddr_storage clientaddr;
       int addrlen = sizeof(clientaddr);
@@ -281,27 +292,25 @@ DWORD WINAPI Test_2_Srv(LPVOID param)
          cout << "accept: " << UDT::getlasterror().getErrorMessage() << endl;
          return NULL;
       }
-
       UDT::epoll_add_usock(eid, new_socks[i]);
    }
 
 
-   // create 10 TCP sockets
+   // create TCP sockets
    SYSSOCKET tcp_serv;
-   if (createTCPSocket(tcp_serv, AF_INET, SOCK_STREAM, 9001) < 0)
+   if (createTCPSocket(tcp_serv, g_Server_Port) < 0)
       return NULL;
 
-   listen(tcp_serv, 10);
+   listen(tcp_serv, 1024);
 
    vector<SYSSOCKET> tcp_socks;
-   tcp_socks.resize(10);
+   tcp_socks.resize(g_TCPNum);
 
-   for (int i = 0; i < 10; ++ i)
+   for (int i = 0; i < g_TCPNum; ++ i)
    {
       sockaddr_storage clientaddr;
       socklen_t addrlen = sizeof(clientaddr);
       tcp_socks[i] = accept(tcp_serv, (sockaddr*)&clientaddr, &addrlen);
-
       UDT::epoll_add_ssock(eid, tcp_socks[i]);
    }
 
@@ -309,7 +318,7 @@ DWORD WINAPI Test_2_Srv(LPVOID param)
    // using epoll to retrieve both UDT and TCP sockets
    set<UDTSOCKET> readfds;
    set<SYSSOCKET> tcpread;
-   int count = 1000 + 10;
+   int count = g_UDTNum + g_TCPNum;
    while (count > 0)
    {
       UDT::epoll_wait(eid, &readfds, NULL, -1, &tcpread);
@@ -317,7 +326,6 @@ DWORD WINAPI Test_2_Srv(LPVOID param)
       {
          int32_t data;
          UDT::recv(*i, (char*)&data, 4, 0);
-
          -- count;
       }
 
@@ -325,7 +333,6 @@ DWORD WINAPI Test_2_Srv(LPVOID param)
       {
          int32_t data;
          recv(*i, (char*)&data, 4, 0);
-
          -- count;
       }
    }
@@ -368,23 +375,22 @@ DWORD WINAPI Test_2_Cli(LPVOID param)
    pthread_sigmask(SIG_BLOCK, &ps, NULL);
 #endif
 
-   // create 1000 UDT clients
+   // create UDT clients
    vector<UDTSOCKET> cli_socks;
-   cli_socks.resize(1000);
+   cli_socks.resize(g_UDTNum);
 
-   // 100 individual ports
-   for (int i = 0; i < 100; ++ i)
+   // create UDT on individual ports
+   for (int i = 0; i < g_IndUDTNum; ++ i)
    {
-      if (createUDTSocket(cli_socks[i], AF_INET, SOCK_STREAM, 0) < 0)
+      if (createUDTSocket(cli_socks[i], 0) < 0)
       {
          cout << "socket: " << UDT::getlasterror().getErrorMessage() << endl;
          return NULL;
       }
    }
 
-   // 900 shared port
-
-   if (createUDTSocket(cli_socks[100], AF_INET, SOCK_STREAM, 0) < 0)
+   // create UDT on shared port
+   if (createUDTSocket(cli_socks[g_IndUDTNum], 0) < 0)
    {
       cout << "socket: " << UDT::getlasterror().getErrorMessage() << endl;
       return NULL;
@@ -392,47 +398,42 @@ DWORD WINAPI Test_2_Cli(LPVOID param)
 
    sockaddr* addr = NULL;
    int size = 0;
-
    addr = (sockaddr*)new sockaddr_in;
    size = sizeof(sockaddr_in);
-
-   UDT::getsockname(cli_socks[100], addr, &size);
+   UDT::getsockname(cli_socks[g_IndUDTNum], addr, &size);
    char sharedport[NI_MAXSERV];
    getnameinfo(addr, size, NULL, 0, sharedport, sizeof(sharedport), NI_NUMERICSERV);
 
-   for (int i = 101; i < 1000; ++ i)
+   // Note that the first shared port has been created, so we start from g_IndUDTNum + 1.
+   for (int i = g_IndUDTNum + 1; i < g_UDTNum; ++ i)
    {
-      if (createUDTSocket(cli_socks[i], AF_INET, SOCK_STREAM, atoi(sharedport)) < 0)
+      if (createUDTSocket(cli_socks[i], atoi(sharedport)) < 0)
       {
          cout << "socket: " << UDT::getlasterror().getErrorMessage() << endl;
          return NULL;
       }
    }
-
    for (vector<UDTSOCKET>::iterator i = cli_socks.begin(); i != cli_socks.end(); ++ i)
    {
-      if (connect(*i, 9000, AF_INET, SOCK_STREAM) < 0)
+      if (connect(*i, g_Server_Port) < 0)
       {
          cout << "connect: " << UDT::getlasterror().getErrorMessage() << endl;
          return NULL;
       }
    }
 
-
-   // create 10 TCP clients
+   // create TCP clients
    vector<SYSSOCKET> tcp_socks;
-   tcp_socks.resize(10);
-
-   for (int i = 0; i < 10; ++ i)
+   tcp_socks.resize(g_TCPNum);
+   for (int i = 0; i < g_TCPNum; ++ i)
    {
-      if (createTCPSocket(tcp_socks[i], AF_INET, SOCK_STREAM, 0) < 0)
+      if (createTCPSocket(tcp_socks[i], 0) < 0)
       {
          return NULL;
       }
 
-      tcp_connect(tcp_socks[i], 9001, AF_INET, SOCK_STREAM);
+      tcp_connect(tcp_socks[i], g_Server_Port);
    }
-
 
    // send data from both UDT and TCP clients
    int32_t data = 0;
@@ -441,20 +442,17 @@ DWORD WINAPI Test_2_Cli(LPVOID param)
       UDT::send(*i, (char*)&data, 4, 0);
       ++ data;
    }
-
    for (vector<SYSSOCKET>::iterator i = tcp_socks.begin(); i != tcp_socks.end(); ++ i)
    {
       send(*i, (char*)&data, 4, 0);
       ++ data;
    }
 
-
    // close all client sockets
    for (vector<UDTSOCKET>::iterator i = cli_socks.begin(); i != cli_socks.end(); ++ i)
    {
       UDT::close(*i);
    }
-
    for (vector<SYSSOCKET>::iterator i = tcp_socks.begin(); i != tcp_socks.end(); ++ i)
    {
 #ifndef WIN32
@@ -467,20 +465,27 @@ DWORD WINAPI Test_2_Cli(LPVOID param)
    return NULL;
 }
 
+
+// Test concurrent rendezvous connections.
+
+const int g_UDTNum3 = 50;
+
 #ifndef WIN32
 void* Test_3_Srv(void* param)
 #else
 DWORD WINAPI Test_3_Srv(LPVOID param)
 #endif
 {
+   cout << "Test rendezvous connections.\n";
+
    vector<UDTSOCKET> srv_socks;
-   srv_socks.resize(50);
+   srv_socks.resize(g_UDTNum3);
 
    int port = 61000;
 
-   for (int i = 0; i < 50; ++ i)
+   for (int i = 0; i < g_UDTNum3; ++ i)
    {
-      if (createUDTSocket(srv_socks[i], AF_INET, SOCK_STREAM, port ++, true) < 0)
+      if (createUDTSocket(srv_socks[i], port ++, true) < 0)
       {
         cout << "error\n";
       }
@@ -490,7 +495,7 @@ DWORD WINAPI Test_3_Srv(LPVOID param)
 
    for (vector<UDTSOCKET>::iterator i = srv_socks.begin(); i != srv_socks.end(); ++ i)
    {
-      connect(*i, peer_port ++, AF_INET, SOCK_STREAM);
+      connect(*i, peer_port ++);
    }
 
    for (vector<UDTSOCKET>::iterator i = srv_socks.begin(); i != srv_socks.end(); ++ i)
@@ -514,13 +519,13 @@ DWORD WINAPI Test_3_Cli(LPVOID param)
 #endif
 {
    vector<UDTSOCKET> cli_socks;
-   cli_socks.resize(50);
+   cli_socks.resize(g_UDTNum3);
 
    int port = 51000;
 
-   for (int i = 0; i < 50; ++ i)
+   for (int i = 0; i < g_UDTNum3; ++ i)
    {
-      if (createUDTSocket(cli_socks[i], AF_INET, SOCK_STREAM, port ++, true) < 0)
+      if (createUDTSocket(cli_socks[i], port ++, true) < 0)
       {
         cout << "error\n";
       }
@@ -530,7 +535,7 @@ DWORD WINAPI Test_3_Cli(LPVOID param)
 
    for (vector<UDTSOCKET>::iterator i = cli_socks.begin(); i != cli_socks.end(); ++ i)
    {
-      connect(*i, peer_port ++, AF_INET, SOCK_STREAM);
+      connect(*i, peer_port ++);
    }
 
    int32_t data = 0;
@@ -548,24 +553,31 @@ DWORD WINAPI Test_3_Cli(LPVOID param)
    return NULL;
 }
 
+
+// Test concurrent UDT connections in multiple threads.
+
+const int g_UDTNum4 = 1000;
+const int g_UDTThreads = 40;
+const int g_UDTPerThread = 25;
+
 #ifndef WIN32
 void* Test_4_Srv(void* param)
 #else
 DWORD WINAPI Test_4_Srv(LPVOID param)
 #endif
 {
+   cout << "Test UDT in multiple threads.\n";
+
    UDTSOCKET serv;
-   if (createUDTSocket(serv, AF_INET, SOCK_STREAM, 9000) < 0)
+   if (createUDTSocket(serv, g_Server_Port) < 0)
       return NULL;
 
-   UDT::listen(serv, 10);
-
-   const int total = 1000;
+   UDT::listen(serv, 1024);
 
    vector<UDTSOCKET> new_socks;
-   new_socks.resize(total);
+   new_socks.resize(g_UDTNum4);
 
-   for (int i = 0; i < total; ++ i)
+   for (int i = 0; i < g_UDTNum4; ++ i)
    {
       sockaddr_storage clientaddr;
       int addrlen = sizeof(clientaddr);
@@ -595,12 +607,10 @@ void* start_and_destroy_clients(void* param)
 DWORD WINAPI start_and_destroy_clients(LPVOID param)
 #endif
 {
-   const int total = 25;
-
    vector<UDTSOCKET> cli_socks;
-   cli_socks.resize(total);
+   cli_socks.resize(g_UDTPerThread);
 
-   if (createUDTSocket(cli_socks[0], AF_INET, SOCK_STREAM, 0) < 0)
+   if (createUDTSocket(cli_socks[0], 0) < 0)
    {
       cout << "socket: " << UDT::getlasterror().getErrorMessage() << endl;
       return NULL;
@@ -616,9 +626,9 @@ DWORD WINAPI start_and_destroy_clients(LPVOID param)
    char sharedport[NI_MAXSERV];
    getnameinfo(addr, size, NULL, 0, sharedport, sizeof(sharedport), NI_NUMERICSERV);
 
-   for (int i = 1; i < total; ++ i)
+   for (int i = 1; i < g_UDTPerThread; ++ i)
    {
-      if (createUDTSocket(cli_socks[i], AF_INET, SOCK_STREAM, atoi(sharedport)) < 0)
+      if (createUDTSocket(cli_socks[i], atoi(sharedport)) < 0)
       {
          cout << "socket: " << UDT::getlasterror().getErrorMessage() << endl;
          return NULL;
@@ -627,7 +637,7 @@ DWORD WINAPI start_and_destroy_clients(LPVOID param)
 
    for (vector<UDTSOCKET>::iterator i = cli_socks.begin(); i != cli_socks.end(); ++ i)
    {
-      if (connect(*i, 9000, AF_INET, SOCK_STREAM) < 0)
+      if (connect(*i, g_Server_Port) < 0)
       {
          cout << "connect: " << UDT::getlasterror().getErrorMessage() << endl;
          return NULL;
@@ -648,11 +658,9 @@ void* Test_4_Cli(void*)
 DWORD WINAPI Test_4_Cli(LPVOID)
 #endif
 {
-   const int total_threads = 40;  // 40 * 25 = 1000
-
 #ifndef WIN32
    vector<pthread_t> cli_threads;
-   cli_threads.resize(total_threads);
+   cli_threads.resize(g_UDTThreads);
 
    for (vector<pthread_t>::iterator i = cli_threads.begin(); i != cli_threads.end(); ++ i)
    {
@@ -665,7 +673,7 @@ DWORD WINAPI Test_4_Cli(LPVOID)
    }
 #else
    vector<HANDLE> cli_threads;
-   cli_threads.resize(total_threads);
+   cli_threads.resize(g_UDTThreads);
 
    for (vector<HANDLE>::iterator i = cli_threads.begin(); i != cli_threads.end(); ++ i)
    {
@@ -706,27 +714,23 @@ int main()
    for (int i = 0; i < test_case; ++ i)
    {
       cout << "Start Test # " << i + 1 << endl;
-
       UDT::startup();
 
 #ifndef WIN32
       pthread_t srv, cli;
       pthread_create(&srv, NULL, Test_Srv[i], NULL);
       pthread_create(&cli, NULL, Test_Cli[i], NULL);
-
       pthread_join(srv, NULL);
       pthread_join(cli, NULL);
 #else
       HANDLE srv, cli;
       srv = CreateThread(NULL, 0, Test_Srv[i], NULL, 0, NULL);
       cli = CreateThread(NULL, 0, Test_Cli[i], NULL, 0, NULL);
-
       WaitForSingleObject(srv, INFINITE);
       WaitForSingleObject(cli, INFINITE);
 #endif
 
       UDT::cleanup();
-
       cout << "Test # " << i + 1 << " completed." << endl;
    }
 

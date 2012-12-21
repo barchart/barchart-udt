@@ -76,6 +76,11 @@ href="error.htm">getlasterror</a>. If UDT_SNDTIMEO is set to a positive value, z
     <td><i>u</i> is non-blocking (UDT_SNDSYN = false) but buffer space is available for sending.</td>
   </tr>
   <tr>
+    <td>ETIMEOUT</td>
+    <td>6003</td>
+    <td>Timeout on UDT_SNDTIMEO .</td>
+  </tr>
+  <tr>
     <td>EPEERERR</td>
     <td>7000</td>
     <td>The peer side has an unrecoverable error and this call has to be cancelled. </td>
@@ -88,10 +93,10 @@ href="error.htm">getlasterror</a>. If UDT_SNDTIMEO is set to a positive value, z
 <p>In blocking mode (default), <strong>send</strong> waits until there is some sending buffer space available. In non-blocking mode, <strong>send</strong> 
 returns immediately and returns error if the sending queue limit is already limited.</p>
 <p>If UDT_SNDTIMEO is set and the socket is in blocking mode, <strong>send</strong> only waits a limited time specified by UDT_SNDTIMEO option. If there is still no 
-buffer space available when the timer expires, zero will be returned. UDT_SNDTIMEO has no effect for non-blocking socket.</p>
+buffer space available when the timer expires, error will be returned. UDT_SNDTIMEO has no effect for non-blocking socket.</p>
 
 <h5>See Also</h5>
-<p><strong><a href="select.htm">select</a>, <a href="recv.htm">send</a>, <a href="sendfile.htm">sendfile</a>, <a href="recvfile.htm">recvfile</a></strong></p>
+<p><strong><a href="recv.htm">send</a>, <a href="sendfile.htm">sendfile</a>, <a href="recvfile.htm">recvfile</a></strong></p>
 <p>&nbsp;</p>
 
 </body>

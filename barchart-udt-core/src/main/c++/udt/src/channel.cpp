@@ -76,7 +76,7 @@ m_iRcvBufSize(65536)
 {
 }
 
-CChannel::CChannel(const int& version):
+CChannel::CChannel(int version):
 m_iIPversion(version),
 m_iSocket(),
 m_iSndBufSize(65536),
@@ -92,7 +92,7 @@ CChannel::~CChannel()
 void CChannel::open(const sockaddr* addr)
 {
    // construct an socket
-   m_iSocket = socket(m_iIPversion, SOCK_DGRAM, 0);
+   m_iSocket = ::socket(m_iIPversion, SOCK_DGRAM, 0);
 
    #ifdef WIN32
       if (INVALID_SOCKET == m_iSocket)
@@ -105,7 +105,7 @@ void CChannel::open(const sockaddr* addr)
    {
       socklen_t namelen = m_iSockAddrSize;
 
-      if (0 != bind(m_iSocket, addr, namelen))
+      if (0 != ::bind(m_iSocket, addr, namelen))
          throw CUDTException(1, 3, NET_ERROR);
    }
    else
@@ -120,13 +120,13 @@ void CChannel::open(const sockaddr* addr)
       hints.ai_family = m_iIPversion;
       hints.ai_socktype = SOCK_DGRAM;
 
-      if (0 != getaddrinfo(NULL, "0", &hints, &res))
+      if (0 != ::getaddrinfo(NULL, "0", &hints, &res))
          throw CUDTException(1, 3, NET_ERROR);
 
-      if (0 != bind(m_iSocket, res->ai_addr, res->ai_addrlen))
+      if (0 != ::bind(m_iSocket, res->ai_addr, res->ai_addrlen))
          throw CUDTException(1, 3, NET_ERROR);
 
-      freeaddrinfo(res);
+      ::freeaddrinfo(res);
    }
 
    setUDPSockOpt();
@@ -143,14 +143,14 @@ void CChannel::setUDPSockOpt()
    #if defined(BSD) || defined(OSX)
       // BSD system will fail setsockopt if the requested buffer size exceeds system maximum value
       int maxsize = 64000;
-      if (0 != setsockopt(m_iSocket, SOL_SOCKET, SO_RCVBUF, (char*)&m_iRcvBufSize, sizeof(int)))
-         setsockopt(m_iSocket, SOL_SOCKET, SO_RCVBUF, (char*)&maxsize, sizeof(int));
-      if (0 != setsockopt(m_iSocket, SOL_SOCKET, SO_SNDBUF, (char*)&m_iSndBufSize, sizeof(int)))
-         setsockopt(m_iSocket, SOL_SOCKET, SO_SNDBUF, (char*)&maxsize, sizeof(int));
+      if (0 != ::setsockopt(m_iSocket, SOL_SOCKET, SO_RCVBUF, (char*)&m_iRcvBufSize, sizeof(int)))
+         ::setsockopt(m_iSocket, SOL_SOCKET, SO_RCVBUF, (char*)&maxsize, sizeof(int));
+      if (0 != ::setsockopt(m_iSocket, SOL_SOCKET, SO_SNDBUF, (char*)&m_iSndBufSize, sizeof(int)))
+         ::setsockopt(m_iSocket, SOL_SOCKET, SO_SNDBUF, (char*)&maxsize, sizeof(int));
    #else
       // for other systems, if requested is greated than maximum, the maximum value will be automactally used
-      if ((0 != setsockopt(m_iSocket, SOL_SOCKET, SO_RCVBUF, (char*)&m_iRcvBufSize, sizeof(int))) ||
-          (0 != setsockopt(m_iSocket, SOL_SOCKET, SO_SNDBUF, (char*)&m_iSndBufSize, sizeof(int))))
+      if ((0 != ::setsockopt(m_iSocket, SOL_SOCKET, SO_RCVBUF, (char*)&m_iRcvBufSize, sizeof(int))) ||
+          (0 != ::setsockopt(m_iSocket, SOL_SOCKET, SO_SNDBUF, (char*)&m_iSndBufSize, sizeof(int))))
          throw CUDTException(1, 3, NET_ERROR);
    #endif
 
@@ -167,16 +167,16 @@ void CChannel::setUDPSockOpt()
    #ifdef UNIX
       // Set non-blocking I/O
       // UNIX does not support SO_RCVTIMEO
-      int opts = fcntl(m_iSocket, F_GETFL);
-      if (-1 == fcntl(m_iSocket, F_SETFL, opts | O_NONBLOCK))
+      int opts = ::fcntl(m_iSocket, F_GETFL);
+      if (-1 == ::fcntl(m_iSocket, F_SETFL, opts | O_NONBLOCK))
          throw CUDTException(1, 3, NET_ERROR);
    #elif WIN32
       DWORD ot = 1; //milliseconds
-      if (0 != setsockopt(m_iSocket, SOL_SOCKET, SO_RCVTIMEO, (char *)&ot, sizeof(DWORD)))
+      if (0 != ::setsockopt(m_iSocket, SOL_SOCKET, SO_RCVTIMEO, (char *)&ot, sizeof(DWORD)))
          throw CUDTException(1, 3, NET_ERROR);
    #else
       // Set receiving time-out value
-      if (0 != setsockopt(m_iSocket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(timeval)))
+      if (0 != ::setsockopt(m_iSocket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(timeval)))
          throw CUDTException(1, 3, NET_ERROR);
    #endif
 }
@@ -186,34 +186,30 @@ void CChannel::close() const
    #ifndef WIN32
       ::close(m_iSocket);
    #else
-      closesocket(m_iSocket);
+      ::closesocket(m_iSocket);
    #endif
 }
 
 int CChannel::getSndBufSize()
 {
    socklen_t size = sizeof(socklen_t);
-
-   getsockopt(m_iSocket, SOL_SOCKET, SO_SNDBUF, (char *)&m_iSndBufSize, &size);
-
+   ::getsockopt(m_iSocket, SOL_SOCKET, SO_SNDBUF, (char *)&m_iSndBufSize, &size);
    return m_iSndBufSize;
 }
 
 int CChannel::getRcvBufSize()
 {
    socklen_t size = sizeof(socklen_t);
-
-   getsockopt(m_iSocket, SOL_SOCKET, SO_RCVBUF, (char *)&m_iRcvBufSize, &size);
-
+   ::getsockopt(m_iSocket, SOL_SOCKET, SO_RCVBUF, (char *)&m_iRcvBufSize, &size);
    return m_iRcvBufSize;
 }
 
-void CChannel::setSndBufSize(const int& size)
+void CChannel::setSndBufSize(int size)
 {
    m_iSndBufSize = size;
 }
 
-void CChannel::setRcvBufSize(const int& size)
+void CChannel::setRcvBufSize(int size)
 {
    m_iRcvBufSize = size;
 }
@@ -221,15 +217,13 @@ void CChannel::setRcvBufSize(const int& size)
 void CChannel::getSockAddr(sockaddr* addr) const
 {
    socklen_t namelen = m_iSockAddrSize;
-
-   getsockname(m_iSocket, addr, &namelen);
+   ::getsockname(m_iSocket, addr, &namelen);
 }
 
 void CChannel::getPeerAddr(sockaddr* addr) const
 {
    socklen_t namelen = m_iSockAddrSize;
-
-   getpeername(m_iSocket, addr, &namelen);
+   ::getpeername(m_iSocket, addr, &namelen);
 }
 
 int CChannel::sendto(const sockaddr* addr, CPacket& packet) const
@@ -259,11 +253,11 @@ int CChannel::sendto(const sockaddr* addr, CPacket& packet) const
       mh.msg_controllen = 0;
       mh.msg_flags = 0;
 
-      int res = sendmsg(m_iSocket, &mh, 0);
+      int res = ::sendmsg(m_iSocket, &mh, 0);
    #else
       DWORD size = CPacket::m_iPktHdrSize + packet.getLength();
       int addrsize = m_iSockAddrSize;
-      int res = WSASendTo(m_iSocket, (LPWSABUF)packet.m_PacketVector, 2, &size, 0, addr, addrsize, NULL, NULL);
+      int res = ::WSASendTo(m_iSocket, (LPWSABUF)packet.m_PacketVector, 2, &size, 0, addr, addrsize, NULL, NULL);
       res = (0 == res) ? size : -1;
    #endif
 
@@ -305,16 +299,16 @@ int CChannel::recvfrom(sockaddr* addr, CPacket& packet) const
          FD_SET(m_iSocket, &set);
          tv.tv_sec = 0;
          tv.tv_usec = 10000;
-         select(m_iSocket+1, &set, NULL, &set, &tv);
+         ::select(m_iSocket+1, &set, NULL, &set, &tv);
       #endif
 
-      int res = recvmsg(m_iSocket, &mh, 0);
+      int res = ::recvmsg(m_iSocket, &mh, 0);
    #else
       DWORD size = CPacket::m_iPktHdrSize + packet.getLength();
       DWORD flag = 0;
       int addrsize = m_iSockAddrSize;
 
-      int res = WSARecvFrom(m_iSocket, (LPWSABUF)packet.m_PacketVector, 2, &size, &flag, addr, &addrsize, NULL, NULL);
+      int res = ::WSARecvFrom(m_iSocket, (LPWSABUF)packet.m_PacketVector, 2, &size, &flag, addr, &addrsize, NULL, NULL);
       res = (0 == res) ? size : -1;
    #endif
 

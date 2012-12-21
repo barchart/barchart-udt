@@ -39,14 +39,14 @@ public class SimpleUdtTest {
 		final AtomicReference<String> ref = new AtomicReference<String>();
 
 		final InetSocketAddress serverAddress = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		startThreadedServer(serverAddress, ref);
 
 		final Socket clientSocket = new NetSocketUDT();
 
 		final InetSocketAddress clientAddress = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		clientSocket.bind(clientAddress);
 		assertTrue("Socket not bound!!", clientSocket.isBound());

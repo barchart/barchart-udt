@@ -48,7 +48,7 @@ class StreamServer extends StreamBase {
 	StreamServer(final TypeUDT type, final InetSocketAddress serverAddress,
 			final ServiceFactory factory) throws Exception {
 
-		super(new SocketUDT(type), TestHelp.getLocalSocketAddress(),
+		super(new SocketUDT(type), TestHelp.localSocketAddress(),
 				serverAddress);
 
 		this.factory = factory;

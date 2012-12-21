@@ -37,9 +37,12 @@ public class TestStatusUDT {
 		assertEquals(StatusUDT.INIT, StatusUDT.fromCode(1));
 		assertEquals(StatusUDT.OPENED, StatusUDT.fromCode(2));
 		assertEquals(StatusUDT.LISTENING, StatusUDT.fromCode(3));
-		assertEquals(StatusUDT.CONNECTED, StatusUDT.fromCode(4));
-		assertEquals(StatusUDT.BROKEN, StatusUDT.fromCode(5));
-		assertEquals(StatusUDT.CLOSED, StatusUDT.fromCode(6));
+		assertEquals(StatusUDT.CONNECTING, StatusUDT.fromCode(4));
+		assertEquals(StatusUDT.CONNECTED, StatusUDT.fromCode(5));
+		assertEquals(StatusUDT.BROKEN, StatusUDT.fromCode(6));
+		assertEquals(StatusUDT.CLOSING, StatusUDT.fromCode(7));
+		assertEquals(StatusUDT.CLOSED, StatusUDT.fromCode(8));
+		assertEquals(StatusUDT.NONEXIST, StatusUDT.fromCode(9));
 
 	}
 
@@ -50,12 +53,13 @@ public class TestStatusUDT {
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
 		final InetSocketAddress localAddress1 = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		socket.bind(localAddress1);
 		assertEquals(StatusUDT.OPENED, socket.getStatus());
 
 		socket.close();
+
 		assertEquals(StatusUDT.CLOSED, socket.getStatus());
 
 	}
@@ -67,7 +71,7 @@ public class TestStatusUDT {
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
 		final InetSocketAddress localAddress1 = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		socket.bind(localAddress1);
 		assertEquals(StatusUDT.OPENED, socket.getStatus());
@@ -84,10 +88,10 @@ public class TestStatusUDT {
 	public void testSocketStatus3() throws Exception {
 
 		final InetSocketAddress clientAddress = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		final InetSocketAddress serverAddress = TestHelp
-				.getLocalSocketAddress();
+				.localSocketAddress();
 
 		//
 
@@ -124,7 +128,7 @@ public class TestStatusUDT {
 					// final SocketUDT accept = server.accept();
 					// assertEquals(StatusUDT.LISTENING, accept.getStatus());
 
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					fail(e.getMessage());
 				}
 			}

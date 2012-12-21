@@ -9,15 +9,15 @@ package com.barchart.udt.nio;
 
 public class MainSelectorUDT {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(final String[] args) throws Exception {
 
-		TestSelectorUDT test = new TestSelectorUDT();
+		final TestSelectorUDT test = new TestSelectorUDT();
 
-		test.setUp();
+		test.init();
 
 		test.testSelect();
 
-		test.tearDown();
+		test.done();
 
 	}
 

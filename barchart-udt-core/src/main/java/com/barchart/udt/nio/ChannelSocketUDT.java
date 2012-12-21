@@ -57,12 +57,15 @@ import com.barchart.udt.SocketUDT;
  */
 public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 
-	private static final Logger log = LoggerFactory
+	protected static final Logger log = LoggerFactory
 			.getLogger(ChannelSocketUDT.class);
 
-	final SocketUDT socketUDT;
+	protected SocketUDT socketUDT;
 
-	ChannelSocketUDT(SelectorProvider provider, SocketUDT socketUDT) {
+	protected ChannelSocketUDT(//
+			final SelectorProvider provider, //
+			final SocketUDT socketUDT //
+	) {
 		super(provider);
 		this.socketUDT = socketUDT;
 	}
@@ -79,15 +82,18 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	private volatile boolean isBlockingMode = isBlocking();
 
 	@Override
-	protected void implConfigureBlocking(boolean block) throws IOException {
+	protected void implConfigureBlocking(final boolean block)
+			throws IOException {
 		socketUDT.configureBlocking(block);
 		isBlockingMode = block;
 	}
 
 	private volatile boolean isConnectionPending;
 
+	private final Object connectLock = new Object();
+
 	@Override
-	public boolean connect(SocketAddress remote) throws IOException {
+	public boolean connect(final SocketAddress remote) throws IOException {
 
 		if (!isOpen()) {
 			throw new ClosedChannelException();
@@ -100,10 +106,12 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 
 		if (remote == null) {
 			close();
-			throw new NullPointerException("remote == null");
+			log.error("remote == null");
+			throw new NullPointerException("");
 		}
 
-		InetSocketAddress remoteSocket = (InetSocketAddress) remote;
+		final InetSocketAddress remoteSocket = (InetSocketAddress) remote;
+
 		if (remoteSocket.isUnresolved()) {
 			log.error("can not use unresolved address: remote={}", remote);
 			close();
@@ -111,63 +119,106 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 		}
 
 		if (isBlocking()) {
-			if (isConnectionPending) {
-				close();
-				throw new ConnectionPendingException();
-			} else {
+			synchronized (connectLock) {
+				try {
+
+					if (isConnectionPending) {
+						close();
+						throw new ConnectionPendingException();
+					}
+
+					isConnectionPending = true;
+
+					begin();
+
+					socketUDT.connect(remoteSocket);
+
+				} finally {
+
+					end(true);
+
+					isConnectionPending = false;
+
+					connectLock.notifyAll();
+
+				}
+			}
+
+			return socketUDT.isConnected();
+
+		} else {
+
+			/** non Blocking */
+
+			final SelectionKeyUDT key = channelKey;
+
+			if (key == null) {
+
+				/** this channel is independent of any selector */
+
+				log.error("UDT channel is in NON blocking mode; "
+						+ "must register with a selector " //
+						+ "before trying to connect(); " //
+						+ "socketId=" + socketUDT.getSocketId());
+
+				throw new IllegalBlockingModeException();
+			}
+
+			/** this channel is registered with a selector */
+
+			synchronized (connectLock) {
+				if (isConnectionPending) {
+					close();
+					throw new ConnectionPendingException();
+				}
 				isConnectionPending = true;
 			}
-			try {
-				begin();
-				socketUDT.connect(remoteSocket);
-			} finally {
-				end(true);
-			}
-			isConnectionPending = false;
-			return socketUDT.isConnected();
-		} else { // non Blocking
-			final SelectionKeyUDT key = channelKey;
-			if (key == null) {
-				// this channel is independent of any selector
-				log.error("UDT channel is in non blocking mode;"
-						+ "must register with a selector "
-						+ "before trying to connect()");
-				throw new IllegalBlockingModeException();
-			} else {
-				// this channel is registered with a selector
-				key.selectorUDT.submitConnectRequest(key, remoteSocket);
-				/*
-				 * connection operation must later be completed by invoking the
-				 * finishConnect() method.
-				 */
-				return false;
-			}
+
+			socketUDT.connect(remoteSocket);
+
+			/**
+			 * connection operation must later be completed by invoking the
+			 * #finishConnect() method.
+			 */
+
+			return false;
+
 		}
 
 	}
 
-	/**
-	 * note this is redundant for blocking mode
-	 */
 	@Override
 	public boolean finishConnect() throws IOException {
+
 		if (!isOpen()) {
 			throw new ClosedChannelException();
 		}
+
+		if (isConnected()) {
+			isConnectionPending = false;
+			return true;
+		}
+
 		if (isBlocking()) {
-			return isConnected();
-		} else { // non blocking
-			if (isConnected()) {
-				logStatus();
-				return true;
-			} else {
-				IOException exception = connectException;
-				if (exception == null) {
-					return false;
-				} else {
-					throw exception;
+
+			synchronized (connectLock) {
+				while (isConnectionPending) {
+					try {
+						connectLock.wait();
+					} catch (final InterruptedException e) {
+						throw new IOException(e);
+					}
 				}
 			}
+
+			return true;
+
+		} else {
+
+			/** non blocking */
+
+			return false;
+
 		}
 	}
 
@@ -178,7 +229,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 
 	@Override
 	public boolean isConnectionPending() {
-		throw new RuntimeException("feature not available");
+		return isConnectionPending;
 	}
 
 	/**
@@ -194,7 +245,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	 * @see com.barchart.udt.SocketUDT#receive(byte[], int, int)
 	 */
 	@Override
-	public final int read(ByteBuffer buffer) throws IOException {
+	public final int read(final ByteBuffer buffer) throws IOException {
 
 		if (buffer == null) {
 			throw new NullPointerException("buffer == null");
@@ -216,9 +267,9 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 					sizeReceived = socket.receive(buffer);
 				} else {
 					assert buffer.hasArray();
-					byte[] array = buffer.array();
-					int position = buffer.position();
-					int limit = buffer.limit();
+					final byte[] array = buffer.array();
+					final int position = buffer.position();
+					final int limit = buffer.limit();
 					sizeReceived = socket.receive(array, position, limit);
 					if (0 < sizeReceived && sizeReceived <= remaining) {
 						buffer.position(position + sizeReceived);
@@ -233,8 +284,8 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			// see contract for receive()
 
 			if (sizeReceived < 0) {
-				log.trace("nothing was received; socketID={}", socket
-						.getSocketId());
+				log.trace("nothing was received; socketID={}",
+						socket.getSocketId());
 				return 0;
 			}
 
@@ -257,7 +308,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
-	public long read(ByteBuffer[] dsts, int offset, int length)
+	public long read(final ByteBuffer[] dsts, final int offset, final int length)
 			throws IOException {
 		throw new RuntimeException("feature not available");
 	}
@@ -293,7 +344,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	 * @see com.barchart.udt.SocketUDT#send(byte[], int, int)
 	 */
 	@Override
-	public final int write(ByteBuffer buffer) throws IOException {
+	public final int write(final ByteBuffer buffer) throws IOException {
 
 		// writeCount.incrementAndGet();
 
@@ -317,9 +368,9 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 					sizeSent = socket.send(buffer);
 				} else {
 					assert buffer.hasArray();
-					byte[] array = buffer.array();
-					int position = buffer.position();
-					int limit = buffer.limit();
+					final byte[] array = buffer.array();
+					final int position = buffer.position();
+					final int limit = buffer.limit();
 					sizeSent = socket.send(array, position, limit);
 					if (0 < sizeSent && sizeSent <= remaining) {
 						buffer.position(position + sizeSent);
@@ -334,8 +385,8 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			// see contract for send()
 
 			if (sizeSent < 0) {
-				log.trace("no buffer space for send; socketID={}", socket
-						.getSocketId());
+				log.trace("no buffer space for send; socketID={}",
+						socket.getSocketId());
 				// logStatus();
 				// log.info("writeCount={} writeSize={}", writeCount,
 				// writeSize);
@@ -363,37 +414,28 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
-	public long write(ByteBuffer[] srcs, int offset, int length)
-			throws IOException {
+	public long write(final ByteBuffer[] srcs, final int offset,
+			final int length) throws IOException {
 		throw new RuntimeException("feature not available");
 	}
 
 	@Override
-	public SocketUDT getSocketUDT() {
+	public SocketUDT socketUDT() {
 		return socketUDT;
 	}
 
 	@Override
-	public KindUDT getChannelKind() {
+	public KindUDT kindUDT() {
 		return KindUDT.CONNECTOR;
 	}
 
-	// note: 1<->1 mapping of channels and keys
-
+	/** note: 1<->1 mapping of channels and keys */
 	protected volatile SelectionKeyUDT channelKey;
 
-	protected void setRegistredKey(SelectionKeyUDT key) {
-		// one time init
+	@Override
+	public void bindKey(final SelectionKeyUDT key) {
 		assert channelKey == null;
 		channelKey = key;
-	}
-
-	// set by connector task
-
-	protected volatile IOException connectException;
-
-	protected void setConnectException(IOException exception) {
-		this.connectException = exception;
 	}
 
 	@Override
@@ -408,7 +450,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 		return socketUDT.toString();
 	}
 
-	void logStatus() {
+	protected void logStatus() {
 		if (channelKey != null) {
 			log.debug("channelKey={}", channelKey);
 		}

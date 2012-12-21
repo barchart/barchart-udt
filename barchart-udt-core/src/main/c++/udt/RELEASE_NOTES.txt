@@ -6,9 +6,17 @@
     http://www.opensource.org/licenses/bsd-license.php
 ====
 
+version 4.10
+
+added UDT_SNDDATA and UDT_RCVDATA options
+fixed a bug that causes unnecessary connection timeout
+improved epoll UDT event handling
+
 version 4.9
 
-some bug fixes
+asynchronous close
+asynchronous connect
+some bug fixes, especially on EPOLL
 improved cache code
 removed unnecessary NAK (reduced loss retransmission)
 receiver side error can unblock a blocked sender

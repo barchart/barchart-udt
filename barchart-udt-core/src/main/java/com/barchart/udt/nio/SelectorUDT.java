@@ -11,7 +11,6 @@ import static com.barchart.udt.SocketUDT.*;
 import static java.nio.channels.SelectionKey.*;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.IntBuffer;
 import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.IllegalSelectorException;
@@ -21,15 +20,17 @@ import java.nio.channels.spi.AbstractSelectableChannel;
 import java.nio.channels.spi.AbstractSelector;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.EpollUDT;
 import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
@@ -47,7 +48,7 @@ public class SelectorUDT extends AbstractSelector {
 	/**
 	 * use this call to instantiate a selector for UDT
 	 */
-	protected static Selector open(TypeUDT type) throws IOException {
+	protected static Selector open(final TypeUDT type) throws IOException {
 		final SelectorProviderUDT provider;
 		switch (type) {
 		case DATAGRAM:
@@ -69,15 +70,17 @@ public class SelectorUDT extends AbstractSelector {
 	protected void implCloseSelector() throws IOException {
 		wakeup();
 		synchronized (this) {
-			synchronized (publicRegisteredKeySet) {
-				synchronized (publicSelectedKeySet) {
+			synchronized (registeredKeySetPublic) {
+				synchronized (selectedKeySetPublic) {
 
 					selectedKeySet.clear();
+					cancelledKeys().clear();
+					registeredKeyMap.clear();
 
 					for (final SelectionKey key : registeredKeySet) {
 						try {
 							key.channel().close();
-						} catch (Throwable e) {
+						} catch (final Throwable e) {
 							log.error("unexpected", e);
 						}
 					}
@@ -89,32 +92,41 @@ public class SelectorUDT extends AbstractSelector {
 		}
 	}
 
-	// NOE: register() and select() are blocking each other
+	/** NOTE: register() and select() are blocking each other */
 	@Override
-	protected SelectionKey register(AbstractSelectableChannel channel,
-			int interestOps, Object attachment) {
+	protected SelectionKey register( //
+			final AbstractSelectableChannel channel, //
+			final int interestOps, //
+			final Object attachment //
+	) {
 
 		if (!(channel instanceof ChannelUDT)) {
-			// also takes care of null
 			log.error("!(channel instanceof ChannelUDT)");
 			throw new IllegalSelectorException();
 		}
 
-		synchronized (publicRegisteredKeySet) {
+		synchronized (registeredKeySetPublic) {
 
-			if (publicRegisteredKeySet.size() == maximimSelectorSize) {
-				log.error("reached maximimSelectorSize)");
+			if (registeredKeySetPublic.size() == maximimSelectorSize) {
+				log.error("reached maximimSelectorSize");
 				throw new IllegalSelectorException();
 			}
 
-			ChannelUDT channelUDT = (ChannelUDT) channel;
+			final ChannelUDT channelUDT = (ChannelUDT) channel;
 
-			SocketUDT socketUDT = channelUDT.getSocketUDT();
+			final SocketUDT socketUDT = channelUDT.socketUDT();
 
-			SelectionKeyUDT keyUDT = new SelectionKeyUDT(//
+			final SelectionKeyUDT keyUDT = new SelectionKeyUDT(//
 					this, channelUDT, attachment, interestOps);
 
-			// XXX the only place with "add/put"
+			/** XXX the only place with "add" */
+			try {
+				epoll.add(keyUDT.socketUDT(), EpollUDT.Opt.ALL);
+			} catch (final ExceptionUDT e) {
+				log.error("epoll add failure", e);
+				throw new IllegalSelectorException();
+			}
+
 			registeredKeyMap.put(socketUDT.getSocketId(), keyUDT);
 			registeredKeySet.add(keyUDT);
 
@@ -130,7 +142,7 @@ public class SelectorUDT extends AbstractSelector {
 		if (!isOpen()) {
 			throw new ClosedSelectorException();
 		}
-		return (Set<SelectionKey>) publicRegisteredKeySet;
+		return (Set<SelectionKey>) registeredKeySetPublic;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -139,7 +151,7 @@ public class SelectorUDT extends AbstractSelector {
 		if (!isOpen()) {
 			throw new ClosedSelectorException();
 		}
-		return (Set<SelectionKey>) publicSelectedKeySet;
+		return (Set<SelectionKey>) selectedKeySetPublic;
 	}
 
 	@Override
@@ -148,18 +160,19 @@ public class SelectorUDT extends AbstractSelector {
 	}
 
 	@Override
-	// per java.nio.Selector contract 0 input means infinite
-	public int select(long timeout) throws IOException {
+	public int select(final long timeout) throws IOException {
 		if (timeout < 0) {
-			throw new IllegalArgumentException("Negative timeout");
+			throw new IllegalArgumentException("negative timeout");
+		} else if (timeout > 0) {
+			return stageEnter(timeout);
+		} else {
+			return stageEnter(UDT_TIMEOUT_INFINITE);
 		}
-		long timeoutUDT = (timeout == 0) ? UDT_TIMEOUT_INFINITE : timeout;
-		return doSelectInsideLock(timeoutUDT);
 	}
 
 	@Override
 	public int selectNow() throws IOException {
-		return doSelectInsideLock(UDT_TIMEOUT_NONE);
+		return stageEnter(UDT_TIMEOUT_NONE);
 	}
 
 	/**
@@ -170,14 +183,14 @@ public class SelectorUDT extends AbstractSelector {
 	 */
 	@Override
 	public Selector wakeup() {
-		// publisher for volatile
+		/** publisher for volatile */
 		wakeupStepCount++;
 		return this;
 	}
 
 	private volatile int wakeupStepCount;
 
-	// guarded by doSelectInsideLock
+	/** guarded by {@link #doSelectLocked} */
 	private int wakeupBaseCount;
 
 	private final void saveWakeupBase() {
@@ -191,314 +204,143 @@ public class SelectorUDT extends AbstractSelector {
 	// #######################################################################
 
 	/**
-	 * Private views of the key sets
-	 */
-
-	/**
 	 * The set of keys with data ready for an operation
 	 */
-	private final Set<SelectionKeyUDT> selectedKeySet;
+	private final Set<SelectionKeyUDT> //
+	selectedKeySet = new HashSet<SelectionKeyUDT>();
+
 	/**
 	 * The set of keys registered with this Selector
 	 */
-	private final Set<SelectionKeyUDT> registeredKeySet;
+	private final Set<SelectionKeyUDT> //
+	registeredKeySet = new HashSet<SelectionKeyUDT>();
 
-	// Public views of the key sets
+	/**
+	 * totally immutable
+	 */
+	private final Set<? extends SelectionKey> //
+	registeredKeySetPublic = Collections.unmodifiableSet(registeredKeySet);
 
-	// totally immutable
-	private final Set<? extends SelectionKey> publicRegisteredKeySet;
-	// partially immutable: removal allowed, but not addition
-	private final Set<? extends SelectionKey> publicSelectedKeySet;
-	// mutable: requests for cancel
-	private final Set<SelectionKey> cancelledKeySet;
+	private final Map<Integer, SelectionKeyUDT> //
+	registeredKeyMap = new ConcurrentHashMap<Integer, SelectionKeyUDT>();
 
-	private final Map<Integer, SelectionKeyUDT> registeredKeyMap;
+	/** partially immutable: removal allowed, but not addition */
+	private final Set<? extends SelectionKey> selectedKeySetPublic;
 
 	/**
 	 * used by SocketUDT.select(); performance optimization: use final arrays
 	 */
 	public final int maximimSelectorSize;
 	//
-	private final int[] readArray;
-	private final int[] writeArray;
-	private final int[] exceptArray;
-	private final int[] sizeArray;
-	//
 	private final IntBuffer readBuffer;
 	private final IntBuffer writeBuffer;
-	private final IntBuffer exceptBuffer;
 	private final IntBuffer sizeBuffer;
 
-	/**
-	 * connector thread pool limit
-	 */
-	public final int maximumConnectorSize;
-	private final ConnectorThreadPoolUDT connectorPool;
+	private final EpollUDT epoll;
 
-	SelectorUDT(SelectorProvider provider, //
-			int maximumSelectorSize, int maximumConnectorSize) {
+	protected SelectorUDT( //
+			final SelectorProvider provider, //
+			final int maximumSelectorSize //
+	) throws ExceptionUDT {
 
 		super(provider);
 
-		registeredKeyMap = new HashMap<Integer, SelectionKeyUDT>();
-
-		registeredKeySet = new HashSet<SelectionKeyUDT>();
-		selectedKeySet = new HashSet<SelectionKeyUDT>();
-		cancelledKeySet = cancelledKeys();
-
-		publicRegisteredKeySet = Collections.unmodifiableSet(registeredKeySet);
-		publicSelectedKeySet = HelperNIOUDT.ungrowableSet(selectedKeySet);
+		selectedKeySetPublic = HelpUDT.ungrowableSet(selectedKeySet);
 
 		this.maximimSelectorSize = maximumSelectorSize;
-		if (isBufferBased) {
-			readBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
-			writeBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
-			exceptBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
-			sizeBuffer = SocketUDT.newDirectIntBufer(UDT_SIZE_COUNT);
-			readArray = null;
-			writeArray = null;
-			exceptArray = null;
-			sizeArray = null;
-		} else {
-			readBuffer = null;
-			writeBuffer = null;
-			exceptBuffer = null;
-			sizeBuffer = null;
-			readArray = new int[maximumSelectorSize];
-			writeArray = new int[maximumSelectorSize];
-			exceptArray = new int[maximumSelectorSize];
-			sizeArray = new int[UDT_SIZE_COUNT];
-		}
 
-		this.maximumConnectorSize = maximumConnectorSize;
-		connectorPool = new ConnectorThreadPoolUDT(maximumConnectorSize);
+		readBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
+		writeBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
+		sizeBuffer = SocketUDT.newDirectIntBufer(UDT_SIZE_COUNT);
+
+		epoll = new EpollUDT();
 
 	}
 
-	public static int UDT_TIMEOUT_INFINITE = -1;
+	/** return immediately from epoll */
+	public static long UDT_TIMEOUT_NONE = 0;
 
-	public static int UDT_TIMEOUT_NONE = 0;
+	/** block epoll till event arrives */
+	public static long UDT_TIMEOUT_INFINITE = -1;
 
-	private final int doSelectInsideLock(long millisTimeout) throws IOException {
+	private final Lock selectLock = new ReentrantLock();
+
+	private final int stageEnter(final long millisTimeout) throws IOException {
+
 		if (!isOpen()) {
 			throw new ClosedSelectorException();
 		}
-		synchronized (this) {
-			synchronized (publicRegisteredKeySet) {
-				synchronized (publicSelectedKeySet) {
-					return doSelectReally(millisTimeout);
-				}
-			}
+
+		selectLock.lock();
+
+		try {
+			return stageLocked(millisTimeout);
+		} finally {
+			selectLock.unlock();
 		}
+
 	}
 
 	//
 
-	public static final String KEY_IS_ARRAY_BASED = //
-	SelectorUDT.class.getName() + ".isArrayBased";
-
-	private static final boolean isBufferBased;
-
-	static {
-		String isArrayBased = System.getProperty(KEY_IS_ARRAY_BASED);
-		if (isArrayBased == null) {
-			isBufferBased = true;
-		} else {
-			isBufferBased = false;
-		}
-		log.debug("isBufferBased={}", isBufferBased);
-	}
-
-	private final void setReadInterest(int index, int socketID) {
-		if (isBufferBased) {
-			readBuffer.put(index, socketID);
-		} else {
-			readArray[index] = socketID;
-		}
-	}
-
-	private final int getReadInterest(int index) {
-		if (isBufferBased) {
-			return readBuffer.get(index);
-		} else {
-			return readArray[index];
-		}
-	}
-
-	private final void setWriteInterest(int index, int socketID) {
-		if (isBufferBased) {
-			writeBuffer.put(index, socketID);
-		} else {
-			writeArray[index] = socketID;
-		}
-	}
-
-	private final int getWriteInterest(int index) {
-		if (isBufferBased) {
-			return writeBuffer.get(index);
-		} else {
-			return writeArray[index];
-		}
-	}
-
-	private final void setExceptInterest(int index, int socketID) {
-		if (isBufferBased) {
-			exceptBuffer.put(index, socketID);
-		} else {
-			exceptArray[index] = socketID;
-		}
-	}
-
-	private final int getExceptInterest(int index) {
-		if (isBufferBased) {
-			return exceptBuffer.get(index);
-		} else {
-			return exceptArray[index];
-		}
-	}
-
-	private final int doSelectSocketUDT(long timeout) throws ExceptionUDT {
-		if (isBufferBased) {
-			return SocketUDT.select(readBuffer, writeBuffer, exceptBuffer,
-					sizeBuffer, timeout);
-		} else {
-			return SocketUDT.select(readArray, writeArray, exceptArray,
-					sizeArray, timeout);
-		}
-	}
-
-	private final void setInterestSize(int readSize, int writeSize,
-			int exceptSize) {
-		if (isBufferBased) {
-			sizeBuffer.put(UDT_READ_INDEX, readSize);
-			sizeBuffer.put(UDT_WRITE_INDEX, writeSize);
-			sizeBuffer.put(UDT_EXCEPT_INDEX, exceptSize);
-		} else {
-			sizeArray[UDT_READ_INDEX] = readSize;
-			sizeArray[UDT_WRITE_INDEX] = writeSize;
-			sizeArray[UDT_EXCEPT_INDEX] = exceptSize;
-		}
-	}
-
-	private final int getReadInterestSize() {
-		if (isBufferBased) {
-			return sizeBuffer.get(UDT_READ_INDEX);
-		} else {
-			return sizeArray[UDT_READ_INDEX];
-		}
-	}
-
-	private final int getWriteInterestSize() {
-		if (isBufferBased) {
-			return sizeBuffer.get(UDT_WRITE_INDEX);
-		} else {
-			return sizeArray[UDT_WRITE_INDEX];
-		}
-	}
-
-	private final int getExceptInterestSize() {
-		if (isBufferBased) {
-			return sizeBuffer.get(UDT_EXCEPT_INDEX);
-		} else {
-			return sizeArray[UDT_EXCEPT_INDEX];
-		}
-	}
-
-	private final void prepareInterest() {
-
-		int readSize = 0;
-		int writeSize = 0;
-		int exceptSize = 0;
-
-		for (final SelectionKeyUDT keyUDT : registeredKeySet) {
-
-			final ChannelUDT channelUDT = keyUDT.channelUDT;
-			keyUDT.readyOps = 0; // publisher for volatile
-
-			if (channelUDT.isOpenSocketUDT()) {
-
-				final int interestOps = keyUDT.interestOps;
-				final int socketID = keyUDT.socketID;
-				final KindUDT channelType = channelUDT.getChannelKind();
-
-				if ((interestOps & (OP_ACCEPT)) != 0) {
-					assert channelType == KindUDT.ACCEPTOR;
-					setReadInterest(readSize, socketID);
-					readSize++;
-				}
-				if ((interestOps & (OP_READ)) != 0) {
-					assert channelType == KindUDT.CONNECTOR;
-					setReadInterest(readSize, socketID);
-					readSize++;
-				}
-				if ((interestOps & (OP_WRITE)) != 0) {
-					assert channelType == KindUDT.CONNECTOR;
-					setWriteInterest(writeSize, socketID);
-					writeSize++;
-				}
-				if ((interestOps & (OP_CONNECT)) != 0) {
-					assert channelType == KindUDT.CONNECTOR;
-					assert (interestOps & (OP_READ | OP_WRITE | OP_ACCEPT)) == 0;
-					/*
-					 * UDT does not support select() for connect() operation as
-					 * yet; using thread pool instead
-					 */
-				}
-			} else {
-				synchronized (cancelledKeySet) {
-					cancelledKeySet.add(keyUDT);
-				}
-			}
-		}
-
-		// set sizes
-		setInterestSize(readSize, writeSize, exceptSize);
-
-	}
-
-	private final void processInterest() {
-
-		// add ready to selected
-		updateRead();
-		updateWrite();
-		updateExcept();
-
+	private final int stageSelectUDT(final long timeout) throws ExceptionUDT {
+		return SocketUDT.selectEpoll(//
+				epoll.id(), //
+				readBuffer, //
+				writeBuffer, //
+				sizeBuffer, //
+				timeout //
+				);
 	}
 
 	/**
-	 * note: millisTimeout input values contract:
+	 * note: millisTimeout contract:
 	 * 
 	 * -1 : infinite
 	 * 
-	 * =0 : immediate (but really up to 10 ms UDT resolution slice)
+	 * =0 : immediate
 	 * 
 	 * >0 : finite
 	 */
-	private final int performSelect(long millisTimeout) throws ExceptionUDT {
+	private final int stageSelect(long millisTimeout) throws ExceptionUDT {
+
 		int readyCount = 0;
+
 		saveWakeupBase();
+
 		if (millisTimeout < 0) {
-			/* infinite: do select in slices; check for wakeup; */
+
+			/** infinite: do select in slices; check for wakeup; */
+
 			do {
-				readyCount = doSelectSocketUDT(DEFAULT_MIN_SELECTOR_TIMEOUT);
+				readyCount = stageSelectUDT(DEFAULT_MIN_SELECTOR_TIMEOUT);
 				if (readyCount > 0 || isWakeupPending()) {
 					break;
 				}
 			} while (true);
+
 		} else if (millisTimeout > 0) {
-			/* finite: do select in slices; check for wakeup; count down */
+
+			/** finite: do select in slices; check for wakeup; count down */
+
 			do {
-				readyCount = doSelectSocketUDT(DEFAULT_MIN_SELECTOR_TIMEOUT);
+				readyCount = stageSelectUDT(DEFAULT_MIN_SELECTOR_TIMEOUT);
 				if (readyCount > 0 || isWakeupPending()) {
 					break;
 				}
 				millisTimeout -= DEFAULT_MIN_SELECTOR_TIMEOUT;
 			} while (millisTimeout > 0);
-		} else { // millisTimeout == 0
-			/* immediate: one shot select */
-			readyCount = doSelectSocketUDT(0);
+
+		} else {
+
+			/** immediate */
+
+			readyCount = stageSelectUDT(0);
+
 		}
+
 		return readyCount;
+
 	}
 
 	/**
@@ -510,172 +352,148 @@ public class SelectorUDT extends AbstractSelector {
 	 * 
 	 * >0 : number of pending r/w ops, NOT number of selected keys
 	 */
-	private final int doSelectReally(long millisTimeout) throws IOException {
+	private final int stageLocked(final long millisTimeout) throws IOException {
 
-		selectedKeySet.clear();
+		try {
 
-		processCancelled();
-
-		int readyCount = 0;
-
-		trySelect: try {
-			// java.nio.Selector contract for wakeup()
+			/** java.nio.Selector contract for wakeup() */
 			begin();
-			// pre select
-			prepareInterest();
-			// into select
-			readyCount = performSelect(millisTimeout);
-			if (readyCount == 0) {
-				// timeout, nothing is ready; no need to process post select
-				break trySelect;
-			}
-			// post select
-			processInterest();
+
+			/** pre select */
+			stagePrepare();
+
+			/** select proper */
+			stageSelect(millisTimeout);
+
+			/** post select */
+			stageProcess();
+
 		} finally {
-			// java.nio.Selector contract for wakeup()
+			/** java.nio.Selector contract for wakeup() */
 			end();
 		}
 
-		// using thread pool based connect() processor
-		readyCount += updateConnect();
-
-		assert readyCount >= 0;
-
-		return readyCount;
+		return selectedKeySet.size();
 
 	}
 
-	private final int updateConnect() {
-		final Queue<SelectionKeyUDT> readyQueue = connectorPool.readyQueue;
-		if (readyQueue.isEmpty()) {
-			return 0;
-		}
-		int updateCount = 0;
-		SelectionKeyUDT keyUDT;
-		while ((keyUDT = readyQueue.poll()) != null) {
-			// contract:
-			assert keyUDT.channelUDT.getChannelKind() == KindUDT.CONNECTOR;
-			assert registeredKeySet.contains(keyUDT);
-			assert (keyUDT.interestOps & OP_CONNECT) != 0;
-			assert (keyUDT.interestOps & (OP_READ | OP_WRITE | OP_ACCEPT)) == 0;
-			//
-			keyUDT.readyOps |= OP_CONNECT;
-			selectedKeySet.add(keyUDT);
-			updateCount++;
-		}
-		return updateCount;
+	private final void stageProcess() {
+
+		stageProcessRead();
+
+		stageProcessWrite();
+
 	}
 
-	private final void updateRead() {
-		final int readSize = getReadInterestSize();
+	private final void stageProcessRead() {
+
+		final int readSize = sizeBuffer.get(UDT_READ_INDEX);
+
 		for (int index = 0; index < readSize; index++) {
-			final int socketId = getReadInterest(index);
+
+			final int socketId = readBuffer.get(index);
+
+			// log.debug("read socketId={}", socketId);
+
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
-			assert keyUDT != null;
-			switch (keyUDT.channelUDT.getChannelKind()) {
+
+			switch (keyUDT.kindUDT()) {
+
 			case ACCEPTOR:
 				keyUDT.readyOps |= OP_ACCEPT;
 				break;
+
 			case CONNECTOR:
-				keyUDT.readyOps |= OP_READ;
-				break;
-			default:
-				assert false : "unexpected default";
-				continue;
-			}
-			selectedKeySet.add(keyUDT);
-		}
-	}
-
-	private final void updateWrite() {
-		final int writeSize = getWriteInterestSize();
-		for (int index = 0; index < writeSize; index++) {
-			final int socketId = getWriteInterest(index);
-			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
-			assert keyUDT != null;
-			switch (keyUDT.channelUDT.getChannelKind()) {
-			case ACCEPTOR:
-				assert false : "unexpected ACCEPTOR";
-				continue;
-			case CONNECTOR:
-				keyUDT.readyOps |= OP_WRITE;
-				break;
-			default:
-				assert false : "unexpected default";
-				continue;
-			}
-			selectedKeySet.add(keyUDT);
-		}
-	}
-
-	private final void updateExcept() {
-		final int exceptSize = getExceptInterestSize();
-		for (int k = 0; k < exceptSize; k++) {
-			final int socketId = getExceptInterest(k);
-			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
-			assert keyUDT != null;
-			switch (keyUDT.channelUDT.getChannelKind()) {
-			case ACCEPTOR:
-			case CONNECTOR:
-				// set all ready OPS to throw on any operation
-				keyUDT.readyOps |= keyUDT.channel().validOps();
-				break;
-			default:
-				assert false : "unexpected default";
-				continue;
-			}
-			selectedKeySet.add(keyUDT);
-		}
-	}
-
-	private final void processCancelled() throws IOException {
-		/*
-		 * Precondition: Synchronized on this, publicRegisteredKeySet,
-		 * publicSelectedKeySet
-		 */
-		synchronized (cancelledKeySet) {
-			if (!cancelledKeySet.isEmpty()) {
-				for (final SelectionKey key : cancelledKeySet) {
-
-					final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
-
-					// XXX the only place with "remove"
-
-					final SelectionKeyUDT removed = //
-					registeredKeyMap.remove(keyUDT.socketID);
-					assert removed != null;
-
-					final boolean isRemoved = //
-					registeredKeySet.remove(keyUDT);
-					assert isRemoved;
-
+				if (keyUDT.channelUDT().isConnectionPending()) {
+					if (keyUDT.socketUDT().isConnected()) {
+						keyUDT.readyOps |= OP_CONNECT;
+					}
+				} else {
+					keyUDT.readyOps |= OP_READ;
 				}
-				cancelledKeySet.clear();
+				break;
+
+			default:
+				assert false : "wrong kind=" + keyUDT.kindUDT();
+				continue;
+
 			}
+
+			selectedKeySet.add(keyUDT);
+
 		}
+
 	}
 
-	final void submitConnectRequest(SelectionKeyUDT keyUDT,
-			InetSocketAddress remote) throws IOException {
+	private final void stageProcessWrite() {
 
-		// TODO think again if lack of sync is OK?
+		final int writeSize = sizeBuffer.get(UDT_WRITE_INDEX);
 
-		if (!registeredKeySet.contains(keyUDT)) {
-			throw new IOException(//
-					"connect request while not registered");
+		for (int index = 0; index < writeSize; index++) {
+
+			final int socketId = writeBuffer.get(index);
+
+			// log.debug("write socketId={}", socketId);
+
+			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
+
+			switch (keyUDT.kindUDT()) {
+
+			case ACCEPTOR:
+				/** udt epoll reports write-ready after accept() : ignore */
+				continue;
+
+			case CONNECTOR:
+				if (keyUDT.channelUDT().isConnectionPending()) {
+					if (keyUDT.socketUDT().isConnected()) {
+						keyUDT.readyOps |= OP_CONNECT;
+					}
+				} else {
+					keyUDT.readyOps |= OP_WRITE;
+				}
+				break;
+
+			default:
+				assert false : "wrong kind=" + keyUDT.kindUDT();
+				continue;
+			}
+
+			selectedKeySet.add(keyUDT);
+
 		}
 
-		if ((keyUDT.interestOps & OP_CONNECT) == 0) {
-			throw new IOException("connect request while not interested;"
-					+ " key=" + keyUDT);
-		}
+	}
 
-		if ((keyUDT.interestOps & (OP_ACCEPT | OP_READ | OP_WRITE)) != 0) {
-			throw new IOException("connect request while is not sole interest;"
-					+ " key=" + keyUDT);
-		}
+	private final void stagePrepare() throws IOException {
 
-		connectorPool.submitRequest(keyUDT, remote);
+		selectedKeySet.clear();
+
+		synchronized (cancelledKeys()) {
+
+			if (cancelledKeys().isEmpty()) {
+				return;
+			}
+
+			for (final SelectionKey key : cancelledKeys()) {
+
+				final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
+
+				/** XXX the only place with "remove" */
+				epoll.remove(keyUDT.socketUDT());
+
+				final SelectionKeyUDT removed = //
+				registeredKeyMap.remove(keyUDT.socketId());
+				assert removed != null;
+
+				final boolean isRemoved = //
+				registeredKeySet.remove(keyUDT);
+				assert isRemoved;
+
+			}
+
+			cancelledKeys().clear();
+
+		}
 
 	}
 

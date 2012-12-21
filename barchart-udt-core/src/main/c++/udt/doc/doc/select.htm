@@ -13,14 +13,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title> UDT Reference</title>
 <link rel="stylesheet" href="udtdoc.css" type="text/css" />
+<style type="text/css">
+<!--
+.style1 {color: #FF0000}
+-->
+</style>
 </head>
 
 <body>
 <div class="ref_head">&nbsp;UDT Reference: Functions</div>
 
 <h4 class="func_name"><strong>select</strong></h4>
-<p>The <b>select</b> method queries one or more groups of UDT sockets.</p>
-
+<p>The <b>select</b> method queries one or more groups of UDT sockets. </p>
+<p class="style1">Note: select is deprecated. Please use <a href="epoll.htm"><strong>epoll</strong></a> instead, which is far more efficienct. </p>
 <div class="code">int select(<br />
 &nbsp; int <font color="#FFFFFF">nfds</font>,<br />
 &nbsp; UDSET* <font color="#FFFFFF">readfds</font>,<br />
@@ -108,7 +113,7 @@ else<br>
 
 
 <h5>See Also</h5>
-<p><strong><a href="selectex.htm">selectEx</a><a href="opt.htm"></a></strong></p>
+<p><strong><a href="selectex.htm">selectEx</a></strong>, <a href="epoll.htm"><strong>epoll</strong></a> </p>
 <p>&nbsp;</p>
 
 </body>

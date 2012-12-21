@@ -52,7 +52,7 @@ public class TestStreamBase {
 	@Test
 	public void testStream11() throws Exception {
 
-		InetSocketAddress serverAddress = TestHelp.getLocalSocketAddress();
+		InetSocketAddress serverAddress = TestHelp.localSocketAddress();
 
 		StreamServer server = new StreamServer(TypeUDT.DATAGRAM, serverAddress,
 				factory1);
@@ -124,7 +124,7 @@ public class TestStreamBase {
 	@Test
 	public void testStream22() throws Exception {
 
-		InetSocketAddress serverAddress = TestHelp.getLocalSocketAddress();
+		InetSocketAddress serverAddress = TestHelp.localSocketAddress();
 
 		StreamServer server = new StreamServer(TypeUDT.DATAGRAM, serverAddress,
 				factory2);
@@ -175,7 +175,7 @@ public class TestStreamBase {
 	// @Test
 	public void testStream12() throws Exception {
 
-		InetSocketAddress serverAddress = TestHelp.getLocalSocketAddress();
+		InetSocketAddress serverAddress = TestHelp.localSocketAddress();
 
 		StreamServer server = new StreamServer(TypeUDT.STREAM, serverAddress,
 				factory1);

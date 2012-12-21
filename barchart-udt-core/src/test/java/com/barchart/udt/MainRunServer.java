@@ -25,14 +25,14 @@ public class MainRunServer {
 		log.info("started SERVER");
 
 		// specify server listening interface
-		final String bindAddress = getProperty("udt.bind.address");
+		final String bindAddress = property("udt.bind.address");
 
 		// specify server listening port
-		final int localPort = Integer.parseInt(getProperty("udt.local.port"));
+		final int localPort = Integer.parseInt(property("udt.local.port"));
 
 		// specify how many packets must come before stats logging
 		final int countMonitor = Integer
-				.parseInt(getProperty("udt.count.monitor"));
+				.parseInt(property("udt.count.monitor"));
 
 		try {
 

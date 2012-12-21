@@ -7,9 +7,11 @@
  */
 package com.barchart.udt.nio;
 
+import static com.barchart.udt.util.TestHelp.*;
+import static java.nio.channels.SelectionKey.*;
 import static org.junit.Assert.*;
 
-import java.net.InetSocketAddress;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -17,8 +19,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.After;
 import org.junit.Before;
@@ -26,7 +29,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.SocketUDT;
+import com.barchart.udt.StatusUDT;
 
 public class TestSelectorProviderUDT {
 
@@ -34,199 +37,411 @@ public class TestSelectorProviderUDT {
 			.getLogger(TestSelectorProviderUDT.class);
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void done() throws Exception {
+	}
+
+	static final int SIZE = 20 * 1024;
+
+	@Test
+	public void testSelectInfinite() throws Exception {
+
+		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
+
+		final Selector selector = provider.openSelector();
+
+		final AtomicBoolean isSelected = new AtomicBoolean(false);
+
+		final Thread thread = new Thread() {
+			@Override
+			public void run() {
+				try {
+					selector.select(0);
+					isSelected.set(true);
+				} catch (final IOException e) {
+					fail("");
+				}
+			}
+		};
+
+		final long timeStart = System.currentTimeMillis();
+
+		thread.start();
+
+		final long timeDelay = 100;
+
+		thread.join(timeDelay);
+
+		final long timeFinish = System.currentTimeMillis();
+
+		final long timeDiff = timeFinish - timeStart;
+
+		assertTrue(timeDiff >= timeDelay);
+
+		assertFalse(isSelected.get());
+
 	}
 
 	@Test
-	public void testOpenSelector() {
-		// log.info("Not yet implemented");
+	public void testSelectImmediate() throws Exception {
+
+		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
+
+		final Selector selector = provider.openSelector();
+
+		final long timeStart = System.currentTimeMillis();
+
+		final int readyCount = selector.selectNow();
+
+		final long timeFinish = System.currentTimeMillis();
+
+		final long timeDiff = timeFinish - timeStart;
+
+		assertTrue(timeDiff < 3);
+
+		assertEquals(0, readyCount);
+
 	}
 
 	@Test
-	public void testSelect_Arrays() {
+	public void testSelectDelayed() throws Exception {
 
-		log.info("testSelect_Arrays");
+		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
 
-		try {
+		final Selector selector = provider.openSelector();
 
-			final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
+		final long timeDelay = 100;
 
-			final Selector selector = provider.openSelector();
+		final long timeStart = System.currentTimeMillis();
 
-			final ChannelSocketUDT channelClient = (ChannelSocketUDT) provider
-					.openSocketChannel();
+		final int readyCount = selector.select(timeDelay);
 
-			final ChannelServerSocketUDT channelServer = (ChannelServerSocketUDT) provider
-					.openServerSocketChannel();
+		final long timeFinish = System.currentTimeMillis();
 
-			channelClient.configureBlocking(false);
-			channelServer.configureBlocking(false);
+		final long timeDiff = timeFinish - timeStart;
 
-			final InetSocketAddress addressServer = new InetSocketAddress(//
-					"localhost", 9011);
+		assertTrue(timeDiff >= timeDelay);
 
-			final InetSocketAddress addressClient = new InetSocketAddress(//
-					"localhost", 9012);
+		assertEquals(0, readyCount);
 
-			final ServerSocket socketServer = channelServer.socket();
-			socketServer.bind(addressServer);
-			// socketServer.accept();
+	}
 
-			final Socket socketClient = channelClient.socket();
-			socketClient.bind(addressClient);
-			// socketClient.accept();
+	@Test
+	public void testAcceptNone() throws Exception {
 
-			final SelectionKeyUDT keyServer = (SelectionKeyUDT) channelServer
-					.register(selector, SelectionKey.OP_ACCEPT);
+		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
 
-			final SelectionKeyUDT keyClient = (SelectionKeyUDT) channelClient
-					.register(selector, SelectionKey.OP_READ
-							| SelectionKey.OP_WRITE);
+		final Selector selector = provider.openSelector();
 
-			final Set<SelectionKeyUDT> registeredKeySet = new HashSet<SelectionKeyUDT>();
+		final ServerSocketChannel acceptorChannel = provider
+				.openServerSocketChannel();
+		acceptorChannel.configureBlocking(false);
+		acceptorChannel.socket().bind(localSocketAddress());
 
-			registeredKeySet.add(keyServer);
-			registeredKeySet.add(keyClient);
+		final SelectionKeyUDT acceptorKey = (SelectionKeyUDT) acceptorChannel
+				.register(selector, OP_ACCEPT);
 
-			final Set<SelectionKeyUDT> selectedKeySet = new HashSet<SelectionKeyUDT>();
+		assertNotNull(acceptorKey);
 
-			log.info("registeredKeySet={}", registeredKeySet);
-			log.info("selectedKeySet={}", selectedKeySet);
+		final int readyCount = selector.select(100);
 
-			log.info("");
+		assertEquals(0, readyCount);
 
-			// socketServer.clearError();
+		final Set<SelectionKey> readySet = selector.selectedKeys();
 
-			final long timeStart = System.currentTimeMillis();
+		assertTrue(readySet.isEmpty());
 
-			final int millisTimeout = 1 * 1000;
+		logSet(readySet);
 
-			final int arraySize = 10;
+	}
 
-			final int[] readArray = new int[arraySize];
-			final int[] writeArray = new int[arraySize];
-			final int[] exceptArray = new int[arraySize];
-			final int[] sizeArray = new int[3];
+	@Test
+	public void testAcceptOne() throws Exception {
 
-			readArray[0] = channelServer.serverSocketUDT.getSocketId();
-			readArray[1] = channelClient.socketUDT.getSocketId();
+		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
 
-			sizeArray[0] = 2;
+		final Selector selector = provider.openSelector();
 
-			// log.info("readArray={}", readArray);
+		final ServerSocketChannel acceptChannel = provider
+				.openServerSocketChannel();
+		acceptChannel.configureBlocking(false);
+		acceptChannel.socket().bind(localSocketAddress());
 
-			SocketUDT.select(readArray, writeArray, exceptArray, sizeArray,
-					millisTimeout);
+		final SelectionKeyUDT acceptKey = (SelectionKeyUDT) acceptChannel
+				.register(selector, OP_ACCEPT);
 
-			// log.info("readArray={}", readArray);
+		final SocketChannel clientChannel = provider.openSocketChannel();
+		clientChannel.configureBlocking(false);
+		clientChannel.socket().bind(localSocketAddress());
 
-			final long timeFinish = System.currentTimeMillis();
+		final SelectionKeyUDT clientKey = (SelectionKeyUDT) clientChannel
+				.register(selector, OP_CONNECT);
 
-			final long timeDiff = timeFinish - timeStart;
-			log.info("timeDiff={}", timeDiff);
+		assertEquals(StatusUDT.LISTENING, acceptKey.socketUDT().getStatus());
+		assertEquals(StatusUDT.OPENED, clientKey.socketUDT().getStatus());
 
-			socketServer.close();
-			socketClient.close();
+		assertNull("nothing to accept", acceptKey.socketUDT().accept());
 
-		} catch (Exception e) {
-			fail("SocketException; " + e.getMessage());
+		{
+			log.info("### state 0");
+			Thread.sleep(50);
+			final int readyCount = selector.select(50);
+			log.info("acceptKey={}", acceptKey);
+			log.info("clientKey={}", clientKey);
+			assertEquals(0, readyCount);
+			final Set<SelectionKey> readySet = selector.selectedKeys();
+			assertEquals(0, readySet.size());
+			logSet(readySet);
+		}
+
+		clientChannel.connect(acceptChannel.socket().getLocalSocketAddress());
+
+		{
+			log.info("### state 1");
+			Thread.sleep(50);
+			final int readyCount = selector.select(50);
+			log.info("acceptKey={}", acceptKey);
+			log.info("clientKey={}", clientKey);
+			assertEquals(2, readyCount);
+			final Set<SelectionKey> readySet = selector.selectedKeys();
+			assertEquals(2, readySet.size());
+			logSet(readySet);
+		}
+
+		assertEquals(StatusUDT.LISTENING, acceptKey.socketUDT().getStatus());
+		assertEquals(StatusUDT.CONNECTED, clientKey.socketUDT().getStatus());
+
+		{
+			log.info("### state 2");
+			Thread.sleep(50);
+			final int readyCount = selector.select(50);
+			log.info("acceptKey={}", acceptKey);
+			log.info("clientKey={}", clientKey);
+			assertEquals(2, readyCount);
+			final Set<SelectionKey> readySet = selector.selectedKeys();
+			assertEquals(2, readySet.size());
+			logSet(readySet);
+		}
+
+		final SocketChannel server = acceptChannel.accept();
+		assertNotNull("first accept valid", server);
+		assertNull("second accept invalid", acceptChannel.accept());
+
+		{
+			log.info("### state 3");
+			Thread.sleep(100);
+			final int readyCount = selector.select(100);
+			log.info("acceptKey={}", acceptKey);
+			log.info("clientKey={}", clientKey);
+			assertEquals(1, readyCount);
+			final Set<SelectionKey> readySet = selector.selectedKeys();
+			assertEquals(1, readySet.size());
+			logSet(readySet);
 		}
 
 	}
 
-	static final int SIZE = 10 * 2048;
-
 	@Test
-	public void testSelect_Buffers() {
+	public void testSelect() throws Exception {
 
-		log.info("testSelect_Buffers");
+		final int millisTimeout = 1 * 1000;
 
-		try {
+		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
 
-			final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
+		final Selector selector = provider.openSelector();
 
-			final Selector selector = provider.openSelector();
+		final ServerSocketChannel acceptChannel = provider
+				.openServerSocketChannel();
+		acceptChannel.configureBlocking(false);
 
-			final SocketChannel channelClient = provider.openSocketChannel();
+		final SocketChannel clientChannel = provider.openSocketChannel();
+		clientChannel.configureBlocking(false);
 
-			final ServerSocketChannel channelServer = provider
-					.openServerSocketChannel();
+		final ServerSocket acceptSocket = acceptChannel.socket();
+		acceptSocket.bind(localSocketAddress());
 
-			channelClient.configureBlocking(false);
-			channelServer.configureBlocking(false);
+		final Socket clientSocket = clientChannel.socket();
+		clientSocket.bind(localSocketAddress());
 
-			final InetSocketAddress localServer = new InetSocketAddress(//
-					"localhost", 9021);
+		final SelectionKeyUDT acceptKey = (SelectionKeyUDT) acceptChannel
+				.register(selector, OP_ACCEPT);
 
-			final InetSocketAddress localClient = new InetSocketAddress(//
-					"localhost", 9022);
+		final SelectionKeyUDT clientKey = (SelectionKeyUDT) clientChannel
+				.register(selector, OP_READ | OP_WRITE);
 
-			final ServerSocket socketServer = channelServer.socket();
-			socketServer.bind(localServer);
-			// socketServer.accept();
+		clientSocket.connect(acceptSocket.getLocalSocketAddress());
 
-			final Socket socketClient = channelClient.socket();
-			socketClient.bind(localClient);
-			// socketClient.accept();
+		log.info("connect");
 
-			socketClient.connect(localServer);
-			log.info("connect");
+		{
 
-			final SelectionKeyUDT keyServer = (SelectionKeyUDT) channelServer
-					.register(selector, SelectionKey.OP_ACCEPT);
+			log.info("### state 0");
 
-			final SelectionKeyUDT keyClient = (SelectionKeyUDT) channelClient
-					.register(selector, SelectionKey.OP_READ
-							| SelectionKey.OP_WRITE);
+			Thread.sleep(50);
 
-			final int millisTimeout = 1 * 1000;
-
-			//
 			final long timeStart = System.currentTimeMillis();
 			final int readyCount = selector.select(millisTimeout);
 			final long timeFinish = System.currentTimeMillis();
 			log.info("readyCount={}", readyCount);
 
+			assertEquals(2, readyCount);
+
 			final long timeDiff = timeFinish - timeStart;
 			log.info("timeDiff={}", timeDiff);
 
-			final Set<SelectionKey> selectedKeySet = selector.selectedKeys();
-			logSet(selectedKeySet);
+			assertTrue(timeDiff < 10);
 
-			for (final SelectionKey key : selectedKeySet) {
-				if (key.isWritable()) {
-					log.info("isWritable");
-					final SocketChannel channel = (SocketChannel) key.channel();
-					final ByteBuffer buffer = ByteBuffer.allocate(SIZE);
-					final int writeCount = channel.write(buffer);
-					log.info("writeCount={}", writeCount);
-				}
-				if (key.isReadable()) {
-					log.info("isReadable");
-					final SocketChannel channel = (SocketChannel) key.channel();
-					final ByteBuffer buffer = ByteBuffer.allocate(SIZE);
-					int readCount = channel.read(buffer);
-					log.info("readCount={}", readCount);
-				}
-			}
+			final Set<SelectionKey> keySet = selector.selectedKeys();
+			logSet(keySet);
 
-			socketServer.close();
-			socketClient.close();
+			assertEquals(2, keySet.size());
 
-		} catch (Exception e) {
-			log.error("Exception;", e);
-			fail("Exception; " + e.getMessage());
+			assertTrue(keySet.contains(clientKey));
+			assertTrue(keySet.contains(acceptKey));
+
+			assertTrue(acceptKey.isValid());
+			assertTrue(clientKey.isValid());
+
+			assertTrue("accept has accept", acceptKey.isAcceptable());
+			assertFalse("accept w/o read", acceptKey.isReadable());
+			assertFalse("accept w/o write", acceptKey.isWritable());
+
+			assertFalse("no accept", clientKey.isAcceptable());
+			assertFalse("no read", clientKey.isReadable());
+			assertTrue("has write", clientKey.isWritable());
+
+			assertTrue(clientChannel.isConnected());
+
 		}
+
+		final SocketChannel serverChannel = acceptChannel.accept();
+
+		assertTrue(serverChannel.isConnected());
+
+		serverChannel.configureBlocking(false);
+
+		final SelectionKey serverKey = serverChannel.register(//
+				selector, OP_READ | OP_WRITE);
+
+		{
+
+			log.info("### state 1");
+
+			Thread.sleep(50);
+
+			final long timeStart = System.currentTimeMillis();
+			final int readyCount = selector.select(millisTimeout);
+			final long timeFinish = System.currentTimeMillis();
+			log.info("readyCount={}", readyCount);
+
+			assertEquals(2, readyCount);
+
+			final long timeDiff = timeFinish - timeStart;
+			log.info("timeDiff={}", timeDiff);
+
+			assertTrue(timeDiff < 10);
+
+			final Set<SelectionKey> keySet = selector.selectedKeys();
+			logSet(keySet);
+
+			assertTrue(keySet.contains(serverKey));
+			assertTrue(keySet.contains(clientKey));
+			assertFalse("nothing to accept", keySet.contains(acceptKey));
+			assertFalse("nothing to accept", acceptKey.isAcceptable());
+
+			assertEquals(OP_WRITE, serverKey.readyOps());
+			assertEquals(OP_WRITE, clientKey.readyOps());
+
+			assertTrue("has write", clientKey.isWritable());
+			assertTrue("has write", serverKey.isWritable());
+
+		}
+
+		//
+
+		final Random random = new Random(0);
+		final byte[] writeArray = new byte[SIZE];
+		random.nextBytes(writeArray);
+
+		{
+
+			log.info("### state 2");
+
+			final ByteBuffer buffer = ByteBuffer.allocate(SIZE);
+			buffer.put(writeArray);
+			buffer.flip();
+
+			final int writeCount = clientChannel.write(buffer);
+
+			Thread.sleep(50);
+
+			assertEquals(SIZE, writeCount);
+
+			final long timeStart = System.currentTimeMillis();
+			final int readyCount = selector.select(millisTimeout);
+			final long timeFinish = System.currentTimeMillis();
+			log.info("readyCount={}", readyCount);
+
+			assertEquals(2, readyCount);
+
+			final long timeDiff = timeFinish - timeStart;
+			log.info("timeDiff={}", timeDiff);
+
+			assertTrue(timeDiff < 10);
+
+			final Set<SelectionKey> keySet3 = selector.selectedKeys();
+			logSet(keySet3);
+
+			assertEquals(2, keySet3.size());
+
+			assertTrue(keySet3.contains(serverKey));
+			assertTrue(keySet3.contains(clientKey));
+
+			assertFalse("accept w/o accept", acceptKey.isAcceptable());
+			assertFalse("accept w/o read", acceptKey.isReadable());
+			assertFalse("accept w/o write", acceptKey.isWritable());
+
+			assertFalse("client w/o accept", clientKey.isAcceptable());
+			assertFalse("client w/o read", clientKey.isReadable());
+			assertTrue("client has write", clientKey.isWritable());
+
+			assertFalse("server w/o accept", clientKey.isAcceptable());
+			assertTrue("server has read", serverKey.isReadable());
+			assertTrue("server has write", serverKey.isWritable());
+
+		}
+
+		{
+
+			final ByteBuffer buffer = ByteBuffer.allocate(SIZE);
+
+			final int readSize = serverChannel.read(buffer);
+
+			assertEquals(SIZE, readSize);
+
+			/** FIXME review select contract */
+			// assertFalse("server has no read", serverKey.isReadable());
+
+		}
+
+		serverChannel.close();
+		clientChannel.close();
+		acceptChannel.close();
+
+		assertFalse(serverChannel.isOpen());
+		assertFalse(clientChannel.isOpen());
+		assertFalse(acceptChannel.isOpen());
+
+		Thread.sleep(50);
 
 	}
 
-	static void logSet(Set<?> set) {
-		for (Object item : set) {
-			log.info("{}", item);
+	static void logSet(final Set<?> set) {
+		for (final Object item : set) {
+			log.info("-- {}", item);
 		}
 	}
 

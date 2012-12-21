@@ -89,7 +89,7 @@ public:
       // Returned value:
       //    None.
 
-   void setLength(const int& len);
+   void setLength(int len);
 
       // Functionality:
       //    Pack a Control packet.
@@ -101,7 +101,7 @@ public:
       // Returned value:
       //    None.
 
-   void pack(const int& pkttype, void* lparam = NULL, void* rparam = NULL, const int& size = 0);
+   void pack(int pkttype, void* lparam = NULL, void* rparam = NULL, int size = 0);
 
       // Functionality:
       //    Read the packet vector.
@@ -202,7 +202,7 @@ public:
    CHandShake();
 
    int serialize(char* buf, int& size);
-   int deserialize(const char* buf, const int& size);
+   int deserialize(const char* buf, int size);
 
 public:
    static const int m_iContentSize;	// Size of hand shake data

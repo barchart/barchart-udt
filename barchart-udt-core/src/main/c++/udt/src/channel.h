@@ -50,11 +50,11 @@ class CChannel
 {
 public:
    CChannel();
-   CChannel(const int& version);
+   CChannel(int version);
    ~CChannel();
 
       // Functionality:
-      //    Opne a UDP channel.
+      //    Open a UDP channel.
       // Parameters:
       //    0) [in] addr: The local address that UDP will use.
       // Returned value:
@@ -63,7 +63,7 @@ public:
    void open(const sockaddr* addr = NULL);
 
       // Functionality:
-      //    Opne a UDP channel based on an existing UDP socket.
+      //    Open a UDP channel based on an existing UDP socket.
       // Parameters:
       //    0) [in] udpsock: UDP socket descriptor.
       // Returned value:
@@ -105,7 +105,7 @@ public:
       // Returned value:
       //    None.
 
-   void setSndBufSize(const int& size);
+   void setSndBufSize(int size);
 
       // Functionality:
       //    Set the UDP receiving buffer size.
@@ -114,7 +114,7 @@ public:
       // Returned value:
       //    None.
 
-   void setRcvBufSize(const int& size);
+   void setRcvBufSize(int size);
 
       // Functionality:
       //    Query the socket address that the channel is using.

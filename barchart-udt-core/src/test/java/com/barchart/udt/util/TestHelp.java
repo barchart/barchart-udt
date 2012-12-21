@@ -8,9 +8,13 @@
 package com.barchart.udt.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.nio.IntBuffer;
+import java.util.HashSet;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +23,7 @@ public class TestHelp {
 
 	private static Logger log = LoggerFactory.getLogger(TestHelp.class);
 
-	public static String getProperty(final String name) {
+	public static String property(final String name) {
 
 		final String value = System.getProperty(name);
 
@@ -32,12 +36,13 @@ public class TestHelp {
 
 	}
 
-	private static final AtomicInteger portCounter = new AtomicInteger(12345);
+	/** allocate available local address / port */
+	public static InetSocketAddress localSocketAddress() throws Exception {
 
-	public static InetSocketAddress getLocalSocketAddress() {
+		final int port = findLocalPort();
 
-		final InetSocketAddress address = new InetSocketAddress("localhost",
-				portCounter.getAndIncrement());
+		final InetSocketAddress address = //
+		new InetSocketAddress("localhost", port);
 
 		log.info("\n\t### allocated address={} ###", address);
 
@@ -111,6 +116,50 @@ public class TestHelp {
 
 	public static String randomSuffix(final String name) {
 		return name + "-" + System.currentTimeMillis();
+	}
+
+	/**
+	 */
+	public static int findLocalPort() throws Exception {
+
+		ServerSocket socket = null;
+
+		try {
+
+			/**
+			 * "A port of <code>0</code> creates a socket on any free port."
+			 */
+			socket = new ServerSocket(0);
+
+			return socket.getLocalPort();
+
+		} catch (final Exception e) {
+
+		} finally {
+
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (final IOException e) {
+				}
+			}
+
+		}
+
+		throw new Exception("can not allocate port");
+
+	}
+
+	public static Set<Integer> socketSet(final IntBuffer buffer) {
+
+		final Set<Integer> set = new HashSet<Integer>();
+
+		while (buffer.hasRemaining()) {
+			set.add(buffer.get());
+		}
+
+		return set;
+
 	}
 
 }

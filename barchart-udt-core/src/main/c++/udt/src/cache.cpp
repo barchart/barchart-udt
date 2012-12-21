@@ -52,168 +52,37 @@ written by
 
 using namespace std;
 
-CCache::CCache(const int& size):
-m_iMaxSize(size),
-m_iHashSize(size * 3),
-m_iCurrSize(0)
+CInfoBlock& CInfoBlock::operator=(const CInfoBlock& obj)
 {
-   m_vHashPtr.resize(m_iHashSize);
-
-   #ifndef WIN32
-      pthread_mutex_init(&m_Lock, NULL);
-   #else
-      m_Lock = CreateMutex(NULL, false, NULL);
-   #endif
-}
-
-CCache::~CCache()
-{
-   for (list<CCacheItem*>::iterator i = m_StorageList.begin(); i != m_StorageList.end(); ++ i)
-      delete *i;
-   m_StorageList.clear();
-
-   #ifndef WIN32
-      pthread_mutex_destroy(&m_Lock);
-   #else
-      CloseHandle(m_Lock);
-   #endif
-}
-
-int CCache::lookup(CCacheItem* data)
-{
-   CGuard cacheguard(m_Lock);
-
-   int key = data->getKey();
-
-   if (key < 0)
-      return -1;
-
-   if (key >= m_iMaxSize)
-      key %= m_iHashSize;
-
-   for (list<list<CCacheItem*>::iterator>::iterator i = m_vHashPtr[key].begin(); i != m_vHashPtr[key].end(); ++ i)
-   {
-      if (*data == ***i)
-      {
-         // copy the cached info
-         *data = ***i;
-         return 0;
-      }
-   }
-
-   return -1;
-}
-
-int CCache::update(CCacheItem* data)
-{
-   CGuard cacheguard(m_Lock);
-
-   int key = data->getKey();
-
-   if (key < 0)
-      return -1;
-
-   if (key >= m_iMaxSize)
-      key %= m_iHashSize;
-
-   CCacheItem* curr = NULL;
-
-   for (list<list<CCacheItem*>::iterator>::iterator i = m_vHashPtr[key].begin(); i != m_vHashPtr[key].end(); ++ i)
-   {
-      if (*data == ***i)
-      {
-         // update the existing entry with the new value
-         ***i = *data;
-         curr = **i;
-
-         // remove the current entry
-         m_StorageList.erase(*i);
-         m_vHashPtr[key].erase(i);
-
-         // re-insert to the front
-         m_StorageList.push_front(curr);
-         m_vHashPtr[key].push_front(m_StorageList.begin());
-
-         return 0;
-      }
-   }
-
-   // create new entry and insert to front
-   curr = data->clone();
-   m_StorageList.push_front(curr);
-   m_vHashPtr[key].push_front(m_StorageList.begin());
-
-   ++ m_iCurrSize;
-   if (m_iCurrSize >= m_iMaxSize)
-   {
-      CCacheItem* last_data = m_StorageList.back();
-      int last_key = last_data->getKey() % m_iHashSize;
-
-      for (list<list<CCacheItem*>::iterator>::iterator i = m_vHashPtr[last_key].begin(); i != m_vHashPtr[last_key].end(); ++ i)
-      {
-         if (*last_data == ***i)
-         {
-            m_vHashPtr[last_key].erase(i);
-            break;
-         }
-      }
-
-      delete last_data;
-      m_StorageList.pop_back();
-      -- m_iCurrSize;
-   }
-
-   return 0;
-}
-
-
-CInfoBlock& CInfoBlock::operator=(CCacheItem& obj)
-{
-   try
-   {
-      const CInfoBlock& real_obj = dynamic_cast<CInfoBlock&>(obj);
-
-      std::copy(real_obj.m_piIP, real_obj.m_piIP + 3, m_piIP);
-      m_iIPversion = real_obj.m_iIPversion;
-      m_ullTimeStamp = real_obj.m_ullTimeStamp;
-      m_iRTT = real_obj.m_iRTT;
-      m_iBandwidth = real_obj.m_iBandwidth;
-      m_iLossRate = real_obj.m_iLossRate;
-      m_iReorderDistance = real_obj.m_iReorderDistance;
-      m_dInterval = real_obj.m_dInterval;
-      m_dCWnd = real_obj.m_dCWnd;
-   }
-   catch (...)
-   {
-   }
+   std::copy(obj.m_piIP, obj.m_piIP + 3, m_piIP);
+   m_iIPversion = obj.m_iIPversion;
+   m_ullTimeStamp = obj.m_ullTimeStamp;
+   m_iRTT = obj.m_iRTT;
+   m_iBandwidth = obj.m_iBandwidth;
+   m_iLossRate = obj.m_iLossRate;
+   m_iReorderDistance = obj.m_iReorderDistance;
+   m_dInterval = obj.m_dInterval;
+   m_dCWnd = obj.m_dCWnd;
 
    return *this;
 }
 
-bool CInfoBlock::operator==(CCacheItem& obj)
+bool CInfoBlock::operator==(const CInfoBlock& obj)
 {
-   try
-   {
-      const CInfoBlock& real_obj = dynamic_cast<CInfoBlock&>(obj);
-
-      if (m_iIPversion != real_obj.m_iIPversion)
-         return false;
-
-      else if (m_iIPversion == AF_INET)
-         return (m_piIP[0] == real_obj.m_piIP[0]);
-
-      for (int i = 0; i < 4; ++ i)
-      {
-         if (m_piIP[i] != real_obj.m_piIP[i])
-            return false;
-      }
-   }
-   catch (...)
-   {
+   if (m_iIPversion != obj.m_iIPversion)
       return false;
+
+   else if (m_iIPversion == AF_INET)
+      return (m_piIP[0] == obj.m_piIP[0]);
+
+   for (int i = 0; i < 4; ++ i)
+   {
+      if (m_piIP[i] != obj.m_piIP[i])
+         return false;
    }
 
-   return true;}
+   return true;
+}
 
 CInfoBlock* CInfoBlock::clone()
 {
@@ -240,7 +109,7 @@ int CInfoBlock::getKey()
    return m_piIP[0] + m_piIP[1] + m_piIP[2] + m_piIP[3];
 }
 
-void CInfoBlock::convert(const sockaddr* addr, const int& ver, uint32_t ip[])
+void CInfoBlock::convert(const sockaddr* addr, int ver, uint32_t ip[])
 {
    if (ver == AF_INET)
    {

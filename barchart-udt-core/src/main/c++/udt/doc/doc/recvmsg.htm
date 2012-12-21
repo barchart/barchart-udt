@@ -72,6 +72,11 @@ href="error.htm">getlasterror</a>. If UDT_RCVTIMEO is set to a positive value, z
     <td>6002</td>
     <td><i>u</i> is non-blocking (UDT_RCVSYN = false) but no message is available.</td>
   </tr>
+  <tr>
+    <td>ETIMEOUT</td>
+    <td>6003</td>
+    <td>Timeout on UDT_RCVTIMEO .</td>
+  </tr>
 </table>
 
 <h5>Description</h5>
@@ -82,10 +87,10 @@ but the message will still be discarded after this <strong>recvmsg</strong> call
 <p>In blocking mode (default), <strong>recvmsg</strong> waits until there is a valid message received into the receiver buffer. In non-blocking mode, 
 <strong>recvmsg</strong></strong> returns immediately and returns error if no message available.</p>
 <p>If UDT_RCVTIMEO is set and the socket is in blocking mode, <strong>recvmsg</strong> only waits a limited time specified by UDT_RCVTIMEO option. If there is still 
-no message available when the timer expires, zero will be returned. UDT_RCVTIMEO has no effect for non-blocking socket.</p>
+no message available when the timer expires, error will be returned. UDT_RCVTIMEO has no effect for non-blocking socket.</p>
 
 <h5>See Also</h5>
-<p><strong><a href="select.htm">select</a>, <a href="sendmsg.htm">send</a></strong></p>
+<p><strong><a href="sendmsg.htm">send</a></strong>, <a href="recv.htm"><strong>recv</strong></a>, <a href="sendmsg.htm"><strong>sendmsg</strong></a> </p>
 <p>&nbsp;</p>
 
 </body>

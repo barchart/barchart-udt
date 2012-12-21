@@ -7,11 +7,16 @@
  */
 package com.barchart.udt.nio;
 
+import static java.nio.channels.SelectionKey.*;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.SocketUDT;
 
@@ -45,73 +50,112 @@ import com.barchart.udt.SocketUDT;
 public class ChannelServerSocketUDT extends ServerSocketChannel implements
 		ChannelUDT {
 
-	final SocketUDT serverSocketUDT;
+	protected static final Logger log = LoggerFactory
+			.getLogger(ChannelServerSocketUDT.class);
 
-	ChannelServerSocketUDT(SelectorProvider provider, SocketUDT socketUDT) {
+	/** note: 1<->1 mapping of channels and keys */
+	protected volatile SelectionKeyUDT channelKey;
+
+	@Override
+	public void bindKey(final SelectionKeyUDT key) {
+		assert channelKey == null;
+		channelKey = key;
+	}
+
+	protected final SocketUDT socketUDT;
+
+	protected ChannelServerSocketUDT(final SelectorProvider provider,
+			final SocketUDT socketUDT) {
 		super(provider);
-		this.serverSocketUDT = socketUDT;
+		this.socketUDT = socketUDT;
 	}
 
 	@Override
 	protected void implCloseSelectableChannel() throws IOException {
-		serverSocketUDT.close();
+		socketUDT.close();
 	}
 
 	@Override
-	protected void implConfigureBlocking(boolean block) throws IOException {
-		serverSocketUDT.configureBlocking(block);
+	protected void implConfigureBlocking(final boolean block)
+			throws IOException {
+		socketUDT.configureBlocking(block);
 	}
 
 	@Override
 	public SocketChannel accept() throws IOException {
 		try {
+
 			begin();
-			SocketUDT socketUDT = serverSocketUDT.accept();
-			SelectorProvider provider = provider();
-			return new ChannelSocketUDT(provider, socketUDT);
+
+			final SocketUDT clientUDT = socketUDT.accept();
+
+			if (clientUDT == null) {
+
+				return null;
+
+			} else {
+
+				/** FIXME review select contract */
+				final SelectionKeyUDT key = channelKey;
+				if (key != null) {
+					key.readyOps &= ~OP_ACCEPT;
+				}
+
+				return new ChannelSocketUDT(provider(), clientUDT);
+
+			}
 		} finally {
 			end(true);
 		}
 	}
 
-	// guarded by 'this'
-	private ServerSocket serverSocketAdapter;
+	/** guarded by 'this' */
+	protected ServerSocket socketAdapter;
 
 	@Override
 	public ServerSocket socket() {
 		synchronized (this) {
-			if (serverSocketAdapter == null) {
+			if (socketAdapter == null) {
 				try {
-					serverSocketAdapter = new AdapterServerSocketUDT(this,
-							serverSocketUDT);
-				} catch (IOException e) {
+					socketAdapter = new AdapterServerSocketUDT(this, socketUDT);
+				} catch (final IOException e) {
 					return null;
 				}
 			}
-			return serverSocketAdapter;
+			return socketAdapter;
 		}
 	}
 
 	@Override
-	public SocketUDT getSocketUDT() {
-		return serverSocketUDT;
+	public SocketUDT socketUDT() {
+		return socketUDT;
 	}
 
 	@Override
-	public KindUDT getChannelKind() {
+	public KindUDT kindUDT() {
 		return KindUDT.ACCEPTOR;
 	}
 
 	@Override
 	public boolean isOpenSocketUDT() {
-		return serverSocketUDT.isOpen();
+		return socketUDT.isOpen();
 	}
 
 	//
 
 	@Override
 	public String toString() {
-		return serverSocketUDT.toString();
+		return socketUDT.toString();
+	}
+
+	@Override
+	public boolean isConnectionPending() {
+		return false;
+	}
+
+	@Override
+	public boolean finishConnect() {
+		return false;
 	}
 
 }

@@ -15,13 +15,13 @@ import java.nio.channels.ServerSocketChannel;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.net.NetServerSocketUDT;
 
-class AdapterServerSocketUDT extends NetServerSocketUDT {
+public class AdapterServerSocketUDT extends NetServerSocketUDT {
 
 	final ChannelServerSocketUDT serverChannelUDT;
 
-	// exception thanks to JDK designers
-	AdapterServerSocketUDT(ChannelServerSocketUDT channelSocketUDT,
-			SocketUDT socketUDT) throws IOException {
+	protected AdapterServerSocketUDT(
+			final ChannelServerSocketUDT channelSocketUDT,
+			final SocketUDT socketUDT) throws IOException {
 		super(socketUDT);
 		this.serverChannelUDT = channelSocketUDT;
 	}
@@ -34,10 +34,10 @@ class AdapterServerSocketUDT extends NetServerSocketUDT {
 	}
 
 	@Override
-	public void bind(SocketAddress endpoint) throws IOException {
-		SelectorProviderUDT provider = //
+	public void bind(final SocketAddress endpoint) throws IOException {
+		final SelectorProviderUDT provider = //
 		(SelectorProviderUDT) serverChannelUDT.provider();
-		int backlog = provider.getAcceptQueueSize();
+		final int backlog = provider.getAcceptQueueSize();
 		bind(endpoint, backlog);
 	}
 

@@ -1646,7 +1646,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select0(JNIEnv *env,
 	jint* readArray = NULL;
 	jint* writeArray = NULL;
 
-	// make empty sets
+	// empty sets
 	UDT::UDSET readSet;
 	UDT::UDSET writeSet;
 	UDT::UDSET exceptSet;
@@ -1784,7 +1784,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select1(JNIEnv* env,
 	jint* readArray = NULL;
 	jint* writeArray = NULL;
 
-	// make empty sets
+	// empty sets
 	UDT::UDSET readSet;
 	UDT::UDSET writeSet;
 	UDT::UDSET exceptSet;
@@ -1867,7 +1867,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx0(JNIEnv *env,
 	// convert timeout
 	int64_t msTimeOut = static_cast<int64_t>(timeout);
 
-	// make and populate input vector
+	// populate input vector
 
 	std::vector<UDTSOCKET> selectFDs;
 
@@ -1885,7 +1885,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx0(JNIEnv *env,
 
 	}
 
-	// make empty output vectors
+	// empty output vectors
 
 	std::vector<UDTSOCKET> readFDs;
 	std::vector<UDTSOCKET> writeFDs;
@@ -1983,13 +1983,12 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx1(JNIEnv *env,
 
 	//	cout << "udt-selectEx1; count=" << count << EOL;
 
-	// make empty output vectors
-
+	// empty output vectors
 	std::vector<UDTSOCKET> readFDs;
 	std::vector<UDTSOCKET> writeFDs;
 	std::vector<UDTSOCKET> exceptFDs;
 
-	// make select
+	// select
 	const int rv = UDT::selectEx( //
 			selectFDs, &readFDs, &writeFDs, NULL, msTimeOut);
 
@@ -2065,13 +2064,14 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd0( //
 		JNIEnv *env, //
 		jclass clsSocketUDT, //
 		const jint pollID, //
-		const jint socketID //
+		const jint socketID, //
+		const jint pollOpt //
 		) {
 
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
 
-	const int rv = UDT::epoll_add_usock(pollID, socketID, NULL);
+	const int rv = UDT::epoll_add_usock(pollID, socketID, &pollOpt);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -2091,7 +2091,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove0( //
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
 
-	const int rv = UDT::epoll_remove_usock(pollID, socketID, NULL);
+	const int rv = UDT::epoll_remove_usock(pollID, socketID);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -2108,15 +2108,13 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		const jint pollID, //
 		const jobject objReadBuffer, //
 		const jobject objWriteBuffer, //
-		const jobject objExceptBuffer, //
 		const jobject objSizeBuffer, //
 		const jlong millisTimeout //
 		) {
 
 	UNUSED(clsSocketUDT);
-	UNUSED(objExceptBuffer);
 
-	// make empty sets
+	// empty sets
 	UDT::UDSET readSet;
 	UDT::UDSET writeSet;
 
@@ -2124,10 +2122,14 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 	const int rv = UDT::epoll_wait( //
 			pollID, &readSet, &writeSet, millisTimeout, NULL, NULL);
 
+//	printf ("function:%s rv=%d \n", __func__, rv);
+//	printf ("function:%s pollID=%d \n", __func__, pollID);
+//	printf ("function:%s millisTimeout=%d \n", __func__, millisTimeout);
+
 	// process timeout & errors
 	if (rv <= 0) { // UDT::ERROR is '-1'; UDT_TIMEOUT is '=0';
 		if (rv == UDT_TIMEOUT) { // timeout
-			return UDT_TIMEOUT;
+			return JNI_OK;
 		} else {
 			UDT::ERRORINFO errorInfo = UDT::getlasterror();
 			UDT_ThrowExceptionUDT_ErrorInfo(env, 0, "epollWait", &errorInfo);
@@ -2137,32 +2139,43 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 
 	//
 
-	// get interest sizes
-	jint* sizeArray = static_cast<jint*> //
+	// get interest report size array
+	jint* const sizeArray = static_cast<jint*> //
 			(env->GetDirectBufferAddress(objSizeBuffer));
 
 	{ // return read interest
+
 		const jsize readSize = readSet.size();
+
+//		printf("function:%s readSize=%d \n", __func__, readSize);
+
+		sizeArray[UDT_READ_INDEX] = readSize;
+
 		if (readSize > 0) {
-			sizeArray[UDT_READ_INDEX] = readSize;
-			jint* readArray = static_cast<jint*>( //
+			jint* const readArray = static_cast<jint*>( //
 					env->GetDirectBufferAddress(objReadBuffer));
 			UDT_CopySetToArray(&readSet, readArray, readSize);
 		}
+
 	}
 
 	{ // return write interest
-		const jsize writeSize = writeSet.size();
-		if (writeSize > 0) {
-			sizeArray[UDT_WRITE_INDEX] = writeSize;
-			jint* writeArray = static_cast<jint*>( //
-					env->GetDirectBufferAddress(objWriteBuffer));
-			UDT_CopySetToArray(&writeSet, writeArray, writeSize);
-		}
-	}
 
-	{ // return exceptions report TODO
-		UDT::UDSET exceptSet;
+		const jsize writeSize = writeSet.size();
+
+//		printf("function:%s writeSize=%d \n", __func__, writeSize);
+
+		sizeArray[UDT_WRITE_INDEX] = writeSize;
+
+		if (writeSize > 0) {
+
+			jint* const writeArray = static_cast<jint*>( //
+					env->GetDirectBufferAddress(objWriteBuffer));
+
+			UDT_CopySetToArray(&writeSet, writeArray, writeSize);
+
+		}
+
 	}
 
 	return rv;
@@ -2170,7 +2183,9 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 }
 
 // #########################################
-// start - used for development only
+// #
+// # start - used for development only
+// #
 
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testEmptyCall0(
 		JNIEnv *env, jobject self) {
@@ -2383,7 +2398,9 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testEpoll0(JNIEnv *env,
 
 }
 
-// finish - used for development only
+// #
+// # finish - used for development only
+// #
 // #########################################
 
-}// [extern "C"]
+} // [extern "C"]

@@ -11,6 +11,7 @@
 #include <iostream>
 #include <udt.h>
 #include "cc.h"
+#include "test_util.h"
 
 using namespace std;
 
@@ -20,7 +21,6 @@ void* recvdata(void*);
 DWORD WINAPI recvdata(LPVOID);
 #endif
 
-
 int main(int argc, char* argv[])
 {
    if ((1 != argc) && ((2 != argc) || (0 == atoi(argv[1]))))
@@ -29,8 +29,8 @@ int main(int argc, char* argv[])
       return 0;
    }
 
-   // use this function to initialize the UDT library
-   UDT::startup();
+   // Automatically start up and clean up UDT module.
+   UDTUpDown _udt_;
 
    addrinfo hints;
    addrinfo* res;
@@ -105,10 +105,7 @@ int main(int argc, char* argv[])
 
    UDT::close(serv);
 
-   // use this function to release the UDT library
-   UDT::cleanup();
-
-   return 1;
+   return 0;
 }
 
 #ifndef WIN32
