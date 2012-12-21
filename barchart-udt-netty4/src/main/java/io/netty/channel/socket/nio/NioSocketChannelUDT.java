@@ -2,6 +2,7 @@ package io.netty.channel.socket.nio;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
+import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.nio.channels.SocketChannel;
 
