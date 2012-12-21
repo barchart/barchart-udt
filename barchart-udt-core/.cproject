@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.config.gnu.cygwin.so.debug.274883714">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cygwin.so.debug.274883714" moduleId="org.eclipse.cdt.core.settings" name="cdt_x86-Windows-gpp">
@@ -44,7 +46,6 @@
 								<option id="gnu.cpp.compiler.option.optimization.level.827637228" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.more" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.1087877860" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.2013577885" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="IA32"/>
 									<listOptionValue builtIn="false" value="WIN32"/>
 									<listOptionValue builtIn="false" value="_WIN32_WINNT=0x0501"/>
 									<listOptionValue builtIn="false" value="__MINGW__"/>
@@ -695,7 +696,6 @@
 								<option id="gnu.cpp.compiler.option.optimization.level.83271788" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.more" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.2101515367" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1139113113" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="AMD64"/>
 									<listOptionValue builtIn="false" value="WIN32"/>
 									<listOptionValue builtIn="false" value="_WIN32_WINNT=0x0501"/>
 									<listOptionValue builtIn="false" value="__MINGW__"/>
