@@ -122,13 +122,13 @@ public class TestOption {
 		try {
 
 			final SocketUDT serverSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			final InetSocketAddress serverAddress = getLocalSocketAddress();
+			final InetSocketAddress serverAddress = localSocketAddress();
 			serverSocket.bind(serverAddress);
 			serverSocket.listen(1);
 			assertTrue(serverSocket.isBound());
 
 			final SocketUDT clientSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			final InetSocketAddress clientAddress = getLocalSocketAddress();
+			final InetSocketAddress clientAddress = localSocketAddress();
 			clientSocket.bind(clientAddress);
 			assertTrue(clientSocket.isBound());
 
@@ -152,7 +152,7 @@ public class TestOption {
 	 * control algorithm limiting bandwidth to 50Mbs between localhost
 	 */
 	@Test
-	public void testOptionCC() {
+	public void testOptionCC() throws Exception {
 
 		try {
 
@@ -163,7 +163,7 @@ public class TestOption {
 			log.info("Attempting to rate limit using custom CCC UDPBlast class");
 
 			final SocketUDT serverSocket = new SocketUDT(TypeUDT.STREAM);
-			final InetSocketAddress serverAddress = getLocalSocketAddress();
+			final InetSocketAddress serverAddress = localSocketAddress();
 			serverSocket.bind(serverAddress);
 			serverSocket.listen(1);
 			assertTrue(serverSocket.isBound());
@@ -173,7 +173,7 @@ public class TestOption {
 			clientSocket.setOption(OptionUDT.UDT_CC, new FactoryUDT<UDPBlast>(
 					UDPBlast.class));
 
-			final InetSocketAddress clientAddress = getLocalSocketAddress();
+			final InetSocketAddress clientAddress = localSocketAddress();
 
 			clientSocket.bind(clientAddress);
 			clientSocket.setSoLinger(false, 0);
@@ -225,5 +225,7 @@ public class TestOption {
 		} catch (final ExceptionUDT e) {
 			fail(e.getMessage());
 		}
+
 	}
+
 }
