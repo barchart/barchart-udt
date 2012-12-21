@@ -27,6 +27,8 @@
 		<!-- http://search.maven.org/#search|ga|1|io.netty -->
 		<barchartNettyVersion>4.0.0.Alpha8</barchartNettyVersion>
 
+		<projectJavaVersion>1.7</projectJavaVersion>
+
 	</properties>
 
 	<dependencies>
