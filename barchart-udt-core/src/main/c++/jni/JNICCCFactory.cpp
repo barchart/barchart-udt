@@ -76,8 +76,9 @@ JNICCCFactory::JNICCCFactory(JNIEnv* env, jobject factoryUDT) {
 
 	initJNITypes(env);
 
-	if(factoryUDT==NULL)
+	if(factoryUDT==NULL){
 		;//TODO create new exception
+	}
 
 	env->GetJavaVM(&_javaVM);
 
@@ -85,14 +86,17 @@ JNICCCFactory::JNICCCFactory(JNIEnv* env, jobject factoryUDT) {
 	//we are storing the jobject as a member variable
 	//for use later on
 	_factoryUDT = env->NewGlobalRef(factoryUDT);
+
 }
 
 JNICCCFactory::~JNICCCFactory(){
 
 	JNIEnv* env = AttachToJVM();
 
-	if(_factoryUDT != NULL)
+	if(_factoryUDT != NULL){
 		env->DeleteLocalRef(_factoryUDT);
+	}
+
 }
 
 CCC* JNICCCFactory::create(){
@@ -115,5 +119,6 @@ CCCVirtualFactory* JNICCCFactory::clone(){
 	jobject objFactoryUDT = env->CallObjectMethod(_factoryUDT,_udt_clsFactoryInterfaceUDT_cloneFactory);
 
 	return new JNICCCFactory(env,objFactoryUDT);
+
 }
 

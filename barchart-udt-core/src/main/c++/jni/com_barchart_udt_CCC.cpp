@@ -81,10 +81,12 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_CCC_setACKTimer
 
 	JNICCC* jniCCC = getNativeJNICCC(env,obj);
 
-	if(jniCCC==NULL)
+	if(jniCCC==NULL){
 		return;
+	}
 
 	jniCCC->setACKTimer(msINT);
+
 }
 
 
@@ -102,6 +104,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_CCC_setACKInterval
 		return;
 
 	jniCCC->setACKInterval(pktINT);
+
 }
 
 
@@ -119,6 +122,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_CCC_setRTO
 		return;
 
 	jniCCC->setRTO(usRTO);
+
 }
 
 
@@ -136,6 +140,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_CCC_setPacketSndPeriod
 		return;
 
 	jniCCC->setPacketSndPeriod(sndPeriod);
+
 }
 
 /*
@@ -152,6 +157,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_CCC_setCWndSize
 		return;
 
 	jniCCC->setCWndSize(cWndSize);
+
 }
 
 
@@ -167,8 +173,10 @@ JNIEXPORT jobject JNICALL Java_com_barchart_udt_CCC_getPerfInfo
 
 	const CPerfMon* perfMon = jniCCC->getPerfInfo();
 
+	UNUSED(perfMon);
+
 	UDT_ThrowExceptionUDT_Message(env,0,"TODO: implement CPerfMon -> MonitorUDT mapping");
+
+	return NULL;
+
 }
-
-
-

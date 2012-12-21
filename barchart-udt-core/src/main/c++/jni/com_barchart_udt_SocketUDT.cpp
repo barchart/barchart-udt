@@ -64,10 +64,6 @@ extern "C" { /* specify the C calling convention */
 
 // ########################################################
 
-// to turn off compiler warnings
-#define UNUSED(x) ((void)(x))
-
-
 // ### UDT references
 
 // UDT classes
@@ -137,7 +133,6 @@ static jfieldID udtm_byteAvailSndBuf; // available UDT sender buffer size
 static jfieldID udtm_byteAvailRcvBuf; // available UDT receiver buffer size
 
 // ########################################################
-
 
 // not used
 void XXX_ThrowSocketExceptionMessage(JNIEnv* env, const char* message) {
@@ -339,6 +334,7 @@ void UDT_InitFieldRefAll(JNIEnv* env) {
 	// UDT CCC
 
 	udt_clsCCC_fld_nativeHandleID = env->GetFieldID(udt_clsCCC ,"nativeHandle","J");
+
 }
 
 void X_InitMethodRef(JNIEnv* env, jmethodID *methodID, jclass klaz,

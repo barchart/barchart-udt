@@ -124,6 +124,9 @@ extern jfieldID udt_clsCCC_fld_nativeHandleID;
 #define FREE(x) if ((x) != NULL) { free(x); x = NULL; }
 #define MALLOC(var,type,size) type* var = (type*) malloc(sizeof(type) * size);
 
+// declare unused explicitly or else see compiler warnings
+#define UNUSED(x) ((void)(x))
+
 extern "C"{
 
 void X_InitClassReference(JNIEnv *env, jclass *classReference,
