@@ -34,7 +34,7 @@
 	<properties>
 
 		<!-- should be set by developer during interactive work -->
-		<versionEclipse>2.0.1-SNAPSHOT</versionEclipse>
+		<versionEclipse>2.1.0-SNAPSHOT</versionEclipse>
 
 		<!-- will be set by maven-invoker-plugin during jenkins build -->
 		<versionJenkins>@project.version@</versionJenkins>
