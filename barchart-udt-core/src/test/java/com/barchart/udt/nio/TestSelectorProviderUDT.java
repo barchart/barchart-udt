@@ -30,10 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.StatusUDT;
+import com.barchart.udt.util.TestHelp;
 
 public class TestSelectorProviderUDT {
 
-	static final Logger log = LoggerFactory
+	public static final Logger log = LoggerFactory
 			.getLogger(TestSelectorProviderUDT.class);
 
 	@Before
@@ -154,7 +155,7 @@ public class TestSelectorProviderUDT {
 
 		assertTrue(readySet.isEmpty());
 
-		logSet(readySet);
+		TestHelp.logSet(readySet);
 
 	}
 
@@ -194,7 +195,7 @@ public class TestSelectorProviderUDT {
 			assertEquals(0, readyCount);
 			final Set<SelectionKey> readySet = selector.selectedKeys();
 			assertEquals(0, readySet.size());
-			logSet(readySet);
+			TestHelp.logSet(readySet);
 		}
 
 		clientChannel.connect(acceptChannel.socket().getLocalSocketAddress());
@@ -208,7 +209,7 @@ public class TestSelectorProviderUDT {
 			assertEquals(2, readyCount);
 			final Set<SelectionKey> readySet = selector.selectedKeys();
 			assertEquals(2, readySet.size());
-			logSet(readySet);
+			TestHelp.logSet(readySet);
 		}
 
 		assertEquals(StatusUDT.LISTENING, acceptKey.socketUDT().getStatus());
@@ -223,7 +224,7 @@ public class TestSelectorProviderUDT {
 			assertEquals(2, readyCount);
 			final Set<SelectionKey> readySet = selector.selectedKeys();
 			assertEquals(2, readySet.size());
-			logSet(readySet);
+			TestHelp.logSet(readySet);
 		}
 
 		final SocketChannel server = acceptChannel.accept();
@@ -239,7 +240,7 @@ public class TestSelectorProviderUDT {
 			assertEquals(1, readyCount);
 			final Set<SelectionKey> readySet = selector.selectedKeys();
 			assertEquals(1, readySet.size());
-			logSet(readySet);
+			TestHelp.logSet(readySet);
 		}
 
 	}
@@ -295,7 +296,7 @@ public class TestSelectorProviderUDT {
 			assertTrue(timeDiff < 10);
 
 			final Set<SelectionKey> keySet = selector.selectedKeys();
-			logSet(keySet);
+			TestHelp.logSet(keySet);
 
 			assertEquals(2, keySet.size());
 
@@ -345,7 +346,7 @@ public class TestSelectorProviderUDT {
 			assertTrue(timeDiff < 10);
 
 			final Set<SelectionKey> keySet = selector.selectedKeys();
-			logSet(keySet);
+			TestHelp.logSet(keySet);
 
 			assertTrue(keySet.contains(serverKey));
 			assertTrue(keySet.contains(clientKey));
@@ -393,7 +394,7 @@ public class TestSelectorProviderUDT {
 			assertTrue(timeDiff < 10);
 
 			final Set<SelectionKey> keySet3 = selector.selectedKeys();
-			logSet(keySet3);
+			TestHelp.logSet(keySet3);
 
 			assertEquals(2, keySet3.size());
 
@@ -437,12 +438,6 @@ public class TestSelectorProviderUDT {
 
 		Thread.sleep(50);
 
-	}
-
-	static void logSet(final Set<?> set) {
-		for (final Object item : set) {
-			log.info("-- {}", item);
-		}
 	}
 
 }

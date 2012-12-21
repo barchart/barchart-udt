@@ -19,6 +19,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.nio.TestSelectorProviderUDT;
+
 public class TestHelp {
 
 	private static Logger log = LoggerFactory.getLogger(TestHelp.class);
@@ -160,6 +162,12 @@ public class TestHelp {
 
 		return set;
 
+	}
+
+	public static void logSet(final Set<?> set) {
+		for (final Object item : set) {
+			TestSelectorProviderUDT.log.info("-- {}", item);
+		}
 	}
 
 }
