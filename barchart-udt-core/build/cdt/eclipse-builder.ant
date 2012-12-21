@@ -22,6 +22,7 @@
 	<target name="target-run-javah">
 		<javah classpath="target/classes" destdir="src/main/c++/jni" verbose="true">
 			<class name="com.barchart.udt.SocketUDT" />
+			<class name="com.barchart.udt.CCC" />
 		</javah>
 	</target>
 
