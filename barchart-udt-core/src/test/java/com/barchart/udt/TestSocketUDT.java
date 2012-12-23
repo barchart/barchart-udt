@@ -600,4 +600,13 @@ public class TestSocketUDT {
 
 	}
 
+	@Test
+	public void testToString() throws Exception {
+
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+
+		log.info("{}", socket);
+
+	}
+
 }

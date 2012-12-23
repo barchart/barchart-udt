@@ -1428,13 +1428,19 @@ public class SocketUDT {
 	//
 	@Override
 	public String toString() {
-		return " id=" + socketID //
-				+ " type=" + type //
-				+ " status=" + getStatus() //
-				+ " blocking=" + isBlocking() //
-				+ " bind=" + getLocalInetAddress() + ":" + getLocalInetPort()//
-				+ " peer=" + getRemoteInetAddress() + ":" + getRemoteInetPort()//
-		;
+
+		return String.format( //
+				"[id: 0x%08x] %s %s block=%s bind=%s:%s peer=%s:%s", //
+				socketID, //
+				type, //
+				getStatus(), //
+				isBlocking(), //
+				getLocalInetAddress(), //
+				getLocalInetPort(), //
+				getRemoteInetAddress(), //
+				getRemoteInetPort() //
+				);
+
 	}
 
 	/**
