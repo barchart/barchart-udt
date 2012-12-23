@@ -11,6 +11,7 @@ import static java.nio.channels.SelectionKey.*;
 import static org.junit.Assert.*;
 import static util.UnitHelp.*;
 
+import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -401,4 +402,42 @@ public class TestSelectorUDT {
 
 	}
 
+	@Test(timeout = 3000)
+	public void testWakeup() throws Exception {
+
+		final SelectorProvider provider = SelectorProviderUDT.DATAGRAM;
+
+		final Selector selector = provider.openSelector();
+
+		final Thread thread = new Thread() {
+
+			@Override
+			public void run() {
+
+				try {
+
+					log.info("init");
+
+					/** blocking */
+					selector.select();
+
+					log.info("done");
+
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+
+		};
+
+		thread.start();
+
+		Thread.sleep(300);
+
+		selector.wakeup();
+
+		thread.join();
+
+	}
 }

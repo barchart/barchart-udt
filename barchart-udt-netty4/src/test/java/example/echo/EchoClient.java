@@ -18,17 +18,22 @@ package example.echo;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannelUDT;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
+import java.nio.channels.spi.SelectorProvider;
+import java.util.concurrent.ThreadFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.barchart.udt.nio.SelectorProviderUDT;
+
+import example.util.ThreadFactoryUDT;
 
 /**
  * Sends one message when a connection is open and echoes back any received data
@@ -57,12 +62,18 @@ public class EchoClient {
 
 		final Bootstrap boot = new Bootstrap();
 
+		final SelectorProvider selectorProvider = SelectorProviderUDT.DATAGRAM;
+
+		final ThreadFactory connectFactory = new ThreadFactoryUDT("udt-connect");
+
+		final NioEventLoopGroup connectGroup = //
+		new NioEventLoopGroup(1, connectFactory, selectorProvider);
+
 		try {
 
-			boot.group(new NioEventLoopGroup())
+			boot.group(connectGroup)
 					//
-					.channel(NioSocketChannel.class)
-					.option(ChannelOption.TCP_NODELAY, true)
+					.channel(NioSocketChannelUDT.class)
 					.remoteAddress(new InetSocketAddress(host, port))
 					.handler(new ChannelInitializer<SocketChannel>() {
 						@Override
@@ -93,27 +104,9 @@ public class EchoClient {
 
 		log.info("init");
 
-		// Print usage if no argument is specified.
-
-		// if (args.length < 2 || args.length > 3) {
-		// System.err.println("Usage: " + EchoClient.class.getSimpleName()
-		// + " <host> <port> [<first message size>]");
-		// return;
-		// }
-
-		// Parse options.
-
-		final String host = "localhost";// args[0];
-
-		final int port = 8080;// Integer.parseInt(args[1]);
-
-		final int firstMessageSize;
-
-		if (args.length == 3) {
-			firstMessageSize = Integer.parseInt(args[2]);
-		} else {
-			firstMessageSize = 256;
-		}
+		final String host = "localhost";
+		final int port = 8080;
+		final int firstMessageSize = 256;
 
 		new EchoClient(host, port, firstMessageSize).run();
 

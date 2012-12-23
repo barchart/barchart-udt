@@ -102,7 +102,7 @@ public class SelectorUDT extends AbstractSelector {
 	private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
 	selectedKeyMap = new ConcurrentHashMap<SelectionKeyUDT, SelectionKeyUDT>();
 
-	/** public view : partially removal allowed, but not addition */
+	/** public view : removal allowed, but not addition */
 	private final Set<? extends SelectionKey> //
 	selectedKeySet = HelpUDT.ungrowableSet(selectedKeyMap.keySet());
 
@@ -119,7 +119,7 @@ public class SelectorUDT extends AbstractSelector {
 	private final IntBuffer writeBuffer;
 
 	/** guarded by {@link #doSelectLocked} */
-	private int wakeupBaseCount;
+	private volatile int wakeupBaseCount;
 
 	private volatile int wakeupStepCount;
 
@@ -156,7 +156,7 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	private final boolean wakeupIsPending() {
+	protected boolean wakeupIsPending() {
 		return wakeupBaseCount != wakeupStepCount;
 	}
 
@@ -206,7 +206,7 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	private final void wakeupMarkBase() {
+	protected void wakeupMarkBase() {
 		wakeupBaseCount = wakeupStepCount;
 	}
 
@@ -240,7 +240,11 @@ public class SelectorUDT extends AbstractSelector {
 		return doEpollEnter(UDT_TIMEOUT_NONE);
 	}
 
-	private int doEpollEnter(final long millisTimeout) throws IOException {
+	/**
+	 * @param millisTimeout
+	 *            <0 : invinite; =0 : immediate; >0 : finite;
+	 */
+	protected int doEpollEnter(final long millisTimeout) throws IOException {
 
 		if (!isOpen()) {
 			log.error("slector is closed");
@@ -257,15 +261,23 @@ public class SelectorUDT extends AbstractSelector {
 	}
 
 	/**
-	 * note: return value contract:
+	 * @param millisTimeout
 	 * 
-	 * <0 : should not happen
+	 *            <0 : invinite;
 	 * 
-	 * =0 : means nothing was selected/timeout
+	 *            =0 : immediate;
 	 * 
-	 * >0 : number of pending r/w ops, NOT number of selected keys
+	 *            >0 : finite;
+	 * @return
+	 * 
+	 *         <0 : should not happen
+	 * 
+	 *         =0 : means nothing was selected/timeout
+	 * 
+	 *         >0 : number of selected keys
 	 */
-	private int doEpollExclusive(final long millisTimeout) throws IOException {
+
+	protected int doEpollExclusive(final long millisTimeout) throws IOException {
 
 		try {
 
@@ -292,7 +304,7 @@ public class SelectorUDT extends AbstractSelector {
 
 	//
 
-	private void doCancel() {
+	protected void doCancel() {
 
 		synchronized (cancelledKeys()) {
 
@@ -323,7 +335,7 @@ public class SelectorUDT extends AbstractSelector {
 	 */
 	private int processCount;
 
-	private void doResults() {
+	protected void doResults() {
 
 		processCount++;
 
@@ -331,12 +343,9 @@ public class SelectorUDT extends AbstractSelector {
 
 		doResultsWrite(processCount);
 
-		log.info("#### selectedKeyMap : {}", selectedKeyMap.size());
-		log.info("#### registeredKeyMap : {}", registeredKeyMap.size());
-
 	}
 
-	private void doResultsRead(final int processCount) {
+	protected void doResultsRead(final int processCount) {
 
 		final int readSize = sizeBuffer.get(UDT_READ_INDEX);
 
@@ -356,7 +365,7 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	private void doResultsWrite(final int processCount) {
+	protected void doResultsWrite(final int processCount) {
 
 		final int writeSize = sizeBuffer.get(UDT_WRITE_INDEX);
 
@@ -375,19 +384,19 @@ public class SelectorUDT extends AbstractSelector {
 	}
 
 	/**
-	 * note: millisTimeout contract:
+	 * @param millisTimeout
 	 * 
-	 * -1 : infinite
+	 *            -1 : infinite
 	 * 
-	 * =0 : immediate
+	 *            =0 : immediate
 	 * 
-	 * >0 : finite
+	 *            >0 : finite
 	 */
-	private int doEpollSelect(long millisTimeout) throws ExceptionUDT {
-
-		int readyCount = 0;
+	protected int doEpollSelect(long millisTimeout) throws ExceptionUDT {
 
 		wakeupMarkBase();
+
+		int readyCount = 0;
 
 		if (millisTimeout < 0) {
 
@@ -424,7 +433,7 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	private int doEpollSelectUDT(final long timeout) throws ExceptionUDT {
+	protected int doEpollSelectUDT(final long timeout) throws ExceptionUDT {
 		return SocketUDT.selectEpoll(//
 				epoll.id(), //
 				readBuffer, //
@@ -434,12 +443,6 @@ public class SelectorUDT extends AbstractSelector {
 				);
 	}
 
-	/**
-	 * Wakeup the selector. NOTE: it is recommended to user timed
-	 * {@link #select(long)} (say, timeout = 100 milliseconds) to avoid missed
-	 * {@link #wakeup()} calls which are rare but possible in current
-	 * implementation (accepted in favor of design simplicity / performance)
-	 */
 	@Override
 	public Selector wakeup() {
 		/** publisher for volatile */

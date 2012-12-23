@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class EpollUDT {
 
 	/**
-	 * epoll interest option
+	 * epoll interest option mask
 	 * <p>
 	 * see udt.h enum EPOLLOpt
 	 */

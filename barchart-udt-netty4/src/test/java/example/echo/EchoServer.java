@@ -26,9 +26,15 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
+import java.nio.channels.spi.SelectorProvider;
+import java.util.concurrent.ThreadFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.barchart.udt.nio.SelectorProviderUDT;
+
+import example.util.ThreadFactoryUDT;
 
 /**
  * Echoes back any received data from a client.
@@ -45,23 +51,27 @@ public class EchoServer {
 
 	public void run() throws Exception {
 
+		final SelectorProvider selectorProvider = SelectorProviderUDT.DATAGRAM;
+
+		final ThreadFactory acceptFactory = new ThreadFactoryUDT("udt-accept");
+		final ThreadFactory connectFactory = new ThreadFactoryUDT("udt-connect");
+
+		final NioEventLoopGroup acceptGroup = //
+		new NioEventLoopGroup(1, acceptFactory, selectorProvider);
+
+		final NioEventLoopGroup connectGroup = //
+		new NioEventLoopGroup(1, connectFactory, selectorProvider);
+
 		// Configure the server.
 		final ServerBootstrap boot = new ServerBootstrap();
 
 		try {
 
-			boot.group(new NioEventLoopGroup(), new NioEventLoopGroup())
-			//
+			boot.group(acceptGroup, connectGroup)
 					.channel(NioServerSocketChannelUDT.class)
-					//
 					.option(ChannelOption.SO_BACKLOG, 100)
-					//
 					.localAddress(new InetSocketAddress(port))
-					//
-					.childOption(ChannelOption.TCP_NODELAY, true)
-					//
 					.handler(new LoggingHandler(LogLevel.INFO))
-					//
 					.childHandler(new ChannelInitializer<SocketChannel>() {
 						@Override
 						public void initChannel(final SocketChannel ch)
