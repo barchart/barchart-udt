@@ -1435,7 +1435,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select0(JNIEnv *env,
 		if (readArray == NULL) {
 			UDT_ThrowExceptionUDT_Message(env, 0,
 					"select0 : can not allocate readArray");
-			return JNI_ERR; // XXX free ?
+			return JNI_ERR;
 		}
 		env->GetIntArrayRegion(objReadArray, 0, readSize, readArray);
 		UDT_CopyArrayToSet(readArray, &readSet, readSize);
@@ -1448,7 +1448,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select0(JNIEnv *env,
 		if (writeArray == NULL) {
 			UDT_ThrowExceptionUDT_Message(env, 0,
 					"select0 : can not allocate writeArray");
-			return JNI_ERR; // XXX free ?
+			return JNI_ERR;
 		}
 		env->GetIntArrayRegion(objWriteArray, 0, writeSize, writeArray);
 		UDT_CopyArrayToSet(writeArray, &writeSet, writeSize);
@@ -1513,7 +1513,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select0(JNIEnv *env,
 		if (exceptArray == NULL) {
 			UDT_ThrowExceptionUDT_Message(env, 0,
 					"select0 : can not allocate exceptArray");
-			return JNI_ERR; // XXX free ?
+			return JNI_ERR;
 		}
 		UDT_CopySetToArray(&exceptSet, exceptArray, exceptSizeReturn);
 		env->SetIntArrayRegion(objExceptArray, 0, exceptSizeReturn,
@@ -1668,9 +1668,6 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx0(JNIEnv *env,
 	std::vector<UDTSOCKET> writeFDs;
 	std::vector<UDTSOCKET> exceptFDs;
 
-	// XXX exceptions from exceptFDs?
-	//	int rv = UDT::selectEx(//
-	//			selectFDs, &readFDs, &writeFDs, &exceptFDs, msTimeOut);
 	const int rv = UDT::selectEx( //
 			selectFDs, &readFDs, &writeFDs, NULL, msTimeOut);
 
@@ -1689,7 +1686,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx0(JNIEnv *env,
 
 	for (jint index = 0; index < selectSize; index++) {
 
-		jobject objSocketUDT = NULL; // XXX
+		jobject objSocketUDT = NULL;
 
 		jint socketID = env->GetIntField(objSocketUDT, udts_SocketID);
 
@@ -1733,8 +1730,6 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx1(JNIEnv *env,
 
 	// convert timeout
 	int64_t msTimeOut = static_cast<int64_t>(timeout);
-
-	// TODO make global --- get IDs
 
 	jclass clsKeyUDT = (env)->FindClass("com/barchart/udt/nio/SelectionKeyUDT");
 	jfieldID socketIDID = env->GetFieldID(clsKeyUDT, //
