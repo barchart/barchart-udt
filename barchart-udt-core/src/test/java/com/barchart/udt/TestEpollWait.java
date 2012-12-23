@@ -9,6 +9,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.barchart.udt.util.HelpUDT;
+
 import util.TestAny;
 
 public class TestEpollWait extends TestAny {
@@ -17,9 +19,9 @@ public class TestEpollWait extends TestAny {
 	@Test
 	public void epollWait0_Accept0() throws Exception {
 
-		final IntBuffer readBuffer = SocketUDT.newDirectIntBufer(10);
-		final IntBuffer writeBuffer = SocketUDT.newDirectIntBufer(10);
-		final IntBuffer sizeBuffer = SocketUDT.newDirectIntBufer(10);
+		final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
+		final IntBuffer writeBuffer = HelpUDT.newDirectIntBufer(10);
+		final IntBuffer sizeBuffer = HelpUDT.newDirectIntBufer(10);
 
 		final int epollID = SocketUDT.epollCreate0();
 
@@ -164,9 +166,9 @@ public class TestEpollWait extends TestAny {
 	@Test
 	public void epollWait0_Accept1() throws Exception {
 
-		final IntBuffer readBuffer = SocketUDT.newDirectIntBufer(10);
-		final IntBuffer writeBuffer = SocketUDT.newDirectIntBufer(10);
-		final IntBuffer sizeBuffer = SocketUDT.newDirectIntBufer(10);
+		final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
+		final IntBuffer writeBuffer = HelpUDT.newDirectIntBufer(10);
+		final IntBuffer sizeBuffer = HelpUDT.newDirectIntBufer(10);
 
 		final int epollID = SocketUDT.epollCreate0();
 
@@ -269,9 +271,9 @@ public class TestEpollWait extends TestAny {
 
 			final int epollID = SocketUDT.epollCreate0();
 
-			final IntBuffer readBuffer = SocketUDT.newDirectIntBufer(10);
-			final IntBuffer writeBuffer = SocketUDT.newDirectIntBufer(10);
-			final IntBuffer sizeBuffer = SocketUDT.newDirectIntBufer(10);
+			final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
+			final IntBuffer writeBuffer = HelpUDT.newDirectIntBufer(10);
+			final IntBuffer sizeBuffer = HelpUDT.newDirectIntBufer(10);
 			final long millisTimeout = 0;
 
 			SocketUDT.epollWait0(epollID, readBuffer, writeBuffer, sizeBuffer,
@@ -296,10 +298,10 @@ public class TestEpollWait extends TestAny {
 
 		final int epollID = -1; // invalid
 
-		final IntBuffer readBuffer = SocketUDT.newDirectIntBufer(10);
-		final IntBuffer writeBuffer = SocketUDT.newDirectIntBufer(10);
+		final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
+		final IntBuffer writeBuffer = HelpUDT.newDirectIntBufer(10);
 
-		final IntBuffer sizeBuffer = SocketUDT
+		final IntBuffer sizeBuffer = HelpUDT
 				.newDirectIntBufer(SocketUDT.UDT_SIZE_COUNT);
 
 		final long millisTimeout = 1 * 1000;

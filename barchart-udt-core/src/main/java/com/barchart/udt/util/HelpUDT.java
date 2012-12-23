@@ -8,6 +8,8 @@
 package com.barchart.udt.util;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
@@ -23,9 +25,6 @@ import com.barchart.udt.EpollUDT;
  * miscellaneous utilities
  */
 public class HelpUDT {
-
-	private HelpUDT() {
-	}
 
 	protected static final Logger log = LoggerFactory.getLogger(EpollUDT.class);
 
@@ -57,77 +56,13 @@ public class HelpUDT {
 
 	}
 
-	public static <E> Set<E> unmodifiableSet(final Collection<E> values) {
-
-		return new Set<E>() {
-
-			@Override
-			public int size() {
-				return values.size();
-			}
-
-			@Override
-			public boolean isEmpty() {
-				return values.isEmpty();
-			}
-
-			@Override
-			public boolean contains(final Object o) {
-				return values.contains(o);
-			}
-
-			@Override
-			public Iterator<E> iterator() {
-				return values.iterator();
-			}
-
-			@Override
-			public Object[] toArray() {
-				return values.toArray();
-			}
-
-			@Override
-			public <T> T[] toArray(final T[] a) {
-				return values.toArray(a);
-			}
-
-			@Override
-			public boolean add(final E e) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public boolean remove(final Object o) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public boolean containsAll(final Collection<?> c) {
-				return values.containsAll(c);
-			}
-
-			@Override
-			public boolean addAll(final Collection<? extends E> c) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public boolean retainAll(final Collection<?> c) {
-				return values.retainAll(c);
-			}
-
-			@Override
-			public boolean removeAll(final Collection<?> c) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public void clear() {
-				throw new UnsupportedOperationException();
-			}
-
-		};
-
+	/** direct integer buffer with proper native byte order */
+	public static final IntBuffer newDirectIntBufer(final int capacity) {
+		/** java int is 4 bytes */
+		return ByteBuffer. //
+				allocateDirect(capacity * 4). //
+				order(ByteOrder.nativeOrder()). //
+				asIntBuffer();
 	}
 
 	public static <E> Set<E> ungrowableSet(final Set<E> set) {
@@ -216,6 +151,82 @@ public class HelpUDT {
 
 		};
 
+	}
+
+	public static <E> Set<E> unmodifiableSet(final Collection<E> values) {
+
+		return new Set<E>() {
+
+			@Override
+			public boolean add(final E e) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean addAll(final Collection<? extends E> c) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void clear() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean contains(final Object o) {
+				return values.contains(o);
+			}
+
+			@Override
+			public boolean containsAll(final Collection<?> c) {
+				return values.containsAll(c);
+			}
+
+			@Override
+			public boolean isEmpty() {
+				return values.isEmpty();
+			}
+
+			@Override
+			public Iterator<E> iterator() {
+				return values.iterator();
+			}
+
+			@Override
+			public boolean remove(final Object o) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean removeAll(final Collection<?> c) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean retainAll(final Collection<?> c) {
+				return values.retainAll(c);
+			}
+
+			@Override
+			public int size() {
+				return values.size();
+			}
+
+			@Override
+			public Object[] toArray() {
+				return values.toArray();
+			}
+
+			@Override
+			public <T> T[] toArray(final T[] a) {
+				return values.toArray(a);
+			}
+
+		};
+
+	}
+
+	private HelpUDT() {
 	}
 
 }

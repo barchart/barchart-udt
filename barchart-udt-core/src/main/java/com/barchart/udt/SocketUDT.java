@@ -10,7 +10,6 @@ package com.barchart.udt;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.Set;
 
@@ -1524,14 +1523,6 @@ public class SocketUDT {
 			final long millisTimeout) throws ExceptionUDT;
 
 	//
-
-	public static final IntBuffer newDirectIntBufer(final int capacity) {
-		/** java int is 4 bytes */
-		return ByteBuffer. //
-				allocateDirect(capacity * 4). //
-				order(ByteOrder.nativeOrder()). //
-				asIntBuffer();
-	}
 
 	// ###########################################
 	// ### used for development & testing only

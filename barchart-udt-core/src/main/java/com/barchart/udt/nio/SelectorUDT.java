@@ -132,9 +132,9 @@ public class SelectorUDT extends AbstractSelector {
 
 		this.maximimSelectorSize = maximumSelectorSize;
 
-		readBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
-		writeBuffer = SocketUDT.newDirectIntBufer(maximumSelectorSize);
-		sizeBuffer = SocketUDT.newDirectIntBufer(UDT_SIZE_COUNT);
+		readBuffer = HelpUDT.newDirectIntBufer(maximumSelectorSize);
+		writeBuffer = HelpUDT.newDirectIntBufer(maximumSelectorSize);
+		sizeBuffer = HelpUDT.newDirectIntBufer(UDT_SIZE_COUNT);
 
 		epoll = new EpollUDT();
 
