@@ -6,7 +6,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 /**
- * native library and resource utilities
+ * "java.net" style programming API for UDT  
  */
-package com.barchart.udt.lib;
+package com.barchart.udt.net;
 

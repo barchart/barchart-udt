@@ -14,7 +14,6 @@ import com.barchart.udt.SocketUDT;
  * 
  * NOTE: {@link com.barchart.udt#TypeUDT} means stream vs datagram;
  * {@link KindUDT} means server vs client.
- * <p>
  */
 public enum KindUDT {
 

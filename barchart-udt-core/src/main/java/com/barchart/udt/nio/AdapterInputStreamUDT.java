@@ -19,7 +19,7 @@ import java.nio.channels.SocketChannel;
  */
 public class AdapterInputStreamUDT extends InputStream {
 
-	private final SocketChannel channel;
+	protected final SocketChannel channel;
 
 	/**
 	 * Creates a new input stream for the specified channel.

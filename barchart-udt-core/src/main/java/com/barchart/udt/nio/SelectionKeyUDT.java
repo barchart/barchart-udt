@@ -21,7 +21,7 @@ import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.SocketUDT;
 
 /**
- * FIXME think again about concurrency
+ * selection key implementation <> FIXME think again about concurrency
  */
 public class SelectionKeyUDT extends SelectionKey {
 

@@ -18,7 +18,7 @@ import java.nio.channels.SocketChannel;
  */
 public class AdapterOutputStreamUDT extends OutputStream {
 
-	private final SocketChannel channel;
+	protected final SocketChannel channel;
 
 	/**
 	 * Creates a new UDT output stream.

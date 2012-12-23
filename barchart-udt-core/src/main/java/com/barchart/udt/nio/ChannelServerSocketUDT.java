@@ -51,15 +51,6 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	protected static final Logger log = LoggerFactory
 			.getLogger(ChannelServerSocketUDT.class);
 
-	/** note: 1<->1 mapping of channels and keys */
-	// protected volatile SelectionKeyUDT channelKey;
-
-	// @Override
-	// public void bindKey(final SelectionKeyUDT key) {
-	// assert channelKey == null;
-	// channelKey = key;
-	// }
-
 	protected final SocketUDT socketUDT;
 
 	protected ChannelServerSocketUDT(final SelectorProvider provider,
@@ -133,8 +124,6 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	public boolean isOpenSocketUDT() {
 		return socketUDT.isOpen();
 	}
-
-	//
 
 	@Override
 	public String toString() {

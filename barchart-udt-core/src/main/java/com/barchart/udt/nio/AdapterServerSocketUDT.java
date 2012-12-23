@@ -17,7 +17,7 @@ import com.barchart.udt.net.NetServerSocketUDT;
 
 public class AdapterServerSocketUDT extends NetServerSocketUDT {
 
-	final ChannelServerSocketUDT serverChannelUDT;
+	protected final ChannelServerSocketUDT serverChannelUDT;
 
 	protected AdapterServerSocketUDT(
 			final ChannelServerSocketUDT channelSocketUDT,

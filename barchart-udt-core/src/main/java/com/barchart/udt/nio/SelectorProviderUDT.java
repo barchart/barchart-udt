@@ -19,6 +19,8 @@ import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
 
 /**
+ * selection provider for UDT
+ * <p>
  * note: you must use the same system-wide provider instance for the same
  * {@link TypeUDT} of UDT channels and UDT selectors;
  */

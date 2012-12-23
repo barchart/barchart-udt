@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * native JNI entity, please not change in any way
+ * annotation marks a native JNI entity, please not change it in any way
  */
 @Documented
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })

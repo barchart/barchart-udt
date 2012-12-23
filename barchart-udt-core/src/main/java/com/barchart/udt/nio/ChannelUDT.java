@@ -12,6 +12,7 @@ import java.io.IOException;
 import com.barchart.udt.SocketUDT;
 
 /**
+ * convenience interface shared by client and server
  */
 public interface ChannelUDT {
 

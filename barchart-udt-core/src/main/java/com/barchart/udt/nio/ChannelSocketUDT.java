@@ -461,19 +461,10 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 		return KindUDT.CONNECTOR;
 	}
 
-	/** note: 1<->1 mapping of channels and keys */
-	// protected volatile SelectionKeyUDT channelKey;
-
-	/*
-	 * @Override public void bindKey(final SelectionKeyUDT key) { assert
-	 * channelKey == null; channelKey = key; }
-	 */
 	@Override
 	public boolean isOpenSocketUDT() {
 		return socketUDT.isOpen();
 	}
-
-	//
 
 	@Override
 	public String toString() {
