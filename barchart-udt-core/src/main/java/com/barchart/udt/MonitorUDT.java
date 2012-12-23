@@ -12,14 +12,16 @@ import java.lang.reflect.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* note: do not change field names; used by JNI */
+/**
+ * note: do not change field names; used by JNI
+ */
 public class MonitorUDT {
 
 	private static final Logger log = LoggerFactory.getLogger(MonitorUDT.class);
 
 	protected final SocketUDT socketUDT;
 
-	protected MonitorUDT(SocketUDT socketUDT) {
+	protected MonitorUDT(final SocketUDT socketUDT) {
 		this.socketUDT = socketUDT;
 	}
 
@@ -311,16 +313,16 @@ public class MonitorUDT {
 	/**
 	 * current monitor status snapshot for all parameters
 	 */
-	public void appendSnapshot(StringBuilder text) {
+	public void appendSnapshot(final StringBuilder text) {
 
 		text.append("\n\t");
 		text.append("socketID");
 		text.append(" = ");
 		text.append(socketUDT.socketID);
 
-		Field fieldArray[] = MonitorUDT.class.getDeclaredFields();
+		final Field fieldArray[] = MonitorUDT.class.getDeclaredFields();
 
-		for (Field field : fieldArray) {
+		for (final Field field : fieldArray) {
 
 			if (!isNumeric(field)) {
 				continue;
@@ -330,36 +332,35 @@ public class MonitorUDT {
 
 				field.setAccessible(true);
 
-				String fieldName = field.getName();
-				String fieldValue = field.get(this).toString();
+				final String fieldName = field.getName();
+				final String fieldValue = field.get(this).toString();
 
 				text.append("\n\t");
 				text.append(fieldName);
 				text.append(" = ");
 				text.append(fieldValue);
 
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("unexpected", e);
 			}
 
 		}
 
-		double localSendLoss = 100.0 * (double) pktSndLoss / (double) pktSent;
+		final double localSendLoss = 100.0 * pktSndLoss / pktSent;
 
 		text.append("\n\t% localSendLoss = ");
 		text.append(localSendLoss);
 
-		double localReceiveLoss = 100.0 * (double) pktRcvLoss
-				/ (double) pktRecv;
+		final double localReceiveLoss = 100.0 * pktRcvLoss / pktRecv;
 
 		text.append("\n\t% localReceiveLoss = ");
 		text.append(localReceiveLoss);
 
 	}
 
-	protected boolean isNumeric(Field field) {
+	protected boolean isNumeric(final Field field) {
 
-		Class<?> fieledType = field.getType();
+		final Class<?> fieledType = field.getType();
 
 		return fieledType == int.class || fieledType == long.class
 				|| fieledType == double.class;
@@ -369,7 +370,7 @@ public class MonitorUDT {
 	@Override
 	public String toString() {
 
-		StringBuilder text = new StringBuilder(1024);
+		final StringBuilder text = new StringBuilder(1024);
 
 		appendSnapshot(text);
 

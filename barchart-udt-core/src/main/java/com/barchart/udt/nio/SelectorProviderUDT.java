@@ -10,9 +10,6 @@ package com.barchart.udt.nio;
 import java.io.IOException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.Pipe;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.nio.channels.spi.AbstractSelector;
 import java.nio.channels.spi.SelectorProvider;
 
 import com.barchart.udt.SocketUDT;
@@ -81,18 +78,18 @@ public class SelectorProviderUDT extends SelectorProvider {
 	}
 
 	@Override
-	public AbstractSelector openSelector() throws IOException {
+	public SelectorUDT openSelector() throws IOException {
 		return new SelectorUDT(this, maxSelectorSize);
 	}
 
 	@Override
-	public ServerSocketChannel openServerSocketChannel() throws IOException {
+	public ChannelServerSocketUDT openServerSocketChannel() throws IOException {
 		final SocketUDT serverSocketUDT = new SocketUDT(type);
 		return new ChannelServerSocketUDT(this, serverSocketUDT);
 	}
 
 	@Override
-	public SocketChannel openSocketChannel() throws IOException {
+	public ChannelSocketUDT openSocketChannel() throws IOException {
 		final SocketUDT socketUDT = new SocketUDT(type);
 		return new ChannelSocketUDT(this, socketUDT);
 	}

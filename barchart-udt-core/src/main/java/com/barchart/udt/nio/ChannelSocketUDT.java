@@ -28,32 +28,21 @@ import com.barchart.udt.SocketUDT;
  * you must use {@link SelectorProviderUDT#openSocketChannel()} to obtain
  * instance of this class; do not use JDK
  * {@link java.nio.channels.SocketChannel#open()};
- * 
+ * <p>
  * example:
  * 
- * [code]
- * 
+ * <pre>
  * SelectorProvider provider = SelectorProviderUDT.DATAGRAM;
- * 
  * SocketChannel clientChannel = provider.openSocketChannel();
- * 
  * clientChannel.configureBlocking(true);
- * 
  * Socket clientSocket = clientChannel.socket();
- * 
- * InetSocketAddress clientAddress = new InetSocketAddress("localhost", 10000);
- * 
+ * InetSocketAddress clientAddress = new InetSocketAddress(&quot;localhost&quot;, 10000);
  * clientSocket.bind(clientAddress);
- * 
  * assert clientSocket.isBound();
- * 
- * InetSocketAddress serverAddress = new InetSocketAddress("localhost", 12345);
- * 
+ * InetSocketAddress serverAddress = new InetSocketAddress(&quot;localhost&quot;, 12345);
  * clientChannel.connect(serverAddress);
- * 
  * assert clientSocket.isConnected();
- * 
- * [/code]
+ * </pre>
  */
 public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 
@@ -95,7 +84,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 		socketUDT.close();
 	}
 
-	/*
+	/**
 	 * local volatile variable, which mirrors super.blocking, to avoid the cost
 	 * of synchronized call inside isBlocking()
 	 */
@@ -316,8 +305,8 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			// see contract for receive()
 
 			if (sizeReceived < 0) {
-				log.trace("nothing was received; socketID={}", socket
-						.getSocketId());
+				log.trace("nothing was received; socketID={}",
+						socket.getSocketId());
 				return 0;
 			}
 
@@ -417,8 +406,8 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			// see contract for send()
 
 			if (sizeSent < 0) {
-				log.trace("no buffer space for send; socketID={}", socket
-						.getSocketId());
+				log.trace("no buffer space for send; socketID={}",
+						socket.getSocketId());
 				// logStatus();
 				// log.info("writeCount={} writeSize={}", writeCount,
 				// writeSize);

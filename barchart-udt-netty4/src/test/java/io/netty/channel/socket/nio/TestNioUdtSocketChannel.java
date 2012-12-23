@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestNioServerSocketChannelUDTTest {
+public class TestNioUdtSocketChannel {
 
 	@Before
 	public void setUp() throws Exception {

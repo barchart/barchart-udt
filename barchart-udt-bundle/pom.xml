@@ -21,7 +21,8 @@
 	<artifactId>barchart-udt-bundle</artifactId>
 	<packaging>bundle</packaging>
 
-	<description>${project.parent.description} [ BUNDLE ] </description>
+	<description>Barchart UDT [ BUNDLE ]</description>
+	<url>https://github.com/barchart/barchart-udt/wiki</url>
 
 	<scm>
 		<url>https://github.com/barchart/barchart-udt</url>
@@ -214,6 +215,7 @@
 									${dependencyUnpack},
 									${basedir}/target/classes,
 								</Include-Resource>
+								<Bundle-DocURL>${url}</Bundle-DocURL>
 							</instructions>
 						</configuration>
 					</plugin>

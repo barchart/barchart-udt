@@ -21,9 +21,11 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannelUDT;
+import io.netty.channel.socket.nio.NioUdtServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.logging.InternalLoggerFactory;
+import io.netty.logging.Slf4JLoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.spi.SelectorProvider;
@@ -41,7 +43,21 @@ import example.util.ThreadFactoryUDT;
  */
 public class EchoServer {
 
-	static Logger log = LoggerFactory.getLogger("server");
+	static Logger log = LoggerFactory.getLogger(EchoServer.class);
+
+	/**
+	 * use slf4j provider for io.netty.logging.InternalLogger
+	 */
+	static {
+
+		final InternalLoggerFactory defaultFactory = new Slf4JLoggerFactory();
+
+		InternalLoggerFactory.setDefaultFactory(defaultFactory);
+
+		log.info("InternalLoggerFactory={}", InternalLoggerFactory
+				.getDefaultFactory().getClass().getName());
+
+	}
 
 	private final int port;
 
@@ -68,7 +84,7 @@ public class EchoServer {
 		try {
 
 			boot.group(acceptGroup, connectGroup)
-					.channel(NioServerSocketChannelUDT.class)
+					.channel(NioUdtServerSocketChannel.class)
 					.option(ChannelOption.SO_BACKLOG, 100)
 					.localAddress(new InetSocketAddress(port))
 					.handler(new LoggingHandler(LogLevel.INFO))

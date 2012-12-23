@@ -2,7 +2,6 @@ package io.netty.channel.socket.nio;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
-import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.nio.channels.SocketChannel;
 
@@ -12,7 +11,7 @@ import com.barchart.udt.nio.SelectorProviderUDT;
 /**
  * emulate jdk socket channel for netty
  */
-public class NioSocketChannelUDT extends NioSocketChannel {
+public class NioUdtSocketChannel extends NioSocketChannel {
 
 	protected static void assertChannelUDT(final SocketChannel channel)
 			throws RuntimeException {
@@ -22,11 +21,11 @@ public class NioSocketChannelUDT extends NioSocketChannel {
 		}
 	}
 
-	protected static SocketChannel newChannelUDT() {
+	protected static ChannelSocketUDT newChannelUDT() {
 		return newChannelUDT(SelectorProviderUDT.STREAM);
 	}
 
-	protected static SocketChannel newChannelUDT(
+	protected static ChannelSocketUDT newChannelUDT(
 			final SelectorProviderUDT provider) {
 		try {
 			return provider.openSocketChannel();
@@ -35,24 +34,22 @@ public class NioSocketChannelUDT extends NioSocketChannel {
 		}
 	}
 
-	public NioSocketChannelUDT() {
+	public NioUdtSocketChannel() {
+
 		this(newChannelUDT());
-	}
-
-	public NioSocketChannelUDT(final SocketChannel channel) {
-
-		this(null, null, channel);
-
-		assertChannelUDT(channel);
 
 	}
 
-	public NioSocketChannelUDT(final Channel parent, final Integer id,
-			final SocketChannel channel) {
+	public NioUdtSocketChannel(final ChannelSocketUDT channelUDT) {
 
-		super(parent, id, channel);
+		this(null, channelUDT.socketUDT().getSocketId(), channelUDT);
 
-		assertChannelUDT(channel);
+	}
+
+	public NioUdtSocketChannel(final Channel parent, final Integer id,
+			final ChannelSocketUDT channelUDT) {
+
+		super(parent, id, channelUDT);
 
 	}
 

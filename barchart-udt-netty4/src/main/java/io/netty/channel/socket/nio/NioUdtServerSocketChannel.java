@@ -6,8 +6,6 @@ import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelMetadata;
 import io.netty.channel.socket.DefaultServerSocketChannelConfig;
 import io.netty.channel.socket.ServerSocketChannelConfig;
-import io.netty.channel.socket.nio.AbstractNioMessageChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -21,7 +19,7 @@ import com.barchart.udt.nio.SelectorProviderUDT;
 /**
  * emulate jdk server socket channel for netty
  */
-public class NioServerSocketChannelUDT extends AbstractNioMessageChannel
+public class NioUdtServerSocketChannel extends AbstractNioMessageChannel
 		implements io.netty.channel.socket.ServerSocketChannel {
 
 	protected static void assertChannelUDT(final ServerSocketChannel channel)
@@ -32,11 +30,11 @@ public class NioServerSocketChannelUDT extends AbstractNioMessageChannel
 		}
 	}
 
-	protected static ServerSocketChannel newChannelUDT() {
+	protected static ChannelServerSocketUDT newChannelUDT() {
 		return newChannelUDT(SelectorProviderUDT.STREAM);
 	}
 
-	protected static ServerSocketChannel newChannelUDT(
+	protected static ChannelServerSocketUDT newChannelUDT(
 			final SelectorProviderUDT provider) {
 		try {
 			return provider.openServerSocketChannel();
@@ -52,9 +50,21 @@ public class NioServerSocketChannelUDT extends AbstractNioMessageChannel
 
 	protected final ServerSocketChannelConfig config;
 
-	public NioServerSocketChannelUDT() {
-		super(null, null, newChannelUDT(), SelectionKey.OP_ACCEPT);
+	public NioUdtServerSocketChannel() {
+		this(newChannelUDT());
+	}
+
+	protected NioUdtServerSocketChannel(final ChannelServerSocketUDT channelUDT) {
+
+		super( //
+				null, //
+				channelUDT.socketUDT().getSocketId(), //
+				channelUDT, //
+				SelectionKey.OP_ACCEPT //
+		);
+
 		config = new DefaultServerSocketChannelConfig(javaChannel().socket());
+
 	}
 
 	@Override

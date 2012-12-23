@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.channels.spi.SelectorProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,29 +20,20 @@ import com.barchart.udt.SocketUDT;
 /**
  * you must use {@link SelectorProviderUDT#openServerSocketChannel()} to obtain
  * instance of this class; do not use JDK
- * {@link java.nio.channels.ServerSocketChannel#open()}; <br>
- * 
+ * {@link java.nio.channels.ServerSocketChannel#open()};
+ * <p>
  * example:
  * 
- * [code]
- * 
+ * <pre>
  * SelectorProvider provider = SelectorProviderUDT.DATAGRAM;
- * 
- * ServerSocketChannel acceptorChannel = provider.openServerSocketChannel();
- * 
- * ServerSocket acceptorSocket = acceptorChannel.socket();
- * 
- * InetSocketAddress acceptorAddress= new InetSocketAddress("localhost", 12345);
- * 
- * acceptorSocket.bind(acceptorAddress);
- * 
- * assert acceptorSocket.isBound();
- * 
- * SocketChannel connectorChannel = acceptorChannel.accept();
- * 
- * assert connectorChannel.isConnected();
- * 
- * [/code]
+ * ServerSocketChannel acceptChannel = provider.openServerSocketChannel();
+ * ServerSocket acceptSocket = acceptChannel.socket();
+ * InetSocketAddress acceptAddress = new InetSocketAddress(&quot;localhost&quot;, 12345);
+ * acceptorSocket.bind(acceptAddress);
+ * assert acceptSocket.isBound();
+ * SocketChannel connectChannel = acceptChannel.accept();
+ * assert connectChannel.isConnected();
+ * </pre>
  */
 public class ChannelServerSocketUDT extends ServerSocketChannel implements
 		ChannelUDT {
@@ -53,10 +43,12 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 
 	protected final SocketUDT socketUDT;
 
-	protected ChannelServerSocketUDT(final SelectorProvider provider,
+	protected ChannelServerSocketUDT(final SelectorProviderUDT provider,
 			final SocketUDT socketUDT) {
+
 		super(provider);
 		this.socketUDT = socketUDT;
+
 	}
 
 	@Override
