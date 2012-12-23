@@ -21,15 +21,11 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import util.TestAny;
 import util.UnitHelp;
 
-public abstract class TestSendRecvAbstract<T> {
-
-	final static Logger log = LoggerFactory
-			.getLogger(TestSendRecvAbstract.class);
+public abstract class TestSendRecvAbstract<T> extends TestAny {
 
 	final static int TEST_TIMEOUT = 30; // seconds
 
@@ -79,13 +75,13 @@ public abstract class TestSendRecvAbstract<T> {
 					doServerReader();
 				}
 				log.info("server reader finish");
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("", e);
 				fail(e.getMessage());
 			}
 			try {
 				barrier.await();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("", e);
 			}
 		}
@@ -101,13 +97,13 @@ public abstract class TestSendRecvAbstract<T> {
 					doServerWriter();
 				}
 				log.info("server writer finish");
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("", e);
 				fail(e.getMessage());
 			}
 			try {
 				barrier.await();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("", e);
 			}
 		}
@@ -125,13 +121,13 @@ public abstract class TestSendRecvAbstract<T> {
 					doClientWriter();
 				}
 				log.info("client writer finish");
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("", e);
 				fail(e.getMessage());
 			}
 			try {
 				barrier.await();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("", e);
 			}
 		}
@@ -146,20 +142,20 @@ public abstract class TestSendRecvAbstract<T> {
 					doClientReader();
 				}
 				log.info("client reader finish");
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("", e);
 				fail(e.getMessage());
 			}
 			try {
 				barrier.await();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				log.error("", e);
 			}
 		}
 	};
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 
 		log.info("started {}", System.getProperty("os.arch"));
 
@@ -185,7 +181,7 @@ public abstract class TestSendRecvAbstract<T> {
 	}
 
 	@After
-	public void done() throws Exception {
+	public void tearDown() throws Exception {
 
 		client.close();
 
@@ -211,7 +207,7 @@ public abstract class TestSendRecvAbstract<T> {
 
 			barrier.await(TEST_TIMEOUT, TimeUnit.SECONDS);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.error("", e);
 			fail(e.getMessage());
 		}

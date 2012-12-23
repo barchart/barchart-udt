@@ -13,15 +13,22 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import util.TestAny;
 import util.UnitHelp;
 
-public class TestRES {
+public class TestRES extends TestAny {
 
-	static final Logger log = LoggerFactory.getLogger(TestRES.class);
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
 
 	@Test
 	public void testFileConnection() throws Exception {

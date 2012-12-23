@@ -15,18 +15,13 @@ import java.net.InetSocketAddress;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TestOption {
+import util.TestAny;
 
-	Logger log = LoggerFactory.getLogger(TestOption.class);
+public class TestOption extends TestAny {
 
 	@Before
 	public void setUp() throws Exception {
-
-		log.info("started {}", System.getProperty("os.arch"));
-
 	}
 
 	@After
@@ -34,50 +29,45 @@ public class TestOption {
 	}
 
 	@Test
-	public void testOptionBasic() {
+	public void testOptionBasic() throws Exception {
 
-		try {
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
-			final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+		OptionUDT option;
 
-			OptionUDT option;
+		option = OptionUDT.UDT_SNDSYN;
+		boolean booleanValue;
+		booleanValue = true;
+		socket.setOption(option, booleanValue);
+		assertEquals(booleanValue, socket.getOption(option));
+		booleanValue = false;
+		socket.setOption(option, booleanValue);
+		assertEquals(booleanValue, socket.getOption(option));
 
-			option = OptionUDT.UDT_SNDSYN;
-			boolean booleanValue;
-			booleanValue = true;
-			socket.setOption(option, booleanValue);
-			assertEquals(booleanValue, socket.getOption(option));
-			booleanValue = false;
-			socket.setOption(option, booleanValue);
-			assertEquals(booleanValue, socket.getOption(option));
+		log.info("pass: boolean");
 
-			log.info("pass: boolean");
+		option = OptionUDT.UDP_RCVBUF;
+		int intValue;
+		intValue = 123456789;
+		socket.setOption(option, intValue);
+		assertEquals(intValue, socket.getOption(option));
+		intValue = 987654321;
+		socket.setOption(option, intValue);
+		assertEquals(intValue, socket.getOption(option));
 
-			option = OptionUDT.UDP_RCVBUF;
-			int intValue;
-			intValue = 123456789;
-			socket.setOption(option, intValue);
-			assertEquals(intValue, socket.getOption(option));
-			intValue = 987654321;
-			socket.setOption(option, intValue);
-			assertEquals(intValue, socket.getOption(option));
+		log.info("pass: int");
 
-			log.info("pass: int");
+		option = OptionUDT.UDT_MAXBW;
+		long longValue;
+		longValue = 1234567890123456789L;
+		socket.setOption(option, longValue);
+		assertEquals(longValue, socket.getOption(option));
+		longValue = 8765432109876543210L;
+		socket.setOption(option, longValue);
+		assertEquals(longValue, socket.getOption(option));
 
-			option = OptionUDT.UDT_MAXBW;
-			long longValue;
-			longValue = 1234567890123456789L;
-			socket.setOption(option, longValue);
-			assertEquals(longValue, socket.getOption(option));
-			longValue = 8765432109876543210L;
-			socket.setOption(option, longValue);
-			assertEquals(longValue, socket.getOption(option));
+		log.info("pass: long");
 
-			log.info("pass: long");
-
-		} catch (final Exception e) {
-			fail("SocketException; " + e.getMessage());
-		}
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -93,57 +83,46 @@ public class TestOption {
 	}
 
 	@Test
-	public void testOptionLinger() {
+	public void testOptionLinger() throws Exception {
 
-		try {
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
-			final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+		final OptionUDT option = OptionUDT.UDT_LINGER;
 
-			final OptionUDT option = OptionUDT.UDT_LINGER;
+		final LingerUDT linger1 = new LingerUDT(65432);
+		socket.setOption(option, linger1);
+		assertEquals(linger1, socket.getOption(option));
 
-			final LingerUDT linger1 = new LingerUDT(65432);
-			socket.setOption(option, linger1);
-			assertEquals(linger1, socket.getOption(option));
+		final LingerUDT linger2 = new LingerUDT(-12345);
+		socket.setOption(option, linger2);
+		assertEquals(LingerUDT.LINGER_ZERO, socket.getOption(option));
 
-			final LingerUDT linger2 = new LingerUDT(-12345);
-			socket.setOption(option, linger2);
-			assertEquals(LingerUDT.LINGER_ZERO, socket.getOption(option));
-
-			log.info("pass: linger");
-
-		} catch (final Exception e) {
-			fail("SocketException; " + e.getMessage());
-		}
+		log.info("pass: linger");
 
 	}
 
 	@Test
-	public void testOptionsPrint() {
-		try {
+	public void testOptionsPrint() throws Exception {
 
-			final SocketUDT serverSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			final InetSocketAddress serverAddress = localSocketAddress();
-			serverSocket.bind(serverAddress);
-			serverSocket.listen(1);
-			assertTrue(serverSocket.isBound());
+		final SocketUDT serverSocket = new SocketUDT(TypeUDT.DATAGRAM);
+		final InetSocketAddress serverAddress = localSocketAddress();
+		serverSocket.bind(serverAddress);
+		serverSocket.listen(1);
+		assertTrue(serverSocket.isBound());
 
-			final SocketUDT clientSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			final InetSocketAddress clientAddress = localSocketAddress();
-			clientSocket.bind(clientAddress);
-			assertTrue(clientSocket.isBound());
+		final SocketUDT clientSocket = new SocketUDT(TypeUDT.DATAGRAM);
+		final InetSocketAddress clientAddress = localSocketAddress();
+		clientSocket.bind(clientAddress);
+		assertTrue(clientSocket.isBound());
 
-			clientSocket.connect(serverAddress);
-			assertTrue(clientSocket.isConnected());
+		clientSocket.connect(serverAddress);
+		assertTrue(clientSocket.isConnected());
 
-			final SocketUDT acceptSocket = serverSocket.accept();
-			assertTrue(acceptSocket.isConnected());
+		final SocketUDT acceptSocket = serverSocket.accept();
+		assertTrue(acceptSocket.isConnected());
 
-			log.info("client options:{}", clientSocket.toStringOptions());
-			log.info("accept options:{}", acceptSocket.toStringOptions());
-
-		} catch (final Exception e) {
-			fail(e.getMessage());
-		}
+		log.info("client options:{}", clientSocket.toStringOptions());
+		log.info("accept options:{}", acceptSocket.toStringOptions());
 
 	}
 

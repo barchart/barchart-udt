@@ -11,12 +11,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class TestSendRecv1 extends TestSendRecvAbstract<byte[]> {
-
-	final static Logger log = LoggerFactory.getLogger(TestSendRecv1.class);
 
 	final static int POSITION = 1234;
 	final static int LIMIT = POSITION + SIZE;
@@ -26,16 +21,16 @@ public class TestSendRecv1 extends TestSendRecvAbstract<byte[]> {
 	protected void doClientReader() throws Exception {
 
 		// blocks here
-		byte[] arraySent = clientQueue.take();
+		final byte[] arraySent = clientQueue.take();
 
-		byte[] arrayReceived = new byte[CAPACITY];
+		final byte[] arrayReceived = new byte[CAPACITY];
 
 		// blocks here
-		int size = client.receive(arrayReceived, POSITION, LIMIT);
+		final int size = client.receive(arrayReceived, POSITION, LIMIT);
 		assertEquals(size, SIZE);
 
-		byte[] dataSent = new byte[SIZE];
-		byte[] dataReceived = new byte[SIZE];
+		final byte[] dataSent = new byte[SIZE];
+		final byte[] dataReceived = new byte[SIZE];
 
 		System.arraycopy(//
 				arraySent, POSITION, dataSent, 0, SIZE);
@@ -48,12 +43,12 @@ public class TestSendRecv1 extends TestSendRecvAbstract<byte[]> {
 	@Override
 	protected void doClientWriter() throws Exception {
 
-		byte[] array = new byte[CAPACITY];
+		final byte[] array = new byte[CAPACITY];
 
 		generator.nextBytes(array);
 
 		// blocks here
-		int size = client.send(array, POSITION, LIMIT);
+		final int size = client.send(array, POSITION, LIMIT);
 		assertEquals(size, SIZE);
 
 		clientQueue.put(array);
@@ -63,10 +58,10 @@ public class TestSendRecv1 extends TestSendRecvAbstract<byte[]> {
 	@Override
 	protected void doServerReader() throws Exception {
 
-		byte[] array = new byte[CAPACITY];
+		final byte[] array = new byte[CAPACITY];
 
 		// blocks here
-		int size = connector.receive(array, POSITION, LIMIT);
+		final int size = connector.receive(array, POSITION, LIMIT);
 		assertEquals(size, SIZE);
 
 		serverQueue.put(array);
@@ -77,10 +72,10 @@ public class TestSendRecv1 extends TestSendRecvAbstract<byte[]> {
 	protected void doServerWriter() throws Exception {
 
 		// blocks here
-		byte[] array = serverQueue.take();
+		final byte[] array = serverQueue.take();
 
 		// blocks here
-		int size = connector.send(array, POSITION, LIMIT);
+		final int size = connector.send(array, POSITION, LIMIT);
 		assertEquals(size, SIZE);
 
 	}

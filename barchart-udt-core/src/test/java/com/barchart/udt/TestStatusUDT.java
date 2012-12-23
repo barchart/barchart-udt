@@ -11,22 +11,21 @@ import static org.junit.Assert.*;
 
 import java.net.InetSocketAddress;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import util.TestAny;
 import util.UnitHelp;
 
-public class TestStatusUDT {
-
-	static final Logger log = LoggerFactory.getLogger(TestStatusUDT.class);
+public class TestStatusUDT extends TestAny {
 
 	@Before
 	public void setUp() throws Exception {
+	}
 
-		log.info("started {}", System.getProperty("os.arch"));
-
+	@After
+	public void tearDown() throws Exception {
 	}
 
 	@Test

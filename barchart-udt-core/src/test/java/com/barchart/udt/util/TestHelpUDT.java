@@ -12,13 +12,10 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TestHelpUDT {
+import util.TestAny;
 
-	private static final Logger log = LoggerFactory
-			.getLogger(TestHelpUDT.class);
+public class TestHelpUDT extends TestAny {
 
 	@Before
 	public void setUp() throws Exception {

@@ -8,7 +8,6 @@
 package util;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.IntBuffer;
@@ -24,6 +23,9 @@ import org.slf4j.LoggerFactory;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.StatusUDT;
 
+/**
+ * unit test helper
+ */
 public class UnitHelp {
 
 	private static Logger log = LoggerFactory.getLogger(UnitHelp.class);
@@ -49,8 +51,6 @@ public class UnitHelp {
 
 		final InetSocketAddress address = //
 		new InetSocketAddress("localhost", port);
-
-		log.info("\n\t### allocated address={} ###", address);
 
 		return address;
 
@@ -147,7 +147,7 @@ public class UnitHelp {
 			if (socket != null) {
 				try {
 					socket.close();
-				} catch (final IOException e) {
+				} catch (final Exception e) {
 				}
 			}
 

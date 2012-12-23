@@ -18,10 +18,11 @@ import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import util.TestAny;
 import util.UnitHelp;
 
 import com.barchart.udt.SocketUDT;
@@ -31,7 +32,15 @@ import com.barchart.udt.TypeUDT;
 /**
  * Test for UDT socket input streams and output streams.
  */
-public class TestStreamUDT {
+public class TestStreamUDT extends TestAny {
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
 
 	private interface ReadStrategy {
 
@@ -42,9 +51,6 @@ public class TestStreamUDT {
 	private static final int DATA_ARRAY_SIZE = 23456;
 
 	private static final int DEFAULT_BUFFER_SIZE = 6789;
-
-	private static final Logger log = LoggerFactory
-			.getLogger(TestStreamUDT.class);
 
 	private static final byte[] TEST_BYTES = testBytes();
 
@@ -90,8 +96,6 @@ public class TestStreamUDT {
 	private void genericInputOutputTest(final ReadStrategy readStrategy)
 			throws Exception {
 
-		Thread.currentThread().setName("### client");
-
 		log.info("STARTED");
 
 		final InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
@@ -113,11 +117,11 @@ public class TestStreamUDT {
 		final InputStream socketIn = new NetInputStreamUDT(clientSocket);
 		final OutputStream socketOut = new NetOutputStreamUDT(clientSocket);
 
-		//Thread.sleep(1000);
+		// Thread.sleep(1000);
 
 		//
 
-		log.info("\n\t ### COPY START");
+		log.info("### COPY START");
 
 		final InputStream dataIn = new ByteArrayInputStream(TEST_BYTES.clone());
 
@@ -125,7 +129,7 @@ public class TestStreamUDT {
 
 		// dataIn.close();
 
-		log.info("\n\t ### COPY OUT DONE");
+		log.info("### COPY OUT DONE");
 
 		final ByteArrayOutputStream dataOut = new ByteArrayOutputStream();
 
@@ -133,7 +137,7 @@ public class TestStreamUDT {
 
 		// dataOut.close();
 
-		log.info("\n\t ### COPY IN DONE");
+		log.info("### COPY IN DONE");
 
 		final byte[] bytesCopy = dataOut.toByteArray();
 
@@ -192,7 +196,7 @@ public class TestStreamUDT {
 
 		}
 
-		log.info("\n\t ### Wrote " + countTotal + " bytes.");
+		log.info("### Wrote " + countTotal + " bytes.");
 
 		return countTotal;
 
@@ -335,11 +339,11 @@ public class TestStreamUDT {
 			public void run() {
 				try {
 
-					log.info("\n\t ### ECHO: START");
+					log.info("### ECHO: START");
 
 					copy(is, os, TEST_BYTES.length, readStrategy);
 
-					log.info("\n\t ### ECHO: FINISH");
+					log.info("### ECHO: FINISH");
 
 					// os.close();
 

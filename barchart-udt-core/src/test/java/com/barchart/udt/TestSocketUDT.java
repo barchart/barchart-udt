@@ -16,22 +16,17 @@ import java.nio.IntBuffer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TestSocketUDT {
+import util.TestAny;
 
-	static final Logger log = LoggerFactory.getLogger(TestSocketUDT.class);
+public class TestSocketUDT extends TestAny {
 
 	@Before
-	public void init() throws Exception {
-
-		log.info("started {}", System.getProperty("os.arch"));
-
+	public void setUp() throws Exception {
 	}
 
 	@After
-	public void done() throws Exception {
+	public void tearDown() throws Exception {
 	}
 
 	@Test

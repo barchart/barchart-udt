@@ -11,12 +11,15 @@ import static org.junit.Assert.*;
 
 import java.nio.channels.SelectionKey;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
+import util.TestAny;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
@@ -24,7 +27,7 @@ import com.barchart.udt.EpollUDT;
 
 /** FIXME */
 @Ignore
-public class TestSelectionKeyUDT {
+public class TestSelectionKeyUDT extends TestAny {
 
 	@BeforeClass
 	public static void startup() throws Exception {
@@ -46,15 +49,22 @@ public class TestSelectionKeyUDT {
 
 	}
 
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
 	@Test
 	public void testAccept() throws Exception {
 
 		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
 
-		final SelectorUDT selector = (SelectorUDT) provider.openSelector();
+		final SelectorUDT selector = provider.openSelector();
 
-		final ChannelUDT channel = (ChannelUDT) provider
-				.openServerSocketChannel();
+		final ChannelUDT channel = provider.openServerSocketChannel();
 
 		final SelectionKeyUDT keyUDT = //
 		new SelectionKeyUDT(selector, channel, null);
@@ -78,9 +88,9 @@ public class TestSelectionKeyUDT {
 
 		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
 
-		final SelectorUDT selector = (SelectorUDT) provider.openSelector();
+		final SelectorUDT selector = provider.openSelector();
 
-		final ChannelUDT channel = (ChannelUDT) provider.openSocketChannel();
+		final ChannelUDT channel = provider.openSocketChannel();
 
 		final SelectionKeyUDT keyUDT = //
 		new SelectionKeyUDT(selector, channel, null);
@@ -108,9 +118,9 @@ public class TestSelectionKeyUDT {
 
 		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
 
-		final SelectorUDT selector = (SelectorUDT) provider.openSelector();
+		final SelectorUDT selector = provider.openSelector();
 
-		final ChannelUDT channel = (ChannelUDT) provider.openSocketChannel();
+		final ChannelUDT channel = provider.openSocketChannel();
 
 		final SelectionKeyUDT keyUDT = //
 		new SelectionKeyUDT(selector, channel, null);
@@ -140,9 +150,9 @@ public class TestSelectionKeyUDT {
 
 		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
 
-		final SelectorUDT selector = (SelectorUDT) provider.openSelector();
+		final SelectorUDT selector = provider.openSelector();
 
-		final ChannelUDT channel = (ChannelUDT) provider.openSocketChannel();
+		final ChannelUDT channel = provider.openSocketChannel();
 
 		final SelectionKeyUDT keyUDT = //
 		new SelectionKeyUDT(selector, channel, null);

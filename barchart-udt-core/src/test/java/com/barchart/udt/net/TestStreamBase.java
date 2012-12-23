@@ -14,33 +14,39 @@ import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.Random;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import util.UnitHelp;
 import util.StopWatch;
+import util.TestAny;
+import util.UnitHelp;
 
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
 
-public class TestStreamBase {
+public class TestStreamBase extends TestAny {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(TestStreamBase.class);
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
 
 	final ServiceFactory factory1 = new ServiceFactory() {
 		@Override
-		public StreamService newService(SocketUDT connectorSocket)
+		public StreamService newService(final SocketUDT connectorSocket)
 				throws Exception {
 			return new StreamService(connectorSocket) {
 				@Override
 				public void run() {
 					while (true) {
 						try {
-							int value = streamIn.read();
+							final int value = streamIn.read();
 							streamOut.write(value);
-						} catch (IOException e) {
+						} catch (final IOException e) {
 							log.error("server; {}", e.getMessage());
 							break;
 						}
@@ -53,24 +59,25 @@ public class TestStreamBase {
 	@Test
 	public void testStream11() throws Exception {
 
-		InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
+		final InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
 
-		StreamServer server = new StreamServer(TypeUDT.DATAGRAM, serverAddress,
-				factory1);
+		final StreamServer server = new StreamServer(TypeUDT.DATAGRAM,
+				serverAddress, factory1);
 
-		StreamClient client = new StreamClient(TypeUDT.DATAGRAM, serverAddress) {
+		final StreamClient client = new StreamClient(TypeUDT.DATAGRAM,
+				serverAddress) {
 			@Override
 			public void run() {
 				try {
 					final int loop = 100;
-					StopWatch timer = new StopWatch();
+					final StopWatch timer = new StopWatch();
 					timer.start();
 					for (int k = 0; k < loop; k++) {
 						for (int index = Byte.MIN_VALUE; index <= Byte.MAX_VALUE; index++) {
 							streamOut.write(index);
 						}
 						for (int index = Byte.MIN_VALUE; index <= Byte.MAX_VALUE; index++) {
-							int value = streamIn.read();
+							final int value = streamIn.read();
 							assertEquals(value, index);
 						}
 					}
@@ -79,7 +86,7 @@ public class TestStreamBase {
 					synchronized (this) {
 						this.notifyAll();
 					}
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					log.error("client; {}", e.getMessage());
 				}
 			}
@@ -101,7 +108,7 @@ public class TestStreamBase {
 
 	final ServiceFactory factory2 = new ServiceFactory() {
 		@Override
-		public StreamService newService(SocketUDT connectorSocket)
+		public StreamService newService(final SocketUDT connectorSocket)
 				throws Exception {
 			return new StreamService(connectorSocket) {
 				@Override
@@ -112,7 +119,7 @@ public class TestStreamBase {
 						try {
 							final int count = streamIn.read(array);
 							streamOut.write(array, 0, count);
-						} catch (IOException e) {
+						} catch (final IOException e) {
 							log.error("server; {}", e.getMessage());
 							break;
 						}
@@ -125,12 +132,13 @@ public class TestStreamBase {
 	@Test
 	public void testStream22() throws Exception {
 
-		InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
+		final InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
 
-		StreamServer server = new StreamServer(TypeUDT.DATAGRAM, serverAddress,
-				factory2);
+		final StreamServer server = new StreamServer(TypeUDT.DATAGRAM,
+				serverAddress, factory2);
 
-		StreamClient client = new StreamClient(TypeUDT.DATAGRAM, serverAddress) {
+		final StreamClient client = new StreamClient(TypeUDT.DATAGRAM,
+				serverAddress) {
 			@Override
 			public void run() {
 				final Random random = new Random();
@@ -153,7 +161,7 @@ public class TestStreamBase {
 					synchronized (this) {
 						this.notifyAll();
 					}
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					log.error("client; {}", e.getMessage());
 				}
 			}
@@ -176,12 +184,13 @@ public class TestStreamBase {
 	// @Test
 	public void testStream12() throws Exception {
 
-		InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
+		final InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
 
-		StreamServer server = new StreamServer(TypeUDT.STREAM, serverAddress,
-				factory1);
+		final StreamServer server = new StreamServer(TypeUDT.STREAM,
+				serverAddress, factory1);
 
-		StreamClient client = new StreamClient(TypeUDT.STREAM, serverAddress) {
+		final StreamClient client = new StreamClient(TypeUDT.STREAM,
+				serverAddress) {
 			@Override
 			public void run() {
 				final Random random = new Random();
@@ -204,7 +213,7 @@ public class TestStreamBase {
 					synchronized (this) {
 						this.notifyAll();
 					}
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					log.error("client; {}", e.getMessage());
 				}
 			}

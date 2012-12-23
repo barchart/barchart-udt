@@ -7,13 +7,21 @@
  */
 package com.barchart.udt.lib;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TestAOL {
+import util.TestAny;
 
-	private static Logger log = LoggerFactory.getLogger(TestAOL.class);
+public class TestAOL extends TestAny {
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
 
 	@Test
 	public void test() {

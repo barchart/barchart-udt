@@ -97,6 +97,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
+					<include>**/*.xml</include>
 					<include>**/*.txt</include>
 					<include>**/*.properties</include>
 				</includes>
@@ -119,6 +120,7 @@
 				<directory>src/test/resources</directory>
 				<filtering>true</filtering>
 				<includes>
+					<include>**/*.xml</include>
 					<include>**/*.txt</include>
 					<include>**/*.properties</include>
 				</includes>

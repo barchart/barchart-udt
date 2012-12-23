@@ -30,19 +30,25 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import util.TestAny;
 
 /**
  * basic single thread selector test
  */
-public class TestSelectorUDT {
+public class TestSelectorUDT extends TestAny {
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
 
 	protected static final int SIZE = 1460;
 
 	protected static final int COUNT = 1000;
-
-	private static Logger log = LoggerFactory.getLogger(TestSelectorUDT.class);
 
 	final SelectorProvider provider = SelectorProviderUDT.DATAGRAM;
 

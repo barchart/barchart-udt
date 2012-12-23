@@ -11,23 +11,18 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class TestSendRecv0 extends TestSendRecvAbstract<byte[]> {
-
-	final static Logger log = LoggerFactory.getLogger(TestSendRecv0.class);
 
 	@Override
 	protected void doClientReader() throws Exception {
 
 		// blocks here
-		byte[] arraySent = clientQueue.take();
+		final byte[] arraySent = clientQueue.take();
 
-		byte[] arrayReceived = new byte[SIZE];
+		final byte[] arrayReceived = new byte[SIZE];
 
 		// blocks here
-		int size = client.receive(arrayReceived);
+		final int size = client.receive(arrayReceived);
 		assertEquals(size, SIZE);
 
 		assertTrue(Arrays.equals(arraySent, arrayReceived));
@@ -37,12 +32,12 @@ public class TestSendRecv0 extends TestSendRecvAbstract<byte[]> {
 	@Override
 	protected void doClientWriter() throws Exception {
 
-		byte[] array = new byte[SIZE];
+		final byte[] array = new byte[SIZE];
 
 		generator.nextBytes(array);
 
 		// blocks here
-		int size = client.send(array);
+		final int size = client.send(array);
 		assertEquals(size, SIZE);
 
 		clientQueue.put(array);
@@ -52,10 +47,10 @@ public class TestSendRecv0 extends TestSendRecvAbstract<byte[]> {
 	@Override
 	protected void doServerReader() throws Exception {
 
-		byte[] array = new byte[SIZE];
+		final byte[] array = new byte[SIZE];
 
 		// blocks here
-		int size = connector.receive(array);
+		final int size = connector.receive(array);
 		assertEquals(size, SIZE);
 
 		serverQueue.put(array);
@@ -66,10 +61,10 @@ public class TestSendRecv0 extends TestSendRecvAbstract<byte[]> {
 	protected void doServerWriter() throws Exception {
 
 		// blocks here
-		byte[] array = serverQueue.take();
+		final byte[] array = serverQueue.take();
 
 		// blocks here
-		int size = connector.send(array);
+		final int size = connector.send(array);
 		assertEquals(size, SIZE);
 
 	}

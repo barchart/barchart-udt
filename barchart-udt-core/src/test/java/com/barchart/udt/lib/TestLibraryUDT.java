@@ -10,13 +10,16 @@ package com.barchart.udt.lib;
 import static com.barchart.udt.lib.LibraryUDT.*;
 import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+import util.TestAny;
 import util.UnitHelp;
 
 import com.barchart.udt.ResourceUDT;
 
-public class TestLibraryUDT {
+public class TestLibraryUDT extends TestAny {
 
 	static {
 
@@ -24,6 +27,14 @@ public class TestLibraryUDT {
 		UnitHelp.logClassPath();
 		UnitHelp.logLibraryPath();
 
+	}
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
 	}
 
 	@Test

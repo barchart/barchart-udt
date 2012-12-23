@@ -12,21 +12,17 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TestRangeCheck {
+import util.TestAny;
 
-	Logger log = LoggerFactory.getLogger(TestRangeCheck.class);
+public class TestRangeCheck extends TestAny {
 
-	volatile SocketUDT socket;
+	private final byte[] array = new byte[1460];
 
-	final byte[] array = new byte[1460];
+	private volatile SocketUDT socket;
 
 	@Before
 	public void setUp() throws Exception {
-
-		log.info("started {}", System.getProperty("os.arch"));
 
 		socket = new SocketUDT(TypeUDT.DATAGRAM);
 
@@ -34,17 +30,20 @@ public class TestRangeCheck {
 
 	@After
 	public void tearDown() throws Exception {
+
+		socket.close();
+
 	}
 
 	@Test
 	public void testRangeLimitOverCapacity() {
 		try {
-			int position = 0;
-			int limit = 2000;
+			final int position = 0;
+			final int limit = 2000;
 			socket.send(array, position, limit);
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			if (e instanceof ExceptionUDT) {
-				ExceptionUDT eUDT = (ExceptionUDT) e;
+				final ExceptionUDT eUDT = (ExceptionUDT) e;
 				switch (eUDT.getError()) {
 				case WRAPPER_MESSAGE:
 					log.info("message={}", eUDT.getMessage());
@@ -60,12 +59,12 @@ public class TestRangeCheck {
 	@Test
 	public void testRangeLimitUnderZero() {
 		try {
-			int position = 110;
-			int limit = -200;
+			final int position = 110;
+			final int limit = -200;
 			socket.send(array, position, limit);
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			if (e instanceof ExceptionUDT) {
-				ExceptionUDT eUDT = (ExceptionUDT) e;
+				final ExceptionUDT eUDT = (ExceptionUDT) e;
 				switch (eUDT.getError()) {
 				case WRAPPER_MESSAGE:
 					log.info("message={}", eUDT.getMessage());
@@ -81,12 +80,12 @@ public class TestRangeCheck {
 	@Test
 	public void testRangePositionUnderZero() {
 		try {
-			int position = -10;
-			int limit = 1000;
+			final int position = -10;
+			final int limit = 1000;
 			socket.send(array, position, limit);
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			if (e instanceof ExceptionUDT) {
-				ExceptionUDT eUDT = (ExceptionUDT) e;
+				final ExceptionUDT eUDT = (ExceptionUDT) e;
 				switch (eUDT.getError()) {
 				case WRAPPER_MESSAGE:
 					log.info("message={}", eUDT.getMessage());
@@ -102,12 +101,12 @@ public class TestRangeCheck {
 	@Test
 	public void testRangePositionOverCapacity() {
 		try {
-			int position = 3010;
-			int limit = 1000;
+			final int position = 3010;
+			final int limit = 1000;
 			socket.send(array, position, limit);
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			if (e instanceof ExceptionUDT) {
-				ExceptionUDT eUDT = (ExceptionUDT) e;
+				final ExceptionUDT eUDT = (ExceptionUDT) e;
 				switch (eUDT.getError()) {
 				case WRAPPER_MESSAGE:
 					log.info("message={}", eUDT.getMessage());
@@ -123,12 +122,12 @@ public class TestRangeCheck {
 	@Test
 	public void testRangePositionOverLimit() {
 		try {
-			int position = 1400;
-			int limit = 1000;
+			final int position = 1400;
+			final int limit = 1000;
 			socket.send(array, position, limit);
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			if (e instanceof ExceptionUDT) {
-				ExceptionUDT eUDT = (ExceptionUDT) e;
+				final ExceptionUDT eUDT = (ExceptionUDT) e;
 				switch (eUDT.getError()) {
 				case WRAPPER_MESSAGE:
 					log.info("message={}", eUDT.getMessage());

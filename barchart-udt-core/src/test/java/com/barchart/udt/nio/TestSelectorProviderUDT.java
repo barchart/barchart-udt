@@ -26,24 +26,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import util.TestAny;
 import util.UnitHelp;
 
 import com.barchart.udt.StatusUDT;
 
-public class TestSelectorProviderUDT {
-
-	public static final Logger log = LoggerFactory
-			.getLogger(TestSelectorProviderUDT.class);
+public class TestSelectorProviderUDT extends TestAny {
 
 	@Before
-	public void init() throws Exception {
+	public void setUp() throws Exception {
 	}
 
 	@After
-	public void done() throws Exception {
+	public void tearDown() throws Exception {
 	}
 
 	static final int SIZE = 20 * 1024;

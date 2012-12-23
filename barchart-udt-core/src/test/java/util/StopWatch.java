@@ -9,9 +9,12 @@ package util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * speed test timer
+ */
 public class StopWatch {
 
-	private AtomicBoolean isRunning = new AtomicBoolean(false);
+	private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
 	private long start;
 	private long stop;
@@ -26,7 +29,7 @@ public class StopWatch {
 		return isRunning.get();
 	}
 
-	public boolean isExceeded(long duration) {
+	public boolean isExceeded(final long duration) {
 		return System.nanoTime() - start > duration;
 	}
 
@@ -54,14 +57,14 @@ public class StopWatch {
 		final double MILLIS = 1000000;
 		final double MICROS = 1000;
 
-		double nanoDiff = stop - start;
+		final double nanoDiff = stop - start;
 
-		int second = (int) (nanoDiff / SECOND);
+		final int second = (int) (nanoDiff / SECOND);
 
-		int millis = (int) ((nanoDiff - second * SECOND) / MILLIS);
+		final int millis = (int) ((nanoDiff - second * SECOND) / MILLIS);
 
-		int micros = (int) ((nanoDiff - second * SECOND - millis * MILLIS) / MICROS);
-		int nanos = (int) (nanoDiff - second * SECOND - millis * MILLIS - micros
+		final int micros = (int) ((nanoDiff - second * SECOND - millis * MILLIS) / MICROS);
+		final int nanos = (int) (nanoDiff - second * SECOND - millis * MILLIS - micros
 				* MICROS);
 		return String.format("time: %d s %d ms %d us %d ns ", second, millis,
 				micros, nanos);

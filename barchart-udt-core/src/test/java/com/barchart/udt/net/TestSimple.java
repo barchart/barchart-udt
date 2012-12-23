@@ -19,17 +19,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import util.TestAny;
 import util.UnitHelp;
 
 /**
  * Sets up a simple UDT client and server to test sending messages between them.
  */
-public class SimpleUdtTest {
-
-	private final Logger log = LoggerFactory.getLogger(getClass());
+public class TestSimple extends TestAny {
 
 	@Test
 	public void testUdtClientServer() throws Exception {

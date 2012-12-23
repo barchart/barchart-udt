@@ -7,7 +7,6 @@
  */
 package com.barchart.udt;
 
-import static org.junit.Assert.*;
 import static util.UnitHelp.*;
 
 import java.net.InetSocketAddress;
@@ -15,19 +14,13 @@ import java.net.InetSocketAddress;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TestMonitorUDT {
+import util.TestAny;
 
-	private static final Logger log = LoggerFactory
-			.getLogger(TestMonitorUDT.class);
+public class TestMonitorUDT extends TestAny {
 
 	@Before
 	public void setUp() throws Exception {
-
-		log.info("started {}", System.getProperty("os.arch"));
-
 	}
 
 	@After
@@ -35,29 +28,23 @@ public class TestMonitorUDT {
 	}
 
 	@Test
-	public void testMonitor() {
+	public void testMonitor() throws Exception {
 
-		try {
+		final SocketUDT serverSocket = new SocketUDT(TypeUDT.DATAGRAM);
+		final InetSocketAddress serverAddress = localSocketAddress();
+		serverSocket.bind(serverAddress);
+		serverSocket.listen(1);
 
-			SocketUDT serverSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			InetSocketAddress serverAddress = localSocketAddress();
-			serverSocket.bind(serverAddress);
-			serverSocket.listen(1);
+		final SocketUDT clientSocket = new SocketUDT(TypeUDT.DATAGRAM);
+		final InetSocketAddress clientAddress = localSocketAddress();
+		clientSocket.bind(clientAddress);
 
-			SocketUDT clientSocket = new SocketUDT(TypeUDT.DATAGRAM);
-			InetSocketAddress clientAddress = localSocketAddress();
-			clientSocket.bind(clientAddress);
+		clientSocket.connect(serverAddress);
 
-			clientSocket.connect(serverAddress);
+		final SocketUDT acceptSocket = serverSocket.accept();
 
-			SocketUDT acceptSocket = serverSocket.accept();
-
-			log.info("client montitor={}", clientSocket.toStringMonitor());
-			log.info("accept montitor={}", acceptSocket.toStringMonitor());
-
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		log.info("client montitor={}", clientSocket.toStringMonitor());
+		log.info("accept montitor={}", acceptSocket.toStringMonitor());
 
 	}
 

@@ -19,16 +19,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/*
+import util.TestAny;
+
+/**
  * verify mingw c++ exceptions are thread safe (will crash jvm if not using
  * -mthreads option for gcc/ld)
  */
-public class TestException {
-
-	static final Logger log = LoggerFactory.getLogger(TestException.class);
+public class TestException extends TestAny {
 
 	final static int TEST_TIMEOUT = 10; // seconds
 
@@ -44,8 +42,6 @@ public class TestException {
 
 	@Before
 	public void setUp() throws Exception {
-
-		log.info("started {}", System.getProperty("os.arch"));
 
 		exceptionCount = new AtomicInteger(0);
 
@@ -77,7 +73,7 @@ public class TestException {
 
 			try {
 				socket = new SocketUDT(TypeUDT.DATAGRAM);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				fail("can not make socket; " + e.getMessage());
 			}
 
@@ -95,7 +91,7 @@ public class TestException {
 					//
 					fail("exception not thrown");
 					//
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					// log.info("e={}", e.getMessage());
 					exceptionCount.getAndIncrement();
 				}
@@ -103,7 +99,7 @@ public class TestException {
 
 			try {
 				barrier.await();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				fail(e.getMessage());
 			}
 
@@ -121,7 +117,7 @@ public class TestException {
 
 		try {
 			barrier.await(TEST_TIMEOUT, TimeUnit.SECONDS);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail(e.getMessage());
 		}
 

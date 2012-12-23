@@ -16,24 +16,18 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import util.TestAny;
 import util.UnitHelp;
 
-public class TestEpollSelect {
-
-	static final Logger log = LoggerFactory.getLogger(TestEpollSelect.class);
+public class TestEpollSelect extends TestAny {
 
 	@Before
-	public void init() throws Exception {
-
-		log.info("started {}", System.getProperty("os.arch"));
-
+	public void setUp() throws Exception {
 	}
 
 	@After
-	public void done() throws Exception {
+	public void tearDown() throws Exception {
 	}
 
 	@Test

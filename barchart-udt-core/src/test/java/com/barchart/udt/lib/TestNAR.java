@@ -10,15 +10,23 @@ package com.barchart.udt.lib;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import util.TestAny;
 
 import com.barchart.udt.lib.NAR.SupportedLinker;
 
-public class TestNAR {
+public class TestNAR extends TestAny {
 
-	private final static Logger log = LoggerFactory.getLogger(TestNAR.class);
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
 
 	@Test
 	public void test() throws Exception {
