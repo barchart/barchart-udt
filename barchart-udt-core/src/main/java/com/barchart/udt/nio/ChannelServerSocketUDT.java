@@ -7,8 +7,6 @@
  */
 package com.barchart.udt.nio;
 
-import static java.nio.channels.SelectionKey.*;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.channels.ServerSocketChannel;
@@ -54,13 +52,13 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 			.getLogger(ChannelServerSocketUDT.class);
 
 	/** note: 1<->1 mapping of channels and keys */
-	protected volatile SelectionKeyUDT channelKey;
+	// protected volatile SelectionKeyUDT channelKey;
 
-	@Override
-	public void bindKey(final SelectionKeyUDT key) {
-		assert channelKey == null;
-		channelKey = key;
-	}
+	// @Override
+	// public void bindKey(final SelectionKeyUDT key) {
+	// assert channelKey == null;
+	// channelKey = key;
+	// }
 
 	protected final SocketUDT socketUDT;
 
@@ -95,13 +93,8 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 
 			} else {
 
-				/** FIXME review select contract */
-				final SelectionKeyUDT key = channelKey;
-				if (key != null) {
-					key.readyOps &= ~OP_ACCEPT;
-				}
-
-				return new ChannelSocketUDT(provider(), clientUDT);
+				return new ChannelSocketUDT( //
+						provider(), clientUDT, clientUDT.isConnected());
 
 			}
 		} finally {
@@ -149,13 +142,8 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	}
 
 	@Override
-	public boolean isConnectionPending() {
-		return false;
-	}
-
-	@Override
-	public boolean finishConnect() {
-		return false;
+	public boolean isConnectFinished() {
+		return true; // not applicable
 	}
 
 }

@@ -12,16 +12,17 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import util.UnitHelp;
+
 import com.barchart.udt.ResourceUDT;
-import com.barchart.udt.util.TestHelp;
 
 public class TestLibraryUDT {
 
 	static {
 
-		TestHelp.logOsArch();
-		TestHelp.logClassPath();
-		TestHelp.logLibraryPath();
+		UnitHelp.logOsArch();
+		UnitHelp.logClassPath();
+		UnitHelp.logLibraryPath();
 
 	}
 
@@ -31,7 +32,7 @@ public class TestLibraryUDT {
 		ResourceUDT.setLibraryLoaderClassName( //
 				LibraryLoaderDefaultUDT.class.getName());
 
-		ResourceUDT.setLibraryExtractLocation(TestHelp
+		ResourceUDT.setLibraryExtractLocation(UnitHelp
 				.randomSuffix("./target/testLoadWithProps"));
 
 		LibraryUDT.load();
@@ -43,7 +44,7 @@ public class TestLibraryUDT {
 	@Test
 	public void testLoadWithTarget() throws Exception {
 
-		final String targetFolder = TestHelp
+		final String targetFolder = UnitHelp
 				.randomSuffix("./target/testLoadWithTarget");
 
 		LibraryUDT.load(targetFolder);

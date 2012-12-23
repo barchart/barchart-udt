@@ -16,7 +16,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.TestHelp;
+import util.UnitHelp;
+
 
 public class TestStatusUDT {
 
@@ -32,17 +33,17 @@ public class TestStatusUDT {
 	@Test
 	public void testFromCode() {
 
-		assertEquals(StatusUDT.UNKNOWN, StatusUDT.fromCode(-1));
+		assertEquals(StatusUDT.UNKNOWN, StatusUDT.from(-1));
 
-		assertEquals(StatusUDT.INIT, StatusUDT.fromCode(1));
-		assertEquals(StatusUDT.OPENED, StatusUDT.fromCode(2));
-		assertEquals(StatusUDT.LISTENING, StatusUDT.fromCode(3));
-		assertEquals(StatusUDT.CONNECTING, StatusUDT.fromCode(4));
-		assertEquals(StatusUDT.CONNECTED, StatusUDT.fromCode(5));
-		assertEquals(StatusUDT.BROKEN, StatusUDT.fromCode(6));
-		assertEquals(StatusUDT.CLOSING, StatusUDT.fromCode(7));
-		assertEquals(StatusUDT.CLOSED, StatusUDT.fromCode(8));
-		assertEquals(StatusUDT.NONEXIST, StatusUDT.fromCode(9));
+		assertEquals(StatusUDT.INIT, StatusUDT.from(1));
+		assertEquals(StatusUDT.OPENED, StatusUDT.from(2));
+		assertEquals(StatusUDT.LISTENING, StatusUDT.from(3));
+		assertEquals(StatusUDT.CONNECTING, StatusUDT.from(4));
+		assertEquals(StatusUDT.CONNECTED, StatusUDT.from(5));
+		assertEquals(StatusUDT.BROKEN, StatusUDT.from(6));
+		assertEquals(StatusUDT.CLOSING, StatusUDT.from(7));
+		assertEquals(StatusUDT.CLOSED, StatusUDT.from(8));
+		assertEquals(StatusUDT.NONEXIST, StatusUDT.from(9));
 
 	}
 
@@ -52,7 +53,7 @@ public class TestStatusUDT {
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
-		final InetSocketAddress localAddress1 = TestHelp
+		final InetSocketAddress localAddress1 = UnitHelp
 				.localSocketAddress();
 
 		socket.bind(localAddress1);
@@ -70,7 +71,7 @@ public class TestStatusUDT {
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
-		final InetSocketAddress localAddress1 = TestHelp
+		final InetSocketAddress localAddress1 = UnitHelp
 				.localSocketAddress();
 
 		socket.bind(localAddress1);
@@ -87,10 +88,10 @@ public class TestStatusUDT {
 	@Test
 	public void testSocketStatus3() throws Exception {
 
-		final InetSocketAddress clientAddress = TestHelp
+		final InetSocketAddress clientAddress = UnitHelp
 				.localSocketAddress();
 
-		final InetSocketAddress serverAddress = TestHelp
+		final InetSocketAddress serverAddress = UnitHelp
 				.localSocketAddress();
 
 		//

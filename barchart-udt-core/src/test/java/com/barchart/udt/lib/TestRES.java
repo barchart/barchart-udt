@@ -17,7 +17,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.TestHelp;
+import util.UnitHelp;
+
 
 public class TestRES {
 
@@ -56,7 +57,7 @@ public class TestRES {
 
 		log.info("user.dir = {}", System.getProperty("user.dir"));
 
-		final String targetFolder = TestHelp
+		final String targetFolder = UnitHelp
 				.randomSuffix("./target/testExtractResource");
 
 		RES.ensureTargetFolder(targetFolder);

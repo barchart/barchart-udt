@@ -5,7 +5,7 @@
  *
  * http://www.opensource.org/licenses/bsd-license.php
  */
-package com.barchart.udt.util;
+package util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -19,7 +19,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.TestHelp;
+import util.UnitHelp;
+
 
 public class TestEpollSelect {
 
@@ -45,7 +46,7 @@ public class TestEpollSelect {
 
 		final int epollID = SocketUDT.epollCreate0();
 
-		final InetSocketAddress bindServer = TestHelp.localSocketAddress();
+		final InetSocketAddress bindServer = UnitHelp.localSocketAddress();
 
 		final SocketUDT socketServer = new SocketUDT(TypeUDT.DATAGRAM);
 		socketServer.configureBlocking(false);
@@ -53,7 +54,7 @@ public class TestEpollSelect {
 		socketServer.listen(1);
 		log.info("socketServer: {}", socketServer.socketID);
 
-		final InetSocketAddress bindClient = TestHelp.localSocketAddress();
+		final InetSocketAddress bindClient = UnitHelp.localSocketAddress();
 
 		final SocketUDT socketClient = new SocketUDT(TypeUDT.DATAGRAM);
 		socketClient.configureBlocking(false);
@@ -129,8 +130,8 @@ public class TestEpollSelect {
 		assertEquals(writeSize, 2);
 		assertEquals(exceptSize, 0);
 
-		final Set<Integer> readSet = TestHelp.socketSet(readBuffer);
-		final Set<Integer> writeSet = TestHelp.socketSet(writeBuffer);
+		final Set<Integer> readSet = UnitHelp.socketIndexSet(readBuffer);
+		final Set<Integer> writeSet = UnitHelp.socketIndexSet(writeBuffer);
 
 		assertTrue(writeSet.contains(socketServer.socketID));
 		assertTrue(writeSet.contains(socketClient.socketID));

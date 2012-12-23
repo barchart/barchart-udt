@@ -7,6 +7,8 @@
  */
 package com.barchart.udt.nio;
 
+import com.barchart.udt.SocketUDT;
+
 /**
  * UDT channel role type.
  * 
@@ -17,15 +19,14 @@ package com.barchart.udt.nio;
 public enum KindUDT {
 
 	/**
-	 * The ACCEPTOR. Server mode: listens and accepts connections; generates
-	 * CONNECTOR as a result of accept()
+	 * Server mode: listens and accepts connections; generates {@link #COMMUTER}
+	 * as a result of {@link SocketUDT#accept()}
 	 */
 	ACCEPTOR, //
 
 	/**
-	 * The CONNECTOR. Client mode: user-created channel which initiates
-	 * connections to servers; Server mode: channel which is a result of
-	 * accept();
+	 * Client mode: user-created channel which initiates connections to servers;
+	 * Server mode: channel which is a result of accept();
 	 */
 	CONNECTOR, //
 

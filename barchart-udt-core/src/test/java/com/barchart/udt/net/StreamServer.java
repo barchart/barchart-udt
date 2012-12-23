@@ -14,10 +14,11 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import util.UnitHelp;
+
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.StatusUDT;
 import com.barchart.udt.TypeUDT;
-import com.barchart.udt.util.TestHelp;
 
 class StreamServer extends StreamBase {
 
@@ -48,7 +49,7 @@ class StreamServer extends StreamBase {
 	StreamServer(final TypeUDT type, final InetSocketAddress serverAddress,
 			final ServiceFactory factory) throws Exception {
 
-		super(new SocketUDT(type), TestHelp.localSocketAddress(),
+		super(new SocketUDT(type), UnitHelp.localSocketAddress(),
 				serverAddress);
 
 		this.factory = factory;

@@ -18,10 +18,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import util.UnitHelp;
+import util.StopWatch;
+
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
-import com.barchart.udt.util.TestHelp;
-import com.barchart.udt.util.StopWatch;
 
 public class TestStreamBase {
 
@@ -52,7 +53,7 @@ public class TestStreamBase {
 	@Test
 	public void testStream11() throws Exception {
 
-		InetSocketAddress serverAddress = TestHelp.localSocketAddress();
+		InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
 
 		StreamServer server = new StreamServer(TypeUDT.DATAGRAM, serverAddress,
 				factory1);
@@ -124,7 +125,7 @@ public class TestStreamBase {
 	@Test
 	public void testStream22() throws Exception {
 
-		InetSocketAddress serverAddress = TestHelp.localSocketAddress();
+		InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
 
 		StreamServer server = new StreamServer(TypeUDT.DATAGRAM, serverAddress,
 				factory2);
@@ -175,7 +176,7 @@ public class TestStreamBase {
 	// @Test
 	public void testStream12() throws Exception {
 
-		InetSocketAddress serverAddress = TestHelp.localSocketAddress();
+		InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
 
 		StreamServer server = new StreamServer(TypeUDT.STREAM, serverAddress,
 				factory1);

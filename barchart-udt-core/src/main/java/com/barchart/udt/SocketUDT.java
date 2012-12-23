@@ -20,15 +20,17 @@ import org.slf4j.LoggerFactory;
 import com.barchart.udt.anno.Native;
 import com.barchart.udt.lib.LibraryLoaderUDT;
 
-/* note: do not change field names; used by JNI */
-/* note: must synchronize create/destroy - workaround for bug in UDT */
-// TODO centralize http references
 /**
+ * notes
+ * <p>
  * current implementation supports IPv4 only (no IPv6)
+ * <p>
+ * do not change fields annotated with {@link Native}
  */
 public class SocketUDT {
 
-	private static final Logger log = LoggerFactory.getLogger(SocketUDT.class);
+	protected static final Logger log = LoggerFactory
+			.getLogger(SocketUDT.class);
 
 	//
 
@@ -67,14 +69,14 @@ public class SocketUDT {
 
 	/**
 	 * Maximum number sockets that can participate in a
-	 * {@link com.barchart.udt.nio.SelectorUDT#select()} operation
+	 * {@link com.barchart.udt.nio.SelectorUDT#select()} operation; see epoll.h
+	 * to confirm current limit
 	 */
 	public static final int DEFAULT_MAX_SELECTOR_SIZE = 1024;
 
 	/**
 	 * Minimum timeout of a {@link com.barchart.udt.nio.SelectorUDT#select()}
-	 * operation. Since UDT :: common.cpp :: void CTimer::waitForEvent() :: is
-	 * using 10 milliseconds resolution; (milliseconds);
+	 * operations.
 	 */
 	public static final int DEFAULT_MIN_SELECTOR_TIMEOUT = 10;
 
@@ -82,9 +84,14 @@ public class SocketUDT {
 	 * Helper value that can be checked from CCC class and force JNI library
 	 * load
 	 */
+	@Native
 	public static final boolean INIT_OK;
 
-	/** native library extractor and loader */
+	/**
+	 * FIXME replace system.exit with a little less drastic approach
+	 * <p>
+	 * native library extractor and loader
+	 */
 	static {
 
 		try {
@@ -123,6 +130,7 @@ public class SocketUDT {
 		}
 
 		INIT_OK = true;
+
 		log.debug("native library load & init OK");
 
 	}
@@ -156,6 +164,7 @@ public class SocketUDT {
 	/**
 	 * message/stream socket type; read by JNI
 	 */
+	@Native
 	protected final TypeUDT type;
 
 	public TypeUDT getType() {
@@ -218,10 +227,13 @@ public class SocketUDT {
 	 * UDT::selectEx() result status
 	 */
 	@Native
+	@Deprecated
 	protected boolean isSelectedRead;
 	@Native
+	@Deprecated
 	protected boolean isSelectedWrite;
 	@Native
+	@Deprecated
 	protected boolean isSelectedException;
 
 	// ###################################################
@@ -1017,14 +1029,16 @@ public class SocketUDT {
 
 	//
 
-	/** TODO add link to UDT doc */
+	/**
+	 * @see <a href="http://udt.sourceforge.net/udt4/doc/socket.htm"></a>
+	 */
 	protected native int getStatus0();
 
 	/**
 	 * returns native status of underlying native UDT socket
 	 */
 	public StatusUDT getStatus() {
-		return StatusUDT.fromCode(getStatus0());
+		return StatusUDT.from(getStatus0());
 	}
 
 	// ###
@@ -1414,18 +1428,12 @@ public class SocketUDT {
 	//
 	@Override
 	public String toString() {
-		return " socketID="
-				+ socketID //
-				+ " type="
-				+ type //
-				+ " isOpen="
-				+ isOpen() //
-				+ " isNonBlocking="
-				+ isNonBlocking() //
-				+ " local=" + getLocalInetAddress() + ":"
-				+ getLocalInetPort()//
-				+ " remote=" + getRemoteInetAddress() + ":"
-				+ getRemoteInetPort()//
+		return " id=" + socketID //
+				+ " type=" + type //
+				+ " status=" + getStatus() //
+				+ " blocking=" + isBlocking() //
+				+ " bind=" + getLocalInetAddress() + ":" + getLocalInetPort()//
+				+ " peer=" + getRemoteInetAddress() + ":" + getRemoteInetPort()//
 		;
 	}
 

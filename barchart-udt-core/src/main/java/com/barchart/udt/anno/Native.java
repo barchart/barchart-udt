@@ -14,10 +14,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * native filed, do not change in any way
+ * native JNI entity, please not change in any way
  */
 @Documented
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Native {
 

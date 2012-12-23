@@ -13,7 +13,8 @@ import org.junit.runner.JUnitCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.TestHelp;
+import util.UnitHelp;
+
 
 public class MainRES {
 
@@ -23,8 +24,8 @@ public class MainRES {
 
 		log.info("started");
 
-		TestHelp.logOsArch();
-		TestHelp.logClassPath();
+		UnitHelp.logOsArch();
+		UnitHelp.logClassPath();
 
 		String name;
 		URL url;

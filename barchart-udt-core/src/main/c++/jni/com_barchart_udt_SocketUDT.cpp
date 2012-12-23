@@ -1848,9 +1848,11 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd0( //
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
 
-	const int option = pollOpt;
+	const int events = static_cast<int>(pollOpt);
 
-	const int rv = UDT::epoll_add_usock(pollID, socketID, &option);
+//	printf("function:%s option=%d \n", __func__, events);
+
+	const int rv = UDT::epoll_add_usock(pollID, socketID, &events);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -2167,7 +2169,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testSocketStatus0(
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testEpoll0(JNIEnv *env,
 		jobject self) {
 
-	const jint socketID = UDT_GetSocketID(env, self);
+	const int socketID = static_cast<int>(UDT_GetSocketID(env, self));
 
 	printf("native: test epoll; socketID=%d \n", socketID);
 

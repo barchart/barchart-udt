@@ -7,9 +7,9 @@
  */
 package com.barchart.udt.nio;
 
-import static com.barchart.udt.util.TestHelp.*;
 import static java.nio.channels.SelectionKey.*;
 import static org.junit.Assert.*;
+import static util.UnitHelp.*;
 
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;

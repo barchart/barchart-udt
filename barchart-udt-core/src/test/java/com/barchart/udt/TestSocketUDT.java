@@ -7,15 +7,14 @@
  */
 package com.barchart.udt;
 
-import static com.barchart.udt.util.TestHelp.*;
 import static org.junit.Assert.*;
+import static util.UnitHelp.*;
 
 import java.net.InetSocketAddress;
 import java.nio.IntBuffer;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -307,62 +306,148 @@ public class TestSocketUDT {
 
 	}
 
-	/** FIXME */
-	@Ignore
+	/** explore read/write */
 	@Test
-	public void testEpollWait0_Accept() throws Exception {
-
-		final int epollID = SocketUDT.epollCreate0();
-
-		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
-		accept.configureBlocking(false);
-		accept.bind0(localSocketAddress());
-		accept.listen0(1);
-
-		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		client.configureBlocking(false);
-		client.bind0(localSocketAddress());
+	public void testEpollWait0_Accept0() throws Exception {
 
 		final IntBuffer readBuffer = SocketUDT.newDirectIntBufer(10);
 		final IntBuffer writeBuffer = SocketUDT.newDirectIntBufer(10);
 		final IntBuffer sizeBuffer = SocketUDT.newDirectIntBufer(10);
 
+		final int epollID = SocketUDT.epollCreate0();
+
+		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
+		accept.configureBlocking(true);
+		accept.bind0(localSocketAddress());
+
 		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.ALL.code);
+
+		socketAwait(accept, StatusUDT.OPENED);
+		log.info("accept OPENED");
+
+		{
+			// no events
+		}
+
+		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
+		accept.configureBlocking(true);
+		client.bind0(localSocketAddress());
+
 		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.ALL.code);
 
-		assertEquals(StatusUDT.LISTENING.getCode(), accept.getStatus0());
-		assertEquals(StatusUDT.OPENED.getCode(), client.getStatus0());
+		socketAwait(client, StatusUDT.OPENED);
+		log.info("client OPENED");
+
+		{
+			// no events
+		}
+
+		accept.listen0(1);
+
+		socketAwait(accept, StatusUDT.LISTENING);
+		log.info("accept LISTENING");
+
+		{
+			// no events
+		}
 
 		client.connect0(accept.getLocalSocketAddress());
 
-		final int readyCount1 = SocketUDT.epollWait0( //
-				epollID, readBuffer, writeBuffer, sizeBuffer, 50);
+		socketAwait(client, StatusUDT.CONNECTED);
+		log.info("client CONNECTED");
 
-		log.info("readyCount1 : {}", readyCount1);
+		{
 
-		assertEquals(2, readyCount1);
-		assertEquals(1, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
-		assertEquals(1, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
-		assertEquals(accept.socketID, readBuffer.get(0));
-		assertEquals(accept.socketID, writeBuffer.get(0));
+			// accept: r/w
+			// client: w
+
+			clear(readBuffer);
+			clear(readBuffer);
+
+			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
+					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+
+			log.info("readyCount : {}", readyCount);
+
+			assertEquals(3, readyCount);
+			assertEquals(1, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(2, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+			assertTrue(socketPresent(accept, readBuffer));
+			assertTrue(socketPresent(accept, writeBuffer));
+			assertTrue(socketPresent(client, writeBuffer));
+
+		}
 
 		final SocketUDT server = accept.accept0();
+		assertNotNull(server);
+		accept.configureBlocking(true);
+		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.ALL.code);
 
-		Thread.sleep(50);
+		socketAwait(server, StatusUDT.CONNECTED);
+		log.info("server CONNECTED");
 
-		assertEquals(StatusUDT.CONNECTED.getCode(), server.getStatus0());
-		assertEquals(StatusUDT.CONNECTED.getCode(), client.getStatus0());
+		{
 
-		final int readyCount2 = SocketUDT.epollWait0( //
-				epollID, readBuffer, writeBuffer, sizeBuffer, 50);
+			// accept: w
+			// client: w
+			// server: w
 
-		log.info("readyCount2 : {}", readyCount2);
+			clear(readBuffer);
+			clear(readBuffer);
 
-		assertEquals(2, readyCount2);
-		assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
-		assertEquals(2, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
-		assertEquals(client.socketID, writeBuffer.get(0));
-		assertEquals(accept.socketID, writeBuffer.get(1));
+			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
+					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+
+			log.info("readyCount : {}", readyCount);
+
+			assertEquals(3, readyCount);
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(3, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+			assertTrue(socketPresent(accept, writeBuffer));
+			assertTrue(socketPresent(client, writeBuffer));
+			assertTrue(socketPresent(server, writeBuffer));
+
+		}
+
+		final int testSize = 3;
+		final int sendCount = client.send(new byte[testSize]);
+		assertEquals(testSize, sendCount);
+
+		Thread.sleep(1000); // FIXME test can time out
+
+		{
+
+			// accept: w
+			// client: w
+			// server: r/w
+
+			clear(readBuffer);
+			clear(readBuffer);
+
+			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
+					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+
+			log.info("readyCount : {}", readyCount);
+
+			assertEquals(4, readyCount);
+			assertEquals(1, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(3, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+			assertTrue(socketPresent(server, readBuffer));
+			assertTrue(socketPresent(accept, writeBuffer));
+			assertTrue(socketPresent(client, writeBuffer));
+			assertTrue(socketPresent(server, writeBuffer));
+
+			logBuffer("read ", readBuffer);
+			logBuffer("write", writeBuffer);
+
+		}
+
+		final int recvCount = server.receive(new byte[10]);
+		assertEquals(testSize, recvCount);
+
+		server.close();
+		client.close();
+		accept.close();
 
 		SocketUDT.epollRelease0(epollID);
 
@@ -420,6 +505,98 @@ public class TestSocketUDT {
 		Thread.sleep(100);
 
 		assertNull(accept.accept());
+
+	}
+
+	/** explore read only */
+	@Test
+	public void testEpollWait0_Accept1() throws Exception {
+
+		final IntBuffer readBuffer = SocketUDT.newDirectIntBufer(10);
+		final IntBuffer writeBuffer = SocketUDT.newDirectIntBufer(10);
+		final IntBuffer sizeBuffer = SocketUDT.newDirectIntBufer(10);
+
+		final int epollID = SocketUDT.epollCreate0();
+
+		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
+		accept.configureBlocking(true);
+		accept.bind0(localSocketAddress());
+		accept.listen0(1);
+		socketAwait(accept, StatusUDT.LISTENING);
+		log.info("accept listen : {}", accept.getSocketId());
+
+		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
+		accept.configureBlocking(true);
+		client.bind0(localSocketAddress());
+
+		// accept
+		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.READ.code);
+		// client
+		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.NONE.code);
+
+		client.connect0(accept.getLocalSocketAddress());
+
+		socketAwait(client, StatusUDT.CONNECTED);
+		log.info("client connect : {}", client.getSocketId());
+
+		{
+			// accept : r
+			// client : none
+
+			clear(readBuffer);
+			clear(readBuffer);
+
+			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
+					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+
+			log.info("readyCount : {}", readyCount);
+			logBuffer("read: ", readBuffer);
+			logBuffer("write:", writeBuffer);
+
+			assertEquals(1, readyCount);
+			assertEquals(1, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+			assertTrue(socketPresent(accept, readBuffer));
+
+		}
+
+		final SocketUDT server = accept.accept0();
+		assertNotNull(server);
+		accept.configureBlocking(true);
+		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.NONE.code);
+
+		socketAwait(server, StatusUDT.CONNECTED);
+		log.info("server connect : {}", server.getSocketId());
+
+		{
+
+			// accept : none
+			// client : none
+			// server : none
+
+			clear(readBuffer);
+			clear(readBuffer);
+
+			try {
+
+				final int readyCount = SocketUDT.epollWait0(epollID,
+						readBuffer, writeBuffer, sizeBuffer, 1000);
+
+				fail("must throw");
+
+			} catch (final ExceptionUDT e) {
+
+				assertEquals(e.getError(), ErrorUDT.ETIMEOUT);
+
+			}
+
+		}
+
+		server.close();
+		client.close();
+		accept.close();
+
+		SocketUDT.epollRelease0(epollID);
 
 	}
 

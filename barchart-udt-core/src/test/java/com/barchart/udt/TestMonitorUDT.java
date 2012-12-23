@@ -7,8 +7,8 @@
  */
 package com.barchart.udt;
 
-import static com.barchart.udt.util.TestHelp.*;
 import static org.junit.Assert.*;
+import static util.UnitHelp.*;
 
 import java.net.InetSocketAddress;
 

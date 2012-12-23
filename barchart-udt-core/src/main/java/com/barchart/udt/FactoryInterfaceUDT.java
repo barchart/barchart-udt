@@ -12,4 +12,5 @@ public interface FactoryInterfaceUDT {
 	public CCC create();
 
 	public FactoryInterfaceUDT cloneFactory();
+
 }

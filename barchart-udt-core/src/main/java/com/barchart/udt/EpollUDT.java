@@ -7,17 +7,13 @@
  */
 package com.barchart.udt;
 
-import static java.nio.channels.SelectionKey.*;
-
-import java.nio.channels.SelectionKey;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Epoll resource descriptor
- * <p>
- * <a href"http://en.wikipedia.org/wiki/Epoll">Epoll</a>
+ * UDT Epoll resource descriptor
+ * 
+ * @see <a href"http://en.wikipedia.org/wiki/Epoll">Epoll</a>
  */
 public class EpollUDT {
 
@@ -56,31 +52,12 @@ public class EpollUDT {
 			this.code = code;
 		}
 
-		protected static final int HAS_READ = OP_ACCEPT | OP_CONNECT | OP_READ;
-		protected static final int HAS_WRITE = OP_WRITE;
-		protected static final int HAS_ALL = HAS_READ | HAS_WRITE;
+		public boolean hasRead() {
+			return (code & READ.code) != 0;
+		}
 
-		public static Opt form(final SelectionKey key) {
-
-			final int interestOps = key.interestOps();
-
-			final boolean hasRead = (interestOps & HAS_READ) > 0;
-			final boolean hasWrite = (interestOps & HAS_WRITE) > 0;
-
-			if (hasRead && hasWrite) {
-				return ALL;
-			}
-
-			if (hasRead) {
-				return READ;
-			}
-
-			if (hasWrite) {
-				return WRITE;
-			}
-
-			return NONE;
-
+		public boolean hasWrite() {
+			return (code & WRITE.code) != 0;
 		}
 
 	}
@@ -143,6 +120,12 @@ public class EpollUDT {
 	public void add(final SocketUDT socket, final Opt option)
 			throws ExceptionUDT {
 
+		// log.info("add : {} / {}", option, socket);
+
+		if (option == Opt.NONE) {
+			return;
+		}
+
 		SocketUDT.epollAdd0(id, socket.getSocketId(), option.code);
 
 	}
@@ -150,7 +133,19 @@ public class EpollUDT {
 	/** unregister socket from event processing Epoll */
 	public void remove(final SocketUDT socket) throws ExceptionUDT {
 
+		// log.info("remove : {}", socket);
+
 		SocketUDT.epollRemove0(id, socket.getSocketId());
+
+	}
+
+	/** re-register socket with a new option */
+	public void update(final SocketUDT socket, final Opt option)
+			throws ExceptionUDT {
+
+		remove(socket);
+
+		add(socket, option);
 
 	}
 

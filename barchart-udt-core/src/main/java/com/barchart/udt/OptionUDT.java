@@ -12,14 +12,16 @@ import static com.barchart.udt.OptionFormatUDT.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: Auto-generated Javadoc
+import com.barchart.udt.anno.Native;
+
 /**
  * The Enum OptionUDT.
+ * <p>
+ * keep code values in sync with UDT::UDTOpt
+ * <p>
+ * provide 2 names: 1) UDT original and 2) human-readble
  */
 public enum OptionUDT {
-
-	// keep code values in sync with UDT::UDTOpt
-	// provide 2 names: 1) UDT original and 2) human-readble
 
 	/** the Maximum Transfer Unit. */
 	UDT_MSS(0, Integer.class, DECIMAL), //
@@ -138,6 +140,7 @@ public enum OptionUDT {
 	 * @param format
 	 *            the format
 	 */
+	@Native
 	private OptionUDT(final int code, final Class<?> klaz,
 			final OptionFormatUDT format) {
 		this.code = code;

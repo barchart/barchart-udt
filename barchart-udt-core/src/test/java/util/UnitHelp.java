@@ -5,7 +5,7 @@
  *
  * http://www.opensource.org/licenses/bsd-license.php
  */
-package com.barchart.udt.util;
+package util;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,15 +15,18 @@ import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.nio.TestSelectorProviderUDT;
+import com.barchart.udt.SocketUDT;
+import com.barchart.udt.StatusUDT;
 
-public class TestHelp {
+public class UnitHelp {
 
-	private static Logger log = LoggerFactory.getLogger(TestHelp.class);
+	private static Logger log = LoggerFactory.getLogger(UnitHelp.class);
 
 	public static String property(final String name) {
 
@@ -154,7 +157,7 @@ public class TestHelp {
 
 	}
 
-	public static Set<Integer> socketSet(final IntBuffer buffer) {
+	public static Set<Integer> socketIndexSet(final IntBuffer buffer) {
 
 		final Set<Integer> set = new HashSet<Integer>();
 
@@ -168,8 +171,48 @@ public class TestHelp {
 
 	public static void logSet(final Set<?> set) {
 		for (final Object item : set) {
-			TestSelectorProviderUDT.log.info("-- {}", item);
+			log.info("--- {}", item);
 		}
 	}
+
+	public static void logBuffer(final String title, final IntBuffer buffer) {
+		for (int index = 0; index < buffer.capacity(); index++) {
+			final int value = buffer.get(index);
+			if (value == 0) {
+				continue;
+			}
+			log.info("{} : {}", title, value);
+		}
+	}
+
+	public static void socketAwait(final SocketUDT socket,
+			final StatusUDT status) throws Exception {
+		while (true) {
+			if (socket.getStatus() == status) {
+				return;
+			} else {
+				Thread.sleep(50);
+			}
+		}
+	}
+
+	public static boolean socketPresent(final SocketUDT socket,
+			final IntBuffer buffer) {
+		for (int index = 0; index < buffer.capacity(); index++) {
+			if (buffer.get(index) == socket.getSocketId()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void clear(final IntBuffer buffer) {
+		for (int index = 0; index < buffer.capacity(); index++) {
+			buffer.put(index, 0);
+		}
+	}
+
+	private static final ConcurrentMap<Integer, SocketUDT> //
+	socketMap = new ConcurrentHashMap<Integer, SocketUDT>();
 
 }

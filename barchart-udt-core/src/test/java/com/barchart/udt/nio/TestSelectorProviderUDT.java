@@ -7,9 +7,9 @@
  */
 package com.barchart.udt.nio;
 
-import static com.barchart.udt.util.TestHelp.*;
 import static java.nio.channels.SelectionKey.*;
 import static org.junit.Assert.*;
+import static util.UnitHelp.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -25,13 +25,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import util.UnitHelp;
+
 import com.barchart.udt.StatusUDT;
-import com.barchart.udt.util.TestHelp;
 
 public class TestSelectorProviderUDT {
 
@@ -138,17 +138,17 @@ public class TestSelectorProviderUDT {
 
 		final Selector selector = provider.openSelector();
 
-		final ServerSocketChannel acceptorChannel = provider
+		final ServerSocketChannel acceptChannel = provider
 				.openServerSocketChannel();
-		acceptorChannel.configureBlocking(false);
-		acceptorChannel.socket().bind(localSocketAddress());
+		acceptChannel.configureBlocking(false);
+		acceptChannel.socket().bind(localSocketAddress());
 
-		final SelectionKeyUDT acceptorKey = (SelectionKeyUDT) acceptorChannel
+		final SelectionKeyUDT acceptKey = (SelectionKeyUDT) acceptChannel
 				.register(selector, OP_ACCEPT);
 
-		assertNotNull(acceptorKey);
+		assertNotNull(acceptKey);
 
-		final int readyCount = selector.select(100);
+		final int readyCount = selector.select(1000);
 
 		assertEquals(0, readyCount);
 
@@ -156,12 +156,12 @@ public class TestSelectorProviderUDT {
 
 		assertTrue(readySet.isEmpty());
 
-		TestHelp.logSet(readySet);
+		logSet(readySet);
+
+		selector.close();
 
 	}
 
-	/** FIXME */
-	@Ignore
 	@Test
 	public void testAcceptOne() throws Exception {
 
@@ -177,6 +177,8 @@ public class TestSelectorProviderUDT {
 		final SelectionKeyUDT acceptKey = (SelectionKeyUDT) acceptChannel
 				.register(selector, OP_ACCEPT);
 
+		assertEquals(StatusUDT.LISTENING, acceptKey.socketUDT().getStatus());
+
 		final SocketChannel clientChannel = provider.openSocketChannel();
 		clientChannel.configureBlocking(false);
 		clientChannel.socket().bind(localSocketAddress());
@@ -184,74 +186,109 @@ public class TestSelectorProviderUDT {
 		final SelectionKeyUDT clientKey = (SelectionKeyUDT) clientChannel
 				.register(selector, OP_CONNECT);
 
-		assertEquals(StatusUDT.LISTENING, acceptKey.socketUDT().getStatus());
 		assertEquals(StatusUDT.OPENED, clientKey.socketUDT().getStatus());
 
 		assertNull("nothing to accept", acceptKey.socketUDT().accept());
 
 		{
 			log.info("### state 0");
-			Thread.sleep(50);
-			final int readyCount = selector.select(50);
+			final int readyCount = selector.select(1000);
+			final Set<SelectionKey> readySet = selector.selectedKeys();
 			log.info("acceptKey={}", acceptKey);
 			log.info("clientKey={}", clientKey);
-			assertEquals(0, readyCount);
-			final Set<SelectionKey> readySet = selector.selectedKeys();
+			UnitHelp.logSet(readySet);
 			assertEquals(0, readySet.size());
-			TestHelp.logSet(readySet);
+			assertEquals(0, readyCount);
+			readySet.clear();
+			assertTrue(selector.selectedKeys().isEmpty());
 		}
 
 		clientChannel.connect(acceptChannel.socket().getLocalSocketAddress());
 
+		socketAwait(clientKey.socketUDT(), StatusUDT.CONNECTED);
+
 		{
 			log.info("### state 1");
-			Thread.sleep(50);
-			final int readyCount = selector.select(50);
+			final int readyCount = selector.select();
+			final Set<SelectionKey> readySet = selector.selectedKeys();
 			log.info("acceptKey={}", acceptKey);
 			log.info("clientKey={}", clientKey);
+			logSet(readySet);
 			assertEquals(2, readyCount);
-			final Set<SelectionKey> readySet = selector.selectedKeys();
 			assertEquals(2, readySet.size());
-			TestHelp.logSet(readySet);
+			assertTrue(readySet.contains(acceptKey));
+			assertTrue(readySet.contains(clientKey));
+			readySet.clear();
+			assertTrue(selector.selectedKeys().isEmpty());
 		}
-
-		assertEquals(StatusUDT.LISTENING, acceptKey.socketUDT().getStatus());
-		assertEquals(StatusUDT.CONNECTED, clientKey.socketUDT().getStatus());
 
 		{
 			log.info("### state 2");
-			Thread.sleep(50);
-			final int readyCount = selector.select(50);
+			final int readyCount = selector.select();
+			final Set<SelectionKey> readySet = selector.selectedKeys();
 			log.info("acceptKey={}", acceptKey);
 			log.info("clientKey={}", clientKey);
-			assertEquals(2, readyCount);
-			final Set<SelectionKey> readySet = selector.selectedKeys();
+			logSet(readySet);
 			assertEquals(2, readySet.size());
-			TestHelp.logSet(readySet);
+			assertEquals(2, readyCount);
+			assertTrue(readySet.contains(acceptKey));
+			assertTrue(readySet.contains(clientKey));
+			readySet.clear();
+			assertTrue(selector.selectedKeys().isEmpty());
 		}
 
-		final SocketChannel server = acceptChannel.accept();
-		assertNotNull("first accept valid", server);
+		final SocketChannel serverChannel = acceptChannel.accept();
+		assertNotNull("first accept valid", serverChannel);
 		assertNull("second accept invalid", acceptChannel.accept());
+
+		serverChannel.configureBlocking(false);
+
+		final SelectionKeyUDT serverKey = (SelectionKeyUDT) serverChannel
+				.register(selector, 0);
+
+		socketAwait(serverKey.socketUDT(), StatusUDT.CONNECTED);
 
 		{
 			log.info("### state 3");
-			Thread.sleep(100);
-			final int readyCount = selector.select(100);
+			final int readyCount = selector.select();
+			final Set<SelectionKey> readySet = selector.selectedKeys();
 			log.info("acceptKey={}", acceptKey);
 			log.info("clientKey={}", clientKey);
+			UnitHelp.logSet(readySet);
 			assertEquals(1, readyCount);
-			final Set<SelectionKey> readySet = selector.selectedKeys();
 			assertEquals(1, readySet.size());
-			TestHelp.logSet(readySet);
+			assertTrue(readySet.contains(clientKey));
+			readySet.clear();
+			assertTrue(selector.selectedKeys().isEmpty());
 		}
+
+		assertFalse(serverChannel.isConnectionPending());
+
+		assertTrue(clientChannel.isConnectionPending());
+		assertTrue(clientChannel.finishConnect());
+		assertFalse(clientChannel.isConnectionPending());
+
+		{
+			log.info("### state 4");
+			final int readyCount = selector.select();
+			final Set<SelectionKey> readySet = selector.selectedKeys();
+			log.info("acceptKey={}", acceptKey);
+			log.info("clientKey={}", clientKey);
+			UnitHelp.logSet(readySet);
+			assertEquals(0, readyCount);
+			assertEquals(0, readySet.size());
+		}
+
+		serverChannel.close();
+		clientChannel.close();
+		acceptChannel.close();
+
+		selector.close();
 
 	}
 
 	@Test
-	public void testSelect() throws Exception {
-
-		final int millisTimeout = 1 * 1000;
+	public void testSelectCycle() throws Exception {
 
 		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
 
@@ -274,9 +311,11 @@ public class TestSelectorProviderUDT {
 				.register(selector, OP_ACCEPT);
 
 		final SelectionKeyUDT clientKey = (SelectionKeyUDT) clientChannel
-				.register(selector, OP_READ | OP_WRITE);
+				.register(selector, OP_CONNECT | OP_READ | OP_WRITE);
 
 		clientSocket.connect(acceptSocket.getLocalSocketAddress());
+
+		socketAwait(clientKey.socketUDT(), StatusUDT.CONNECTED);
 
 		log.info("connect");
 
@@ -284,22 +323,13 @@ public class TestSelectorProviderUDT {
 
 			log.info("### state 0");
 
-			Thread.sleep(50);
-
-			final long timeStart = System.currentTimeMillis();
-			final int readyCount = selector.select(millisTimeout);
-			final long timeFinish = System.currentTimeMillis();
+			final int readyCount = selector.select();
 			log.info("readyCount={}", readyCount);
 
 			assertEquals(2, readyCount);
 
-			final long timeDiff = timeFinish - timeStart;
-			log.info("timeDiff={}", timeDiff);
-
-			assertTrue(timeDiff < 10);
-
 			final Set<SelectionKey> keySet = selector.selectedKeys();
-			TestHelp.logSet(keySet);
+			UnitHelp.logSet(keySet);
 
 			assertEquals(2, keySet.size());
 
@@ -310,14 +340,18 @@ public class TestSelectorProviderUDT {
 			assertTrue(clientKey.isValid());
 
 			assertTrue("accept has accept", acceptKey.isAcceptable());
+			assertFalse("accept w/o conn", acceptKey.isConnectable());
 			assertFalse("accept w/o read", acceptKey.isReadable());
 			assertFalse("accept w/o write", acceptKey.isWritable());
 
 			assertFalse("no accept", clientKey.isAcceptable());
+			assertTrue("connection", clientKey.isConnectable());
 			assertFalse("no read", clientKey.isReadable());
-			assertTrue("has write", clientKey.isWritable());
+			assertFalse("no write", clientKey.isWritable());
 
 			assertTrue(clientChannel.isConnected());
+
+			keySet.clear();
 
 		}
 
@@ -327,40 +361,34 @@ public class TestSelectorProviderUDT {
 
 		serverChannel.configureBlocking(false);
 
-		final SelectionKey serverKey = serverChannel.register(//
+		final SelectionKey serverKey = serverChannel.register( //
 				selector, OP_READ | OP_WRITE);
+
+		assertTrue("consumer must ack", clientChannel.finishConnect());
 
 		{
 
 			log.info("### state 1");
 
-			Thread.sleep(50);
-
-			final long timeStart = System.currentTimeMillis();
-			final int readyCount = selector.select(millisTimeout);
-			final long timeFinish = System.currentTimeMillis();
+			final int readyCount = selector.select();
 			log.info("readyCount={}", readyCount);
 
 			assertEquals(2, readyCount);
 
-			final long timeDiff = timeFinish - timeStart;
-			log.info("timeDiff={}", timeDiff);
-
-			assertTrue(timeDiff < 10);
-
 			final Set<SelectionKey> keySet = selector.selectedKeys();
-			TestHelp.logSet(keySet);
+			UnitHelp.logSet(keySet);
+
+			assertEquals(2, keySet.size());
 
 			assertTrue(keySet.contains(serverKey));
 			assertTrue(keySet.contains(clientKey));
-			assertFalse("nothing to accept", keySet.contains(acceptKey));
-			assertFalse("nothing to accept", acceptKey.isAcceptable());
+			assertFalse("key is not reported", keySet.contains(acceptKey));
+			assertTrue("yet key is not cleared", acceptKey.isAcceptable());
 
-			assertEquals(OP_WRITE, serverKey.readyOps());
-			assertEquals(OP_WRITE, clientKey.readyOps());
-
-			assertTrue("has write", clientKey.isWritable());
 			assertTrue("has write", serverKey.isWritable());
+			assertTrue("has write", clientKey.isWritable());
+
+			keySet.clear();
 
 		}
 
@@ -380,45 +408,40 @@ public class TestSelectorProviderUDT {
 
 			final int writeCount = clientChannel.write(buffer);
 
-			Thread.sleep(50);
-
 			assertEquals(SIZE, writeCount);
 
-			final long timeStart = System.currentTimeMillis();
-			final int readyCount = selector.select(millisTimeout);
-			final long timeFinish = System.currentTimeMillis();
+			Thread.sleep(1000); // let it send
+
+			final int readyCount = selector.select();
 			log.info("readyCount={}", readyCount);
 
 			assertEquals(2, readyCount);
 
-			final long timeDiff = timeFinish - timeStart;
-			log.info("timeDiff={}", timeDiff);
+			final Set<SelectionKey> keySet = selector.selectedKeys();
+			UnitHelp.logSet(keySet);
 
-			assertTrue(timeDiff < 10);
+			assertEquals(2, keySet.size());
 
-			final Set<SelectionKey> keySet3 = selector.selectedKeys();
-			TestHelp.logSet(keySet3);
-
-			assertEquals(2, keySet3.size());
-
-			assertTrue(keySet3.contains(serverKey));
-			assertTrue(keySet3.contains(clientKey));
-
-			assertFalse("accept w/o accept", acceptKey.isAcceptable());
-			assertFalse("accept w/o read", acceptKey.isReadable());
-			assertFalse("accept w/o write", acceptKey.isWritable());
+			assertTrue(keySet.contains(serverKey));
+			assertTrue(keySet.contains(clientKey));
 
 			assertFalse("client w/o accept", clientKey.isAcceptable());
+			assertFalse("client w/o conn", clientKey.isConnectable());
 			assertFalse("client w/o read", clientKey.isReadable());
 			assertTrue("client has write", clientKey.isWritable());
 
-			assertFalse("server w/o accept", clientKey.isAcceptable());
+			assertFalse("server w/o accept", serverKey.isAcceptable());
+			assertFalse("server w/o conn", serverKey.isConnectable());
 			assertTrue("server has read", serverKey.isReadable());
 			assertTrue("server has write", serverKey.isWritable());
+
+			keySet.clear();
 
 		}
 
 		{
+
+			log.info("### state 3");
 
 			final ByteBuffer buffer = ByteBuffer.allocate(SIZE);
 
@@ -426,8 +449,18 @@ public class TestSelectorProviderUDT {
 
 			assertEquals(SIZE, readSize);
 
-			/** FIXME review select contract */
-			// assertFalse("server has no read", serverKey.isReadable());
+			final int readyCount = selector.select();
+			log.info("readyCount={}", readyCount);
+
+			final Set<SelectionKey> keySet = selector.selectedKeys();
+			UnitHelp.logSet(keySet);
+
+			assertFalse("server w/o accept", serverKey.isAcceptable());
+			assertFalse("server w/o conn", serverKey.isConnectable());
+			assertTrue("server w/o read", serverKey.isReadable());
+			assertTrue("server has write", serverKey.isWritable());
+
+			keySet.clear();
 
 		}
 
@@ -438,8 +471,6 @@ public class TestSelectorProviderUDT {
 		assertFalse(serverChannel.isOpen());
 		assertFalse(clientChannel.isOpen());
 		assertFalse(acceptChannel.isOpen());
-
-		Thread.sleep(50);
 
 	}
 

@@ -1,7 +1,7 @@
 eclipse.preferences.version=1
 indexer/filesToParseUpFront=cstdarg, stdarg.h, stddef.h, sys/resource.h, ctime, sys/types.h, signal.h, cstdio
 indexer/indexAllFiles=true
-indexer/indexOnOpen=true
+indexer/indexOnOpen=false
 indexer/indexUnusedHeadersWithAlternateLang=false
 indexer/indexUnusedHeadersWithDefaultLang=false
 indexer/indexerId=org.eclipse.cdt.core.fastIndexer

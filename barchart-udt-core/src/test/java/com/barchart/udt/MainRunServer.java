@@ -7,7 +7,7 @@
  */
 package com.barchart.udt;
 
-import static com.barchart.udt.util.TestHelp.*;
+import static util.UnitHelp.*;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;

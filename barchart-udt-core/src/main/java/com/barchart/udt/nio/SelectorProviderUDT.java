@@ -19,7 +19,7 @@ import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
 
 /**
- * you must use the same system-wide provider instance for the same
+ * note: you must use the same system-wide provider instance for the same
  * {@link TypeUDT} of UDT channels and UDT selectors;
  */
 public class SelectorProviderUDT extends SelectorProvider {
@@ -65,19 +65,14 @@ public class SelectorProviderUDT extends SelectorProvider {
 		maxSelectorSize = selectorSize;
 	}
 
-	//
-
 	/**
-	 * feature not available
+	 * FIXME support datagram
 	 */
 	@Override
 	public DatagramChannel openDatagramChannel() throws IOException {
-		throw new RuntimeException("feature not available");
+		throw new RuntimeException("TODO");
 	}
 
-	/**
-	 * feature not available
-	 */
 	@Override
 	public Pipe openPipe() throws IOException {
 		throw new RuntimeException("feature not available");

@@ -750,57 +750,90 @@ class SocketChannelImpl
 
     /**
      * Translates native poll revent ops into a ready operation ops
+     * 
+     * USED only with initialReadyOps==0 
      */
-    public boolean translateReadyOps(int ops, int initialOps,
-                                     SelectionKeyImpl sk) {
-        int intOps = sk.nioInterestOps(); // Do this just once, it synchronizes
-        int oldOps = sk.nioReadyOps();
-        int newOps = initialOps;
+    public boolean translateReadyOps(
+    		int nativeOps, 
+    		int initialReadyOps, // 0
+    		SelectionKeyImpl key
+    		) {
+    	
+        int interestOps = key.nioInterestOps(); // Do this just once, it synchronizes
+        int oldReadyOps = key.nioReadyOps();
+        int newReadyOps = initialReadyOps; // 0
 
-        if ((ops & PollArrayWrapper.POLLNVAL) != 0) {
+        if ((nativeOps & PollArrayWrapper.POLLNVAL) != 0) {
             // This should only happen if this channel is pre-closed while a
             // selection operation is in progress
             // ## Throw an error if this channel has not been pre-closed
             return false;
         }
 
-        if ((ops & (PollArrayWrapper.POLLERR
+        if ((nativeOps & (PollArrayWrapper.POLLERR
                     | PollArrayWrapper.POLLHUP)) != 0) {
-            newOps = intOps;
-            sk.nioReadyOps(newOps);
+        	
+            newReadyOps = interestOps; // ready == interest for error reporting
+            
+            /** XXX STORE */
+            key.nioReadyOps(newReadyOps);
+            
             // No need to poll again in checkConnect,
             // the error will be detected there
+            
             readyToConnect = true;
-            return (newOps & ~oldOps) != 0;
+            
+            return (newReadyOps & ~oldReadyOps) != 0;
+            
         }
 
-        if (((ops & PollArrayWrapper.POLLIN) != 0) &&
-            ((intOps & SelectionKey.OP_READ) != 0) &&
-            (state == ST_CONNECTED))
-            newOps |= SelectionKey.OP_READ;
+        boolean isReading = ((interestOps & SelectionKey.OP_READ) != 0);
+        boolean isConnected = (state == ST_CONNECTED);
+        
+        if (((nativeOps & PollArrayWrapper.POLLIN) != 0) &&
+            isReading && isConnected ){
 
-        if (((ops & PollArrayWrapper.POLLCONN) != 0) &&
-            ((intOps & SelectionKey.OP_CONNECT) != 0) &&
-            ((state == ST_UNCONNECTED) || (state == ST_PENDING))) {
-            newOps |= SelectionKey.OP_CONNECT;
-            readyToConnect = true;
+            newReadyOps |= SelectionKey.OP_READ;
+
         }
 
-        if (((ops & PollArrayWrapper.POLLOUT) != 0) &&
-            ((intOps & SelectionKey.OP_WRITE) != 0) &&
-            (state == ST_CONNECTED))
-            newOps |= SelectionKey.OP_WRITE;
+        boolean isConnecting = ((interestOps & SelectionKey.OP_CONNECT) != 0);
+        boolean isConnectPending = ((state == ST_UNCONNECTED) || (state == ST_PENDING));        
+        
+        if (((nativeOps & PollArrayWrapper.POLLCONN) != 0) &&
+            isConnecting && isConnectPending ) {
+        	
+            newReadyOps |= SelectionKey.OP_CONNECT;
+            readyToConnect = true;
+            
+        }
+        
+        boolean isWriting = ((interestOps & SelectionKey.OP_WRITE) != 0);
 
-        sk.nioReadyOps(newOps);
-        return (newOps & ~oldOps) != 0;
+        if (((nativeOps & PollArrayWrapper.POLLOUT) != 0) &&
+        		isWriting && (state == ST_CONNECTED)) {
+
+            newReadyOps |= SelectionKey.OP_WRITE;
+
+        }
+
+        /** XXX STORE */
+        key.nioReadyOps(newReadyOps);
+        
+        boolean isReadyChange = (newReadyOps & ~oldReadyOps) != 0;
+        
+        return isReadyChange;
+        
     }
 
+    /** XXX NOT USED */
     public boolean translateAndUpdateReadyOps(int ops, SelectionKeyImpl sk) {
         return translateReadyOps(ops, sk.nioReadyOps(), sk);
     }
 
+    /** XXX USED */
     public boolean translateAndSetReadyOps(int ops, SelectionKeyImpl sk) {
-        return translateReadyOps(ops, 0, sk);
+        return translateReadyOps(ops, 0, sk); // 0 == initial ready ops
     }
 
     /**

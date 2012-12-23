@@ -9,19 +9,19 @@ package com.barchart.udt;
 
 import java.net.SocketException;
 
+import com.barchart.udt.anno.Native;
+
 /**
  * The Class ExceptionUDT. Wraps all native UDT exceptions and more.
  */
-// used by JNI; do not change any signatures;
+@SuppressWarnings("serial")
 public class ExceptionUDT extends SocketException {
-
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -6353519522691064012L;
 
 	/**
 	 * The error udt. Keeps error description for this exception. Use this enum
 	 * in switch/case to fine tune exception processing.
 	 */
+	@Native
 	private final ErrorUDT errorUDT;
 
 	public ErrorUDT getError() {
@@ -33,6 +33,7 @@ public class ExceptionUDT extends SocketException {
 	 * Can possibly contain '0' when particular method can not determine
 	 * {@link #socketID} that produced the exception.
 	 */
+	@Native
 	private final int socketID;
 
 	public int getSocketID() {
@@ -50,6 +51,7 @@ public class ExceptionUDT extends SocketException {
 	 * @param comment
 	 *            the comment
 	 */
+	@Native
 	protected ExceptionUDT(final int socketID, final int errorCode,
 			final String comment) {
 		super(ErrorUDT.descriptionFrom(socketID, errorCode, comment));
@@ -57,7 +59,6 @@ public class ExceptionUDT extends SocketException {
 		this.socketID = socketID;
 	}
 
-	// used by SocketUDT
 	/**
 	 * Instantiates a new exception udt for synthetic JNI wrapper exception.
 	 * This exception is generated in the JNI glue code itself.
@@ -69,6 +70,7 @@ public class ExceptionUDT extends SocketException {
 	 * @param comment
 	 *            the comment
 	 */
+	@Native
 	protected ExceptionUDT(final int socketID, final ErrorUDT error,
 			final String comment) {
 		super(ErrorUDT.descriptionFrom(socketID, error.getCode(), comment));

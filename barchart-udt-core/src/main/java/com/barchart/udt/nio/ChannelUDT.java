@@ -12,7 +12,6 @@ import java.io.IOException;
 import com.barchart.udt.SocketUDT;
 
 /**
- * NOTE: 1<->1 mapping between: ChannelUDT -> SocketUDT
  */
 public interface ChannelUDT {
 
@@ -24,10 +23,12 @@ public interface ChannelUDT {
 
 	boolean isOpenSocketUDT();
 
-	boolean isConnectionPending();
+	/**
+	 * was connection attempt acknowledged by
+	 * {@link ChannelSocketUDT#finishConnect()}
+	 */
+	boolean isConnectFinished();
 
-	boolean finishConnect() throws IOException;
-
-	void bindKey(final SelectionKeyUDT key);
+	public int validOps();
 
 }

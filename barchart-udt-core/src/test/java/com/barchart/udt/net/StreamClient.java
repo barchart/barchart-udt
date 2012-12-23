@@ -14,9 +14,10 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import util.UnitHelp;
+
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
-import com.barchart.udt.util.TestHelp;
 
 abstract class StreamClient extends StreamBase implements Runnable {
 
@@ -28,7 +29,7 @@ abstract class StreamClient extends StreamBase implements Runnable {
 	StreamClient(final TypeUDT type, final InetSocketAddress remoteAddress)
 			throws Exception {
 
-		super(new SocketUDT(type), TestHelp.localSocketAddress(),
+		super(new SocketUDT(type), UnitHelp.localSocketAddress(),
 				remoteAddress);
 
 		this.executor = Executors.newCachedThreadPool();

@@ -7,8 +7,12 @@
  */
 package com.barchart.udt;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * status of underlying UDT native socket
+ * status of underlying UDT native socket as reported by
+ * {@link SocketUDT#getStatus0()}
  * <p>
  * keep in sync with udt.h UDTSTATUS enum; see:
  * <p>
@@ -16,12 +20,7 @@ package com.barchart.udt;
  */
 public enum StatusUDT {
 
-	/** keep the order */
-
-	//
-
-	/** non UDT value */
-	UNKNOWN(0), //
+	/** note: keep the order */
 
 	//
 
@@ -52,7 +51,13 @@ public enum StatusUDT {
 	/** trying to check status on socket that was closed and removed */
 	NONEXIST(9), //
 
+	/** non udt constant, catch-all value */
+	UNKNOWN(100), //
+
 	;
+
+	protected static final Logger log = LoggerFactory
+			.getLogger(StatusUDT.class);
 
 	private final int code;
 
@@ -64,11 +69,9 @@ public enum StatusUDT {
 		return code;
 	}
 
-	public static final StatusUDT fromCode(final int code) {
+	public static final StatusUDT from(final int code) {
 
 		switch (code) {
-		case 0:
-			return UNKNOWN;
 		case 1:
 			return INIT;
 		case 2:
@@ -88,6 +91,7 @@ public enum StatusUDT {
 		case 9:
 			return NONEXIST;
 		default:
+			log.error("unexpected code={}", code);
 			return UNKNOWN;
 		}
 

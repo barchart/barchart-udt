@@ -15,6 +15,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.util.HelpUDT;
+
 public class TestHelperUDT {
 
 	private static final Logger log = LoggerFactory
@@ -33,7 +35,7 @@ public class TestHelperUDT {
 
 	@Test
 	public void testMd5sum() {
-		long signature = HelperUDT.md5sum("0123456789-ABCDEF?-");
+		long signature = HelpUDT.md5sum("0123456789-ABCDEF?-");
 		assertEquals(9050253258997952554L, signature);
 		log.info("signature={}", signature);
 	}

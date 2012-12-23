@@ -24,7 +24,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.util.TestHelp;
+import util.UnitHelp;
+
 
 public abstract class TestSendRecvAbstract<T> {
 
@@ -172,8 +173,8 @@ public abstract class TestSendRecvAbstract<T> {
 		server.configureBlocking(true);
 		client.configureBlocking(true);
 
-		serverAddress = TestHelp.localSocketAddress();
-		clientAddress = TestHelp.localSocketAddress();
+		serverAddress = UnitHelp.localSocketAddress();
+		clientAddress = UnitHelp.localSocketAddress();
 
 		log.info("serverAddress={} clientAddress={}", serverAddress,
 				clientAddress);

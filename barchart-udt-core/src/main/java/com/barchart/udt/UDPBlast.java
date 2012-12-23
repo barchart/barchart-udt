@@ -25,4 +25,5 @@ public class UDPBlast extends CCC {
 	void setRate(final int mbps) {
 		setPacketSndPeriod((iSMSS * 8.0) / mbps);
 	}
+
 }
