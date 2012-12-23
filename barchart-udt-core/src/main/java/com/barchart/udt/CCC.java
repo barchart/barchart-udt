@@ -13,7 +13,12 @@ import org.slf4j.LoggerFactory;
 /**
  * A wrapper around the base UDT congestion control class
  * 
- * @author CCob*
+ * @see <a href="http://udt.sourceforge.net/udt4/doc/ccc.htm">reference</a>
+ * @see <a href="http://udt.sourceforge.net/udt4/doc/t-cc.htm">tutorial</a>
+ * @see FactoryUDT
+ * @see FactoryInterfaceUDT
+ * 
+ * @author CCob
  */
 public class CCC {
 

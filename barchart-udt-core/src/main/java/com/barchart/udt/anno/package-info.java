@@ -6,7 +6,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 /**
- * project annotations
+ * Project Annotations
  */
 package com.barchart.udt.anno;
 

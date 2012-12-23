@@ -6,7 +6,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 /**
- * 
+ * Java wrapper around native C++ UDT protocol
  */
 package com.barchart.udt;
 

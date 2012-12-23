@@ -6,7 +6,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 /**
- * native library and resource utilities
+ * Native Library and Resource Utilities
  */
 package com.barchart.udt.lib;
 

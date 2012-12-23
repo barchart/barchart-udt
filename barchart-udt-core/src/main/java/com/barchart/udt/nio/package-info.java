@@ -6,7 +6,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 /**
- * "java.nio" style programming API for UDT
+ * {@link java.nio} - Style Programming API for UDT
  */
 package com.barchart.udt.nio;
 

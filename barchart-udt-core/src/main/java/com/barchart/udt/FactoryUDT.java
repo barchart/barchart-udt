@@ -12,6 +12,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper around the UDT CCCFactory class
+ * 
+ * @see <a href="http://udt.sourceforge.net/udt4/doc/ccc.htm">reference</a>
+ * @see <a href="http://udt.sourceforge.net/udt4/doc/t-cc.htm">tutorial</a>
+ * @see CCC
+ * 
+ * @author CCob
  */
 public class FactoryUDT<C> implements FactoryInterfaceUDT {
 
@@ -78,4 +84,5 @@ public class FactoryUDT<C> implements FactoryInterfaceUDT {
 	public FactoryInterfaceUDT cloneFactory() {
 		return new FactoryUDT<C>(clazz);
 	}
+
 }

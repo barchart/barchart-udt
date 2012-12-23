@@ -5,9 +5,9 @@
  *
  * http://www.opensource.org/licenses/bsd-license.php
  */
-package com.barchart.udt;
+package com.barchart.udt.ccc;
 
-public class MainOptionCC {
+public class MainUDTBlast {
 
 	/**
 	 * @param args
@@ -15,11 +15,15 @@ public class MainOptionCC {
 	public static void main(final String[] args) {
 
 		try {
-			final TestOption option = new TestOption();
 
-			option.testOptionCC();
+			final TestUDPBlast blastTest = new TestUDPBlast();
+
+			blastTest.test();
+
 		} catch (final Throwable e) {
+
 			e.printStackTrace();
+
 		}
 
 	}

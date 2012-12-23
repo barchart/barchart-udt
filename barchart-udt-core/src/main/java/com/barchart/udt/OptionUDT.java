@@ -20,6 +20,9 @@ import com.barchart.udt.anno.Native;
  * keep code values in sync with UDT::UDTOpt
  * <p>
  * provide 2 names: 1) UDT original and 2) human-readble
+ * 
+ * @see <a href="http://udt.sourceforge.net/udt4/doc/opt.htm">UDT Options</a>
+ * 
  */
 public enum OptionUDT {
 
@@ -38,9 +41,10 @@ public enum OptionUDT {
 	/** if receiving is blocking. */
 	Is_Receive_Synchronous(2, Boolean.class, BOOLEAN), //
 
-	// custom congestion control algorithm
-	/* TODO not yet implemented: FactoryUDT */
+	/** custom congestion control algorithm */
 	UDT_CC(3, FactoryUDT.class, DECIMAL), //
+	/** custom congestion control algorithm */
+	Custom_Congestion_Control(3, FactoryUDT.class, DECIMAL), //
 
 	/** Flight flag size (window size). */
 	UDT_FC(4, Integer.class, BINARY), //

@@ -5,14 +5,15 @@
  *
  * http://www.opensource.org/licenses/bsd-license.php
  */
-package com.barchart.udt;
+package com.barchart.udt.ccc;
+
+import com.barchart.udt.CCC;
 
 /**
+ * Wrapper around the CUDPBlast class that demos the use of a custom congestion
+ * control algorithm
  * 
  * @author CCob
- * 
- *         Wrapper around the CUDPBlast class that demos the use of a custom
- *         congestion control algorithm
  */
 public class UDPBlast extends CCC {
 
@@ -22,7 +23,7 @@ public class UDPBlast extends CCC {
 		setCWndSize(83333.0);
 	}
 
-	void setRate(final int mbps) {
+	public void setRate(final int mbps) {
 		setPacketSndPeriod((iSMSS * 8.0) / mbps);
 	}
 

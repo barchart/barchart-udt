@@ -6,7 +6,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 /**
- * miscellaneous utilities
+ * Miscellaneous Utilities
  */
 package com.barchart.udt.util;
 

@@ -7,10 +7,13 @@
  */
 package com.barchart.udt;
 
+/**
+ * @author CCob
+ */
 public interface FactoryInterfaceUDT {
 
-	public CCC create();
+	CCC create();
 
-	public FactoryInterfaceUDT cloneFactory();
+	FactoryInterfaceUDT cloneFactory();
 
 }
