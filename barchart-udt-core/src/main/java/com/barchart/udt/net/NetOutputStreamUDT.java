@@ -19,7 +19,7 @@ import com.barchart.udt.SocketUDT;
  */
 public class NetOutputStreamUDT extends OutputStream {
 
-	private final SocketUDT socketUDT;
+	protected final SocketUDT socketUDT;
 
 	/**
 	 * 

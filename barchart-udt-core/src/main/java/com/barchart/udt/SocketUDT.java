@@ -325,7 +325,7 @@ public class SocketUDT {
 		synchronized (SocketUDT.class) {
 			if (isOpen()) {
 				close0();
-				log.debug("closed socketID={}", socketID);
+				log.debug("closed : {}", this);
 			}
 		}
 	}

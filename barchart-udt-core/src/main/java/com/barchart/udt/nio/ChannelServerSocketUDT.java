@@ -43,8 +43,10 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 
 	protected final SocketUDT socketUDT;
 
-	protected ChannelServerSocketUDT(final SelectorProviderUDT provider,
-			final SocketUDT socketUDT) {
+	protected ChannelServerSocketUDT( //
+			final SelectorProviderUDT provider, //
+			final SocketUDT socketUDT //
+	) {
 
 		super(provider);
 		this.socketUDT = socketUDT;
@@ -77,7 +79,10 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 			} else {
 
 				return new ChannelSocketUDT( //
-						provider(), clientUDT, clientUDT.isConnected());
+						(SelectorProviderUDT) provider(), //
+						clientUDT, //
+						clientUDT.isConnected() //
+				);
 
 			}
 		} finally {

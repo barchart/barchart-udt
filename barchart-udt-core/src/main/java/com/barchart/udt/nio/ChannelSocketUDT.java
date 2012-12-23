@@ -17,7 +17,6 @@ import java.nio.channels.ConnectionPendingException;
 import java.nio.channels.IllegalBlockingModeException;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.UnresolvedAddressException;
-import java.nio.channels.spi.SelectorProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +48,10 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	protected static final Logger log = LoggerFactory
 			.getLogger(ChannelSocketUDT.class);
 
-	protected SocketUDT socketUDT;
+	protected final SocketUDT socketUDT;
 
 	protected ChannelSocketUDT( //
-			final SelectorProvider provider, //
+			final SelectorProviderUDT provider, //
 			final SocketUDT socketUDT //
 	) {
 
@@ -61,7 +60,7 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	protected ChannelSocketUDT( //
-			final SelectorProvider provider, //
+			final SelectorProviderUDT provider, //
 			final SocketUDT socketUDT, //
 			final boolean isConnected //
 	) {

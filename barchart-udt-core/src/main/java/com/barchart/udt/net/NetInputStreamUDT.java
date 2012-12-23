@@ -21,7 +21,7 @@ public class NetInputStreamUDT extends InputStream {
 
 	public static int EOF = -1;
 
-	private final SocketUDT socketUDT;
+	protected final SocketUDT socketUDT;
 
 	/**
 	 * 

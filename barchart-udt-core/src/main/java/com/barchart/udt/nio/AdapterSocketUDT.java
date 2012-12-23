@@ -19,14 +19,16 @@ public class AdapterSocketUDT extends NetSocketUDT {
 
 	protected final ChannelSocketUDT channelUDT;
 
-	protected AdapterSocketUDT(final ChannelSocketUDT channelSocketUDT,
-			final SocketUDT socketUDT) {
+	protected AdapterSocketUDT( //
+			final ChannelSocketUDT channelUDT, //
+			final SocketUDT socketUDT //
+	) {
 		super(socketUDT);
-		this.channelUDT = channelSocketUDT;
+		this.channelUDT = channelUDT;
 	}
 
 	@Override
-	public SocketChannel getChannel() {
+	public ChannelSocketUDT getChannel() {
 		return channelUDT;
 	}
 

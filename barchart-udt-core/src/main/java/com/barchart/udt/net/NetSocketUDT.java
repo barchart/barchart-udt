@@ -52,12 +52,13 @@ public class NetSocketUDT extends Socket implements IceSocket {
 	}
 
 	@Override
-	public void connect(SocketAddress endpoint) throws IOException {
+	public void connect(final SocketAddress endpoint) throws IOException {
 		socketUDT.connect((InetSocketAddress) endpoint);
 	}
 
 	@Override
-	public void connect(SocketAddress endpoint, int timeout) throws IOException {
+	public void connect(final SocketAddress endpoint, final int timeout)
+			throws IOException {
 		throw new RuntimeException("feature not available");
 	}
 
@@ -98,7 +99,7 @@ public class NetSocketUDT extends Socket implements IceSocket {
 	public SocketAddress getLocalSocketAddress() {
 		try {
 			return socketUDT.getLocalSocketAddress();
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 			return null;
 		}
 	}
@@ -130,7 +131,7 @@ public class NetSocketUDT extends Socket implements IceSocket {
 	public SocketAddress getRemoteSocketAddress() {
 		try {
 			return socketUDT.getRemoteSocketAddress();
-		} catch (ExceptionUDT e) {
+		} catch (final ExceptionUDT e) {
 			return null;
 		}
 	}
@@ -191,58 +192,59 @@ public class NetSocketUDT extends Socket implements IceSocket {
 	}
 
 	@Override
-	public void sendUrgentData(int data) throws IOException {
+	public void sendUrgentData(final int data) throws IOException {
 		throw new RuntimeException("feature not available");
 	}
 
 	@Override
-	public void setKeepAlive(boolean on) throws SocketException {
+	public void setKeepAlive(final boolean on) throws SocketException {
 		throw new RuntimeException("feature not available");
 	}
 
 	@Override
-	public void setOOBInline(boolean on) throws SocketException {
+	public void setOOBInline(final boolean on) throws SocketException {
 		throw new RuntimeException("feature not available");
 	}
 
 	@Override
-	public void setPerformancePreferences(int connectionTime, int latency,
-			int bandwidth) {
+	public void setPerformancePreferences(final int connectionTime,
+			final int latency, final int bandwidth) {
 		throw new RuntimeException("feature not available");
 	}
 
 	@Override
-	public void setReceiveBufferSize(int size) throws SocketException {
+	public void setReceiveBufferSize(final int size) throws SocketException {
 		socketUDT.setReceiveBufferSize(size);
 	}
 
 	@Override
-	public void setReuseAddress(boolean on) throws SocketException {
+	public void setReuseAddress(final boolean on) throws SocketException {
 		socketUDT.setReuseAddress(on);
 	}
 
 	@Override
-	public void setSendBufferSize(int size) throws SocketException {
+	public void setSendBufferSize(final int size) throws SocketException {
 		socketUDT.setSendBufferSize(size);
 	}
 
 	@Override
-	public void setSoLinger(boolean on, int linger) throws SocketException {
+	public void setSoLinger(final boolean on, final int linger)
+			throws SocketException {
 		socketUDT.setSoLinger(on, linger);
 	}
 
 	@Override
-	public void setSoTimeout(int timeout) throws SocketException {
+	public void setSoTimeout(final int timeout) throws SocketException {
 		socketUDT.setSoTimeout(timeout);
 	}
 
 	@Override
-	public void setTcpNoDelay(boolean on) throws SocketException {
+	public void setTcpNoDelay(final boolean on) throws SocketException {
 		throw new RuntimeException("feature not available");
 	}
 
 	@Override
-	public void setTrafficClass(int tc) throws SocketException {
+	public void setTrafficClass(final int tc) throws SocketException {
 		throw new RuntimeException("feature not available");
 	}
 
