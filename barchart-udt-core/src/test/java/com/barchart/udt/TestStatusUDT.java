@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import util.UnitHelp;
 
-
 public class TestStatusUDT {
 
 	static final Logger log = LoggerFactory.getLogger(TestStatusUDT.class);
@@ -53,8 +52,7 @@ public class TestStatusUDT {
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
-		final InetSocketAddress localAddress1 = UnitHelp
-				.localSocketAddress();
+		final InetSocketAddress localAddress1 = UnitHelp.localSocketAddress();
 
 		socket.bind(localAddress1);
 		assertEquals(StatusUDT.OPENED, socket.getStatus());
@@ -71,8 +69,7 @@ public class TestStatusUDT {
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 		assertEquals(StatusUDT.INIT, socket.getStatus());
 
-		final InetSocketAddress localAddress1 = UnitHelp
-				.localSocketAddress();
+		final InetSocketAddress localAddress1 = UnitHelp.localSocketAddress();
 
 		socket.bind(localAddress1);
 		assertEquals(StatusUDT.OPENED, socket.getStatus());
@@ -88,11 +85,9 @@ public class TestStatusUDT {
 	@Test
 	public void testSocketStatus3() throws Exception {
 
-		final InetSocketAddress clientAddress = UnitHelp
-				.localSocketAddress();
+		final InetSocketAddress clientAddress = UnitHelp.localSocketAddress();
 
-		final InetSocketAddress serverAddress = UnitHelp
-				.localSocketAddress();
+		final InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
 
 		//
 

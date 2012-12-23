@@ -58,24 +58,26 @@ public class NetOutputStreamUDT extends OutputStream {
 			throws IOException {
 
 		int bytesRemaining = len;
-		
-		while(bytesRemaining > 0){
-			
-			final int count = socketUDT.send(bytes, off + len - bytesRemaining , off + len);
-			
+
+		while (bytesRemaining > 0) {
+
+			final int count = socketUDT.send(bytes, off + len - bytesRemaining,
+					off + len);
+
 			if (count > 0) {
-				bytesRemaining -= count;													
+				bytesRemaining -= count;
 				continue;
-			}			
-			
+			}
+
 			if (count == 0) {
 				throw new ExceptionSendUDT(socketUDT.getSocketId(),
 						ErrorUDT.USER_DEFINED_MESSAGE, "UDT send time out");
-			}			
-			
-			throw new IllegalStateException("Socket has been chaged to non-blocking");			
+			}
+
+			throw new IllegalStateException(
+					"Socket has been chaged to non-blocking");
 		}
-				
+
 	}
 
 	@Override

@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import util.StopWatch;
 
-
 public class MainBench {
 
 	static final int COUNT = 1 * 10 * 1000;

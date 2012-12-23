@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  * annotation marks a native JNI entity, please not change it in any way
  */
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
+@Target( { ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Native {
 

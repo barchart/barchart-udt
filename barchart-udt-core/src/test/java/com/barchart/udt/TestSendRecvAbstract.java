@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import util.UnitHelp;
 
-
 public abstract class TestSendRecvAbstract<T> {
 
 	final static Logger log = LoggerFactory

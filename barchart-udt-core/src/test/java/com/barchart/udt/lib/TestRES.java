@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import util.UnitHelp;
 
-
 public class TestRES {
 
 	static final Logger log = LoggerFactory.getLogger(TestRES.class);

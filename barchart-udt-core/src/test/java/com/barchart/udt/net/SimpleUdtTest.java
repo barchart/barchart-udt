@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import util.UnitHelp;
 
-
 /**
  * Sets up a simple UDT client and server to test sending messages between them.
  */
@@ -39,15 +38,13 @@ public class SimpleUdtTest {
 		// we're getting the right one across multiple threads.
 		final AtomicReference<String> ref = new AtomicReference<String>();
 
-		final InetSocketAddress serverAddress = UnitHelp
-				.localSocketAddress();
+		final InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
 
 		startThreadedServer(serverAddress, ref);
 
 		final Socket clientSocket = new NetSocketUDT();
 
-		final InetSocketAddress clientAddress = UnitHelp
-				.localSocketAddress();
+		final InetSocketAddress clientAddress = UnitHelp.localSocketAddress();
 
 		clientSocket.bind(clientAddress);
 		assertTrue("Socket not bound!!", clientSocket.isBound());

@@ -220,10 +220,11 @@ public class SelectionKeyUDT extends SelectionKey {
 					}
 					return true;
 				} else {
-					log.warn(
-							"logic error",
-							new Exception(
-									"ready to write while connected yet not insterested"));
+					log
+							.warn(
+									"logic error",
+									new Exception(
+											"ready to write while connected yet not insterested"));
 					return false;
 				}
 			} else {
@@ -235,10 +236,11 @@ public class SelectionKeyUDT extends SelectionKey {
 					}
 					return true;
 				} else {
-					log.warn(
-							"logic error",
-							new Exception(
-									"ready to write while not connected and not interested"));
+					log
+							.warn(
+									"logic error",
+									new Exception(
+											"ready to write while not connected and not interested"));
 					return false;
 				}
 			}

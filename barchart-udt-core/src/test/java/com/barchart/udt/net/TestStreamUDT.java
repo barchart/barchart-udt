@@ -94,8 +94,7 @@ public class TestStreamUDT {
 
 		log.info("STARTED");
 
-		final InetSocketAddress serverAddress = UnitHelp
-				.localSocketAddress();
+		final InetSocketAddress serverAddress = UnitHelp.localSocketAddress();
 
 		startThreadedServer(serverAddress, readStrategy);
 
@@ -103,8 +102,7 @@ public class TestStreamUDT {
 
 		final SocketUDT clientSocket = new SocketUDT(TypeUDT.STREAM);
 
-		final InetSocketAddress clientAddress = UnitHelp
-				.localSocketAddress();
+		final InetSocketAddress clientAddress = UnitHelp.localSocketAddress();
 
 		clientSocket.bind(clientAddress);
 		assertTrue("Socket not bound!!", clientSocket.isBound());
