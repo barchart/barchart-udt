@@ -85,11 +85,11 @@ public class EpollUDT {
 
 	}
 
-	private static final Logger log = LoggerFactory.getLogger(EpollUDT.class);
+	protected static final Logger log = LoggerFactory.getLogger(EpollUDT.class);
 
-	private final int id;
+	protected final int id;
 
-	private volatile boolean isActive;
+	protected volatile boolean isActive;
 
 	/**
 	 * allocate Epoll
@@ -111,7 +111,7 @@ public class EpollUDT {
 		SocketUDT.epollRelease0(id);
 		isActive = false;
 
-		log.debug("destroy id={}", id());
+		log.debug("destroyed id={}", id());
 
 	}
 

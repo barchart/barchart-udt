@@ -14,12 +14,20 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.barchart.udt.HelperUDT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.barchart.udt.EpollUDT;
 
 /**
  * miscellaneous utilities
  */
 public class HelpUDT {
+
+	private HelpUDT() {
+	}
+
+	protected static final Logger log = LoggerFactory.getLogger(EpollUDT.class);
 
 	public static long md5sum(final String text) {
 
@@ -41,7 +49,7 @@ public class HelpUDT {
 
 		} catch (final NoSuchAlgorithmException e) {
 
-			HelperUDT.log.error("md5 failed", e);
+			log.error("md5 failed", e);
 
 			return 0;
 
