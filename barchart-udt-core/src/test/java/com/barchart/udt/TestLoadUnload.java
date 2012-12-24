@@ -16,16 +16,22 @@ import org.slf4j.LoggerFactory;
 
 public class TestLoadUnload {
 
-	class JNIClassLoader extends ClassLoader {
+	private static class JNIClassLoader extends ClassLoader {
 
-		private final Map<String, Class<?>> classes;
+		final Map<String, Class<?>> classes;
 
 		File classLoadRoot;
 
-		public JNIClassLoader(final File classLoadRoot) {
+		JNIClassLoader(final File classLoadRoot) {
+
 			super(JNIClassLoader.class.getClassLoader());
+
 			classes = new HashMap<String, Class<?>>();
+
 			this.classLoadRoot = classLoadRoot;
+
+			TestLoadUnload.isLoaderPresent = true;
+
 		}
 
 		@Override
@@ -69,6 +75,7 @@ public class TestLoadUnload {
 
 			final String path = name.replace('.', File.separatorChar)
 					+ ".class";
+
 			byte[] b = null;
 
 			try {
@@ -83,36 +90,49 @@ public class TestLoadUnload {
 			classes.put(name, c);
 
 			return c;
+
 		}
 
 		private byte[] loadClassData(final String name) throws IOException {
+
 			final File file = new File(classLoadRoot, name);
 			final int size = (int) file.length();
 			final byte buff[] = new byte[size];
-			final DataInputStream in = new DataInputStream(new FileInputStream(
-					file));
+
+			final DataInputStream in = //
+			new DataInputStream(new FileInputStream(file));
 
 			in.readFully(buff);
 			in.close();
 
 			return buff;
+
 		}
 
 		@Override
 		protected void finalize() throws Throwable {
-			log.info("Finalised JNI class loader");
+
+			log.info("Finalised {}", this.getClass());
+
 			super.finalize();
+
+			TestLoadUnload.isLoaderPresent = false;
+
 		}
 
 	}
 
-	Logger log = LoggerFactory.getLogger(TestLoadUnload.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(TestLoadUnload.class);
+
+	private static volatile boolean isLoaderPresent;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void createSocketWithClassloader() throws ClassNotFoundException,
+	private int createSocketWithClassloader() throws ClassNotFoundException,
 			IllegalArgumentException, SecurityException,
 			InstantiationException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+			InvocationTargetException, NoSuchMethodException,
+			InterruptedException {
 
 		final String currentDir = new File(".").getAbsolutePath();
 		log.info(String.format("Current directory: %s", currentDir));
@@ -121,62 +141,71 @@ public class TestLoadUnload {
 		// use the whole java classpath
 		final File classPath = new File("target/classes");
 
-		JNIClassLoader cl = new JNIClassLoader(classPath);
+		JNIClassLoader loader = new JNIClassLoader(classPath);
 
-		Class<Enum> typeClass = (Class<Enum>) cl
+		Class<Enum> typeClass = (Class<Enum>) loader
 				.findClass("com.barchart.udt.TypeUDT");
 
-		Class<?> ca = cl.findClass("com.barchart.udt.SocketUDT");
+		Class<?> socketClass = loader.findClass("com.barchart.udt.SocketUDT");
 
-		Object udt = ca.getDeclaredConstructor(typeClass).newInstance(
-				Enum.valueOf(typeClass, "DATAGRAM"));
+		Object socketInstance = socketClass.getDeclaredConstructor(typeClass)
+				.newInstance(Enum.valueOf(typeClass, "DATAGRAM"));
 
-		ca.getMethod("cleanup").invoke(udt);
+		socketClass.getMethod("cleanup").invoke(socketInstance);
 
-		log.info(String.format("Socket hash code: %s", udt.hashCode()));
+		final int classHashCode = socketClass.hashCode();
 
-		ca = null;
+		log.info(String.format("socketClass hashCode : %s", classHashCode));
+
 		typeClass = null;
-		udt = null;
-		cl = null;
+		socketClass = null;
+		socketInstance = null;
+		loader = null;
+
+		/** waiting loader to finalize */
+		while (isLoaderPresent) {
+			System.gc();
+			Thread.sleep(100);
+		}
+
+		/** waiting jvm to unlink class */
 		System.gc();
+		Thread.sleep(100);
+
+		return classHashCode;
+
 	}
 
-	@Test
-	public void testLoadUnload() {
+	@Test(timeout = 15 * 1000)
+	public void testLoadUnload() throws Exception {
 
-		try {
+		int lastClassHash = 0;
 
-			createSocketWithClassloader();
+		{
+			final int nextClassHash = createSocketWithClassloader();
+			assertTrue(nextClassHash != lastClassHash);
+			lastClassHash = nextClassHash;
+		}
 
-			createSocketWithClassloader();
+		{
+			final int nextClassHash = createSocketWithClassloader();
+			assertTrue(nextClassHash != lastClassHash);
+			lastClassHash = nextClassHash;
+		}
 
-		} catch (final ClassNotFoundException e) {
-			fail("Failed to find SocketUDT class for load/unload test");
-		} catch (final InstantiationException e) {
-			log.error("Failed to create new SocketUDT class", e);
-			fail("Failed to instansiate SocketUDT class for load/unload test");
-		} catch (final IllegalAccessException e) {
-			fail("Failed to create SocketUDT class for load/unload test");
-		} catch (final IllegalArgumentException e) {
-			log.error("Failed to construct SocketUDT", e);
-			fail("Failed to create SocketUDT class for load/unload test");
-		} catch (final SecurityException e) {
-			fail("Failed to create SocketUDT class for load/unload test");
-		} catch (final InvocationTargetException e) {
-			fail("Failed to create SocketUDT class for load/unload test");
-		} catch (final NoSuchMethodException e) {
-			log.error("Failed to construct SocketUDT", e);
-			fail("Failed to create SocketUDT class for load/unload test");
-		} finally {
+		{
+			final int nextClassHash = createSocketWithClassloader();
+			assertTrue(nextClassHash != lastClassHash);
+			lastClassHash = nextClassHash;
 		}
 
 	}
 
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws Throwable {
 
-		final TestLoadUnload lul = new TestLoadUnload();
-		lul.testLoadUnload();
+		final TestLoadUnload test = new TestLoadUnload();
+
+		test.testLoadUnload();
 
 	}
 

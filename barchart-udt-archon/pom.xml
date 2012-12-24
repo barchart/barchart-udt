@@ -99,8 +99,13 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
+					
 						<!-- do not fork to enforce java bits (32/64) during tests -->
-						<forkMode>never</forkMode>
+						<!-- <forkMode>never</forkMode> -->
+						
+						<!-- FIXME propagate MAVEN_OPTS to forked jvm -->
+						<forkMode>always</forkMode>
+						
 					</configuration>
 				</plugin>
 
