@@ -46,7 +46,6 @@ class JNICCCFactory: public CCCVirtualFactory {
 
 private:
 
-	static jclass  _cls_FactoryInterfaceUDT;
 	static jmethodID _udt_clsFactoryInterfaceUDT_create;
 	static jmethodID _udt_clsFactoryInterfaceUDT_cloneFactory;
 

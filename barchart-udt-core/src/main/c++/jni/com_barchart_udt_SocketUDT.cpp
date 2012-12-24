@@ -291,8 +291,40 @@ void UDT_InitClassRefAll(JNIEnv* env) {
 			"com/barchart/udt/LingerUDT");
 	X_InitClassReference(env, &udt_clsCCC, //
 			"com/barchart/udt/CCC");
+	X_InitClassReference(env,&udt_clsFactoryInterfaceUDT,
+			"com/barchart/udt/FactoryInterfaceUDT");
 
 }
+
+void UDT_FreeClassRefAll(JNIEnv* env) {
+
+	// JDK
+
+	X_FreeClassReference(env, &jdk_clsBoolean);
+	X_FreeClassReference(env, &jdk_clsInteger);
+	X_FreeClassReference(env, &jdk_clsLong);
+
+	X_FreeClassReference(env, &jdk_clsInet4Address);
+	X_FreeClassReference(env, &jdk_clsInet6Address);
+	X_FreeClassReference(env, &jdk_clsInetSocketAddress);
+
+	X_FreeClassReference(env, &jdk_clsSocketException);
+
+	X_FreeClassReference(env, &jdk_clsSet);
+	X_FreeClassReference(env, &jdk_clsIterator);
+
+	// UDT
+
+	X_FreeClassReference(env, &udt_clsSocketUDT);
+	X_FreeClassReference(env, &udt_clsTypeUDT);
+	X_FreeClassReference(env, &udt_clsFactoryUDT);
+	X_FreeClassReference(env, &udt_clsMonitorUDT);
+	X_FreeClassReference(env, &udt_clsExceptionUDT);
+	X_FreeClassReference(env, &udt_clsLingerUDT);
+	X_FreeClassReference(env, &udt_clsCCC);
+	X_FreeClassReference(env, &udt_clsFactoryInterfaceUDT);
+}
+
 
 void UDT_InitFieldRefAll(JNIEnv* env) {
 
@@ -458,7 +490,8 @@ void JNICALL Java_com_barchart_udt_SocketUDT_stopClass0(JNIEnv* env,
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
 
-	// TODO release JNI global references
+	//Release global JNI references
+	UDT_FreeClassRefAll(env);
 
 	const int rv = UDT::cleanup();
 
