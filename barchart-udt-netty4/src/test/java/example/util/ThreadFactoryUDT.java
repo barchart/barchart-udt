@@ -16,7 +16,8 @@ public class ThreadFactoryUDT implements ThreadFactory {
 	@Override
 	public Thread newThread(final Runnable runnable) {
 
-		return new Thread(runnable, name + "-" + counter.getAndIncrement());
+		return new Thread( //
+				runnable, "udt-" + name + "-" + counter.getAndIncrement());
 
 	};
 

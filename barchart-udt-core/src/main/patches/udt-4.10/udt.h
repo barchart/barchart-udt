@@ -1,5 +1,5 @@
 /*****************************************************************************
-Copyright (c) 2001 - 2010, The Board of Trustees of the University of Illinois.
+Copyright (c) 2001 - 2011, The Board of Trustees of the University of Illinois.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*****************************************************************************
 written by
-   Yunhong Gu, last updated 12/14/2010
+   Yunhong Gu, last updated 01/18/2011
 *****************************************************************************/
 
 #ifndef __UDT_H__
@@ -47,10 +47,11 @@ written by
    #include <sys/socket.h>
    #include <netinet/in.h>
 #else
-   #include <windows.h>
    #ifdef __MINGW__
+      #include <stdint.h>
       #include <ws2tcpip.h>
    #endif
+   #include <windows.h>
 #endif
 #include <fstream>
 #include <set>
@@ -89,28 +90,23 @@ written by
       #define UDT_API
    #endif
 #else
-   #define UDT_API
+   #define UDT_API __attribute__ ((visibility("default")))
 #endif
 
 #define NO_BUSY_WAITING
 
 #ifdef WIN32
    #ifndef __MINGW__
-      typedef SOCKET UDPSOCKET;
+      typedef SOCKET SYSSOCKET;
    #else
-      typedef int UDPSOCKET;
+      typedef int SYSSOCKET;
    #endif
 #else
-   typedef int UDPSOCKET;
-#endif
-
-typedef int UDTSOCKET;
-
-#ifndef WIN32
    typedef int SYSSOCKET;
-#else
-   typedef SOCKET SYSSOCKET;
 #endif
+
+typedef SYSSOCKET UDPSOCKET;
+typedef int UDTSOCKET;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -129,6 +125,7 @@ enum EPOLLOpt
    UDT_EPOLL_ERR = 0x8
 };
 
+enum UDTSTATUS {INIT = 1, OPENED, LISTENING, CONNECTING, CONNECTED, BROKEN, CLOSING, CLOSED, NONEXIST};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -150,7 +147,11 @@ enum UDTOpt
    UDT_SNDTIMEO,        // send() timeout
    UDT_RCVTIMEO,        // recv() timeout
    UDT_REUSEADDR,	// reuse an existing port or create a new one
-   UDT_MAXBW		// maximum bandwidth (bytes per second) that the connection can use
+   UDT_MAXBW,		// maximum bandwidth (bytes per second) that the connection can use
+   UDT_STATE,		// current socket state, see UDTSTATUS, read only
+   UDT_EVENT,		// current avalable events associated with the socket
+   UDT_SNDDATA,		// size of data in the sending buffer
+   UDT_RCVDATA		// size of data available for recv
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -284,14 +285,21 @@ public: // Error Code
    static const int EASYNCFAIL;
    static const int EASYNCSND;
    static const int EASYNCRCV;
+   static const int ETIMEOUT;
    static const int EPEERERR;
    static const int EUNKNOWN;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// If you need to export these APIs to be used by a different language,
+// declare extern "C" for them, and add a "udt_" prefix to each API.
+// The following APIs: sendfile(), recvfile(), epoll_wait(), geterrormsg(),
+// include C++ specific feature, please use the corresponding sendfile2(), etc.
+
 namespace UDT
 {
+
 typedef CUDTException ERRORINFO;
 typedef UDTOpt SOCKOPT;
 typedef CPerfMon TRACEINFO;
@@ -305,7 +313,7 @@ UDT_API int startup();
 UDT_API int cleanup();
 UDT_API UDTSOCKET socket(int af, int type, int protocol);
 UDT_API int bind(UDTSOCKET u, const struct sockaddr* name, int namelen);
-UDT_API int bind(UDTSOCKET u, UDPSOCKET udpsock);
+UDT_API int bind2(UDTSOCKET u, UDPSOCKET udpsock);
 UDT_API int listen(UDTSOCKET u, int backlog);
 UDT_API UDTSOCKET accept(UDTSOCKET u, struct sockaddr* addr, int* addrlen);
 UDT_API int connect(UDTSOCKET u, const struct sockaddr* name, int namelen);
@@ -320,17 +328,35 @@ UDT_API int sendmsg(UDTSOCKET u, const char* buf, int len, int ttl = -1, bool in
 UDT_API int recvmsg(UDTSOCKET u, char* buf, int len);
 UDT_API int64_t sendfile(UDTSOCKET u, std::fstream& ifs, int64_t& offset, int64_t size, int block = 364000);
 UDT_API int64_t recvfile(UDTSOCKET u, std::fstream& ofs, int64_t& offset, int64_t size, int block = 7280000);
+UDT_API int64_t sendfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block = 364000);
+UDT_API int64_t recvfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block = 7280000);
+
+// select and selectEX are DEPRECATED; please use epoll. 
 UDT_API int select(int nfds, UDSET* readfds, UDSET* writefds, UDSET* exceptfds, const struct timeval* timeout);
-UDT_API int selectEx(const std::vector<UDTSOCKET>& fds, std::vector<UDTSOCKET>* readfds, std::vector<UDTSOCKET>* writefds, std::vector<UDTSOCKET>* exceptfds, int64_t msTimeOut);
+UDT_API int selectEx(const std::vector<UDTSOCKET>& fds, std::vector<UDTSOCKET>* readfds,
+                     std::vector<UDTSOCKET>* writefds, std::vector<UDTSOCKET>* exceptfds, int64_t msTimeOut);
+
+// FIXME make patch
+UDT_API int epoll_update_usock(int eid, UDTSOCKET u, const int* events = NULL);
+// FIXME make patch
+UDT_API int epoll_verify_usock(int eid, UDTSOCKET u, int* events);
+
 UDT_API int epoll_create();
-UDT_API int epoll_add_usock(const int eid, const UDTSOCKET u, const int* events = NULL);
-UDT_API int epoll_add_ssock(const int eid, const SYSSOCKET s, const int* events = NULL);
-UDT_API int epoll_remove_usock(const int eid, const UDTSOCKET u, const int* events = NULL);
-UDT_API int epoll_remove_ssock(const int eid, const SYSSOCKET s, const int* events = NULL);
-UDT_API int epoll_wait(const int eid, std::set<UDTSOCKET>* readfds, std::set<UDTSOCKET>* writefds, int64_t msTimeOut, std::set<SYSSOCKET>* lrfds = NULL, std::set<SYSSOCKET>* wrfds = NULL);
-UDT_API int epoll_release(const int eid);
+UDT_API int epoll_add_usock(int eid, UDTSOCKET u, const int* events = NULL);
+UDT_API int epoll_add_ssock(int eid, SYSSOCKET s, const int* events = NULL);
+UDT_API int epoll_remove_usock(int eid, UDTSOCKET u);
+UDT_API int epoll_remove_ssock(int eid, SYSSOCKET s);
+UDT_API int epoll_wait(int eid, std::set<UDTSOCKET>* readfds, std::set<UDTSOCKET>* writefds, int64_t msTimeOut,
+                       std::set<SYSSOCKET>* lrfds = NULL, std::set<SYSSOCKET>* wrfds = NULL);
+UDT_API int epoll_wait2(int eid, UDTSOCKET* readfds, int* rnum, UDTSOCKET* writefds, int* wnum, int64_t msTimeOut,
+                        SYSSOCKET* lrfds = NULL, int* lrnum = NULL, SYSSOCKET* lwfds = NULL, int* lwnum = NULL);
+UDT_API int epoll_release(int eid);
 UDT_API ERRORINFO& getlasterror();
+UDT_API int getlasterror_code();
+UDT_API const char* getlasterror_desc();
 UDT_API int perfmon(UDTSOCKET u, TRACEINFO* perf, bool clear = true);
-}
+UDT_API UDTSTATUS getsockstate(UDTSOCKET u);
+
+}  // namespace UDT
 
 #endif

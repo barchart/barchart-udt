@@ -131,7 +131,7 @@ public class TestSelectionKeyUDT extends TestAny {
 
 		keyUDT.interestOps(SelectionKey.OP_READ | SelectionKey.OP_CONNECT);
 
-		assertEquals(EpollUDT.Opt.ALL, keyUDT.epollOpt());
+		assertEquals(EpollUDT.Opt.BOTH, keyUDT.epollOpt());
 
 		assertTrue("connect ok", keyUDT.processWrite(1));
 		// assertTrue("connected", keyUDT.isBeyondConnect());

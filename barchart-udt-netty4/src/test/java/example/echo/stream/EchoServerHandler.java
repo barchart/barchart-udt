@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package example.echo;
+package example.echo.stream;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundByteHandlerAdapter;
 
@@ -24,41 +24,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Handler implementation for the echo client. It initiates the ping-pong
- * traffic between the echo client and server by sending the first message to
- * the server.
+ * Handler implementation for the echo server.
  */
-public class EchoClientHandler extends ChannelInboundByteHandlerAdapter {
+@Sharable
+public class EchoServerHandler extends ChannelInboundByteHandlerAdapter {
 
 	private static final Logger logger = Logger
-			.getLogger(EchoClientHandler.class.getName());
-
-	private final ByteBuf firstMessage;
-
-	/**
-	 * Creates a client-side handler.
-	 */
-	public EchoClientHandler(final int firstMessageSize) {
-
-		if (firstMessageSize <= 0) {
-			throw new IllegalArgumentException("firstMessageSize: "
-					+ firstMessageSize);
-		}
-
-		firstMessage = Unpooled.buffer(firstMessageSize);
-
-		for (int i = 0; i < firstMessage.capacity(); i++) {
-			firstMessage.writeByte((byte) i);
-		}
-
-	}
-
-	@Override
-	public void channelActive(final ChannelHandlerContext ctx) {
-
-		ctx.write(firstMessage);
-
-	}
+			.getLogger(EchoServerHandler.class.getName());
 
 	@Override
 	public void inboundBufferUpdated(final ChannelHandlerContext ctx,
@@ -79,6 +51,7 @@ public class EchoClientHandler extends ChannelInboundByteHandlerAdapter {
 			final Throwable cause) {
 
 		// Close the connection when an exception is raised.
+
 		logger.log(Level.WARNING, "Unexpected exception from downstream.",
 				cause);
 

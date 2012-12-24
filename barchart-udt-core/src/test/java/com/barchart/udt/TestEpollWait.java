@@ -9,9 +9,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.barchart.udt.util.HelpUDT;
-
 import util.TestAny;
+
+import com.barchart.udt.util.HelpUDT;
 
 public class TestEpollWait extends TestAny {
 
@@ -29,7 +29,7 @@ public class TestEpollWait extends TestAny {
 		accept.configureBlocking(true);
 		accept.bind0(localSocketAddress());
 
-		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.ALL.code);
+		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.BOTH.code);
 
 		socketAwait(accept, StatusUDT.OPENED);
 		log.info("accept OPENED");
@@ -39,10 +39,10 @@ public class TestEpollWait extends TestAny {
 		}
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		accept.configureBlocking(true);
+		client.configureBlocking(true);
 		client.bind0(localSocketAddress());
 
-		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.ALL.code);
+		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.BOTH.code);
 
 		socketAwait(client, StatusUDT.OPENED);
 		log.info("client OPENED");
@@ -89,8 +89,8 @@ public class TestEpollWait extends TestAny {
 
 		final SocketUDT server = accept.accept0();
 		assertNotNull(server);
-		accept.configureBlocking(true);
-		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.ALL.code);
+		server.configureBlocking(true);
+		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.BOTH.code);
 
 		socketAwait(server, StatusUDT.CONNECTED);
 		log.info("server CONNECTED");
@@ -180,13 +180,16 @@ public class TestEpollWait extends TestAny {
 		log.info("accept listen : {}", accept.getSocketId());
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		accept.configureBlocking(true);
+		client.configureBlocking(true);
 		client.bind0(localSocketAddress());
 
-		// accept
 		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.READ.code);
-		// client
 		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.NONE.code);
+
+		// SocketUDT
+		// .epollUpdate0(epollID, accept.socketID, EpollUDT.Opt.NONE.code);
+		// SocketUDT
+		// .epollUpdate0(epollID, client.socketID, EpollUDT.Opt.NONE.code);
 
 		client.connect0(accept.getLocalSocketAddress());
 
@@ -216,7 +219,7 @@ public class TestEpollWait extends TestAny {
 
 		final SocketUDT server = accept.accept0();
 		assertNotNull(server);
-		accept.configureBlocking(true);
+		server.configureBlocking(true);
 		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.NONE.code);
 
 		socketAwait(server, StatusUDT.CONNECTED);

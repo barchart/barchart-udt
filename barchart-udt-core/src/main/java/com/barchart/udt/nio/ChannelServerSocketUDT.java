@@ -10,12 +10,12 @@ package com.barchart.udt.nio;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.SocketUDT;
+import com.barchart.udt.TypeUDT;
 
 /**
  * you must use {@link SelectorProviderUDT#openServerSocketChannel()} to obtain
@@ -41,6 +41,9 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	protected static final Logger log = LoggerFactory
 			.getLogger(ChannelServerSocketUDT.class);
 
+	/** guarded by 'this' */
+	protected ServerSocket socketAdapter;
+
 	protected final SocketUDT socketUDT;
 
 	protected ChannelServerSocketUDT( //
@@ -51,6 +54,32 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 		super(provider);
 		this.socketUDT = socketUDT;
 
+	}
+
+	@Override
+	public ChannelSocketUDT accept() throws IOException {
+		try {
+
+			begin();
+
+			final SocketUDT clientUDT = socketUDT.accept();
+
+			if (clientUDT == null) {
+
+				return null;
+
+			} else {
+
+				return new ChannelSocketUDT( //
+						providerUDT(), //
+						clientUDT, //
+						clientUDT.isConnected() //
+				);
+
+			}
+		} finally {
+			end(true);
+		}
 	}
 
 	@Override
@@ -65,33 +94,24 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	}
 
 	@Override
-	public SocketChannel accept() throws IOException {
-		try {
-
-			begin();
-
-			final SocketUDT clientUDT = socketUDT.accept();
-
-			if (clientUDT == null) {
-
-				return null;
-
-			} else {
-
-				return new ChannelSocketUDT( //
-						(SelectorProviderUDT) provider(), //
-						clientUDT, //
-						clientUDT.isConnected() //
-				);
-
-			}
-		} finally {
-			end(true);
-		}
+	public boolean isConnectFinished() {
+		return true;
 	}
 
-	/** guarded by 'this' */
-	protected ServerSocket socketAdapter;
+	@Override
+	public boolean isOpenSocketUDT() {
+		return socketUDT.isOpen();
+	}
+
+	@Override
+	public KindUDT kindUDT() {
+		return KindUDT.ACCEPTOR;
+	}
+
+	@Override
+	public SelectorProviderUDT providerUDT() {
+		return (SelectorProviderUDT) super.provider();
+	}
 
 	@Override
 	public ServerSocket socket() {
@@ -113,23 +133,13 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	}
 
 	@Override
-	public KindUDT kindUDT() {
-		return KindUDT.ACCEPTOR;
-	}
-
-	@Override
-	public boolean isOpenSocketUDT() {
-		return socketUDT.isOpen();
-	}
-
-	@Override
 	public String toString() {
 		return socketUDT.toString();
 	}
 
 	@Override
-	public boolean isConnectFinished() {
-		return true; // not applicable
+	public TypeUDT typeUDT() {
+		return providerUDT().type;
 	}
 
 }

@@ -37,9 +37,9 @@ public class TestEpollBasic extends TestAny {
 
 		assertTrue(epollID > 0);
 
-		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.ALL.code);
-		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.ALL.code);
-		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.ALL.code);
+		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.BOTH.code);
 
 		SocketUDT.epollRelease0(epollID);
 
@@ -58,7 +58,7 @@ public class TestEpollBasic extends TestAny {
 
 		final int epollID = SocketUDT.epollCreate0();
 
-		SocketUDT.epollAdd0(epollID, -1, EpollUDT.Opt.ALL.code);
+		SocketUDT.epollAdd0(epollID, -1, EpollUDT.Opt.BOTH.code);
 
 		SocketUDT.epollRelease0(epollID);
 
@@ -76,7 +76,7 @@ public class TestEpollBasic extends TestAny {
 
 		assertTrue(epollID > 0);
 
-		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.ALL.code);
+		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.BOTH.code);
 
 		SocketUDT.epollRemove0(epollID, socket.socketID);
 

@@ -181,7 +181,7 @@ public class UnitHelp {
 			if (value == 0) {
 				continue;
 			}
-			log.info("{} : {}", title, value);
+			log.info(String.format("%s [id: 0x%08x]", title, value));
 		}
 	}
 

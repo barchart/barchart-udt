@@ -1,10 +1,10 @@
 package io.netty.channel.socket.nio;
 
+
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
-public class TestNioUdtSocketChannel {
+public class TestNioUdtByteConnectorChannel {
 
 	@Before
 	public void setUp() throws Exception {
@@ -12,11 +12,6 @@ public class TestNioUdtSocketChannel {
 
 	@After
 	public void tearDown() throws Exception {
-	}
-
-	@Test
-	public void test() throws Exception {
-
 	}
 
 }

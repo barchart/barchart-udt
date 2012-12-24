@@ -324,7 +324,7 @@ public class SocketUDT {
 		synchronized (SocketUDT.class) {
 			if (isOpen()) {
 				close0();
-				log.debug("closed : {}", this);
+				log.debug("done : {}", this);
 			}
 		}
 	}
@@ -1073,6 +1073,7 @@ public class SocketUDT {
 			this.socketAddressFamily = 2; // ipv4
 			setDefaultMessageSendMode();
 		}
+		log.debug("init : {}", this);
 	}
 
 	/**
@@ -1092,6 +1093,7 @@ public class SocketUDT {
 			this.socketAddressFamily = 2; // ipv4
 			setDefaultMessageSendMode();
 		}
+		log.debug("init : {}", this);
 	}
 
 	/**
@@ -1429,11 +1431,10 @@ public class SocketUDT {
 	public String toString() {
 
 		return String.format( //
-				"[id: 0x%08x] %s %s block=%s bind=%s:%s peer=%s:%s", //
+				"[id: 0x%08x] %s %s bind=%s:%s peer=%s:%s", //
 				socketID, //
 				type, //
 				getStatus(), //
-				isBlocking(), //
 				getLocalInetAddress(), //
 				getLocalInetPort(), //
 				getRemoteInetAddress(), //
@@ -1507,6 +1508,50 @@ public class SocketUDT {
 	 */
 	protected static native void epollRemove0( //
 			final int epollID, final int socketID) throws ExceptionUDT;
+
+	/**
+	 * requires patch to udt c++
+	 */
+	protected static native void epollUpdate0( //
+			final int epollID, //
+			final int socketID, //
+			final int epollOpt //
+	) throws ExceptionUDT;
+
+	/**
+	 * update epoll interest mask
+	 */
+	public static void epollUpdate( //
+			final EpollUDT epoll, //
+			final SocketUDT socket, //
+			final EpollUDT.Opt opt //
+	) throws ExceptionUDT {
+
+		epollUpdate0(epoll.id(), socket.getSocketId(), opt.code);
+
+	}
+
+	/**
+	 * requires patch to udt c++
+	 */
+	protected static native int epollVerify0( //
+			final int epollID, //
+			final int socketID //
+	) throws ExceptionUDT;
+
+	/**
+	 * verify epoll interest mask
+	 */
+	public static EpollUDT.Opt epollVerify( //
+			final EpollUDT epoll, //
+			final SocketUDT socket //
+	) throws ExceptionUDT {
+
+		final int code = epollVerify0(epoll.id(), socket.getSocketId());
+
+		return EpollUDT.Opt.from(code);
+
+	}
 
 	/**
 	 * note: throws {@link ErrorUDT#ETIMEOUT} on any timeout instead of

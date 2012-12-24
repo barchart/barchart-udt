@@ -22,25 +22,22 @@ import com.barchart.udt.TypeUDT;
 
 public class NetServerSocketUDT extends ServerSocket implements IceServerSocket {
 
-	protected final SocketUDT serverSocketUDT;
+	protected final SocketUDT socketUDT;
 
 	public NetServerSocketUDT() throws IOException {
-		this.serverSocketUDT = new SocketUDT(TypeUDT.STREAM);
-		this.serverSocketUDT.configureBlocking(true);
+		this.socketUDT = new SocketUDT(TypeUDT.STREAM);
+		this.socketUDT.configureBlocking(true);
 	}
 
-	// exception thanks to JDK designers
 	/** NOTE: you just carefully choose TypeUDT */
 	public NetServerSocketUDT(final SocketUDT socketUDT) throws IOException {
-		this.serverSocketUDT = socketUDT;
+		this.socketUDT = socketUDT;
 	}
-
-	//
 
 	@Override
 	public Socket accept() throws IOException {
-		final SocketUDT connector = serverSocketUDT.accept();
-		return new NetSocketUDT(connector);
+		final SocketUDT clientUDT = socketUDT.accept();
+		return new NetSocketUDT(clientUDT);
 	}
 
 	@Override
@@ -60,13 +57,13 @@ public class NetServerSocketUDT extends ServerSocket implements IceServerSocket 
 		if (backlog <= 0) {
 			backlog = SocketUDT.DEFAULT_ACCEPT_QUEUE_SIZE;
 		}
-		serverSocketUDT.bind((InetSocketAddress) bindpoint);
-		serverSocketUDT.listen(backlog);
+		socketUDT.bind((InetSocketAddress) bindpoint);
+		socketUDT.listen(backlog);
 	}
 
 	@Override
 	public void close() throws IOException {
-		serverSocketUDT.close();
+		socketUDT.close();
 	}
 
 	@Override
@@ -76,18 +73,18 @@ public class NetServerSocketUDT extends ServerSocket implements IceServerSocket 
 
 	@Override
 	public InetAddress getInetAddress() {
-		return serverSocketUDT.getLocalInetAddress();
+		return socketUDT.getLocalInetAddress();
 	}
 
 	@Override
 	public int getLocalPort() {
-		return serverSocketUDT.getLocalInetPort();
+		return socketUDT.getLocalInetPort();
 	}
 
 	@Override
 	public SocketAddress getLocalSocketAddress() {
 		try {
-			return serverSocketUDT.getLocalSocketAddress();
+			return socketUDT.getLocalSocketAddress();
 		} catch (final ExceptionUDT e) {
 			return null;
 		}
@@ -95,27 +92,27 @@ public class NetServerSocketUDT extends ServerSocket implements IceServerSocket 
 
 	@Override
 	public int getReceiveBufferSize() throws SocketException {
-		return serverSocketUDT.getReceiveBufferSize();
+		return socketUDT.getReceiveBufferSize();
 	}
 
 	@Override
 	public boolean getReuseAddress() throws SocketException {
-		return serverSocketUDT.getReuseAddress();
+		return socketUDT.getReuseAddress();
 	}
 
 	@Override
 	public int getSoTimeout() throws IOException {
-		return serverSocketUDT.getSoTimeout();
+		return socketUDT.getSoTimeout();
 	}
 
 	@Override
 	public boolean isBound() {
-		return serverSocketUDT.isBound();
+		return socketUDT.isBound();
 	}
 
 	@Override
 	public boolean isClosed() {
-		return serverSocketUDT.isClosed();
+		return socketUDT.isClosed();
 	}
 
 	@Override
@@ -127,18 +124,18 @@ public class NetServerSocketUDT extends ServerSocket implements IceServerSocket 
 	// NOTE: set both send and receive, since they are inherited on accept()
 	@Override
 	public void setReceiveBufferSize(final int size) throws SocketException {
-		serverSocketUDT.setReceiveBufferSize(size);
-		serverSocketUDT.setSendBufferSize(size);
+		socketUDT.setReceiveBufferSize(size);
+		socketUDT.setSendBufferSize(size);
 	}
 
 	@Override
 	public void setReuseAddress(final boolean on) throws SocketException {
-		serverSocketUDT.setReuseAddress(on);
+		socketUDT.setReuseAddress(on);
 	}
 
 	@Override
 	public void setSoTimeout(final int timeout) throws SocketException {
-		serverSocketUDT.setSoTimeout(timeout);
+		socketUDT.setSoTimeout(timeout);
 	}
 
 }

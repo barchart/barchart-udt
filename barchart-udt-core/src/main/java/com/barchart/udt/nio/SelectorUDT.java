@@ -145,14 +145,14 @@ public class SelectorUDT extends AbstractSelector {
 
 		wakeup();
 
-		for (final SelectionKey key : registeredKeyMap.values()) {
-			key.cancel();
+		try {
+			selectLock.lock();
+			cancelledKeys().addAll(registeredKeySet);
+		} finally {
+			selectLock.unlock();
 		}
 
 		doCancel();
-
-		selectedKeyMap.clear();
-		registeredKeyMap.clear();
 
 	}
 
@@ -302,8 +302,14 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	//
+	/** cancel store */
+	protected void cancel(final SelectionKeyUDT keyUDT) {
+		synchronized (cancelledKeys()) {
+			cancelledKeys().add(keyUDT);
+		}
+	}
 
+	/** cancel apply */
 	protected void doCancel() {
 
 		synchronized (cancelledKeys()) {
@@ -314,13 +320,14 @@ public class SelectorUDT extends AbstractSelector {
 
 			for (final SelectionKey key : cancelledKeys()) {
 
-				assert !key.isValid();
-
 				final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
 
-				keyUDT.interestOps(0);
-
-				registeredKeyMap.remove(keyUDT.socketId());
+				if (keyUDT.isValid()) {
+					keyUDT.interestOps(0);
+					keyUDT.setValid(false);
+					registeredKeyMap.remove(keyUDT.socketId());
+					log.debug("### cancel : {}", keyUDT);
+				}
 
 			}
 

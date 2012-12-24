@@ -1878,6 +1878,55 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove0( //
 
 }
 
+JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollUpdate0( //
+		JNIEnv *env, //
+		jclass clsSocketUDT, //
+		const jint pollID, //
+		const jint socketID, //
+		const jint pollOpt //
+		) {
+
+	UNUSED(env);
+	UNUSED(clsSocketUDT);
+
+	const int events = static_cast<int>(pollOpt);
+
+//	printf("function:%s option=%d \n", __func__, events);
+
+	const int rv = UDT::epoll_update_usock(pollID, socketID, &events);
+
+	if (rv == UDT::ERROR) {
+		UDT::ERRORINFO errorInfo = UDT::getlasterror();
+		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollUpdate", &errorInfo);
+		return;
+	}
+
+}
+
+JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollVerify0(
+	JNIEnv *env, //
+	jclass clsSocketUDT, //
+	const jint pollID, //
+	const jint socketID //
+	){
+
+	UNUSED(env);
+	UNUSED(clsSocketUDT);
+
+	int events = 0;
+
+	const int rv = UDT::epoll_verify_usock(pollID, socketID, &events);
+
+	if (rv == UDT::ERROR) {
+		UDT::ERRORINFO errorInfo = UDT::getlasterror();
+		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollVerify", &errorInfo);
+		return JNI_ERR;
+	}
+
+	return static_cast<jint>(events);
+
+}
+
 JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		JNIEnv *env, //
 		jclass clsSocketUDT, //

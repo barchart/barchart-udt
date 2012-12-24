@@ -21,14 +21,16 @@
 		</condition>
 
 		<exec executable="${executable}">
-			
+
+			<env key="JAVA_TYPE" value="JAVA_7" />
+
 			<arg value="versions:use-latest-releases" />
-			
+
 			<arg value="--define" />
 			<arg value="includes=com.barchart.*" />
-			
+
 		</exec>
-		
+
 	</target>
 
 </project>

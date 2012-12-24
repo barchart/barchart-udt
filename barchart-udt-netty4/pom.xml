@@ -25,7 +25,7 @@
 		<barchartBundleVersion>2.1.0-SNAPSHOT</barchartBundleVersion>
 
 		<!-- http://search.maven.org/#search|ga|1|io.netty -->
-		<barchartNettyVersion>4.0.0.Alpha8</barchartNettyVersion>
+		<barchartNettyVersion>4.0.0.Beta1-SNAPSHOT</barchartNettyVersion>
 
 		<projectJavaVersion>1.7</projectJavaVersion>
 

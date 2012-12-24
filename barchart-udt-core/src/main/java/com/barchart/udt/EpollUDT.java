@@ -46,19 +46,28 @@ public class EpollUDT {
 		WRITE(0x4), //
 
 		/**
-		 * UDT_EPOLL_ERR: interested in error reporting
-		 * <p>
-		 * can not be set - implicitly always present; can be reported by
-		 * {@link OptionUDT#Epoll_Event_Mask}
+		 * UDT_EPOLL_ERR: interested in exceptions
 		 */
 		ERROR(0x8), //
 
-		/**
-		 * interested in read and write
-		 */
-		ALL(READ.code | WRITE.code), //
+		BOTH(READ.code | WRITE.code), //
+
+		ALL(READ.code | WRITE.code | ERROR.code), //
+
+		UNKNOWN(-1);
 
 		;
+
+		private static final Opt[] ENUM_VALS = Opt.values();
+
+		public static Opt from(final int code) {
+			for (final Opt known : ENUM_VALS) {
+				if (known.code == code) {
+					return known;
+				}
+			}
+			return UNKNOWN;
+		}
 
 		/**
 		 * epoll event mask;
@@ -99,7 +108,7 @@ public class EpollUDT {
 		id = SocketUDT.epollCreate0();
 		isActive = true;
 
-		log.debug("created id={}", id());
+		log.debug("ep create {}", id());
 
 	}
 
@@ -109,9 +118,10 @@ public class EpollUDT {
 	public void destroy() throws ExceptionUDT {
 
 		SocketUDT.epollRelease0(id);
+
 		isActive = false;
 
-		log.debug("destroyed id={}", id());
+		log.debug("ep delete {}", id());
 
 	}
 
@@ -143,11 +153,7 @@ public class EpollUDT {
 	public void add(final SocketUDT socket, final Opt option)
 			throws ExceptionUDT {
 
-		log.debug("add : {} / {}", option, socket);
-
-		if (option == Opt.NONE) {
-			return;
-		}
+		log.debug("ep add {} {}", socket, option);
 
 		SocketUDT.epollAdd0(id, socket.getSocketId(), option.code);
 
@@ -156,7 +162,7 @@ public class EpollUDT {
 	/** unregister socket from event processing Epoll */
 	public void remove(final SocketUDT socket) throws ExceptionUDT {
 
-		log.debug("remove : {}", socket);
+		log.debug("ep rem {}", socket);
 
 		SocketUDT.epollRemove0(id, socket.getSocketId());
 
@@ -166,9 +172,11 @@ public class EpollUDT {
 	public void update(final SocketUDT socket, final Opt option)
 			throws ExceptionUDT {
 
-		remove(socket);
+		log.debug("ep mod {} {}", socket, option);
 
-		add(socket, option);
+		// SocketUDT.epollUpdate(this, socket, option);
+		SocketUDT.epollRemove0(id, socket.getSocketId());
+		SocketUDT.epollAdd0(id, socket.getSocketId(), option.code);
 
 	}
 

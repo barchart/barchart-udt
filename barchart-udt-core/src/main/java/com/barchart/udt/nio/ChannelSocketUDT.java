@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.SocketUDT;
+import com.barchart.udt.TypeUDT;
 
 /**
  * you must use {@link SelectorProviderUDT#openSocketChannel()} to obtain
@@ -47,6 +48,21 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 
 	protected static final Logger log = LoggerFactory
 			.getLogger(ChannelSocketUDT.class);
+
+	protected final Object connectLock = new Object();
+
+	/**
+	 * local volatile variable, which mirrors super.blocking, to avoid the cost
+	 * of synchronized call inside isBlocking()
+	 */
+	protected volatile boolean isBlockingMode = isBlocking();
+
+	protected volatile boolean isConnectFinished;
+
+	protected volatile boolean isConnectionPending;
+
+	/** guarded by 'this' */
+	protected Socket socketAdapter;
 
 	protected final SocketUDT socketUDT;
 
@@ -77,29 +93,6 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 		}
 
 	}
-
-	@Override
-	protected void implCloseSelectableChannel() throws IOException {
-		socketUDT.close();
-	}
-
-	/**
-	 * local volatile variable, which mirrors super.blocking, to avoid the cost
-	 * of synchronized call inside isBlocking()
-	 */
-	protected volatile boolean isBlockingMode = isBlocking();
-
-	@Override
-	protected void implConfigureBlocking(final boolean block)
-			throws IOException {
-		socketUDT.configureBlocking(block);
-		isBlockingMode = block;
-	}
-
-	protected volatile boolean isConnectFinished;
-	protected volatile boolean isConnectionPending;
-
-	protected final Object connectLock = new Object();
 
 	@Override
 	public boolean connect(final SocketAddress remote) throws IOException {
@@ -238,6 +231,18 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
+	protected void implCloseSelectableChannel() throws IOException {
+		socketUDT.close();
+	}
+
+	@Override
+	protected void implConfigureBlocking(final boolean block)
+			throws IOException {
+		socketUDT.configureBlocking(block);
+		isBlockingMode = block;
+	}
+
+	@Override
 	public boolean isConnected() {
 		return socketUDT.isConnected();
 	}
@@ -251,6 +256,23 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	public boolean isConnectionPending() {
 		return isConnectionPending;
 	}
+
+	@Override
+	public boolean isOpenSocketUDT() {
+		return socketUDT.isOpen();
+	}
+
+	@Override
+	public KindUDT kindUDT() {
+		return KindUDT.CONNECTOR;
+	}
+
+	@Override
+	public SelectorProviderUDT providerUDT() {
+		return (SelectorProviderUDT) super.provider();
+	}
+
+	//
 
 	/**
 	 * See {@link java.nio.channels.SocketChannel#read(ByteBuffer)} contract;
@@ -333,9 +355,6 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 		throw new RuntimeException("feature not available");
 	}
 
-	// guarded by 'this'
-	protected Socket socketAdapter;
-
 	@Override
 	public Socket socket() {
 		synchronized (this) {
@@ -346,11 +365,15 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 		}
 	}
 
-	//
+	@Override
+	public SocketUDT socketUDT() {
+		return socketUDT;
+	}
 
-	// used for debugging
-	// private final AtomicInteger writeCount = new AtomicInteger(0);
-	// private final AtomicInteger writeSize = new AtomicInteger(0);
+	@Override
+	public String toString() {
+		return socketUDT.toString();
+	}
 
 	/**
 	 * See {@link java.nio.channels.SocketChannel#write(ByteBuffer)} contract;
@@ -407,10 +430,6 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			if (sizeSent < 0) {
 				log.trace("no buffer space for send; socketID={}",
 						socket.getSocketId());
-				// logStatus();
-				// log.info("writeCount={} writeSize={}", writeCount,
-				// writeSize);
-				// System.exit(1);
 				return 0;
 			}
 
@@ -420,7 +439,6 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			}
 
 			if (sizeSent <= remaining) {
-				// writeSize.addAndGet(sizeSent);
 				return sizeSent;
 			} else { // should not happen
 				log.error("unexpected: sizeSent > remaining; socketID={}",
@@ -440,31 +458,17 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
-	public SocketUDT socketUDT() {
-		return socketUDT;
+	public TypeUDT typeUDT() {
+		return providerUDT().type;
 	}
 
-	@Override
-	public KindUDT kindUDT() {
-		return KindUDT.CONNECTOR;
-	}
+	/** java 7 */
+	public ChannelSocketUDT bind(final SocketAddress localAddress) throws IOException {
 
-	@Override
-	public boolean isOpenSocketUDT() {
-		return socketUDT.isOpen();
-	}
+		socketUDT.bind((InetSocketAddress) localAddress);
 
-	@Override
-	public String toString() {
-		return socketUDT.toString();
-	}
+		return this;
 
-	protected void logStatus() {
-		// if (channelKey != null) {
-		// log.debug("channelKey={}", channelKey);
-		// }
-		log.debug("options={}", socketUDT.toStringOptions());
-		log.debug("monitor={}", socketUDT.toStringMonitor());
 	}
 
 }

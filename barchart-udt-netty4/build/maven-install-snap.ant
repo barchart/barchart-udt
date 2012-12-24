@@ -25,12 +25,13 @@
 			<env key="JAVA_TYPE" value="JAVA_7" />
 
 			<arg value="clean" />
-			<arg value="process-resources" />
-			
-			<arg value="--activate-profiles" />
-			<arg value="license" />
-			
+			<arg value="install" />
+
+			<arg value="--show-version" />
+			<arg value="--update-snapshots" />
+
 		</exec>
+
 	</target>
 
 </project>

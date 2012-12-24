@@ -10,6 +10,7 @@ package com.barchart.udt.nio;
 import java.io.IOException;
 
 import com.barchart.udt.SocketUDT;
+import com.barchart.udt.TypeUDT;
 
 /**
  * convenience interface shared by client and server
@@ -31,5 +32,9 @@ public interface ChannelUDT {
 	boolean isConnectFinished();
 
 	public int validOps();
+
+	SelectorProviderUDT providerUDT();
+
+	TypeUDT typeUDT();
 
 }
