@@ -54,6 +54,8 @@
 #define JNI_UPDATE 0 // jni object release with copy
 //
 
+extern "C"{
+
 // ### JDK references
 
 // JDK classes
@@ -84,9 +86,11 @@ extern jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
 extern jmethodID jdk_clsIterator_hasNextID; // boolean iterator.hasNext()
 extern jmethodID jdk_clsIterator_nextID; // Object iterator.next()
 
+// UDT classes
+extern jclass udt_clsFactoryInterfaceUDT;
+
 // UDT methods
 extern jfieldID udt_clsCCC_fld_nativeHandleID;
-
 
 //#define EOL "\n"
 
@@ -127,10 +131,10 @@ extern jfieldID udt_clsCCC_fld_nativeHandleID;
 // declare unused explicitly or else see compiler warnings
 #define UNUSED(x) ((void)(x))
 
-extern "C"{
-
 void X_InitClassReference(JNIEnv *env, jclass *classReference,
 		const char *className);
+
+void X_FreeClassReference(JNIEnv *env, jclass* globalRef);
 
 jobject X_NewBoolean(JNIEnv *env, bool value);
 

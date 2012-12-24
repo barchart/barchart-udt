@@ -74,6 +74,9 @@ jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
 jmethodID jdk_clsIterator_hasNextID; // boolean iterator.hasNext()
 jmethodID jdk_clsIterator_nextID; // Object iterator.next()
 
+// UDT classes
+jclass udt_clsFactoryInterfaceUDT; //com.barchart.udt.FactoryInterfaceUDT
+
 // UDT methods
 jfieldID udt_clsCCC_fld_nativeHandleID;
 
@@ -87,6 +90,13 @@ void X_InitClassReference(JNIEnv *env, jclass *classReference,
 	CHK_NUL_RET_RET(klaz, "klaz");
 	*classReference = static_cast<jclass>(env->NewGlobalRef((jobject) klaz));
 	CHK_NUL_RET_RET(*classReference, "*classReference");
+}
+
+void X_FreeClassReference(JNIEnv *env, jclass* globalRef){
+	CHK_NUL_RET_RET(env, "env");
+	CHK_NUL_RET_RET(globalRef, "globalRef");
+	env->DeleteGlobalRef(*globalRef);
+	*globalRef = NULL;
 }
 
 // use native bool parameter

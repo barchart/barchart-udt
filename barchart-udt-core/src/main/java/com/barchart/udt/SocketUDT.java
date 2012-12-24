@@ -84,7 +84,7 @@ public class SocketUDT {
 	 * load
 	 */
 	@Native
-	public static final boolean INIT_OK;
+	public static boolean INIT_OK = false;
 
 	/**
 	 * FIXME replace system.exit with a little less drastic approach
@@ -261,6 +261,19 @@ public class SocketUDT {
 	 *      href="http://udt.sourceforge.net/udt4/doc/cleanup.htm.htm">UDT::cleanup()</a>
 	 */
 	protected static native void stopClass0() throws ExceptionUDT;
+
+	/**
+	 * Cleans up global JNI references and the UDT library.
+	 * <p>
+	 * The behavior of SocketUDT class after a call to cleanup is undefined, so
+	 * it should only ever be called once you are done and you are ready for the
+	 * class loader to unload the JNI library
+	 * 
+	 * @throws ExceptionUDT
+	 */
+	public static void cleanup() throws ExceptionUDT {
+		stopClass0();
+	}
 
 	/**
 	 * used by default constructor

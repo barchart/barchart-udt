@@ -39,22 +39,19 @@
 #include "JNICCC.h"
 #include "JNIHelpers.h"
 
-jclass 		JNICCCFactory::_cls_FactoryInterfaceUDT = NULL;
 jmethodID 	JNICCCFactory::_udt_clsFactoryInterfaceUDT_create = NULL;
 jmethodID 	JNICCCFactory::_udt_clsFactoryInterfaceUDT_cloneFactory = NULL;
 
 bool JNICCCFactory::initJNITypes(JNIEnv* env){
 
-	if(_cls_FactoryInterfaceUDT != NULL)
+	if(_udt_clsFactoryInterfaceUDT_create != NULL)
 		return true;
 
-	X_InitClassReference(env,&_cls_FactoryInterfaceUDT,"com/barchart/udt/FactoryInterfaceUDT");
-
-	if(_cls_FactoryInterfaceUDT==NULL)
+	if(udt_clsFactoryInterfaceUDT==NULL)
 		return false;
 
-	_udt_clsFactoryInterfaceUDT_cloneFactory = env->GetMethodID(_cls_FactoryInterfaceUDT, "cloneFactory", "()Lcom/barchart/udt/FactoryInterfaceUDT;");
-	_udt_clsFactoryInterfaceUDT_create = env->GetMethodID(_cls_FactoryInterfaceUDT, "create", "()Lcom/barchart/udt/CCC;");
+	_udt_clsFactoryInterfaceUDT_cloneFactory = env->GetMethodID(udt_clsFactoryInterfaceUDT, "cloneFactory", "()Lcom/barchart/udt/FactoryInterfaceUDT;");
+	_udt_clsFactoryInterfaceUDT_create = env->GetMethodID(udt_clsFactoryInterfaceUDT, "create", "()Lcom/barchart/udt/CCC;");
 
 	return true;
 }
