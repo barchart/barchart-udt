@@ -1,0 +1,95 @@
+diff --git work/git/barchart-udt/barchart-udt-core/target/udt/UDT4/src/api.cpp work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/api.cpp
+index ea0fc24..57abe79 100644
+--- work/git/barchart-udt/barchart-udt-core/target/udt/UDT4/src/api.cpp
++++ work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/api.cpp
+@@ -1111,8 +1111,6 @@ int CUDTUnited::epoll_add_ssock(const int eid, const SYSSOCKET s, const int* eve
+ 
+ int CUDTUnited::epoll_remove_usock(const int eid, const UDTSOCKET u)
+ {
+-   int ret = m_EPoll.remove_usock(eid, u);
+-
+    CUDTSocket* s = locate(u);
+    if (NULL != s)
+    {
+@@ -1123,7 +1121,7 @@ int CUDTUnited::epoll_remove_usock(const int eid, const UDTSOCKET u)
+    //   throw CUDTException(5, 4);
+    //}
+ 
+-   return ret;
++   return m_EPoll.remove_usock(eid, u);
+ }
+ 
+ int CUDTUnited::epoll_remove_ssock(const int eid, const SYSSOCKET s)
+diff --git work/git/barchart-udt/barchart-udt-core/target/udt/UDT4/src/core.cpp work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/core.cpp
+index ba989aa..ec8b2fa 100644
+--- work/git/barchart-udt/barchart-udt-core/target/udt/UDT4/src/core.cpp
++++ work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/core.cpp
+@@ -801,12 +801,12 @@ POST_CONNECT:
+    m_pRNode->m_bOnList = true;
+    m_pRcvQueue->setNewEntry(this);
+ 
+-   // acknowledge the management module.
+-   s_UDTUnited.connect_complete(m_SocketID);
+-
+    // acknowledde any waiting epolls to write
+    s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_OUT, true);
+ 
++   // acknowledge the management module.
++   s_UDTUnited.connect_complete(m_SocketID);
++
+    return 0;
+ }
+ 
+@@ -951,9 +951,7 @@ void CUDT::close()
+    if (m_bConnected)
+       m_pSndQueue->m_pSndUList->remove(this);
+ 
+-   // trigger any pending IO events.
+-   s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_ERR, true);
+-   // then remove itself from all epoll monitoring
++   // remove itself from all epoll monitoring
+    try
+    {
+       for (set<int>::iterator i = m_sPollID.begin(); i != m_sPollID.end(); ++ i)
+@@ -2663,13 +2661,11 @@ void CUDT::addEPoll(const int eid)
+ 
+ void CUDT::removeEPoll(const int eid)
+ {
+-   // clear IO events notifications;
+-   // since this happens after the epoll ID has been removed, they cannot be set again
+-   set<int> remove;
+-   remove.insert(eid);
+-   s_UDTUnited.m_EPoll.update_events(m_SocketID, remove, UDT_EPOLL_IN | UDT_EPOLL_OUT, false);
+-
+    CGuard::enterCS(s_UDTUnited.m_EPoll.m_EPollLock);
+    m_sPollID.erase(eid);
+    CGuard::leaveCS(s_UDTUnited.m_EPoll.m_EPollLock);
++
++   // clear IO events notifications;
++   // since this happens after the epoll ID has been removed, they cannot be set again
++   s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_IN | UDT_EPOLL_OUT, false);
+ }
+diff --git work/git/barchart-udt/barchart-udt-core/target/udt/UDT4/src/epoll.cpp work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/epoll.cpp
+index 0e7ddb1..2a39b9a 100644
+--- work/git/barchart-udt/barchart-udt-core/target/udt/UDT4/src/epoll.cpp
++++ work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/epoll.cpp
+@@ -117,7 +117,6 @@ int CEPoll::add_ssock(const int eid, const SYSSOCKET& s, const int* events)
+ 
+ #ifdef LINUX
+    epoll_event ev;
+-   memset(&ev, 0, sizeof(epoll_event));
+ 
+    if (NULL == events)
+       ev.events = EPOLLIN | EPOLLOUT | EPOLLERR;
+@@ -152,7 +151,10 @@ int CEPoll::remove_usock(const int eid, const UDTSOCKET& u)
+ 
+    p->second.m_sUDTSocksIn.erase(u);
+    p->second.m_sUDTSocksOut.erase(u);
+-   p->second.m_sUDTSocksEx.erase(u);
++
++   // when the socket is removed from a monitoring, it is not available anymore for any IO notification
++   p->second.m_sUDTReads.erase(u);
++   p->second.m_sUDTWrites.erase(u);
+ 
+    return 0;
+ }
