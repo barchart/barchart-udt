@@ -1393,17 +1393,16 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_updateMonitor0(
 
 // #########################################################################
 
-void UDT_CopyArrayToSet(jint* array, UDT::UDSET* udSet, const jsize size) {
-	pair<UDT::UDSET::iterator, bool> rv;
+void UDT_CopyArrayToSet(jint* array, set<UDTSOCKET>* udSet, const jsize size) {
+	udSet->clear();
 	for (jint index = 0; index < size; index++) {
-		const jint socketID = array[index];
-		rv = UD_SET(socketID, udSet);
-		assert(rv.second == true);
+		const UDTSOCKET socketID = static_cast<UDTSOCKET>(array[index]);
+		udSet->insert(socketID);
 	}
 }
 
-void UDT_CopySetToArray(UDT::UDSET* udSet, jint* array, const jsize size) {
-	UDT::UDSET::iterator iterator = udSet->begin();
+void UDT_CopySetToArray(set<UDTSOCKET>* udSet, jint* array, const jsize size) {
+	set<UDTSOCKET>::iterator iterator = udSet->begin();
 	for (jint index = 0; index < size; index++) {
 		const jint socketID = *iterator;
 		array[index] = socketID;
@@ -1426,6 +1425,9 @@ void UDT_CopySetToArray(UDT::UDSET* udSet, jint* array, const jsize size) {
 // =0 : timeout, no ready sockets
 // >0 : total number or reads, writes, exceptions
 //
+// ###
+// ### DEPRECATED
+// ###
 JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select0(JNIEnv *env,
 		jclass clsSocketUDT, //
 		const jintArray objReadArray, //
@@ -1457,9 +1459,9 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select0(JNIEnv *env,
 	jint* writeArray = NULL;
 
 	// empty sets
-	UDT::UDSET readSet;
-	UDT::UDSET writeSet;
-	UDT::UDSET exceptSet;
+	set<UDTSOCKET> readSet;
+	set<UDTSOCKET> writeSet;
+	set<UDTSOCKET> exceptSet;
 
 	// interested in read
 	if (isInterestedInRead) {
@@ -1492,7 +1494,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select0(JNIEnv *env,
 	X_ConvertMillisIntoTimeValue(millisTimeout, &timeValue);
 
 	// do select
-	const int rv = UDT::select(0, &readSet, &writeSet, &exceptSet, &timeValue);
+	const int rv = -1; // UDT::select(0, &readSet, &writeSet, &exceptSet, &timeValue);
 
 	// process timeout & errors
 	if (rv <= 0) { // UDT::ERROR is '-1'; UDT_TIMEOUT is '=0';
@@ -1571,6 +1573,9 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select0(JNIEnv *env,
 // =0 : timeout, no ready sockets
 // >0 : total number or reads, writes, exceptions
 //
+// ###
+// ### DEPRECATED
+// ###
 JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select1(JNIEnv* env,
 		jclass clsSocketUDT, //
 		const jobject objReadBuffer, //
@@ -1595,9 +1600,9 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select1(JNIEnv* env,
 	jint* writeArray = NULL;
 
 	// empty sets
-	UDT::UDSET readSet;
-	UDT::UDSET writeSet;
-	UDT::UDSET exceptSet;
+	set<UDTSOCKET> readSet;
+	set<UDTSOCKET> writeSet;
+	set<UDTSOCKET> exceptSet;
 
 	// interested in read
 	if (isInterestedInRead) {
@@ -1618,7 +1623,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select1(JNIEnv* env,
 	X_ConvertMillisIntoTimeValue(millisTimeout, &timeValue);
 
 	// do select
-	const int rv = UDT::select(0, &readSet, &writeSet, &exceptSet, &timeValue);
+	const int rv = -1; // UDT::select(0, &readSet, &writeSet, &exceptSet, &timeValue);
 
 	// process timeout & errors
 	if (rv <= 0) { // UDT::ERROR is '-1'; UDT_TIMEOUT is '=0';
@@ -1664,7 +1669,9 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select1(JNIEnv* env,
 
 }
 
-// not used
+// ###
+// ### DEPRECATED
+// ###
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx0(JNIEnv *env,
 		jclass clsSocketUDT, jintArray objSelectArray, jintArray objReadArray,
 		jintArray objWriteArray, jintArray objExceptionArray, jlong timeout) {
@@ -1701,8 +1708,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx0(JNIEnv *env,
 	std::vector<UDTSOCKET> writeFDs;
 	std::vector<UDTSOCKET> exceptFDs;
 
-	const int rv = UDT::selectEx( //
-			selectFDs, &readFDs, &writeFDs, NULL, msTimeOut);
+	const int rv = -1; // UDT::selectEx( selectFDs, &readFDs, &writeFDs, NULL, msTimeOut);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -1753,7 +1759,9 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx0(JNIEnv *env,
 
 }
 
-// not used
+// ###
+// ### DEPRECATED
+// ###
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx1(JNIEnv *env,
 		jclass self, jobject registeredKeySet, jobject selectedKeySet,
 		jlong timeout) {
@@ -1794,8 +1802,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_selectEx1(JNIEnv *env,
 	std::vector<UDTSOCKET> exceptFDs;
 
 	// select
-	const int rv = UDT::selectEx( //
-			selectFDs, &readFDs, &writeFDs, NULL, msTimeOut);
+	const int rv = -1; // UDT::selectEx( selectFDs, &readFDs, &writeFDs, NULL, msTimeOut);
 
 	// process errors
 	if (rv == UDT::ERROR) {
@@ -1924,8 +1931,8 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 	UNUSED(clsSocketUDT);
 
 	// empty sets
-	UDT::UDSET readSet;
-	UDT::UDSET writeSet;
+	set<UDTSOCKET> readSet;
+	set<UDTSOCKET> writeSet;
 
 	// do select
 	const int rv = UDT::epoll_wait( //
