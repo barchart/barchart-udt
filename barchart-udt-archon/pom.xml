@@ -100,7 +100,7 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
 						<forkMode>always</forkMode>
-						<argLine>-d${javaBits}</argLine>
+						<argLine>${javaBits}</argLine>
 					</configuration>
 				</plugin>
 
@@ -274,7 +274,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${lin32}</archosClassifier>
-				<javaBits>32</javaBits>
+				<javaBits>-d32</javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -287,7 +287,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${lin64}</archosClassifier>
-				<javaBits>64</javaBits>
+				<javaBits>-d64</javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -300,7 +300,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${mac32}</archosClassifier>
-				<javaBits>32</javaBits>
+				<javaBits>-d32</javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -313,7 +313,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${mac64}</archosClassifier>
-				<javaBits>64</javaBits>
+				<javaBits>-d64</javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -326,7 +326,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${win32}</archosClassifier>
-				<javaBits>32</javaBits>
+				<javaBits></javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -339,7 +339,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${win64}</archosClassifier>
-				<javaBits>64</javaBits>
+				<javaBits></javaBits>
 			</properties>
 		</profile>
 
