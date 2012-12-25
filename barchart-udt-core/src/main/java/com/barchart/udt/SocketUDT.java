@@ -337,7 +337,7 @@ public class SocketUDT {
 		synchronized (SocketUDT.class) {
 			if (isOpen()) {
 				close0();
-				log.debug("closed : {}", this);
+				log.debug("done : {}", this);
 			}
 		}
 	}
@@ -663,8 +663,6 @@ public class SocketUDT {
 
 	// ###
 
-	
-
 	// #############################
 
 	// note: will be inlined by jvm
@@ -974,6 +972,7 @@ public class SocketUDT {
 			this.socketAddressFamily = 2; // ipv4
 			setDefaultMessageSendMode();
 		}
+		log.debug("init : {}", this);
 	}
 
 	/**
@@ -993,6 +992,7 @@ public class SocketUDT {
 			this.socketAddressFamily = 2; // ipv4
 			setDefaultMessageSendMode();
 		}
+		log.debug("init : {}", this);
 	}
 
 	/**
@@ -1330,11 +1330,10 @@ public class SocketUDT {
 	public String toString() {
 
 		return String.format( //
-				"[id: 0x%08x] %s %s block=%s bind=%s:%s peer=%s:%s", //
+				"[id: 0x%08x] %s %s bind=%s:%s peer=%s:%s", //
 				socketID, //
 				type, //
 				getStatus(), //
-				isBlocking(), //
 				getLocalInetAddress(), //
 				getLocalInetPort(), //
 				getRemoteInetAddress(), //
@@ -1408,6 +1407,14 @@ public class SocketUDT {
 	 */
 	protected static native void epollRemove0( //
 			final int epollID, final int socketID) throws ExceptionUDT;
+
+	/** TODO update epoll mask */
+	protected static native void epollUpdate0(int epollID, int socketID,
+			int epollMask) throws ExceptionUDT;
+
+	/** TODO query epoll mask */
+	protected static native int epollVerify0(int epollID, int socketID)
+			throws ExceptionUDT;
 
 	/**
 	 * note: throws {@link ErrorUDT#ETIMEOUT} on any timeout instead of

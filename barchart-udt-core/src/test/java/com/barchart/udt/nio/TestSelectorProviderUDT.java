@@ -204,6 +204,11 @@ public class TestSelectorProviderUDT extends TestAny {
 		socketAwait(clientKey.socketUDT(), StatusUDT.CONNECTED);
 
 		{
+			log.info("acceptKey={}", acceptKey);
+			log.info("clientKey={}", clientKey);
+		}
+
+		{
 			log.info("### state 1");
 			final int readyCount = selector.select();
 			final Set<SelectionKey> readySet = selector.selectedKeys();

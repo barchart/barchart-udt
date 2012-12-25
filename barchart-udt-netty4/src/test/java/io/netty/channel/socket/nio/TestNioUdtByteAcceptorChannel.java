@@ -1,10 +1,10 @@
-package com.barchart.udt.netty;
-
+package io.netty.channel.socket.nio;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
-public class TestDummy {
+public class TestNioUdtByteAcceptorChannel {
 
 	@Before
 	public void setUp() throws Exception {
@@ -12,6 +12,11 @@ public class TestDummy {
 
 	@After
 	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void test() throws Exception {
+
 	}
 
 }

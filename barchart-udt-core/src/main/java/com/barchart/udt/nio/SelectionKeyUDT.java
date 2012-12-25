@@ -7,7 +7,6 @@
  */
 package com.barchart.udt.nio;
 
-import java.net.InetSocketAddress;
 import java.nio.channels.CancelledKeyException;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
@@ -17,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.EpollUDT.Opt;
-import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.SocketUDT;
 
 /**
@@ -100,18 +98,29 @@ public class SelectionKeyUDT extends SelectionKey {
 		assertValidKey();
 		assertValidOps(interestOps);
 
-		final Opt epollNew = from(interestOps);
+		try {
 
-		if (epollNew != epollOpt) {
-			try {
+			// if (interestOps == 0) {
+			// selectorUDT.epoll.remove(socketUDT());
+			// return this;
+			// }
+
+			final Opt epollNew = from(interestOps);
+
+			if (epollNew != epollOpt) {
 				selectorUDT.epoll.update(socketUDT(), epollNew);
 				epollOpt = epollNew;
-			} catch (final Exception e) {
-				log.error("epoll update failure", e);
 			}
-		}
 
-		this.interestOps = interestOps;
+		} catch (final Exception e) {
+
+			log.error("epoll failure", e);
+
+		} finally {
+
+			this.interestOps = interestOps;
+
+		}
 
 		return this;
 
@@ -149,6 +158,14 @@ public class SelectionKeyUDT extends SelectionKey {
 	/** read and write correlation counter */
 	private volatile int processCount;
 
+	protected void logError(final String comment) {
+
+		final String message = "logic error : \n\t" + this;
+
+		log.warn(message, new Exception("" + comment));
+
+	}
+
 	/**
 	 * note: read is before write
 	 * 
@@ -156,14 +173,21 @@ public class SelectionKeyUDT extends SelectionKey {
 	 */
 	protected synchronized boolean processRead(final int processCount) {
 
+		log.debug("### read  {}", this);
+
 		this.processCount = processCount;
 
-		if (!epollOpt.hasRead()) {
-			log.warn("logic error", new Exception("spurious read"));
-			return false;
-		}
-
 		final int interestOps = this.interestOps;
+
+		if (!epollOpt.hasRead()) {
+			if (interestOps == 0) {
+				logError("error report when missing interest");
+				return false;
+			} else {
+				readyOps = interestOps;
+				return true;
+			}
+		}
 
 		switch (kindUDT()) {
 		case ACCEPTOR:
@@ -171,8 +195,7 @@ public class SelectionKeyUDT extends SelectionKey {
 				readyOps = OP_ACCEPT;
 				return true;
 			} else {
-				log.warn("logic error", new Exception(
-						"ready to accept while not interested"));
+				logError("ready to accept while not interested");
 				return false;
 			}
 		case CONNECTOR:
@@ -180,12 +203,11 @@ public class SelectionKeyUDT extends SelectionKey {
 				readyOps = OP_READ;
 				return true;
 			} else {
-				log.warn("logic error", new Exception(
-						"ready to read while not interested"));
+				logError("ready to read while not interested");
 				return false;
 			}
 		default:
-			log.warn("logic error", new Exception("wrong kind"));
+			logError("wrong kind");
 			return false;
 		}
 
@@ -198,17 +220,23 @@ public class SelectionKeyUDT extends SelectionKey {
 	 */
 	protected synchronized boolean processWrite(final int processCount) {
 
+		log.debug("### write {}", this);
+
 		if (!epollOpt.hasWrite()) {
-			log.warn("logic error", new Exception("surious write"));
-			return false;
+			if (interestOps == 0) {
+				logError("error report when missing interest");
+				return false;
+			} else {
+				readyOps = interestOps;
+				return true;
+			}
 		}
 
 		final int interestOps = this.interestOps;
 
 		switch (kindUDT()) {
 		case ACCEPTOR:
-			log.warn("logic error", new Exception(
-					"ready to write but for acceptor"));
+			logError("ready to write yet for acceptor");
 			return false;
 		case CONNECTOR:
 			if (channelUDT().isConnectFinished()) {
@@ -220,11 +248,7 @@ public class SelectionKeyUDT extends SelectionKey {
 					}
 					return true;
 				} else {
-					log
-							.warn(
-									"logic error",
-									new Exception(
-											"ready to write while connected yet not insterested"));
+					logError("ready to write when connected nad not insterested");
 					return false;
 				}
 			} else {
@@ -236,16 +260,12 @@ public class SelectionKeyUDT extends SelectionKey {
 					}
 					return true;
 				} else {
-					log
-							.warn(
-									"logic error",
-									new Exception(
-											"ready to write while not connected and not interested"));
+					logError("ready to write when not connected and not interested");
 					return false;
 				}
 			}
 		default:
-			log.warn("logic error", new Exception("wrong kind"));
+			logError("wrong kind");
 			return false;
 		}
 
@@ -268,54 +288,20 @@ public class SelectionKeyUDT extends SelectionKey {
 	@Override
 	public String toString() {
 
-		InetSocketAddress local;
-		try {
-			local = socketUDT().getLocalSocketAddress();
-		} catch (final ExceptionUDT e) {
-			local = null;
-		}
-
-		InetSocketAddress remote;
-		try {
-			remote = socketUDT().getRemoteSocketAddress();
-		} catch (final ExceptionUDT e) {
-			remote = null;
-		}
-
-		final StringBuilder text = new StringBuilder(128);
-
-		text.append("{");
-
-		text.append("id=");
-		text.append(socketId());
-		text.append(",");
-
-		text.append("poll=");
-		text.append(epollOpt);
-		text.append(",");
-
-		text.append("kind=");
-		text.append(channelUDT.kindUDT());
-		text.append(",");
-
-		text.append("ready=");
-		text.append(toStringOps(readyOps));
-		text.append(",");
-
-		text.append("inter=");
-		text.append(toStringOps(interestOps));
-		text.append(",");
-
-		text.append("bind=");
-		text.append(local);
-		text.append(",");
-
-		text.append("peer=");
-		text.append(remote);
-
-		text.append("}");
-
-		return text.toString();
+		return String
+				.format("[id: 0x%08x] poll=%s ready=%s inter=%s %s %s %s bind=%s:%s peer=%s:%s", //
+						socketUDT().getSocketId(), //
+						epollOpt, //
+						toStringOps(readyOps), //
+						toStringOps(interestOps), //
+						channelUDT.typeUDT(), //
+						channelUDT.kindUDT(), //
+						socketUDT().getStatus(), //
+						socketUDT().getLocalInetAddress(), //
+						socketUDT().getLocalInetPort(), //
+						socketUDT().getRemoteInetAddress(), //
+						socketUDT().getRemoteInetPort() //
+				);
 
 	}
 
@@ -360,7 +346,7 @@ public class SelectionKeyUDT extends SelectionKey {
 		final boolean hasWrite = (interestOps & HAS_WRITE) != 0;
 
 		if (hasRead && hasWrite) {
-			return Opt.ALL;
+			return Opt.BOTH;
 		}
 
 		if (hasRead) {
@@ -388,10 +374,11 @@ public class SelectionKeyUDT extends SelectionKey {
 	}
 
 	@Override
-	public synchronized void cancel() {
+	public void cancel() {
 		if (isValid()) {
-			interestOps(0);
-			setValid(false);
+			// log.debug("", new Exception("" + this));
+			log.debug("{}", this);
+			selectorUDT.cancel(this);
 		}
 	}
 

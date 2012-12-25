@@ -13,37 +13,36 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package example.echo;
+package example.echo.stream;
 
-import io.netty.bootstrap.ServerBootstrap;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioUdtServerSocketChannel;
+import io.netty.channel.socket.nio.NioUdtProvider;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.logging.InternalLoggerFactory;
 import io.netty.logging.Slf4JLoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.nio.channels.spi.SelectorProvider;
 import java.util.concurrent.ThreadFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.nio.SelectorProviderUDT;
-
 import example.util.ThreadFactoryUDT;
 
 /**
- * Echoes back any received data from a client.
+ * Sends one message when a connection is open and echoes back any received data
+ * to the server. Simply put, the echo client initiates the ping-pong traffic
+ * between the echo client and server by sending the first message to the
+ * server.
  */
-public class EchoServer {
+public class EchoClient {
 
-	static Logger log = LoggerFactory.getLogger(EchoServer.class);
+	static Logger log = LoggerFactory.getLogger(EchoClient.class);
 
 	/**
 	 * use slf4j provider for io.netty.logging.InternalLogger
@@ -59,54 +58,53 @@ public class EchoServer {
 
 	}
 
+	private final String host;
 	private final int port;
+	private final int firstMessageSize;
 
-	public EchoServer(final int port) {
+	public EchoClient(final String host, final int port,
+			final int firstMessageSize) {
+		this.host = host;
 		this.port = port;
+		this.firstMessageSize = firstMessageSize;
 	}
 
 	public void run() throws Exception {
 
-		final SelectorProvider selectorProvider = SelectorProviderUDT.DATAGRAM;
+		// Configure the client.
 
-		final ThreadFactory acceptFactory = new ThreadFactoryUDT("udt-accept");
-		final ThreadFactory connectFactory = new ThreadFactoryUDT("udt-connect");
+		final Bootstrap boot = new Bootstrap();
 
-		final NioEventLoopGroup acceptGroup = //
-		new NioEventLoopGroup(1, acceptFactory, selectorProvider);
+		final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
 
-		final NioEventLoopGroup connectGroup = //
-		new NioEventLoopGroup(1, connectFactory, selectorProvider);
-
-		// Configure the server.
-		final ServerBootstrap boot = new ServerBootstrap();
+		final NioEventLoopGroup connectGroup = new NioEventLoopGroup(//
+				1, connectFactory, NioUdtProvider.BYTE_PROVIDER);
 
 		try {
 
-			boot.group(acceptGroup, connectGroup)
-					.channel(NioUdtServerSocketChannel.class)
-					.option(ChannelOption.SO_BACKLOG, 100)
-					.localAddress(new InetSocketAddress(port))
-					.handler(new LoggingHandler(LogLevel.INFO))
-					.childHandler(new ChannelInitializer<SocketChannel>() {
+			boot.group(connectGroup)
+					.channelFactory(NioUdtProvider.BYTE_CONNECTOR)
+					.localAddress("localhost", 0)
+					.remoteAddress(new InetSocketAddress(host, port))
+					.handler(new ChannelInitializer<UdtChannel>() {
 						@Override
-						public void initChannel(final SocketChannel ch)
+						public void initChannel(final UdtChannel ch)
 								throws Exception {
 							ch.pipeline().addLast(
 									new LoggingHandler(LogLevel.INFO),
-									new EchoServerHandler());
+									new EchoClientHandler(firstMessageSize));
 						}
 					});
 
-			// Start the server.
-			final ChannelFuture future = boot.bind().sync();
+			// Start the client.
+			final ChannelFuture f = boot.connect().sync();
 
-			// Wait until the server socket is closed.
-			future.channel().closeFuture().sync();
+			// Wait until the connection is closed.
+			f.channel().closeFuture().sync();
 
 		} finally {
 
-			// Shut down all event loops to terminate all threads.
+			// Shut down the event loop to terminate all threads.
 			boot.shutdown();
 
 		}
@@ -117,17 +115,14 @@ public class EchoServer {
 
 		log.info("init");
 
-		int port;
+		final String host = "localhost";
+		final int port = 1234;
+		final int firstMessageSize = 256;
 
-		if (args.length > 0) {
-			port = Integer.parseInt(args[0]);
-		} else {
-			port = 8080;
-		}
-
-		new EchoServer(port).run();
+		new EchoClient(host, port, firstMessageSize).run();
 
 		log.info("done");
 
 	}
+
 }

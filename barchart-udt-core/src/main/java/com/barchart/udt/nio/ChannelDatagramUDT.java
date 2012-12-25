@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
 import com.barchart.udt.SocketUDT;
+import com.barchart.udt.TypeUDT;
 
 /**
  * TODO
@@ -17,18 +18,6 @@ public class ChannelDatagramUDT extends DatagramChannel implements ChannelUDT {
 
 		super(provider);
 
-	}
-
-	@Override
-	public DatagramSocket socket() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isConnected() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
@@ -45,16 +34,45 @@ public class ChannelDatagramUDT extends DatagramChannel implements ChannelUDT {
 	}
 
 	@Override
-	public SocketAddress receive(final ByteBuffer dst) throws IOException {
+	protected void implCloseSelectableChannel() throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void implConfigureBlocking(final boolean block)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isConnected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isConnectFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isOpenSocketUDT() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public KindUDT kindUDT() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int send(final ByteBuffer src, final SocketAddress target)
-			throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+	public SelectorProviderUDT providerUDT() {
+		return (SelectorProviderUDT) super.provider();
 	}
 
 	@Override
@@ -71,6 +89,31 @@ public class ChannelDatagramUDT extends DatagramChannel implements ChannelUDT {
 	}
 
 	@Override
+	public SocketAddress receive(final ByteBuffer dst) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int send(final ByteBuffer src, final SocketAddress target)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public DatagramSocket socket() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SocketUDT socketUDT() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public int write(final ByteBuffer src) throws IOException {
 		// TODO Auto-generated method stub
 		return 0;
@@ -84,40 +127,8 @@ public class ChannelDatagramUDT extends DatagramChannel implements ChannelUDT {
 	}
 
 	@Override
-	protected void implCloseSelectableChannel() throws IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void implConfigureBlocking(final boolean block)
-			throws IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public KindUDT kindUDT() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SocketUDT socketUDT() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isOpenSocketUDT() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isConnectFinished() {
-		// TODO Auto-generated method stub
-		return false;
+	public TypeUDT typeUDT() {
+		return providerUDT().type;
 	}
 
 }
