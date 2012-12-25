@@ -1,12 +1,5 @@
-<!--
-
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
+<!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -54,7 +47,7 @@
 	</properties>
 
 	<dependencies>
-	
+
 		<!-- MAIN -->
 
 		<!-- required logging api -->
@@ -82,9 +75,9 @@
 
 		<!-- use yammer metrics for benchmarks -->
 		<dependency>
-		    <groupId>com.yammer.metrics</groupId>
-		    <artifactId>metrics-core</artifactId>
-		    <version>2.2.0</version>
+			<groupId>com.yammer.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
+			<version>2.2.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -231,7 +224,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-patch-plugin</artifactId>
-						 <version>1.1.1</version>
+						<version>1.1.1</version>
 						<executions>
 							<execution>
 								<id>apply-local-patches</id>
@@ -260,7 +253,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
-						<version>1.8</version>
 						<configuration>
 							<streamLogs>true</streamLogs>
 							<projectsDirectory>${basedir}/../.</projectsDirectory>
@@ -647,6 +639,67 @@
 							</execution>
 						</executions>
 					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- produce diff between git repo and udt repo -->
+		<profile>
+			<id>difference</id>
+			<build>
+
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-scm-plugin</artifactId>
+						<configuration>
+							<connectionType>connection</connectionType>
+							<connectionUrl>${connectionUDT}</connectionUrl>
+							<checkoutDirectory>${checkoutUDT}</checkoutDirectory>
+							<useExport>true</useExport>
+							<cvs-settings>
+								<traceCvsCommand>true</traceCvsCommand>
+								<compressionLevel>5</compressionLevel>
+							</cvs-settings>
+						</configuration>
+						<executions>
+							<execution>
+								<id>checkout-udt-sources-from-csv</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>checkout</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>produce-diff</id>
+								<phase>generate-sources</phase>
+								<configuration>
+									<target>
+										<exec executable="git"
+											output="src/main/patches/${moduleUDT}/result.patch" error="target/result.patch.error">
+											<arg value="diff" />
+											<arg value="--no-index" />
+											<arg value="--no-prefix" />
+											<arg value="${checkoutUDT}/${moduleUDT}/src" />
+											<arg value="${nativeSrcUDT}/src" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
 				</plugins>
 			</build>
 		</profile>

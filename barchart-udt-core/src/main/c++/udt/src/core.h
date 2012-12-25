@@ -113,6 +113,12 @@ public: //API
    static int epoll_verify_usock(const int eid, const UDTSOCKET u, int* events);
 
 
+   // BARCHART
+   static int epoll_update_usock(const int eid, const UDTSOCKET u, const int* events = NULL);
+   // BARCHART
+   static int epoll_verify_usock(const int eid, const UDTSOCKET u, int* events);
+
+
 public: // internal API
    static CUDT* getUDTHandle(UDTSOCKET u);
 

@@ -93,10 +93,9 @@ public: // for CUDTUnited API
 
    int add_usock(const int eid, const UDTSOCKET& u, const int* events = NULL);
 
-   // FIXME make patch
+   // BARCHART
    int update_usock(const int eid, const UDTSOCKET& u, const int* events = NULL);
-
-   // FIXME make patch
+   // BARCHART
    int verify_usock(const int eid, const UDTSOCKET& u, int* events);
 
       // Functionality:

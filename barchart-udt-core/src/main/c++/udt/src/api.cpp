@@ -1104,7 +1104,7 @@ int CUDTUnited::epoll_add_usock(const int eid, const UDTSOCKET u, const int* eve
    return ret;
 }
 
-// FIXME make patch
+// BARCHART
 int CUDTUnited::epoll_update_usock(const int eid, const UDTSOCKET u, const int* events)
 {
    CUDTSocket* s = locate(u);
@@ -1117,7 +1117,7 @@ int CUDTUnited::epoll_update_usock(const int eid, const UDTSOCKET u, const int* 
    return ret;
 }
 
-// FIXME make patch
+// BARCHART
 int CUDTUnited::epoll_verify_usock(const int eid, const UDTSOCKET u, int* events)
 {
    CUDTSocket* s = locate(u);
@@ -1137,8 +1137,6 @@ int CUDTUnited::epoll_add_ssock(const int eid, const SYSSOCKET s, const int* eve
 
 int CUDTUnited::epoll_remove_usock(const int eid, const UDTSOCKET u)
 {
-   int ret = m_EPoll.remove_usock(eid, u);
-
    CUDTSocket* s = locate(u);
    if (NULL != s)
    {
@@ -1149,7 +1147,7 @@ int CUDTUnited::epoll_remove_usock(const int eid, const UDTSOCKET u)
    //   throw CUDTException(5, 4);
    //}
 
-   return ret;
+   return m_EPoll.remove_usock(eid, u);
 }
 
 int CUDTUnited::epoll_remove_ssock(const int eid, const SYSSOCKET s)
@@ -2038,7 +2036,7 @@ int CUDT::epoll_add_usock(const int eid, const UDTSOCKET u, const int* events)
    }
 }
 
-// FIXME make patch
+// BARCHART
 int CUDT::epoll_update_usock(const int eid, const UDTSOCKET u, const int* events)
 {
    try
@@ -2057,7 +2055,7 @@ int CUDT::epoll_update_usock(const int eid, const UDTSOCKET u, const int* events
    }
 }
 
-// FIXME make patch
+// BARCHART
 int CUDT::epoll_verify_usock(const int eid, const UDTSOCKET u, int* events)
 {
    try
@@ -2353,13 +2351,13 @@ int epoll_add_usock(int eid, UDTSOCKET u, const int* events)
    return CUDT::epoll_add_usock(eid, u, events);
 }
 
-// FIXME make patch
+// BARCHART
 int epoll_update_usock(int eid, UDTSOCKET u, const int* events)
 {
    return CUDT::epoll_update_usock(eid, u, events);
 }
 
-// FIXME make patch
+// BARCHART
 int epoll_verify_usock(int eid, UDTSOCKET u, int* events)
 {
    return CUDT::epoll_verify_usock(eid, u, events);

@@ -84,7 +84,7 @@ public class SocketUDT {
 	 * load
 	 */
 	@Native
-	public static final boolean INIT_OK;
+	public static boolean INIT_OK = false;
 
 	/**
 	 * FIXME replace system.exit with a little less drastic approach
@@ -261,6 +261,19 @@ public class SocketUDT {
 	 *      href="http://udt.sourceforge.net/udt4/doc/cleanup.htm.htm">UDT::cleanup()</a>
 	 */
 	protected static native void stopClass0() throws ExceptionUDT;
+
+	/**
+	 * Cleans up global JNI references and the UDT library.
+	 * <p>
+	 * The behavior of SocketUDT class after a call to cleanup is undefined, so
+	 * it should only ever be called once you are done and you are ready for the
+	 * class loader to unload the JNI library
+	 * 
+	 * @throws ExceptionUDT
+	 */
+	public static void cleanup() throws ExceptionUDT {
+		stopClass0();
+	}
 
 	/**
 	 * used by default constructor
@@ -588,109 +601,6 @@ public class SocketUDT {
 	}
 
 	/**
-	 * @see com.barchart.udt.nio.SelectorUDT#select()
-	 * @see <a
-	 *      href="http://udt.sourceforge.net/udt4/doc/select.htm">UDT::select()</a>
-	 */
-	@Deprecated
-	protected static native int select0( //
-			final int[] readArray, //
-			final int[] writeArray, //
-			final int[] exceptArray, //
-			final int[] sizeArray, //
-			final long millisTimeout //
-	) throws ExceptionUDT;
-
-	/**
-	 * Basic access to UDT socket readiness selection feature. Based on int[]
-	 * array info exchange. Timeout is in milliseconds.
-	 * 
-	 * @return <code><0</code> : should not happen<br>
-	 *         <code>=0</code> : timeout, no ready sockets<br>
-	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
-	 * @see #select0(int[], int[], int[], int[], long)
-	 */
-	@Deprecated
-	public final static int select( //
-			final int[] readArray, //
-			final int[] writeArray, //
-			final int[] exceptArray, //
-			final int[] sizeArray, //
-			final long millisTimeout) throws ExceptionUDT {
-
-		// asserts are contracts
-
-		assert readArray != null;
-		assert writeArray != null;
-		assert exceptArray != null;
-		assert sizeArray != null;
-
-		assert readArray.length >= sizeArray[UDT_READ_INDEX];
-		assert writeArray.length >= sizeArray[UDT_WRITE_INDEX];
-		assert exceptArray.length >= readArray.length;
-		assert exceptArray.length >= writeArray.length;
-
-		assert millisTimeout >= DEFAULT_MIN_SELECTOR_TIMEOUT
-				|| millisTimeout <= 0;
-
-		return select0(readArray, writeArray, exceptArray, sizeArray,
-				millisTimeout);
-
-	}
-
-	/**
-	 * @see com.barchart.udt.nio.SelectorUDT#select()
-	 * @see <a
-	 *      href="http://udt.sourceforge.net/udt4/doc/select.htm">UDT::select()</a>
-	 */
-	@Deprecated
-	protected static native int select1( //
-			final IntBuffer readBuffer, //
-			final IntBuffer writeBuffer, //
-			final IntBuffer exceptBuffer, //
-			final IntBuffer sizeBuffer, //
-			long millisTimeout //
-	) throws ExceptionUDT;
-
-	/**
-	 * Basic access to UDT socket readiness selection feature. Based on
-	 * {@link java.nio.DirectIntBuffer} info exchange.Timeout is in
-	 * milliseconds.
-	 * 
-	 * @return <code><0</code> : should not happen<br>
-	 *         <code>=0</code> : timeout, no ready sockets<br>
-	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
-	 * @see #select1(IntBuffer, IntBuffer, IntBuffer, IntBuffer, long)
-	 */
-	@Deprecated
-	public final static int select( //
-			final IntBuffer readBuffer, //
-			final IntBuffer writeBuffer, //
-			final IntBuffer exceptBuffer, //
-			final IntBuffer sizeBuffer, //
-			final long millisTimeout) throws ExceptionUDT {
-
-		// asserts are contracts
-
-		assert readBuffer != null && readBuffer.isDirect();
-		assert writeBuffer != null && writeBuffer.isDirect();
-		assert exceptBuffer != null && exceptBuffer.isDirect();
-		assert sizeBuffer != null && sizeBuffer.isDirect();
-
-		assert readBuffer.capacity() >= sizeBuffer.get(UDT_READ_INDEX);
-		assert writeBuffer.capacity() >= sizeBuffer.get(UDT_WRITE_INDEX);
-		assert exceptBuffer.capacity() >= readBuffer.capacity();
-		assert exceptBuffer.capacity() >= writeBuffer.capacity();
-
-		assert millisTimeout >= DEFAULT_MIN_SELECTOR_TIMEOUT
-				|| millisTimeout <= 0;
-
-		return select1(readBuffer, writeBuffer, exceptBuffer, sizeBuffer,
-				millisTimeout);
-
-	}
-
-	/**
 	 * Basic access to UDT socket readiness selection feature. Based on
 	 * {@link java.nio.DirectIntBuffer} info exchange.Timeout is in
 	 * milliseconds.
@@ -752,17 +662,6 @@ public class SocketUDT {
 	}
 
 	// ###
-
-	/**
-	 * unimplemented / unused
-	 */
-	@Deprecated
-	protected static native void selectEx0(//
-			final int[] registrationArray, //
-			final int[] readArray, //
-			final int[] writeArray, //
-			final int[] exceptionArray, //
-			final long timeout) throws ExceptionUDT;
 
 	// #############################
 
@@ -1508,6 +1407,14 @@ public class SocketUDT {
 	 */
 	protected static native void epollRemove0( //
 			final int epollID, final int socketID) throws ExceptionUDT;
+
+	/** TODO update epoll mask */
+	protected static native void epollUpdate0(int epollID, int socketID,
+			int epollMask) throws ExceptionUDT;
+
+	/** TODO query epoll mask */
+	protected static native int epollVerify0(int epollID, int socketID)
+			throws ExceptionUDT;
 
 	/**
 	 * requires patch to udt c++

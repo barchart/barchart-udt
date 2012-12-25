@@ -99,8 +99,8 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
-						<!-- do not fork to enforce java bits (32/64) during tests -->
-						<forkMode>never</forkMode>
+						<forkMode>always</forkMode>
+						<argLine>${javaBits}</argLine>
 					</configuration>
 				</plugin>
 
@@ -274,6 +274,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${lin32}</archosClassifier>
+				<javaBits>-d32</javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -286,6 +287,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${lin64}</archosClassifier>
+				<javaBits>-d64</javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -298,6 +300,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${mac32}</archosClassifier>
+				<javaBits>-d32</javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -310,6 +313,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${mac64}</archosClassifier>
+				<javaBits>-d64</javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -322,6 +326,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${win32}</archosClassifier>
+				<javaBits></javaBits>
 			</properties>
 		</profile>
 		<profile>
@@ -334,6 +339,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${win64}</archosClassifier>
+				<javaBits></javaBits>
 			</properties>
 		</profile>
 

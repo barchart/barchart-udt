@@ -336,9 +336,9 @@ UDT_API int select(int nfds, UDSET* readfds, UDSET* writefds, UDSET* exceptfds, 
 UDT_API int selectEx(const std::vector<UDTSOCKET>& fds, std::vector<UDTSOCKET>* readfds,
                      std::vector<UDTSOCKET>* writefds, std::vector<UDTSOCKET>* exceptfds, int64_t msTimeOut);
 
-// FIXME make patch
+// BARCHART
 UDT_API int epoll_update_usock(int eid, UDTSOCKET u, const int* events = NULL);
-// FIXME make patch
+// BARCHART
 UDT_API int epoll_verify_usock(int eid, UDTSOCKET u, int* events);
 
 UDT_API int epoll_create();
