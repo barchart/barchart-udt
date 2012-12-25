@@ -135,24 +135,9 @@ CUDT::CUDT()
 
 CUDT::CUDT(const CUDT& ancestor)
 {
-   m_pSndBuffer = NULL;
-   m_pRcvBuffer = NULL;
-   m_pSndLossList = NULL;
-   m_pRcvLossList = NULL;
-   m_pACKWindow = NULL;
-   m_pSndTimeWindow = NULL;
-   m_pRcvTimeWindow = NULL;
+   CUDT();
 
-   m_pSndQueue = NULL;
-   m_pRcvQueue = NULL;
-   m_pPeerAddr = NULL;
-   m_pSNode = NULL;
-   m_pRNode = NULL;
-
-   // Initilize mutex and condition variables
-   initSynch();
-
-   // Default UDT configurations
+   // Set the following properties to the same as the ancestor.
    m_iMSS = ancestor.m_iMSS;
    m_bSynSending = ancestor.m_bSynSending;
    m_bSynRecving = ancestor.m_bSynRecving;
@@ -169,21 +154,8 @@ CUDT::CUDT(const CUDT& ancestor)
    m_iRcvTimeOut = ancestor.m_iRcvTimeOut;
    m_bReuseAddr = true;	// this must be true, because all accepted sockets shared the same port with the listener
    m_llMaxBW = ancestor.m_llMaxBW;
-
    m_pCCFactory = ancestor.m_pCCFactory->clone();
-   m_pCC = NULL;
    m_pCache = ancestor.m_pCache;
-
-   // Initial status
-   m_bOpened = false;
-   m_bListening = false;
-   m_bConnecting = false;
-   m_bConnected = false;
-   m_bClosing = false;
-   m_bShutdown = false;
-   m_bBroken = false;
-   m_bPeerHealth = true;
-   m_ullLingerExpiration = 0;
 }
 
 CUDT::~CUDT()
@@ -475,6 +447,12 @@ void CUDT::getOpt(UDTOpt optName, void* optval, int& optlen)
          *(int32_t*)optval = 0;
       optlen = sizeof(int32_t);
       break;
+
+   case UDP_SOCKET:
+     // Not supported yet.
+     //*(UDPSOCKET*)optval = m_iSocketID;
+     optlen = sizeof(UDPSOCKET);
+     break;
 
    default:
       throw CUDTException(5, 0, 0);
@@ -801,11 +779,11 @@ POST_CONNECT:
    m_pRNode->m_bOnList = true;
    m_pRcvQueue->setNewEntry(this);
 
-   // acknowledge the management module.
-   s_UDTUnited.connect_complete(m_SocketID);
-
    // acknowledde any waiting epolls to write
    s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_OUT, true);
+
+   // acknowledge the management module.
+   s_UDTUnited.connect_complete(m_SocketID);
 
    return 0;
 }
@@ -951,9 +929,7 @@ void CUDT::close()
    if (m_bConnected)
       m_pSndQueue->m_pSndUList->remove(this);
 
-   // trigger any pending IO events.
-   s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_ERR, true);
-   // then remove itself from all epoll monitoring
+   // remove itself from all epoll monitoring
    try
    {
       for (set<int>::iterator i = m_sPollID.begin(); i != m_sPollID.end(); ++ i)
@@ -979,7 +955,7 @@ void CUDT::close()
       m_bListening = false;
       m_pRcvQueue->removeListener(this);
    }
-   else if (m_bConnecting)
+   else if (m_bListening)
    {
       m_pRcvQueue->removeConnector(m_SocketID);
    }
@@ -991,7 +967,7 @@ void CUDT::close()
 
       m_pCC->close();
 
-      // Store current connection information.
+      // Cache information about current connection.
       CInfoBlock ib;
       ib.m_iIPversion = m_iIPversion;
       CInfoBlock::convert(m_pPeerAddr, m_iIPversion, ib.m_piIP);
@@ -1010,7 +986,7 @@ void CUDT::close()
    m_bOpened = false;
 }
 
-int CUDT::send(const char* data, int len)
+int CUDT::send(const char* data, int len, int session)
 {
    if (UDT_DGRAM == m_iSockType)
       throw CUDTException(5, 10, 0);
@@ -1119,7 +1095,7 @@ int CUDT::send(const char* data, int len)
    return size;
 }
 
-int CUDT::recv(char* data, int len)
+int CUDT::recv(char* data, int len, int session)
 {
    if (UDT_DGRAM == m_iSockType)
       throw CUDTException(5, 10, 0);
@@ -1206,7 +1182,7 @@ int CUDT::recv(char* data, int len)
    return res;
 }
 
-int CUDT::sendmsg(const char* data, int len, int msttl, bool inorder)
+int CUDT::sendmsg(const char* data, int len, int msttl, bool inorder, int session)
 {
    if (UDT_STREAM == m_iSockType)
       throw CUDTException(5, 9, 0);
@@ -1309,7 +1285,7 @@ int CUDT::sendmsg(const char* data, int len, int msttl, bool inorder)
    return len;   
 }
 
-int CUDT::recvmsg(char* data, int len)
+int CUDT::recvmsg(char* data, int len, int session)
 {
    if (UDT_STREAM == m_iSockType)
       throw CUDTException(5, 9, 0);
@@ -1408,7 +1384,7 @@ int CUDT::recvmsg(char* data, int len)
    return res;
 }
 
-int64_t CUDT::sendfile(fstream& ifs, int64_t& offset, int64_t size, int block)
+int64_t CUDT::sendfile(fstream& ifs, int64_t& offset, int64_t size, int block, int session)
 {
    if (UDT_DGRAM == m_iSockType)
       throw CUDTException(5, 10, 0);
@@ -1501,7 +1477,7 @@ int64_t CUDT::sendfile(fstream& ifs, int64_t& offset, int64_t size, int block)
    return size - tosend;
 }
 
-int64_t CUDT::recvfile(fstream& ofs, int64_t& offset, int64_t size, int block)
+int64_t CUDT::recvfile(fstream& ofs, int64_t& offset, int64_t size, int block, int session)
 {
    if (UDT_DGRAM == m_iSockType)
       throw CUDTException(5, 10, 0);
@@ -2663,13 +2639,11 @@ void CUDT::addEPoll(const int eid)
 
 void CUDT::removeEPoll(const int eid)
 {
-   // clear IO events notifications;
-   // since this happens after the epoll ID has been removed, they cannot be set again
-   set<int> remove;
-   remove.insert(eid);
-   s_UDTUnited.m_EPoll.update_events(m_SocketID, remove, UDT_EPOLL_IN | UDT_EPOLL_OUT, false);
-
    CGuard::enterCS(s_UDTUnited.m_EPoll.m_EPollLock);
    m_sPollID.erase(eid);
    CGuard::leaveCS(s_UDTUnited.m_EPoll.m_EPollLock);
+
+   // clear IO events notifications;
+   // since this happens after the epoll ID has been removed, they cannot be set again
+   s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_IN | UDT_EPOLL_OUT, false);
 }

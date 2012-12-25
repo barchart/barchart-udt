@@ -907,181 +907,6 @@ int CUDTUnited::getsockname(const UDTSOCKET u, sockaddr* name, int* namelen)
    return 0;
 }
 
-int CUDTUnited::select(ud_set* readfds, ud_set* writefds, ud_set* exceptfds, const timeval* timeout)
-{
-   uint64_t entertime = CTimer::getTime();
-
-   uint64_t to;
-   if (NULL == timeout)
-      to = 0xFFFFFFFFFFFFFFFFULL;
-   else
-      to = timeout->tv_sec * 1000000 + timeout->tv_usec;
-
-   // initialize results
-   int count = 0;
-   set<UDTSOCKET> rs, ws, es;
-
-   // retrieve related UDT sockets
-   vector<CUDTSocket*> ru, wu, eu;
-   CUDTSocket* s;
-   if (NULL != readfds)
-      for (set<UDTSOCKET>::iterator i1 = readfds->begin(); i1 != readfds->end(); ++ i1)
-      {
-         if (BROKEN == getStatus(*i1))
-         {
-            rs.insert(*i1);
-            ++ count;
-         }
-         else if (NULL == (s = locate(*i1)))
-            throw CUDTException(5, 4, 0);
-         else
-            ru.push_back(s);
-      }
-   if (NULL != writefds)
-      for (set<UDTSOCKET>::iterator i2 = writefds->begin(); i2 != writefds->end(); ++ i2)
-      {
-         if (BROKEN == getStatus(*i2))
-         {
-            ws.insert(*i2);
-            ++ count;
-         }
-         else if (NULL == (s = locate(*i2)))
-            throw CUDTException(5, 4, 0);
-         else
-            wu.push_back(s);
-      }
-   if (NULL != exceptfds)
-      for (set<UDTSOCKET>::iterator i3 = exceptfds->begin(); i3 != exceptfds->end(); ++ i3)
-      {
-         if (BROKEN == getStatus(*i3))
-         {
-            es.insert(*i3);
-            ++ count;
-         }
-         else if (NULL == (s = locate(*i3)))
-            throw CUDTException(5, 4, 0);
-         else
-            eu.push_back(s);
-      }
-
-   do
-   {
-      // query read sockets
-      for (vector<CUDTSocket*>::iterator j1 = ru.begin(); j1 != ru.end(); ++ j1)
-      {
-         s = *j1;
-
-         if ((s->m_pUDT->m_bConnected && (s->m_pUDT->m_pRcvBuffer->getRcvDataSize() > 0) && ((s->m_pUDT->m_iSockType == UDT_STREAM) || (s->m_pUDT->m_pRcvBuffer->getRcvMsgNum() > 0)))
-            || (!s->m_pUDT->m_bListening && (s->m_pUDT->m_bBroken || !s->m_pUDT->m_bConnected))
-            || (s->m_pUDT->m_bListening && (s->m_pQueuedSockets->size() > 0))
-            || (s->m_Status == CLOSED))
-         {
-            rs.insert(s->m_SocketID);
-            ++ count;
-         }
-      }
-
-      // query write sockets
-      for (vector<CUDTSocket*>::iterator j2 = wu.begin(); j2 != wu.end(); ++ j2)
-      {
-         s = *j2;
-
-         if ((s->m_pUDT->m_bConnected && (s->m_pUDT->m_pSndBuffer->getCurrBufSize() < s->m_pUDT->m_iSndBufSize))
-            || s->m_pUDT->m_bBroken || !s->m_pUDT->m_bConnected || (s->m_Status == CLOSED))
-         {
-            ws.insert(s->m_SocketID);
-            ++ count;
-         }
-      }
-
-      // query exceptions on sockets
-      for (vector<CUDTSocket*>::iterator j3 = eu.begin(); j3 != eu.end(); ++ j3)
-      {
-         // check connection request status, not supported now
-      }
-
-      if (0 < count)
-         break;
-
-      CTimer::waitForEvent();
-   } while (to > CTimer::getTime() - entertime);
-
-   if (NULL != readfds)
-      *readfds = rs;
-
-   if (NULL != writefds)
-      *writefds = ws;
-
-   if (NULL != exceptfds)
-      *exceptfds = es;
-
-   return count;
-}
-
-int CUDTUnited::selectEx(const vector<UDTSOCKET>& fds, vector<UDTSOCKET>* readfds, vector<UDTSOCKET>* writefds, vector<UDTSOCKET>* exceptfds, int64_t msTimeOut)
-{
-   uint64_t entertime = CTimer::getTime();
-
-   uint64_t to;
-   if (msTimeOut >= 0)
-      to = msTimeOut * 1000;
-   else
-      to = 0xFFFFFFFFFFFFFFFFULL;
-
-   // initialize results
-   int count = 0;
-   if (NULL != readfds)
-      readfds->clear();
-   if (NULL != writefds)
-      writefds->clear();
-   if (NULL != exceptfds)
-      exceptfds->clear();
-
-   do
-   {
-      for (vector<UDTSOCKET>::const_iterator i = fds.begin(); i != fds.end(); ++ i)
-      {
-         CUDTSocket* s = locate(*i);
-
-         if ((NULL == s) || s->m_pUDT->m_bBroken || (s->m_Status == CLOSED))
-         {
-            if (NULL != exceptfds)
-            {
-               exceptfds->push_back(*i);
-               ++ count;
-            }
-            continue;
-         }
-
-         if (NULL != readfds)
-         {
-            if ((s->m_pUDT->m_bConnected && (s->m_pUDT->m_pRcvBuffer->getRcvDataSize() > 0) && ((s->m_pUDT->m_iSockType == UDT_STREAM) || (s->m_pUDT->m_pRcvBuffer->getRcvMsgNum() > 0)))
-               || (s->m_pUDT->m_bListening && (s->m_pQueuedSockets->size() > 0)))
-            {
-               readfds->push_back(s->m_SocketID);
-               ++ count;
-            }
-         }
-
-         if (NULL != writefds)
-         {
-            if (s->m_pUDT->m_bConnected && (s->m_pUDT->m_pSndBuffer->getCurrBufSize() < s->m_pUDT->m_iSndBufSize))
-            {
-               writefds->push_back(s->m_SocketID);
-               ++ count;
-            }
-         }
-      }
-
-      if (count > 0)
-         break;
-
-      CTimer::waitForEvent();
-   } while (to > CTimer::getTime() - entertime);
-
-   return count;
-}
-
 int CUDTUnited::epoll_create()
 {
    return m_EPoll.create();
@@ -1111,8 +936,6 @@ int CUDTUnited::epoll_add_ssock(const int eid, const SYSSOCKET s, const int* eve
 
 int CUDTUnited::epoll_remove_usock(const int eid, const UDTSOCKET u)
 {
-   int ret = m_EPoll.remove_usock(eid, u);
-
    CUDTSocket* s = locate(u);
    if (NULL != s)
    {
@@ -1123,7 +946,7 @@ int CUDTUnited::epoll_remove_usock(const int eid, const UDTSOCKET u)
    //   throw CUDTException(5, 4);
    //}
 
-   return ret;
+   return m_EPoll.remove_usock(eid, u);
 }
 
 int CUDTUnited::epoll_remove_ssock(const int eid, const SYSSOCKET s)
@@ -1384,6 +1207,8 @@ void CUDTUnited::updateMux(CUDTSocket* s, const sockaddr* addr, const UDPSOCKET*
       {
          if ((i->second.m_iIPversion == s->m_pUDT->m_iIPversion) && (i->second.m_iMSS == s->m_pUDT->m_iMSS) && i->second.m_bReusable)
          {
+            //TODO: differentiate IP version and local IP addr as well.
+
             if (i->second.m_iPort == port)
             {
                // reuse the existing multiplexer
@@ -1789,12 +1614,12 @@ int CUDT::setsockopt(UDTSOCKET u, int, UDTOpt optname, const void* optval, int o
    }
 }
 
-int CUDT::send(UDTSOCKET u, const char* buf, int len, int)
+int CUDT::send(UDTSOCKET u, const char* buf, int len, int session)
 {
    try
    {
       CUDT* udt = s_UDTUnited.lookup(u);
-      return udt->send(buf, len);
+      return udt->send(buf, len, session);
    }
    catch (CUDTException e)
    {
@@ -1813,12 +1638,12 @@ int CUDT::send(UDTSOCKET u, const char* buf, int len, int)
    }
 }
 
-int CUDT::recv(UDTSOCKET u, char* buf, int len, int)
+int CUDT::recv(UDTSOCKET u, char* buf, int len, int session)
 {
    try
    {
       CUDT* udt = s_UDTUnited.lookup(u);
-      return udt->recv(buf, len);
+      return udt->recv(buf, len, session);
    }
    catch (CUDTException e)
    {
@@ -1832,12 +1657,12 @@ int CUDT::recv(UDTSOCKET u, char* buf, int len, int)
    }
 }
 
-int CUDT::sendmsg(UDTSOCKET u, const char* buf, int len, int ttl, bool inorder)
+int CUDT::sendmsg(UDTSOCKET u, const char* buf, int len, int ttl, bool inorder, int session)
 {
    try
    {
       CUDT* udt = s_UDTUnited.lookup(u);
-      return udt->sendmsg(buf, len, ttl, inorder);
+      return udt->sendmsg(buf, len, ttl, inorder, session);
    }
    catch (CUDTException e)
    {
@@ -1856,12 +1681,12 @@ int CUDT::sendmsg(UDTSOCKET u, const char* buf, int len, int ttl, bool inorder)
    }
 }
 
-int CUDT::recvmsg(UDTSOCKET u, char* buf, int len)
+int CUDT::recvmsg(UDTSOCKET u, char* buf, int len, int session)
 {
    try
    {
       CUDT* udt = s_UDTUnited.lookup(u);
-      return udt->recvmsg(buf, len);
+      return udt->recvmsg(buf, len, session);
    }
    catch (CUDTException e)
    {
@@ -1875,12 +1700,12 @@ int CUDT::recvmsg(UDTSOCKET u, char* buf, int len)
    }
 }
 
-int64_t CUDT::sendfile(UDTSOCKET u, fstream& ifs, int64_t& offset, int64_t size, int block)
+int64_t CUDT::sendfile(UDTSOCKET u, fstream& ifs, int64_t& offset, int64_t size, int block, int session)
 {
    try
    {
       CUDT* udt = s_UDTUnited.lookup(u);
-      return udt->sendfile(ifs, offset, size, block);
+      return udt->sendfile(ifs, offset, size, block, session);
    }
    catch (CUDTException e)
    {
@@ -1899,74 +1724,16 @@ int64_t CUDT::sendfile(UDTSOCKET u, fstream& ifs, int64_t& offset, int64_t size,
    }
 }
 
-int64_t CUDT::recvfile(UDTSOCKET u, fstream& ofs, int64_t& offset, int64_t size, int block)
+int64_t CUDT::recvfile(UDTSOCKET u, fstream& ofs, int64_t& offset, int64_t size, int block, int session)
 {
    try
    {
       CUDT* udt = s_UDTUnited.lookup(u);
-      return udt->recvfile(ofs, offset, size, block);
+      return udt->recvfile(ofs, offset, size, block, session);
    }
    catch (CUDTException e)
    {
       s_UDTUnited.setError(new CUDTException(e));
-      return ERROR;
-   }
-   catch (...)
-   {
-      s_UDTUnited.setError(new CUDTException(-1, 0, 0));
-      return ERROR;
-   }
-}
-
-int CUDT::select(int, ud_set* readfds, ud_set* writefds, ud_set* exceptfds, const timeval* timeout)
-{
-   if ((NULL == readfds) && (NULL == writefds) && (NULL == exceptfds))
-   {
-      s_UDTUnited.setError(new CUDTException(5, 3, 0));
-      return ERROR;
-   }
-
-   try
-   {
-      return s_UDTUnited.select(readfds, writefds, exceptfds, timeout);
-   }
-   catch (CUDTException e)
-   {
-      s_UDTUnited.setError(new CUDTException(e));
-      return ERROR;
-   }
-   catch (bad_alloc&)
-   {
-      s_UDTUnited.setError(new CUDTException(3, 2, 0));
-      return ERROR;
-   }
-   catch (...)
-   {
-      s_UDTUnited.setError(new CUDTException(-1, 0, 0));
-      return ERROR;
-   }
-}
-
-int CUDT::selectEx(const vector<UDTSOCKET>& fds, vector<UDTSOCKET>* readfds, vector<UDTSOCKET>* writefds, vector<UDTSOCKET>* exceptfds, int64_t msTimeOut)
-{
-   if ((NULL == readfds) && (NULL == writefds) && (NULL == exceptfds))
-   {
-      s_UDTUnited.setError(new CUDTException(5, 3, 0));
-      return ERROR;
-   }
-
-   try
-   {
-      return s_UDTUnited.selectEx(fds, readfds, writefds, exceptfds, msTimeOut);
-   }
-   catch (CUDTException e)
-   {
-      s_UDTUnited.setError(new CUDTException(e));
-      return ERROR;
-   }
-   catch (bad_alloc&)
-   {
-      s_UDTUnited.setError(new CUDTException(3, 2, 0));
       return ERROR;
    }
    catch (...)
@@ -2223,60 +1990,50 @@ int setsockopt(UDTSOCKET u, int level, SOCKOPT optname, const void* optval, int 
    return CUDT::setsockopt(u, level, optname, optval, optlen);
 }
 
-int send(UDTSOCKET u, const char* buf, int len, int flags)
+int send(UDTSOCKET u, const char* buf, int len, int session)
 {
-   return CUDT::send(u, buf, len, flags);
+   return CUDT::send(u, buf, len, session);
 }
 
-int recv(UDTSOCKET u, char* buf, int len, int flags)
+int recv(UDTSOCKET u, char* buf, int len, int session)
 {
-   return CUDT::recv(u, buf, len, flags);
+   return CUDT::recv(u, buf, len, session);
 }
 
-int sendmsg(UDTSOCKET u, const char* buf, int len, int ttl, bool inorder)
+int sendmsg(UDTSOCKET u, const char* buf, int len, int ttl, bool inorder, int session)
 {
-   return CUDT::sendmsg(u, buf, len, ttl, inorder);
+   return CUDT::sendmsg(u, buf, len, ttl, inorder, session);
 }
 
-int recvmsg(UDTSOCKET u, char* buf, int len)
+int recvmsg(UDTSOCKET u, char* buf, int len, int session)
 {
-   return CUDT::recvmsg(u, buf, len);
+   return CUDT::recvmsg(u, buf, len, session);
 }
 
-int64_t sendfile(UDTSOCKET u, fstream& ifs, int64_t& offset, int64_t size, int block)
+int64_t sendfile(UDTSOCKET u, fstream& ifs, int64_t& offset, int64_t size, int block, int session)
 {
-   return CUDT::sendfile(u, ifs, offset, size, block);
+   return CUDT::sendfile(u, ifs, offset, size, block, session);
 }
 
-int64_t recvfile(UDTSOCKET u, fstream& ofs, int64_t& offset, int64_t size, int block)
+int64_t recvfile(UDTSOCKET u, fstream& ofs, int64_t& offset, int64_t size, int block, int session)
 {
-   return CUDT::recvfile(u, ofs, offset, size, block);
+   return CUDT::recvfile(u, ofs, offset, size, block, session);
 }
 
-int64_t sendfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block)
+int64_t sendfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block, int session)
 {
    fstream ifs(path, ios::binary | ios::in);
-   int64_t ret = CUDT::sendfile(u, ifs, *offset, size, block);
+   int64_t ret = CUDT::sendfile(u, ifs, *offset, size, block, session);
    ifs.close();
    return ret;
 }
 
-int64_t recvfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block)
+int64_t recvfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block, int session)
 {
    fstream ofs(path, ios::binary | ios::out);
-   int64_t ret = CUDT::sendfile(u, ofs, *offset, size, block);
+   int64_t ret = CUDT::sendfile(u, ofs, *offset, size, block, session);
    ofs.close();
    return ret;
-}
-
-int select(int nfds, UDSET* readfds, UDSET* writefds, UDSET* exceptfds, const struct timeval* timeout)
-{
-   return CUDT::select(nfds, readfds, writefds, exceptfds, timeout);
-}
-
-int selectEx(const vector<UDTSOCKET>& fds, vector<UDTSOCKET>* readfds, vector<UDTSOCKET>* writefds, vector<UDTSOCKET>* exceptfds, int64_t msTimeOut)
-{
-   return CUDT::selectEx(fds, readfds, writefds, exceptfds, msTimeOut);
 }
 
 int epoll_create()

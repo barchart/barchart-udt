@@ -38,7 +38,7 @@
 		<target>${project.build.directory}</target>
 
 		<!-- c++ source repository -->
-		<moduleUDT>UDT4</moduleUDT>
+		<moduleUDT>UDT5</moduleUDT>
 		<checkoutUDT>${target}/udt</checkoutUDT>
 		<connectionUDT>scm:cvs:pserver:anonymous:@udt.cvs.sourceforge.net:/cvsroot/udt:${moduleUDT}</connectionUDT>
 

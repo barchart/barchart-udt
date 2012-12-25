@@ -1,16 +1,8 @@
-====
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-====
-
 Copyright (c) 2001 - 2011, The Board of Trustees of the University of Illinois.
 All Rights Reserved.
 Copyright (c) 2011 - 2012, Google, Inc. All Rights Reserved.
 
-UDP-based Data Transfer (UDT) Library - version 4
+UDP-based Data Transfer (UDT) Library - version 5
 Author: Yunhong Gu [yunhong.gu @ gmail.com]
 
 UDT version 4 is free software under BSD License. See ./LICENSE.txt.

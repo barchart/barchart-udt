@@ -54,7 +54,7 @@ public:
    ~CChannel();
 
       // Functionality:
-      //    Open a UDP channel.
+      //    Opne a UDP channel.
       // Parameters:
       //    0) [in] addr: The local address that UDP will use.
       // Returned value:
@@ -63,7 +63,7 @@ public:
    void open(const sockaddr* addr = NULL);
 
       // Functionality:
-      //    Open a UDP channel based on an existing UDP socket.
+      //    Opne a UDP channel based on an existing UDP socket.
       // Parameters:
       //    0) [in] udpsock: UDP socket descriptor.
       // Returned value:

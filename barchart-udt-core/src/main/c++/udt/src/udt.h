@@ -90,7 +90,7 @@ written by
       #define UDT_API
    #endif
 #else
-   #define UDT_API __attribute__ ((visibility("default")))
+   #define UDT_API
 #endif
 
 #define NO_BUSY_WAITING
@@ -109,12 +109,6 @@ typedef SYSSOCKET UDPSOCKET;
 typedef int UDTSOCKET;
 
 ////////////////////////////////////////////////////////////////////////////////
-
-typedef std::set<UDTSOCKET> ud_set;
-#define UD_CLR(u, uset) ((uset)->erase(u))
-#define UD_ISSET(u, uset) ((uset)->find(u) != (uset)->end())
-#define UD_SET(u, uset) ((uset)->insert(u))
-#define UD_ZERO(uset) ((uset)->clear())
 
 enum EPOLLOpt
 {
@@ -149,9 +143,10 @@ enum UDTOpt
    UDT_REUSEADDR,	// reuse an existing port or create a new one
    UDT_MAXBW,		// maximum bandwidth (bytes per second) that the connection can use
    UDT_STATE,		// current socket state, see UDTSTATUS, read only
-   UDT_EVENT,		// current avalable events associated with the socket
-   UDT_SNDDATA,		// size of data in the sending buffer
-   UDT_RCVDATA		// size of data available for recv
+   UDT_EVENT,		// current avalable events associated with the socket, read only
+   UDT_SNDDATA,		// size of data in the sending buffer, read only
+   UDT_RCVDATA,		// size of data available for recv, read only
+   UDP_SOCKET		// the UDP socket used by the UDT socket, read only
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -303,7 +298,6 @@ namespace UDT
 typedef CUDTException ERRORINFO;
 typedef UDTOpt SOCKOPT;
 typedef CPerfMon TRACEINFO;
-typedef ud_set UDSET;
 
 UDT_API extern const UDTSOCKET INVALID_SOCK;
 #undef ERROR
@@ -322,20 +316,14 @@ UDT_API int getpeername(UDTSOCKET u, struct sockaddr* name, int* namelen);
 UDT_API int getsockname(UDTSOCKET u, struct sockaddr* name, int* namelen);
 UDT_API int getsockopt(UDTSOCKET u, int level, SOCKOPT optname, void* optval, int* optlen);
 UDT_API int setsockopt(UDTSOCKET u, int level, SOCKOPT optname, const void* optval, int optlen);
-UDT_API int send(UDTSOCKET u, const char* buf, int len, int flags);
-UDT_API int recv(UDTSOCKET u, char* buf, int len, int flags);
-UDT_API int sendmsg(UDTSOCKET u, const char* buf, int len, int ttl = -1, bool inorder = false);
-UDT_API int recvmsg(UDTSOCKET u, char* buf, int len);
-UDT_API int64_t sendfile(UDTSOCKET u, std::fstream& ifs, int64_t& offset, int64_t size, int block = 364000);
-UDT_API int64_t recvfile(UDTSOCKET u, std::fstream& ofs, int64_t& offset, int64_t size, int block = 7280000);
-UDT_API int64_t sendfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block = 364000);
-UDT_API int64_t recvfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block = 7280000);
-
-// select and selectEX are DEPRECATED; please use epoll. 
-UDT_API int select(int nfds, UDSET* readfds, UDSET* writefds, UDSET* exceptfds, const struct timeval* timeout);
-UDT_API int selectEx(const std::vector<UDTSOCKET>& fds, std::vector<UDTSOCKET>* readfds,
-                     std::vector<UDTSOCKET>* writefds, std::vector<UDTSOCKET>* exceptfds, int64_t msTimeOut);
-
+UDT_API int send(UDTSOCKET u, const char* buf, int len, int session = 0);
+UDT_API int recv(UDTSOCKET u, char* buf, int len, int session = 0);
+UDT_API int sendmsg(UDTSOCKET u, const char* buf, int len, int ttl = -1, bool inorder = false, int session = 0);
+UDT_API int recvmsg(UDTSOCKET u, char* buf, int len, int session = 0);
+UDT_API int64_t sendfile(UDTSOCKET u, std::fstream& ifs, int64_t& offset, int64_t size, int block = 364000, int session = 0);
+UDT_API int64_t recvfile(UDTSOCKET u, std::fstream& ofs, int64_t& offset, int64_t size, int block = 7280000, int session = 0);
+UDT_API int64_t sendfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block = 364000, int session = 0);
+UDT_API int64_t recvfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block = 7280000, int session = 0);
 UDT_API int epoll_create();
 UDT_API int epoll_add_usock(int eid, UDTSOCKET u, const int* events = NULL);
 UDT_API int epoll_add_ssock(int eid, SYSSOCKET s, const int* events = NULL);

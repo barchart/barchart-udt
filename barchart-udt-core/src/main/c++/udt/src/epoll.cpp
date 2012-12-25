@@ -117,7 +117,6 @@ int CEPoll::add_ssock(const int eid, const SYSSOCKET& s, const int* events)
 
 #ifdef LINUX
    epoll_event ev;
-   memset(&ev, 0, sizeof(epoll_event));
 
    if (NULL == events)
       ev.events = EPOLLIN | EPOLLOUT | EPOLLERR;
@@ -152,7 +151,10 @@ int CEPoll::remove_usock(const int eid, const UDTSOCKET& u)
 
    p->second.m_sUDTSocksIn.erase(u);
    p->second.m_sUDTSocksOut.erase(u);
-   p->second.m_sUDTSocksEx.erase(u);
+
+   // when the socket is removed from a monitoring, it is not available anymore for any IO notification
+   p->second.m_sUDTReads.erase(u);
+   p->second.m_sUDTWrites.erase(u);
 
    return 0;
 }

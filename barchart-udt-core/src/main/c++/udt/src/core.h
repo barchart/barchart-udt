@@ -89,14 +89,12 @@ public: //API
    static int getsockname(UDTSOCKET u, sockaddr* name, int* namelen);
    static int getsockopt(UDTSOCKET u, int level, UDTOpt optname, void* optval, int* optlen);
    static int setsockopt(UDTSOCKET u, int level, UDTOpt optname, const void* optval, int optlen);
-   static int send(UDTSOCKET u, const char* buf, int len, int flags);
-   static int recv(UDTSOCKET u, char* buf, int len, int flags);
-   static int sendmsg(UDTSOCKET u, const char* buf, int len, int ttl = -1, bool inorder = false);
-   static int recvmsg(UDTSOCKET u, char* buf, int len);
-   static int64_t sendfile(UDTSOCKET u, std::fstream& ifs, int64_t& offset, int64_t size, int block = 364000);
-   static int64_t recvfile(UDTSOCKET u, std::fstream& ofs, int64_t& offset, int64_t size, int block = 7280000);
-   static int select(int nfds, ud_set* readfds, ud_set* writefds, ud_set* exceptfds, const timeval* timeout);
-   static int selectEx(const std::vector<UDTSOCKET>& fds, std::vector<UDTSOCKET>* readfds, std::vector<UDTSOCKET>* writefds, std::vector<UDTSOCKET>* exceptfds, int64_t msTimeOut);
+   static int send(UDTSOCKET u, const char* buf, int len, int session = 0);
+   static int recv(UDTSOCKET u, char* buf, int len, int session = 0);
+   static int sendmsg(UDTSOCKET u, const char* buf, int len, int ttl = -1, bool inorder = false, int session = 0);
+   static int recvmsg(UDTSOCKET u, char* buf, int len, int session = 0);
+   static int64_t sendfile(UDTSOCKET u, std::fstream& ifs, int64_t& offset, int64_t size, int block = 364000, int session = 0);
+   static int64_t recvfile(UDTSOCKET u, std::fstream& ofs, int64_t& offset, int64_t size, int block = 7280000, int session = 0);
    static int epoll_create();
    static int epoll_add_usock(const int eid, const UDTSOCKET u, const int* events = NULL);
    static int epoll_add_ssock(const int eid, const SYSSOCKET s, const int* events = NULL);
@@ -172,20 +170,22 @@ private:
       // Parameters:
       //    0) [in] data: The address of the application data to be sent.
       //    1) [in] len: The size of the data block.
+      //    2) [in] session ID.
       // Returned value:
       //    Actual size of data sent.
 
-   int send(const char* data, int len);
+   int send(const char* data, int len, int session = 0);
 
       // Functionality:
       //    Request UDT to receive data to a memory block "data" with size of "len".
       // Parameters:
       //    0) [out] data: data received.
       //    1) [in] len: The desired size of data to be received.
+      //    2) [in] session ID.
       // Returned value:
       //    Actual size of data received.
 
-   int recv(char* data, int len);
+   int recv(char* data, int len, int session = 0);
 
       // Functionality:
       //    send a message of a memory block "data" with size of "len".
@@ -194,20 +194,22 @@ private:
       //    1) [in] len: The desired size of data to be received.
       //    2) [in] ttl: the time-to-live of the message.
       //    3) [in] inorder: if the message should be delivered in order.
+      //    4) [in] session ID.
       // Returned value:
       //    Actual size of data sent.
 
-   int sendmsg(const char* data, int len, int ttl, bool inorder);
+   int sendmsg(const char* data, int len, int ttl, bool inorder, int session = 0);
 
       // Functionality:
       //    Receive a message to buffer "data".
       // Parameters:
       //    0) [out] data: data received.
       //    1) [in] len: size of the buffer.
+      //    2) [in] session ID.
       // Returned value:
       //    Actual size of data received.
 
-   int recvmsg(char* data, int len);
+   int recvmsg(char* data, int len, int session = 0);
 
       // Functionality:
       //    Request UDT to send out a file described as "fd", starting from "offset", with size of "size".
@@ -216,10 +218,11 @@ private:
       //    1) [in, out] offset: From where to read and send data; output is the new offset when the call returns.
       //    2) [in] size: How many data to be sent.
       //    3) [in] block: size of block per read from disk
+      //    4) [in] session ID.
       // Returned value:
       //    Actual size of data sent.
 
-   int64_t sendfile(std::fstream& ifs, int64_t& offset, int64_t size, int block = 366000);
+   int64_t sendfile(std::fstream& ifs, int64_t& offset, int64_t size, int block = 366000, int session = 0);
 
       // Functionality:
       //    Request UDT to receive data into a file described as "fd", starting from "offset", with expected size of "size".
@@ -228,10 +231,11 @@ private:
       //    1) [in, out] offset: From where to write data; output is the new offset when the call returns.
       //    2) [in] size: How many data to be received.
       //    3) [in] block: size of block per write to disk
+      //    4) [in] session ID.
       // Returned value:
       //    Actual size of data received.
 
-   int64_t recvfile(std::fstream& ofs, int64_t& offset, int64_t size, int block = 7320000);
+   int64_t recvfile(std::fstream& ofs, int64_t& offset, int64_t size, int block = 7320000, int session = 0);
 
       // Functionality:
       //    Configure UDT options.
