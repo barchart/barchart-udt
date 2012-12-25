@@ -1393,17 +1393,15 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_updateMonitor0(
 
 // #########################################################################
 
-void UDT_CopyArrayToSet(jint* array, UDT::UDSET* udSet, const jsize size) {
-	pair<UDT::UDSET::iterator, bool> rv;
+void UDT_CopyArrayToSet(jint* array, set<UDTSOCKET>* udSet, const jsize size) {
 	for (jint index = 0; index < size; index++) {
 		const jint socketID = array[index];
-		rv = UD_SET(socketID, udSet);
-		assert(rv.second == true);
+		udSet->insert(socketID);
 	}
 }
 
-void UDT_CopySetToArray(UDT::UDSET* udSet, jint* array, const jsize size) {
-	UDT::UDSET::iterator iterator = udSet->begin();
+void UDT_CopySetToArray(set<UDTSOCKET>* udSet, jint* array, const jsize size) {
+	set<UDTSOCKET>::iterator iterator = udSet->begin();
 	for (jint index = 0; index < size; index++) {
 		const jint socketID = *iterator;
 		array[index] = socketID;
@@ -1457,9 +1455,9 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select0(JNIEnv *env,
 	jint* writeArray = NULL;
 
 	// empty sets
-	UDT::UDSET readSet;
-	UDT::UDSET writeSet;
-	UDT::UDSET exceptSet;
+	set<UDTSOCKET> readSet;
+	set<UDTSOCKET> writeSet;
+	set<UDTSOCKET> exceptSet;
 
 	// interested in read
 	if (isInterestedInRead) {
@@ -1595,9 +1593,9 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_select1(JNIEnv* env,
 	jint* writeArray = NULL;
 
 	// empty sets
-	UDT::UDSET readSet;
-	UDT::UDSET writeSet;
-	UDT::UDSET exceptSet;
+	set<UDTSOCKET> readSet;
+	set<UDTSOCKET> writeSet;
+	set<UDTSOCKET> exceptSet;
 
 	// interested in read
 	if (isInterestedInRead) {
@@ -1924,8 +1922,8 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 	UNUSED(clsSocketUDT);
 
 	// empty sets
-	UDT::UDSET readSet;
-	UDT::UDSET writeSet;
+	set<UDTSOCKET> readSet;
+	set<UDTSOCKET> writeSet;
 
 	// do select
 	const int rv = UDT::epoll_wait( //
