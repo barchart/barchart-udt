@@ -1111,8 +1111,6 @@ int CUDTUnited::epoll_add_ssock(const int eid, const SYSSOCKET s, const int* eve
 
 int CUDTUnited::epoll_remove_usock(const int eid, const UDTSOCKET u)
 {
-   int ret = m_EPoll.remove_usock(eid, u);
-
    CUDTSocket* s = locate(u);
    if (NULL != s)
    {
@@ -1123,7 +1121,7 @@ int CUDTUnited::epoll_remove_usock(const int eid, const UDTSOCKET u)
    //   throw CUDTException(5, 4);
    //}
 
-   return ret;
+   return m_EPoll.remove_usock(eid, u);
 }
 
 int CUDTUnited::epoll_remove_ssock(const int eid, const SYSSOCKET s)
