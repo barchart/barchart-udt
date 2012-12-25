@@ -291,7 +291,7 @@ void UDT_InitClassRefAll(JNIEnv* env) {
 			"com/barchart/udt/LingerUDT");
 	X_InitClassReference(env, &udt_clsCCC, //
 			"com/barchart/udt/CCC");
-	X_InitClassReference(env,&udt_clsFactoryInterfaceUDT,
+	X_InitClassReference(env, &udt_clsFactoryInterfaceUDT,
 			"com/barchart/udt/FactoryInterfaceUDT");
 
 }
@@ -324,7 +324,6 @@ void UDT_FreeClassRefAll(JNIEnv* env) {
 	X_FreeClassReference(env, &udt_clsCCC);
 	X_FreeClassReference(env, &udt_clsFactoryInterfaceUDT);
 }
-
 
 void UDT_InitFieldRefAll(JNIEnv* env) {
 
@@ -365,7 +364,8 @@ void UDT_InitFieldRefAll(JNIEnv* env) {
 
 	// UDT CCC
 
-	udt_clsCCC_fld_nativeHandleID = env->GetFieldID(udt_clsCCC ,"nativeHandle","J");
+	udt_clsCCC_fld_nativeHandleID = env->GetFieldID(udt_clsCCC, "nativeHandle",
+			"J");
 
 }
 
@@ -436,8 +436,6 @@ void UDT_InitMethodRefAll(JNIEnv* env) {
 			"<init>", "(I)V");
 	CHK_NUL_RET_RET(udt_clsLingerUDT_initID, "udt_clsLingerUDT_initID");
 
-
-
 }
 
 // ########################################################
@@ -445,8 +443,8 @@ void UDT_InitMethodRefAll(JNIEnv* env) {
 /* signature is a monotonously increasing integer; set in java class SocketUDT */
 
 // validate consistency of java code and native library
-JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_getSignatureJNI0(JNIEnv* env,
-		jclass clsSocketUDT) {
+JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_getSignatureJNI0(
+		JNIEnv* env, jclass clsSocketUDT) {
 
 	UNUSED(env);
 	UNUSED(clsSocketUDT);
@@ -813,11 +811,10 @@ JNIEXPORT jobject JNICALL Java_com_barchart_udt_SocketUDT_getOption0(
 		//check to see if they type is as JNICCC class
 		JNICCC* pJNICCC = dynamic_cast<JNICCC*>(pCCC);
 
-		if(pJNICCC!= NULL){
+		if (pJNICCC != NULL) {
 			//it is, so return the corresponding Java CCC (or derivative) class
 			return pJNICCC->getJavaCCC();
-		}
-		else{
+		} else {
 			//it's a plain CCC class or standard C++ congestion
 			//control class so return NULL instead
 			return NULL;
@@ -879,7 +876,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_setOption0(JNIEnv *env,
 	} else if (env->IsSameObject(klaz, udt_clsFactoryUDT)) {
 		//		printf("FactoryUDT\n");
 
-		optionValue.factory = new JNICCCFactory(env,objValue);
+		optionValue.factory = new JNICCCFactory(env, objValue);
 		optionValueSize = sizeof(void*);
 
 		//UDT_ThrowExceptionUDT_Message(env, socketID,
@@ -892,9 +889,10 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_setOption0(JNIEnv *env,
 	}
 
 	const int rv = UDT::setsockopt(socketID, 0, optionName,
-			(void*) (optionName == UDT_CC ? optionValue.factory : &optionValue), optionValueSize);
+			(void*) (optionName == UDT_CC ? optionValue.factory : &optionValue),
+			optionValueSize);
 
-	if(optionName == UDT_CC && optionValue.factory != NULL){
+	if (optionName == UDT_CC && optionValue.factory != NULL) {
 		delete reinterpret_cast<JNICCCFactory*>(optionValue.factory);
 	}
 
@@ -1512,6 +1510,52 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove0( //
 
 }
 
+JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollUpdate0( //
+		JNIEnv *env, //
+		jclass clsSocketUDT, //
+		const jint pollID, //
+		const jint socketID, //
+		const jint pollOpt //
+		) {
+
+	UNUSED(clsSocketUDT);
+
+	const int events = static_cast<int>(pollOpt);
+
+	const int rv = UDT::epoll_update_usock(pollID, socketID, &events);
+
+	if (rv == UDT::ERROR) {
+		UDT::ERRORINFO errorInfo = UDT::getlasterror();
+		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollUpdate0",
+				&errorInfo);
+		return;
+	}
+
+}
+
+JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollVerify0( //
+		JNIEnv *env, //
+		jclass clsSocketUDT, //
+		const jint pollID, //
+		const jint socketID) {
+
+	UNUSED(clsSocketUDT);
+
+	int events = 0;
+
+	const int rv = UDT::epoll_verify_usock(pollID, socketID, &events);
+
+	if (rv == UDT::ERROR) {
+		UDT::ERRORINFO errorInfo = UDT::getlasterror();
+		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollUpdate0",
+				&errorInfo);
+		return JNI_ERR;
+	}
+
+	return static_cast<jint>(events);
+
+}
+
 JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		JNIEnv *env, //
 		jclass clsSocketUDT, //
@@ -1813,4 +1857,4 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testEpoll0(JNIEnv *env,
 // #
 // #########################################
 
-} // [extern "C"]
+}// [extern "C"]

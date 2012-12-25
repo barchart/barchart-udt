@@ -107,6 +107,58 @@ int CEPoll::add_usock(const int eid, const UDTSOCKET& u, const int* events)
    return 0;
 }
 
+// BARCHART
+int CEPoll::update_usock(const int eid, const UDTSOCKET& u, const int* events)
+{
+   CGuard pg(m_EPollLock);
+
+   map<int, CEPollDesc>::iterator p = m_mPolls.find(eid);
+   if (p == m_mPolls.end()){
+	      throw CUDTException(5, 13);
+   }
+
+   if(events){
+	   if (*events & UDT_EPOLL_IN){
+		   p->second.m_sUDTSocksIn.insert(u);
+	   }else{
+		   p->second.m_sUDTSocksIn.erase(u);
+	   }
+	   if (*events & UDT_EPOLL_OUT){
+		   p->second.m_sUDTSocksOut.insert(u);
+	   } else{
+		   p->second.m_sUDTSocksOut.erase(u);
+	   }
+   }
+
+   return 0;
+}
+
+
+// BARCHART
+int CEPoll::verify_usock(const int eid, const UDTSOCKET& u, int* events)
+{
+
+   CGuard pg(m_EPollLock);
+
+   map<int, CEPollDesc>::iterator p = m_mPolls.find(eid);
+   if (p == m_mPolls.end()){
+	      throw CUDTException(5, 13);
+   }
+
+   if(events){
+	   if(p->second.m_sUDTSocksIn.find(u) != p->second.m_sUDTSocksIn.end()){
+		   *events |= UDT_EPOLL_IN;
+	   }
+	   if(p->second.m_sUDTSocksOut.find(u) != p->second.m_sUDTSocksOut.end()){
+		   *events |= UDT_EPOLL_OUT;
+	   }
+   }
+
+   return 0;
+
+}
+
+
 int CEPoll::add_ssock(const int eid, const SYSSOCKET& s, const int* events)
 {
    CGuard pg(m_EPollLock);

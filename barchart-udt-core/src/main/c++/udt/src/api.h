@@ -181,6 +181,11 @@ public:
    int epoll_wait(const int eid, std::set<UDTSOCKET>* readfds, std::set<UDTSOCKET>* writefds, int64_t msTimeOut, std::set<SYSSOCKET>* lrfds = NULL, std::set<SYSSOCKET>* lwfds = NULL);
    int epoll_release(const int eid);
 
+   // BARCHART
+   int epoll_update_usock(const int eid, const UDTSOCKET u, const int* events = NULL);
+   // BARCHART
+   int epoll_verify_usock(const int eid, const UDTSOCKET u, int* events);
+
       // Functionality:
       //    record the UDT exception.
       // Parameters:

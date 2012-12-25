@@ -93,6 +93,11 @@ public: // for CUDTUnited API
 
    int add_usock(const int eid, const UDTSOCKET& u, const int* events = NULL);
 
+   // BARCHART
+   int update_usock(const int eid, const UDTSOCKET& u, const int* events = NULL);
+   // BARCHART
+   int verify_usock(const int eid, const UDTSOCKET& u, int* events);
+
       // Functionality:
       //    add a system socket to an EPoll.
       // Parameters:
