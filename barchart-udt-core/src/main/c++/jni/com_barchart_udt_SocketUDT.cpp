@@ -679,9 +679,9 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedRemoteSocket
 	sockaddr remoteSockAddr;
 	int remoteSockAddrSize = sizeof(remoteSockAddr);
 
-	// "peer" means remote
-	const int rv = UDT::getpeername(socketID, &remoteSockAddr,
-			&remoteSockAddrSize);
+	// "peer" is remote
+	const int rv = UDT::getpeername( //
+			socketID, &remoteSockAddr, &remoteSockAddrSize);
 
 	if (rv == UDT::ERROR) {
 		// no exceptions
@@ -714,9 +714,9 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedLocalSocketA
 	sockaddr localSockAddr;
 	int localSockAddrSize = sizeof(localSockAddr);
 
-	// "sock" means local
-	const int rv = UDT::getsockname(socketID, &localSockAddr,
-			&localSockAddrSize);
+	// "sock" is local
+	const int rv = UDT::getsockname( //
+			socketID, &localSockAddr, &localSockAddrSize);
 
 	if (rv == UDT::ERROR) {
 		// no exceptions
@@ -759,8 +759,8 @@ JNIEXPORT jobject JNICALL Java_com_barchart_udt_SocketUDT_getOption0(
 
 	const jint socketID = UDT_GetSocketID(env, self);
 
-	const int rv = UDT::getsockopt(socketID, 0, optionName,
-			(void*) &optionValue, &optionValueSize);
+	const int rv = UDT::getsockopt( //
+			socketID, 0, optionName, (void*) &optionValue, &optionValueSize);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -1065,7 +1065,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_receive2(JNIEnv *env,
 	// assert(data[0] | 1);
 	// assert(data[size - 1] | 1);
 
-	const int rv;
+	int rv;
 
 	switch (socketType) {
 	case SOCK_STREAM:
@@ -1532,11 +1532,11 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 	set<UDTSOCKET> readSet;
 	set<UDTSOCKET> writeSet;
 
-	// get readiness report
+	// readiness report
 	const int rv = UDT::epoll_wait( //
 			pollID, &readSet, &writeSet, millisTimeout, NULL, NULL);
 
-	// get interest report size array
+	// readiness reports size array
 	jint* const sizeArray = //
 			static_cast<jint*>(env->GetDirectBufferAddress(objSizeBuffer));
 
