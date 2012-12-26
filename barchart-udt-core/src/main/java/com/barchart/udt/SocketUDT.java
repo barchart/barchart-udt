@@ -609,8 +609,6 @@ public class SocketUDT {
 	 * Basic access to UDT socket readiness selection feature. Based on
 	 * {@link java.nio.DirectIntBuffer} info exchange.Timeout is in
 	 * milliseconds.
-	 * <p>
-	 * note: does not throw exception on timeout
 	 * 
 	 * @param millisTimeout
 	 * 
@@ -626,6 +624,7 @@ public class SocketUDT {
 	 * @return <code><0</code> : should not happen<br>
 	 *         <code>=0</code> : timeout, no ready sockets<br>
 	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
+	 * 
 	 * @see #epollWait0(int, IntBuffer, IntBuffer, IntBuffer, IntBuffer, long)
 	 */
 	public final static int selectEpoll( //
@@ -641,35 +640,13 @@ public class SocketUDT {
 		assert writeBuffer != null && writeBuffer.isDirect();
 		assert sizeBuffer != null && sizeBuffer.isDirect();
 
-		/** revert to documented behavior - no timeout exception */
-
-		try {
-
-			return epollWait0( //
-					epollId, //
-					readBuffer, //
-					writeBuffer, //
-					sizeBuffer, //
-					millisTimeout //
-			);
-
-		} catch (final ExceptionUDT e) {
-
-			if (e.getError() == ErrorUDT.ETIMEOUT) {
-
-				/** ensure nothing is reported on timeout */
-
-				sizeBuffer.put(UDT_READ_INDEX, 0);
-				sizeBuffer.put(UDT_WRITE_INDEX, 0);
-				sizeBuffer.put(UDT_EXCEPT_INDEX, 0);
-
-				return 0;
-
-			} else {
-				throw e;
-			}
-
-		}
+		return epollWait0( //
+				epollId, //
+				readBuffer, //
+				writeBuffer, //
+				sizeBuffer, //
+				millisTimeout //
+		);
 
 	}
 
@@ -1413,9 +1390,6 @@ public class SocketUDT {
 			throws ExceptionUDT;
 
 	/**
-	 * note: throws {@link ErrorUDT#ETIMEOUT} on any timeout instead of
-	 * returning 0
-	 * 
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT::epoll_wait()</a>
 	 */

@@ -1576,20 +1576,25 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 	const int rv = UDT::epoll_wait( //
 			pollID, &readSet, &writeSet, millisTimeout, NULL, NULL);
 
+	// get interest report size array
+	jint* const sizeArray = //
+			static_cast<jint*>(env->GetDirectBufferAddress(objSizeBuffer));
+
 	// process timeout & errors
-	if (rv <= 0) { // UDT::ERROR is '-1'; UDT_TIMEOUT is '=0';
-		if (rv == UDT_TIMEOUT) { // timeout
-			return JNI_OK;
+	if (rv <= 0) { // UDT::ERROR is '-1'
+		UDT::ERRORINFO errorInfo = UDT::getlasterror();
+		if (errorInfo.getErrorCode() == UDT::ERRORINFO::ETIMEOUT) {
+			// not a java exception:
+			sizeArray[UDT_READ_INDEX] = 0;
+			sizeArray[UDT_WRITE_INDEX] = 0;
+			sizeArray[UDT_EXCEPT_INDEX] = 0;
+			return UDT_TIMEOUT;
 		} else {
-			UDT::ERRORINFO errorInfo = UDT::getlasterror();
+			// really exception
 			UDT_ThrowExceptionUDT_ErrorInfo(env, 0, "epollWait0", &errorInfo);
 			return JNI_ERR;
 		}
 	}
-
-	// get interest report size array
-	jint* const sizeArray = //
-			static_cast<jint*>(env->GetDirectBufferAddress(objSizeBuffer));
 
 	// return read interest
 	const jsize readSize = readSet.size();

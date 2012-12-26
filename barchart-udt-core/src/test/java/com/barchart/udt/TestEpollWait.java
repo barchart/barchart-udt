@@ -16,7 +16,7 @@ import com.barchart.udt.util.HelpUDT;
 public class TestEpollWait extends TestAny {
 
 	/** explore read/write */
-	@Test
+	@Test(timeout = 5 * 1000)
 	public void epollWait0_Accept0() throws Exception {
 
 		final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
@@ -163,7 +163,7 @@ public class TestEpollWait extends TestAny {
 	}
 
 	/** explore read only */
-	@Test
+	@Test(timeout = 5 * 1000)
 	public void epollWait0_Accept1() throws Exception {
 
 		final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
@@ -234,18 +234,12 @@ public class TestEpollWait extends TestAny {
 			clear(readBuffer);
 			clear(readBuffer);
 
-			try {
+			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
+					writeBuffer, sizeBuffer, 1000);
 
-				final int readyCount = SocketUDT.epollWait0(epollID,
-						readBuffer, writeBuffer, sizeBuffer, 1000);
-
-				fail("must throw");
-
-			} catch (final ExceptionUDT e) {
-
-				assertEquals(e.getError(), ErrorUDT.ETIMEOUT);
-
-			}
+			assertEquals(0, readyCount);
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
 
 		}
 
@@ -258,45 +252,41 @@ public class TestEpollWait extends TestAny {
 	}
 
 	/**
-	 * NOT TRUE
-	 * 
+	 * fixed in SocketuUDT.cpp
+	 * <p>
+	 * http://udt.sourceforge.net/udt4/doc/epoll.htm
+	 * <p>
 	 * "Finally, for epoll_wait, negative timeout value will make the function
 	 * to waituntil an event happens. If the timeout value is 0, then the
 	 * function returns immediately with any sockets associated an IO event. If
 	 * timeout occurs before any event happens, the function returns 0."
 	 * 
-	 * @throws Exception
 	 */
 	@Test
 	public void epollWait0_ZeroTimeout() throws Exception {
 
-		try {
+		final int epollID = SocketUDT.epollCreate0();
 
-			final int epollID = SocketUDT.epollCreate0();
+		final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
+		final IntBuffer writeBuffer = HelpUDT.newDirectIntBufer(10);
+		final IntBuffer sizeBuffer = HelpUDT.newDirectIntBufer(10);
 
-			final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
-			final IntBuffer writeBuffer = HelpUDT.newDirectIntBufer(10);
-			final IntBuffer sizeBuffer = HelpUDT.newDirectIntBufer(10);
-			final long millisTimeout = 0;
+		final long millisTimeout = 0;
 
-			SocketUDT.epollWait0(epollID, readBuffer, writeBuffer, sizeBuffer,
-					millisTimeout);
+		final int readyCount = SocketUDT.epollWait0( //
+				epollID, readBuffer, writeBuffer, sizeBuffer, millisTimeout);
 
-			SocketUDT.epollRelease0(epollID);
+		assertEquals(0, readyCount);
 
-		} catch (final ExceptionUDT e) {
+		assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+		assertEquals(0, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+		assertEquals(0, sizeBuffer.get(SocketUDT.UDT_EXCEPT_INDEX));
 
-			if (e.getError() == ErrorUDT.ETIMEOUT) {
-				return;
-			} else {
-				throw e;
-			}
-
-		}
+		SocketUDT.epollRelease0(epollID);
 
 	}
 
-	@Test(expected = ExceptionUDT.class)
+	@Test(expected = ExceptionUDT.class, timeout = 3 * 1000)
 	public void epollWati0_Exception() throws Exception {
 
 		final int epollID = -1; // invalid
