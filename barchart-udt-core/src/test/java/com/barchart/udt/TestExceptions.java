@@ -26,7 +26,7 @@ import util.TestAny;
  * verify mingw c++ exceptions are thread safe (will crash jvm if not using
  * -mthreads option for gcc/ld)
  */
-public class TestException extends TestAny {
+public class TestExceptions extends TestAny {
 
 	final static int TEST_TIMEOUT = 10; // seconds
 
@@ -74,26 +74,29 @@ public class TestException extends TestAny {
 			try {
 				socket = new SocketUDT(TypeUDT.DATAGRAM);
 			} catch (final Exception e) {
-				fail("can not make socket; " + e.getMessage());
+				fail("can not init socket; " + e.getMessage());
 			}
 
 			for (int k = 0; k < COUNT; k++) {
 				try {
-					// log.info("k={}", k);
-					// InetSocketAddress remoteSocketAddress = new
-					// InetSocketAddress(0);
-					// if (k % 1000 == 0) {
-					// log.info("k={}", k);
-					// }
-					//
-					// must throw exception
+
+					/** must throw exception */
 					socket.receive(buffer);
-					//
+
 					fail("exception not thrown");
-					//
+
 				} catch (final Exception e) {
-					// log.info("e={}", e.getMessage());
+
 					exceptionCount.getAndIncrement();
+
+				}
+			}
+
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (final Exception e) {
+					fail("can not close socket");
 				}
 			}
 
