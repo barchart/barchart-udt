@@ -519,9 +519,13 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recvmsg()</a>
 	 */
-	protected native int receive1(final int socketID, final int socketType, //
-			final byte[] array, final int position, final int limit)
-			throws ExceptionUDT;
+	protected native int receive1( //
+			final int socketID, //
+			final int socketType, //
+			final byte[] array, //
+			final int position, //
+			final int limit //
+	) throws ExceptionUDT;
 
 	/**
 	 * receive into a {@link java.nio.channels.DirectByteBuffer}
@@ -708,12 +712,15 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
-	protected native int send2(final int socketID,
+	protected native int send2( //
+			final int socketID, //
 			final int socketType, //
-			final int timeToLive,
+			final int timeToLive, //
 			final boolean isOrdered, //
-			final ByteBuffer buffer, final int bufferPosition,
-			final int bufferLimit) throws ExceptionUDT;
+			final ByteBuffer buffer, //
+			final int bufferPosition, //
+			final int bufferLimit //
+	) throws ExceptionUDT;
 
 	/**
 	 * send from byte[] array upto <code>size=array.length</code> bytes
@@ -1423,31 +1430,30 @@ public class SocketUDT {
 	// ### used for development & testing only
 	// ###
 
-	native void testEmptyCall0();
+	protected static native void testEmptyCall0();
 
-	native void testIterateArray0(Object[] array);
+	protected static native void testIterateArray0(Object[] array);
 
-	native void testIterateSet0(Set<Object> set);
+	protected static native void testIterateSet0(Set<Object> set);
 
-	native int[] testMakeArray0(int size);
+	protected static native int[] testMakeArray0(int size);
 
-	native void testGetSetArray0(int[] array, boolean isReturn);
+	protected static native void testGetSetArray0(int[] array, boolean isReturn);
 
-	native void testInvalidClose0(int socketID) throws ExceptionUDT;
+	protected static native void testInvalidClose0(int socketID)
+			throws ExceptionUDT;
 
-	native void testCrashJVM0();
+	protected static native void testCrashJVM0();
 
-	native void testDirectByteBufferAccess0(ByteBuffer buffer);
+	protected static native void testDirectByteBufferAccess0(ByteBuffer buffer);
 
-	native void testDirectIntBufferAccess0(IntBuffer buffer);
+	protected static native void testDirectIntBufferAccess0(IntBuffer buffer);
 
-	native void testFillArray0(byte[] array);
+	protected static native void testFillArray0(byte[] array);
 
-	native void testFillBuffer0(ByteBuffer buffer);
+	protected static native void testFillBuffer0(ByteBuffer buffer);
 
-	native void testSocketStatus0();
-
-	native void testEpoll0(); //
+	protected static native void testDirectIntBufferLoad0(IntBuffer buffer);
 
 	// ###
 	// ### used for development & testing only

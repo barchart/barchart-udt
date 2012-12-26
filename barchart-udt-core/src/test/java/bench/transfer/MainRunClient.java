@@ -5,7 +5,7 @@
  *
  * http://www.opensource.org/licenses/bsd-license.php
  */
-package com.barchart.udt;
+package bench.transfer;
 
 import static util.UnitHelp.*;
 
@@ -16,11 +16,16 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.MonitorUDT;
+import com.barchart.udt.OptionUDT;
+import com.barchart.udt.SocketUDT;
+import com.barchart.udt.TypeUDT;
+
 public class MainRunClient {
 
 	private static Logger log = LoggerFactory.getLogger(MainRunClient.class);
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 
 		log.info("started CLIENT");
 
@@ -77,7 +82,7 @@ public class MainRunClient {
 
 			long count = 0;
 
-			final MonitorUDT monitor = sender.monitor;
+			final MonitorUDT monitor = sender.getMonitor();
 
 			while (true) {
 
@@ -109,7 +114,7 @@ public class MainRunClient {
 
 			// log.info("result={}", result);
 
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			log.error("unexpected", e);
 		}
 

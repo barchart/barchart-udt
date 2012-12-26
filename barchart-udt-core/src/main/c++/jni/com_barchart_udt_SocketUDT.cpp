@@ -1628,20 +1628,20 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 // # start - used for development only
 // #
 
+// test cost of JNI call
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testEmptyCall0(
-		JNIEnv *env, jobject self) {
+		JNIEnv *env, jclass clsSocketUDT) {
 
-	// test cost of JNI call
 	UNUSED(env);
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 }
 
+// test cost of JNI-to-Java array iteration
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testIterateArray0(
-		JNIEnv *env, jobject self, jobjectArray objArray) {
+		JNIEnv *env, jclass clsSocketUDT, jobjectArray objArray) {
 
-	// test cost of JNI-to-Java array iteration
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 	const jsize size = env->GetArrayLength(objArray);
 	for (jint index = 0; index < size; index++) {
@@ -1652,11 +1652,11 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testIterateArray0(
 
 }
 
+// test cost of JNI-to-Java set iteration
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testIterateSet0(
-		JNIEnv *env, jobject self, jobject objSet) {
+		JNIEnv *env, jclass clsSocketUDT, jobject objSet) {
 
-	// test cost of JNI-to-Java set iteration
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 	jobject iterator = env->CallObjectMethod(objSet, jdk_clsSet_iteratorID);
 
@@ -1673,11 +1673,11 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testIterateSet0(
 
 }
 
+// test cost of JNI-to-Java make array
 JNIEXPORT jintArray JNICALL JNICALL Java_com_barchart_udt_SocketUDT_testMakeArray0(
-		JNIEnv *env, jobject self, jint size) {
+		JNIEnv *env, jclass clsSocketUDT, jint size) {
 
-	// test cost of JNI-to-Java make array
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 	jintArray array = env->NewIntArray(size);
 
@@ -1685,11 +1685,12 @@ JNIEXPORT jintArray JNICALL JNICALL Java_com_barchart_udt_SocketUDT_testMakeArra
 
 }
 
+// test cost of array copy
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testGetSetArray0(
-		JNIEnv *env, jobject self, jintArray objArray, jboolean isReturn) {
+		JNIEnv *env, jclass clsSocketUDT, jintArray objArray,
+		jboolean isReturn) {
 
-	// test cost of array copy
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 	jboolean isCopy;
 
@@ -1705,11 +1706,11 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testGetSetArray0(
 
 }
 
+// test error on close of a closed socket
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testInvalidClose0(
-		JNIEnv *env, jobject self, const jint socketID) {
+		JNIEnv *env, jclass clsSocketUDT, const jint socketID) {
 
-	// test error on close of a closed socket
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 	const int rv = UDT::close(socketID);
 
@@ -1722,15 +1723,14 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testInvalidClose0(
 
 }
 
+// test crash jvm to debug crash log parser
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testCrashJVM0(
-		JNIEnv *env, jobject self) {
-
-	// test crash jvm to debug crash log parser
+		JNIEnv *env, jclass clsSocketUDT) {
 
 	printf("native: test crash jvm \n");
 
 	UNUSED(env);
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 	jint *array = NULL;
 
@@ -1738,50 +1738,58 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testCrashJVM0(
 
 }
 
+// test correctness of direct BYTE buffer access
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testDirectByteBufferAccess0(
-		JNIEnv* env, jobject self, jobject bufferObj) {
+		JNIEnv* env, jclass clsSocketUDT, jobject bufferObj) {
 
-	// test correctness of direct BYTE buffer access
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
-	jbyte* byteBuffer = static_cast<jbyte*>(env->GetDirectBufferAddress(
-			bufferObj));
+	jbyte* byteBuffer = //
+			static_cast<jbyte*>(env->GetDirectBufferAddress(bufferObj));
 
 	jlong capacity = env->GetDirectBufferCapacity(bufferObj);
-	int capacityInt = (int) capacity;
 
-	printf("native: byteBuffer capacity=%d \n", capacityInt);
+	printf("native: byteBuffer capacity=%d \n", (int) capacity);
 
 	byteBuffer[0] = 'A';
 	byteBuffer[1] = 'B';
 	byteBuffer[2] = 'C';
+	byteBuffer[3] = 'D';
+	byteBuffer[4] = 'E';
+	byteBuffer[5] = 'F';
+	byteBuffer[6] = 'G';
+	byteBuffer[7] = 'H';
 
 }
 
+// test correctness of direct INT buffer access
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testDirectIntBufferAccess0(
-		JNIEnv* env, jobject self, jobject bufferObj) {
+		JNIEnv* env, jclass clsSocketUDT, jobject bufferObj) {
 
-	// test correctness of direct INT buffer access
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 	jint* intBuffer = static_cast<jint*>(env->GetDirectBufferAddress(bufferObj));
 
 	jlong capacity = env->GetDirectBufferCapacity(bufferObj);
-	int capacityInt = (int) capacity;
 
-	printf("native: intBuffer capacity=%d \n", capacityInt);
+	printf("native: intBuffer capacity=%d \n", (int) capacity);
 
 	intBuffer[0] = 'A';
 	intBuffer[1] = 'B';
 	intBuffer[2] = 'C';
+	intBuffer[3] = 'D';
+	intBuffer[4] = 'E';
+	intBuffer[5] = 'F';
+	intBuffer[6] = 'G';
+	intBuffer[7] = 'H';
 
 }
 
+// test cost of jni array fill
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testFillArray0(
-		JNIEnv *env, jobject self, jbyteArray arrayObj) {
+		JNIEnv *env, jclass clsSocketUDT, jbyteArray arrayObj) {
 
-	// test cost of jni array fill
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 	jboolean isCopy;
 	jbyte* array = env->GetByteArrayElements(arrayObj, &isCopy);
@@ -1795,11 +1803,11 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testFillArray0(
 
 }
 
+// test cost of jni direct buffer fill
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testFillBuffer0(
-		JNIEnv *env, jobject self, jobject bufferObj) {
+		JNIEnv *env, jclass clsSocketUDT, jobject bufferObj) {
 
-	// test cost of jni direct buffer fill
-	UNUSED(self);
+	UNUSED(clsSocketUDT);
 
 	jbyte* buffer = static_cast<jbyte*>(env->GetDirectBufferAddress(bufferObj));
 
@@ -1811,31 +1819,20 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testFillBuffer0(
 
 }
 
-JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testSocketStatus0(
-		JNIEnv *env, jobject self) {
+// test cost of direct INT buffer load
+JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testDirectIntBufferLoad0(
+		JNIEnv* env, jclass clsSocketUDT, jobject bufferObj) {
 
-	// test socket status api
+	UNUSED(clsSocketUDT);
 
-	const jint socketID = UDT_GetSocketID(env, self);
+	const jint* byteBuffer = //
+			static_cast<jint*>(env->GetDirectBufferAddress(bufferObj));
 
-	//	printf("native: test socket status; id=%d \n", socketID);
+	UNUSED(byteBuffer);
 
-	const UDTSTATUS status = UDT::getsockstate(socketID);
+	const jlong capacity = env->GetDirectBufferCapacity(bufferObj);
 
-	printf("native: test socket status; status=%d \n", status);
-
-}
-
-JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testEpoll0(JNIEnv *env,
-		jobject self) {
-
-	const int socketID = static_cast<int>(UDT_GetSocketID(env, self));
-
-	printf("native: test epoll; socketID=%d \n", socketID);
-
-	const int epollID = UDT::epoll_create();
-
-	printf("native: test epoll; epollID=%d \n", epollID);
+	UNUSED(capacity);
 
 }
 

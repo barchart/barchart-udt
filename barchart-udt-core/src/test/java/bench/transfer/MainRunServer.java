@@ -5,7 +5,7 @@
  *
  * http://www.opensource.org/licenses/bsd-license.php
  */
-package com.barchart.udt;
+package bench.transfer;
 
 import static util.UnitHelp.*;
 
@@ -16,11 +16,16 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.MonitorUDT;
+import com.barchart.udt.OptionUDT;
+import com.barchart.udt.SocketUDT;
+import com.barchart.udt.TypeUDT;
+
 public class MainRunServer {
 
 	private static Logger log = LoggerFactory.getLogger(MainRunServer.class);
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 
 		log.info("started SERVER");
 
@@ -37,7 +42,7 @@ public class MainRunServer {
 		try {
 
 			final SocketUDT acceptor = new SocketUDT(TypeUDT.DATAGRAM);
-			log.info("init; acceptor={}", acceptor.socketID);
+			log.info("init; acceptor={}", acceptor.getSocketId());
 
 			InetSocketAddress localSocketAddress = new InetSocketAddress(
 					bindAddress, localPort);
@@ -51,9 +56,9 @@ public class MainRunServer {
 
 			final SocketUDT receiver = acceptor.accept();
 
-			log.info("accept; receiver={}", receiver.socketID);
+			log.info("accept; receiver={}", receiver.getSocketId());
 
-			assert receiver.socketID != acceptor.socketID;
+			assert receiver.getSocketId() != acceptor.getSocketId();
 
 			final long timeStart = System.currentTimeMillis();
 
@@ -69,7 +74,7 @@ public class MainRunServer {
 			text.append("\t\n");
 			log.info("receiver options; {}", text);
 
-			final MonitorUDT monitor = receiver.monitor;
+			final MonitorUDT monitor = receiver.getMonitor();
 
 			while (true) {
 
@@ -102,7 +107,7 @@ public class MainRunServer {
 
 			// log.info("result={}", result);
 
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			log.error("unexpected", e);
 		}
 

@@ -20,8 +20,13 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundByteHandlerAdapter;
 
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Meter;
 
 /**
  * Handler implementation for the echo client. It initiates the ping-pong
@@ -45,6 +50,9 @@ public class EchoClientHandler extends ChannelInboundByteHandlerAdapter {
 
 	}
 
+	final Meter meter = Metrics.newMeter(EchoClientHandler.class, "rate",
+			"bytes", TimeUnit.SECONDS);
+
 	@Override
 	public void channelActive(final ChannelHandlerContext ctx) throws Exception {
 
@@ -60,6 +68,8 @@ public class EchoClientHandler extends ChannelInboundByteHandlerAdapter {
 	public void inboundBufferUpdated(final ChannelHandlerContext ctx,
 			final ByteBuf in) {
 
+		meter.mark(in.readableBytes());
+
 		final ByteBuf out = ctx.nextOutboundByteBuffer();
 
 		out.discardReadBytes();
@@ -67,12 +77,6 @@ public class EchoClientHandler extends ChannelInboundByteHandlerAdapter {
 		out.writeBytes(in);
 
 		ctx.flush();
-
-		if (count % 1000 == 0) {
-			log.info("count {}", count);
-		}
-
-		count++;
 
 	}
 

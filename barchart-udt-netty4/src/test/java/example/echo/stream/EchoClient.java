@@ -28,9 +28,12 @@ import io.netty.logging.Slf4JLoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.yammer.metrics.reporting.ConsoleReporter;
 
 import example.util.ThreadFactoryUDT;
 
@@ -113,6 +116,8 @@ public class EchoClient {
 	public static void main(final String[] args) throws Exception {
 
 		log.info("init");
+
+		ConsoleReporter.enable(3, TimeUnit.SECONDS);
 
 		final String host = "localhost";
 		final int port = 1234;

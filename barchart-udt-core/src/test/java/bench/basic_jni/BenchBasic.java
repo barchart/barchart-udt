@@ -5,9 +5,10 @@
  *
  * http://www.opensource.org/licenses/bsd-license.php
  */
-package com.barchart.udt;
+package bench.basic_jni;
 
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,34 +18,46 @@ import org.slf4j.LoggerFactory;
 
 import util.StopWatch;
 
-public class MainBench {
+import com.barchart.udt.ExceptionUDT;
+import com.barchart.udt.SocketUDT;
+import com.barchart.udt.TypeUDT;
+import com.barchart.udt.util.HelpUDT;
 
-	static final int COUNT = 1 * 10 * 1000;
+public class BenchBasic extends SocketUDT {
+
+	public BenchBasic(final TypeUDT type) throws ExceptionUDT {
+		super(type);
+	}
+
+	static final int COUNT = 1 * 100 * 1000;
 
 	static final int SIZE = 1024;
 
-	private static Logger log = LoggerFactory.getLogger(MainBench.class);
+	private static Logger log = LoggerFactory.getLogger(BenchBasic.class);
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) throws Exception {
 
-		log.info("started");
+		log.info("init");
 
-		try {
+		testJava();
+		testJNI();
 
-			testJava();
+		testJava();
+		testJNI();
 
-			testJNI();
+		testJava();
+		testJNI();
 
-		} catch (Exception e) {
-			log.info("unexpected", e);
-		}
+		log.info("done");
 
 	}
 
 	static void testJava() throws Exception {
 
+		log.info("### JAVA ###");
+
 		long nanos;
-		StopWatch timer = new StopWatch();
+		final StopWatch timer = new StopWatch();
 
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
@@ -57,22 +70,22 @@ public class MainBench {
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
 			// small array
-			byte[] array = new byte[128];
+			final byte[] array = new byte[128];
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT;
-		log.info("make small array; nanos={}", nanos);
+		log.info("make array 123; nanos={}", nanos);
 
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
 			// medium array
-			byte[] array = new byte[1024];
+			final byte[] array = new byte[1024];
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT;
-		log.info("make medium array; nanos={}", nanos);
+		log.info("make array 1024; nanos={}", nanos);
 
-		int[] arrayInt = new int[SIZE];
+		final int[] arrayInt = new int[SIZE];
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
 			Arrays.fill(arrayInt, 1235678);
@@ -83,12 +96,12 @@ public class MainBench {
 
 		//
 
-		Integer[] array = new Integer[1024];
+		final Integer[] array = new Integer[1024];
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
-			for (Integer i : array) {
+			for (final Integer i : array) {
 				// iterate array
-				Integer x = i;
+				final Integer x = i;
 			}
 		}
 		timer.stop();
@@ -96,16 +109,16 @@ public class MainBench {
 		log.info("iterate array; nanos={}", nanos);
 
 		// SET
-		Set<Integer> set = new HashSet<Integer>();
+		final Set<Integer> set = new HashSet<Integer>();
 		for (int k = 0; k < 1024; k++) {
 			set.add(k);
 		}
 		//
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
-			for (Integer i : set) {
+			for (final Integer i : set) {
 				// iterate set
-				Integer x = i;
+				final Integer x = i;
 			}
 		}
 		timer.stop();
@@ -114,7 +127,7 @@ public class MainBench {
 		//
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
-			Object[] x = set.toArray();
+			final Object[] x = set.toArray();
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT;
@@ -124,14 +137,22 @@ public class MainBench {
 
 	static void testJNI() throws Exception {
 
-		SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+		log.info("### JNI ###");
 
 		long nanos;
-		StopWatch timer = new StopWatch();
+		final StopWatch timer = new StopWatch();
 
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
-			socket.testEmptyCall0();
+			// baseline
+		}
+		timer.stop();
+		nanos = timer.nanoTime() / COUNT;
+		log.info("baseline nanos={}", nanos);
+
+		timer.start();
+		for (int k = 0; k < COUNT; k++) {
+			BenchBasic.testEmptyCall0();
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT;
@@ -139,45 +160,45 @@ public class MainBench {
 
 		timer.start();
 		for (int k = 0; k < COUNT * 10; k++) {
-			int[] array = socket.testMakeArray0(SIZE);
+			final int[] array = BenchBasic.testMakeArray0(SIZE);
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT / 10;
-		log.info("make arrray; nanos={}", nanos);
+		log.info("make arrray 1024; nanos={}", nanos);
 
-		int[] arrayInt = new int[SIZE];
+		final int[] arrayInt = new int[SIZE];
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
-			socket.testGetSetArray0(arrayInt, true);
+			BenchBasic.testGetSetArray0(arrayInt, true);
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT;
 		log.info("get/set/update array; nanos={}", nanos);
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
-			socket.testGetSetArray0(arrayInt, false);
+			BenchBasic.testGetSetArray0(arrayInt, false);
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT;
-		log.info("get/set/abort array; nanos={}", nanos);
+		log.info("get/set/abort  array; nanos={}", nanos);
 
-		Object[] array = new Object[SIZE];
+		final Object[] array = new Object[SIZE];
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
-			socket.testIterateArray0(array);
+			BenchBasic.testIterateArray0(array);
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT / SIZE;
 		log.info("iterate object array; nanos={}", nanos);
 
 		//
-		Set<Object> set = new HashSet<Object>();
+		final Set<Object> set = new HashSet<Object>();
 		for (int k = 0; k < SIZE; k++) {
 			set.add(k);
 		}
 		timer.start();
 		for (int k = 0; k < COUNT / 10; k++) {
-			socket.testIterateSet0(set);
+			BenchBasic.testIterateSet0(set);
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT / SIZE * 10;
@@ -185,25 +206,34 @@ public class MainBench {
 
 		//
 
-		final int FILL_SIZE = 16;
+		final int FILL_SIZE = 1024;
 
-		byte[] fillArray = new byte[FILL_SIZE];
+		final byte[] fillArray = new byte[FILL_SIZE];
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
-			socket.testFillArray0(fillArray);
+			BenchBasic.testFillArray0(fillArray);
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT;
-		log.info("fillArray; nanos={}", nanos);
+		log.info("fillArray;  nanos={}", nanos);
 
-		ByteBuffer fillBuffer = ByteBuffer.allocateDirect(FILL_SIZE);
+		final ByteBuffer fillBuffer = ByteBuffer.allocateDirect(FILL_SIZE);
 		timer.start();
 		for (int k = 0; k < COUNT; k++) {
-			socket.testFillBuffer0(fillBuffer);
+			BenchBasic.testFillBuffer0(fillBuffer);
 		}
 		timer.stop();
 		nanos = timer.nanoTime() / COUNT;
 		log.info("fillBuffer; nanos={}", nanos);
+
+		final IntBuffer loadBuffer = HelpUDT.newDirectIntBufer(1024);
+		timer.start();
+		for (int k = 0; k < COUNT; k++) {
+			BenchBasic.testDirectIntBufferLoad0(loadBuffer);
+		}
+		timer.stop();
+		nanos = timer.nanoTime() / COUNT;
+		log.info("loadBuffer; nanos={}", nanos);
 
 	}
 

@@ -5,32 +5,28 @@
  *
  * http://www.opensource.org/licenses/bsd-license.php
  */
-package com.barchart.udt;
+package bench.carsh;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
 
-public class MainCrashJVM {
+public class MainCrashJVM extends SocketUDT {
 
-	private static Logger log = LoggerFactory.getLogger(MainCrashJVM.class);
+	public MainCrashJVM(final TypeUDT type) throws ExceptionUDT {
+		super(type);
+	}
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 
 		log.info("started; trying to crash jvm");
 
 		try {
 
-			TypeUDT type = TypeUDT.STREAM;
-
-			SocketUDT socket = new SocketUDT(type);
-
 			// this will kill the jvm
-			socket.testCrashJVM0();
+			SocketUDT.testCrashJVM0();
 
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			log.error("unexpected", e);
 		}
 

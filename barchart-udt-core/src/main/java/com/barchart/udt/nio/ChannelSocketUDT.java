@@ -301,22 +301,31 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			final boolean isBlocking = isBlockingMode;
 
 			final int sizeReceived;
+
 			try {
+
 				if (isBlocking) {
 					begin(); // JDK contract for NIO blocking calls
 				}
+
 				if (buffer.isDirect()) {
+
 					sizeReceived = socket.receive(buffer);
+
 				} else {
-					assert buffer.hasArray();
+
 					final byte[] array = buffer.array();
 					final int position = buffer.position();
 					final int limit = buffer.limit();
+
 					sizeReceived = socket.receive(array, position, limit);
+
 					if (0 < sizeReceived && sizeReceived <= remaining) {
 						buffer.position(position + sizeReceived);
 					}
+
 				}
+
 			} finally {
 				if (isBlocking) {
 					end(true); // JDK contract for NIO blocking calls
@@ -403,18 +412,25 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 			final boolean isBlocking = isBlockingMode;
 
 			final int sizeSent;
+
 			try {
+
 				if (isBlocking) {
 					begin(); // JDK contract for NIO blocking calls
 				}
+
 				if (buffer.isDirect()) {
+
 					sizeSent = socket.send(buffer);
+
 				} else {
-					assert buffer.hasArray();
+
 					final byte[] array = buffer.array();
 					final int position = buffer.position();
 					final int limit = buffer.limit();
+
 					sizeSent = socket.send(array, position, limit);
+
 					if (0 < sizeSent && sizeSent <= remaining) {
 						buffer.position(position + sizeSent);
 					}
@@ -463,7 +479,8 @@ public class ChannelSocketUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	/** java 7 */
-	public ChannelSocketUDT bind(final SocketAddress localAddress) throws IOException {
+	public ChannelSocketUDT bind(final SocketAddress localAddress)
+			throws IOException {
 
 		socketUDT.bind((InetSocketAddress) localAddress);
 
