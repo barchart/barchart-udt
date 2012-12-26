@@ -229,4 +229,19 @@ public class HelpUDT {
 	private HelpUDT() {
 	}
 
+	public static final void checkBuffer(final ByteBuffer buffer) {
+		if (buffer == null) {
+			throw new IllegalArgumentException("buffer == null");
+		}
+		if (!buffer.isDirect()) {
+			throw new IllegalArgumentException("must use DirectByteBuffer");
+		}
+	}
+
+	public static final void checkArray(final byte[] array) {
+		if (array == null) {
+			throw new IllegalArgumentException("array == null");
+		}
+	}
+
 }

@@ -14,20 +14,22 @@ public class NioUdtByteAcceptorChannel extends NioUdtBaseAcceptorChannel {
 	@Override
 	protected int doReadMessages(final MessageBuf<Object> buf) throws Exception {
 
-		logger.debug("### do read");
-
 		final ChannelSocketUDT channelUDT = javaChannel().accept();
 
-		logger.debug("### channelUDT=" + channelUDT);
+		logger.debug("ACC read " + channelUDT);
 
 		if (channelUDT == null) {
+
 			return 0;
+
+		} else {
+
+			buf.add(new NioUdtByteConnectorChannel( //
+					this, channelUDT.socketUDT().getSocketId(), channelUDT));
+
+			return 1;
+
 		}
-
-		buf.add(new NioUdtByteConnectorChannel( //
-				this, channelUDT.socketUDT().getSocketId(), channelUDT));
-
-		return 1;
 
 	}
 

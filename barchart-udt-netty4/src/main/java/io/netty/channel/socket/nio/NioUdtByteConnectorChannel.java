@@ -29,11 +29,9 @@ import io.netty.logging.InternalLoggerFactory;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.SocketChannel;
 
 import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.ChannelSocketUDT;
-import com.sun.nio.sctp.SctpChannel;
 
 /**
  * 
@@ -45,7 +43,7 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 	InternalLoggerFactory.getInstance(NioUdtByteConnectorChannel.class);
 
 	protected static final ChannelMetadata METADATA = //
-	new ChannelMetadata(BufType.MESSAGE, false);
+	new ChannelMetadata(BufType.BYTE, false);
 
 	private final UdtChannelConfig config;
 
@@ -56,16 +54,6 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 	}
 
 	/**
-	 * Create a new instance
-	 * 
-	 * @param parent
-	 *            the {@link Channel} which is the parent of this
-	 *            {@link NioUdtByteConnectorChannel} or {@code null}.
-	 * @param id
-	 *            the id to use for this instance or {@code null} if a new once
-	 *            should be generated
-	 * @param channelUDT
-	 *            the underlying {@link SctpChannel}
 	 */
 	protected NioUdtByteConnectorChannel( //
 			final Channel parent, //
@@ -113,7 +101,7 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 	@Override
 	protected void doBind(final SocketAddress localAddress) throws Exception {
 
-		logger.debug("### bind = " + localAddress);
+		logger.debug("CON bind = " + localAddress);
 
 		javaChannel().bind(localAddress);
 
@@ -128,7 +116,7 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 	protected boolean doConnect(final SocketAddress remoteAddress,
 			final SocketAddress localAddress) throws Exception {
 
-		logger.debug("### connect " + javaChannel());
+		logger.debug("CON connect " + javaChannel());
 
 		if (localAddress != null) {
 			javaChannel().bind(localAddress);
@@ -140,7 +128,7 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 
 			final boolean connected = javaChannel().connect(remoteAddress);
 
-			logger.debug("### connected=" + connected);
+			logger.debug("CON connected=" + connected);
 
 			if (connected) {
 				selectionKey().interestOps(SelectionKey.OP_READ);
@@ -156,18 +144,24 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 			if (!success) {
 				doClose();
 			}
-			logger.debug("### success=" + success);
+			logger.debug("CON success=" + success);
 		}
 
 	}
 
 	@Override
 	protected void doDisconnect() throws Exception {
+
+		logger.debug("CON disconnect");
+
 		doClose();
+
 	}
 
 	@Override
 	protected void doFinishConnect() throws Exception {
+
+		logger.debug("CON finsish");
 
 		if (!javaChannel().finishConnect()) {
 			throw new Error("provider error");
@@ -179,12 +173,18 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 
 	@Override
 	protected int doReadBytes(final ByteBuf byteBuf) throws Exception {
+
+		// logger.debug("CON read");
+
 		return byteBuf.writeBytes(javaChannel(), byteBuf.writableBytes());
+
 	}
 
 	@Override
 	protected int doWriteBytes(final ByteBuf byteBuf, final boolean lastSpin)
 			throws Exception {
+
+		// logger.debug("CON write");
 
 		final int pendingBytes = byteBuf.readableBytes();
 
@@ -213,15 +213,22 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 
 	}
 
+	// FIXME review
 	@Override
 	public boolean isActive() {
-		final SocketChannel ch = javaChannel();
-		return ch.isOpen() && ch.isConnected();
+
+		final ChannelSocketUDT channelUDT = javaChannel();
+
+		return channelUDT.isOpen() && channelUDT.isConnected()
+				&& channelUDT.isConnectFinished();
+
 	}
 
 	@Override
 	protected ChannelSocketUDT javaChannel() {
+
 		return (ChannelSocketUDT) super.javaChannel();
+
 	}
 
 	@Override

@@ -71,7 +71,7 @@ public class TestEpollWait extends TestAny {
 			// client: w
 
 			clear(readBuffer);
-			clear(readBuffer);
+			clear(writeBuffer);
 
 			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
 					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
@@ -102,7 +102,7 @@ public class TestEpollWait extends TestAny {
 			// server: w
 
 			clear(readBuffer);
-			clear(readBuffer);
+			clear(writeBuffer);
 
 			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
 					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
@@ -131,7 +131,7 @@ public class TestEpollWait extends TestAny {
 			// server: r/w
 
 			clear(readBuffer);
-			clear(readBuffer);
+			clear(writeBuffer);
 
 			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
 					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
@@ -320,6 +320,127 @@ public class TestEpollWait extends TestAny {
 
 	@After
 	public void tearDown() throws Exception {
+	}
+
+	/** emulate jdk selector */
+	@Test(timeout = 5 * 1000)
+	public void epollWait0_Accept2() throws Exception {
+
+		final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
+		final IntBuffer writeBuffer = HelpUDT.newDirectIntBufer(10);
+		final IntBuffer sizeBuffer = HelpUDT.newDirectIntBufer(10);
+
+		final int epollID = SocketUDT.epollCreate0();
+
+		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
+		accept.configureBlocking(true);
+		accept.bind0(localSocketAddress());
+		accept.listen0(10);
+		socketAwait(accept, StatusUDT.LISTENING);
+		log.info("accept : {}", accept);
+
+		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
+		client.configureBlocking(true);
+		client.bind0(localSocketAddress());
+
+		client.connect0(accept.getLocalSocketAddress());
+
+		socketAwait(client, StatusUDT.CONNECTED);
+		log.info("client {}", client);
+
+		final SocketUDT server = accept.accept();
+		socketAwait(server, StatusUDT.CONNECTED);
+		log.info("server {}", server);
+
+		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.READ.code);
+
+		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.BOTH.code);
+
+		{
+
+			clear(readBuffer);
+			clear(writeBuffer);
+
+			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
+					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+
+			log.info("readyCount : {}", readyCount);
+			logBuffer("read: ", readBuffer);
+			logBuffer("write:", writeBuffer);
+
+			assertEquals(2, readyCount);
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(2, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+
+		}
+
+		{
+
+			clear(readBuffer);
+			clear(writeBuffer);
+
+			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
+					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+
+			log.info("readyCount : {}", readyCount);
+			logBuffer("read: ", readBuffer);
+			logBuffer("write:", writeBuffer);
+
+			assertEquals(2, readyCount);
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(2, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+
+		}
+
+		SocketUDT.epollRemove0(epollID, client.socketID);
+		SocketUDT.epollRemove0(epollID, server.socketID);
+
+		{
+
+			clear(readBuffer);
+			clear(writeBuffer);
+
+			final int readyCount = SocketUDT.selectEpoll(epollID, readBuffer,
+					writeBuffer, sizeBuffer, 0);
+
+			log.info("readyCount : {}", readyCount);
+			logBuffer("read: ", readBuffer);
+			logBuffer("write:", writeBuffer);
+
+			assertEquals(0, readyCount);
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+
+		}
+
+		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.BOTH.code);
+
+		{
+
+			clear(readBuffer);
+			clear(writeBuffer);
+
+			final int readyCount = SocketUDT.selectEpoll(epollID, readBuffer,
+					writeBuffer, sizeBuffer, 0);
+
+			log.info("readyCount : {}", readyCount);
+			logBuffer("read: ", readBuffer);
+			logBuffer("write:", writeBuffer);
+
+			assertEquals(2, readyCount);
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(2, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+
+		}
+
+		server.close();
+		client.close();
+		accept.close();
+
+		SocketUDT.epollRelease0(epollID);
+
 	}
 
 }

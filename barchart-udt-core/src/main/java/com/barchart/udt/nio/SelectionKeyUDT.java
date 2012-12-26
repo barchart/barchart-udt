@@ -15,13 +15,15 @@ import java.nio.channels.Selector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.EpollUDT;
 import com.barchart.udt.EpollUDT.Opt;
 import com.barchart.udt.SocketUDT;
 
 /**
  * selection key implementation <> FIXME think again about concurrency
  */
-public class SelectionKeyUDT extends SelectionKey {
+public class SelectionKeyUDT extends SelectionKey implements
+		Comparable<SelectionKeyUDT> {
 
 	protected static final Logger log = LoggerFactory
 			.getLogger(SelectionKeyUDT.class);
@@ -42,7 +44,7 @@ public class SelectionKeyUDT extends SelectionKey {
 		this.channelUDT = channelUDT;
 		super.attach(attachment);
 
-		setValid(true);
+		makeValid(true);
 
 	}
 
@@ -57,6 +59,10 @@ public class SelectionKeyUDT extends SelectionKey {
 	@Override
 	public SelectableChannel channel() {
 		return (SelectableChannel) channelUDT;
+	}
+
+	protected EpollUDT epollUDT() {
+		return selectorUDT.epollUDT;
 	}
 
 	/**
@@ -86,7 +92,7 @@ public class SelectionKeyUDT extends SelectionKey {
 		}
 	}
 
-	private volatile Opt epollOpt = Opt.NONE;
+	private volatile Opt epollOpt;
 
 	protected Opt epollOpt() {
 		return epollOpt;
@@ -100,17 +106,27 @@ public class SelectionKeyUDT extends SelectionKey {
 
 		try {
 
-			// if (interestOps == 0) {
-			// selectorUDT.epoll.remove(socketUDT());
-			// return this;
-			// }
-
 			final Opt epollNew = from(interestOps);
 
+			// log.debug("epollNew : {}", epollNew);
+
 			if (epollNew != epollOpt) {
-				selectorUDT.epoll.update(socketUDT(), epollNew);
+
+				// epollUDT().update(socketUDT(), epollNew);
+
+				if (Opt.NONE == epollNew) {
+					epollUDT().remove(socketUDT());
+				} else {
+					epollUDT().remove(socketUDT());
+					epollUDT().add(socketUDT(), epollNew);
+				}
+
 				epollOpt = epollNew;
+
 			}
+
+			// final Opt epollUdt = epollUDT().verify(socketUDT());
+			// log.debug("epollUdt : {}", epollUdt);
 
 		} catch (final Exception e) {
 
@@ -167,106 +183,118 @@ public class SelectionKeyUDT extends SelectionKey {
 	}
 
 	/**
-	 * note: read is before write
+	 * note: read interest is reported before write interest
 	 * 
 	 * @return should report state change?
 	 */
-	protected synchronized boolean processRead(final int processCount) {
+	protected boolean doRead(final int processCount) {
 
-		log.debug("### read  {}", this);
+		// log.debug("read  {}", this);
 
+		int readyOps = 0;
+		final int interestOps = this.interestOps;
 		this.processCount = processCount;
 
-		final int interestOps = this.interestOps;
+		try {
 
-		if (!epollOpt.hasRead()) {
-			if (interestOps == 0) {
-				logError("error report when missing interest");
-				return false;
-			} else {
-				readyOps = interestOps;
-				return true;
+			if (!epollOpt.hasRead()) {
+				if (interestOps == 0) {
+					logError("error report when missing interest");
+					return false;
+				} else {
+					readyOps = interestOps;
+					return true;
+				}
 			}
-		}
 
-		switch (kindUDT()) {
-		case ACCEPTOR:
-			if (interestAccept(interestOps)) {
-				readyOps = OP_ACCEPT;
-				return true;
-			} else {
-				logError("ready to accept while not interested");
+			switch (kindUDT()) {
+			case ACCEPTOR:
+				if (interestAccept(interestOps)) {
+					readyOps = OP_ACCEPT;
+					return true;
+				} else {
+					logError("ready to ACCEPT while not interested");
+					return false;
+				}
+			case CONNECTOR:
+				if (interestRead(interestOps)) {
+					readyOps = OP_READ;
+					return true;
+				} else {
+					logError("ready to READ while not interested");
+					return false;
+				}
+			default:
+				logError("wrong kind");
 				return false;
 			}
-		case CONNECTOR:
-			if (interestRead(interestOps)) {
-				readyOps = OP_READ;
-				return true;
-			} else {
-				logError("ready to read while not interested");
-				return false;
-			}
-		default:
-			logError("wrong kind");
-			return false;
+
+		} finally {
+
+			this.readyOps = readyOps;
+
 		}
 
 	}
 
 	/**
-	 * note: write is after read
+	 * note: write interest is reported after read interest
 	 * 
 	 * @return should report state change?
 	 */
-	protected synchronized boolean processWrite(final int processCount) {
+	protected boolean doWrite(final int processCount) {
 
-		log.debug("### write {}", this);
+		// log.debug("write {}", this);
 
-		if (!epollOpt.hasWrite()) {
-			if (interestOps == 0) {
-				logError("error report when missing interest");
-				return false;
-			} else {
-				readyOps = interestOps;
-				return true;
-			}
-		}
-
+		int readyOps = 0;
 		final int interestOps = this.interestOps;
+		final boolean hadReadBeforeWrite = this.processCount == processCount;
 
-		switch (kindUDT()) {
-		case ACCEPTOR:
-			logError("ready to write yet for acceptor");
-			return false;
-		case CONNECTOR:
-			if (channelUDT().isConnectFinished()) {
-				if (interestWrite(interestOps)) {
-					if (this.processCount == processCount) {
-						readyOps |= OP_WRITE;
-					} else {
-						readyOps = OP_WRITE;
-					}
-					return true;
-				} else {
-					logError("ready to write when connected nad not insterested");
+		try {
+
+			if (!epollOpt.hasWrite()) {
+				if (interestOps == 0) {
+					logError("error report when missing interest");
 					return false;
-				}
-			} else {
-				if (interestConnect(interestOps)) {
-					if (this.processCount == processCount) {
-						readyOps |= OP_CONNECT;
-					} else {
-						readyOps = OP_CONNECT;
-					}
-					return true;
 				} else {
-					logError("ready to write when not connected and not interested");
-					return false;
+					readyOps = interestOps;
+					return true;
 				}
 			}
-		default:
-			logError("wrong kind");
-			return false;
+
+			switch (kindUDT()) {
+			case ACCEPTOR:
+				logError("ready to WRITE for acceptor");
+				return false;
+			case CONNECTOR:
+				if (channelUDT().isConnectFinished()) {
+					if (interestWrite(interestOps)) {
+						readyOps = OP_WRITE;
+						return true;
+					} else {
+						logError("ready to WRITE when not insterested");
+						return false;
+					}
+				} else {
+					if (interestConnect(interestOps)) {
+						readyOps = OP_CONNECT;
+						return true;
+					} else {
+						logError("ready to CONNECT when not interested");
+						return false;
+					}
+				}
+			default:
+				logError("wrong kind");
+				return false;
+			}
+
+		} finally {
+			if (hadReadBeforeWrite) {
+				this.readyOps |= readyOps;
+			} else {
+				this.readyOps = readyOps;
+			}
 		}
 
 	}
@@ -369,17 +397,40 @@ public class SelectionKeyUDT extends SelectionKey {
 		return isValid;
 	}
 
-	protected void setValid(final boolean isValid) {
-		this.isValid = isValid;
+	/** add/remove poll/socket registration */
+	protected void makeValid(final boolean isValid) {
+		try {
+			if (isValid) {
+				epollOpt = Opt.NONE;
+				epollUDT().add(socketUDT(), epollOpt);
+			} else {
+				epollUDT().remove(socketUDT());
+			}
+		} catch (final Exception e) {
+			log.error("epoll failure", e);
+		} finally {
+			this.isValid = isValid;
+		}
 	}
 
 	@Override
 	public void cancel() {
 		if (isValid()) {
-			// log.debug("", new Exception("" + this));
-			log.debug("{}", this);
 			selectorUDT.cancel(this);
 		}
+	}
+
+	@Override
+	public int compareTo(final SelectionKeyUDT that) {
+		final int thisId = this.socketId();
+		final int thatId = that.socketId();
+		if (thisId > thatId) {
+			return +1;
+		}
+		if (thisId < thatId) {
+			return -1;
+		}
+		return 0;
 	}
 
 }

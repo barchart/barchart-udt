@@ -11,14 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * UDT Epoll resource descriptor
+ * UDT Epoll Manager
  * 
- * @see <a href"http://en.wikipedia.org/wiki/Epoll">Epoll</a>
+ * @see <a href="http://en.wikipedia.org/wiki/Epoll">Epoll</a>
+ * @see <a href="http://udt.sourceforge.net/udt4/doc/epoll.htm">UDT Epoll</a>
  */
 public class EpollUDT {
 
 	/**
-	 * epoll interest option mask
+	 * poll interest option mask
 	 * <p>
 	 * see udt.h enum - EPOLLOpt
 	 * 
@@ -27,6 +28,8 @@ public class EpollUDT {
 	 *    UDT_EPOLL_OUT = 0x4,
 	 *    UDT_EPOLL_ERR = 0x8
 	 * </pre>
+	 * 
+	 * this is subset adapted to jdk select pattern
 	 */
 	public static enum Opt {
 
@@ -70,7 +73,7 @@ public class EpollUDT {
 		}
 
 		/**
-		 * epoll event mask;
+		 * poll event mask;
 		 * <p>
 		 * used for both requesting interest and reporting readiness
 		 */
@@ -92,6 +95,18 @@ public class EpollUDT {
 			return (code & WRITE.code) != 0;
 		}
 
+		public boolean isValidInterestRequest() {
+			switch (this) {
+			case NONE:
+			case READ:
+			case WRITE:
+			case BOTH:
+				return true;
+			default:
+				return false;
+			}
+		}
+
 	}
 
 	protected static final Logger log = LoggerFactory.getLogger(EpollUDT.class);
@@ -101,40 +116,59 @@ public class EpollUDT {
 	protected volatile boolean isActive;
 
 	/**
-	 * allocate Epoll
+	 * place holder socket to work around logic in epoll.h CEPoll::wait() which
+	 * expects at least one socket being monitored with non empty interest
+	 */
+	private final SocketUDT socketUDT;
+
+	/**
+	 * allocate poll
 	 */
 	public EpollUDT() throws ExceptionUDT {
 
 		id = SocketUDT.epollCreate0();
 		isActive = true;
 
-		log.debug("ep create {}", id());
+		socketUDT = new SocketUDT(TypeUDT.DATAGRAM);
+		SocketUDT.epollAdd0(id, socketUDT.getSocketId(), Opt.BOTH.code);
+
+		log.debug("ep {} create", id());
 
 	}
 
 	/**
-	 * deallocate Epoll; idempotent
+	 * deallocate poll; called on {@link #finalize()}
 	 */
 	public void destroy() throws ExceptionUDT {
 
-		SocketUDT.epollRelease0(id);
+		SocketUDT.epollRemove0(id(), socketUDT.getSocketId());
+		socketUDT.close();
 
 		isActive = false;
+		SocketUDT.epollRelease0(id());
 
-		log.debug("ep delete {}", id());
+		log.debug("ep {} delete", id());
 
 	}
 
-	/** descriptor id */
+	/**
+	 * poll descriptor id
+	 */
 	public int id() {
 		return id;
 	}
 
+	/**
+	 * poll becomes active after instance creation and inactive after
+	 * {@link #destroy()}
+	 */
 	public boolean isActive() {
 		return isActive;
 	}
 
 	/**
+	 * deallocate poll
+	 * <p>
 	 * NOTE: catch all exceptions; else prevents GC
 	 * <p>
 	 * NOTE: do not leak "this" references; else prevents GC
@@ -149,34 +183,51 @@ public class EpollUDT {
 		}
 	}
 
-	/** register socket into event processing Epoll */
+	/**
+	 * register socket into event processing poll
+	 */
 	public void add(final SocketUDT socket, final Opt option)
 			throws ExceptionUDT {
 
-		log.debug("ep add {} {}", socket, option);
+		log.debug("ep {} add {} {}", id(), socket, option);
 
-		SocketUDT.epollAdd0(id, socket.getSocketId(), option.code);
+		assert option.isValidInterestRequest();
+
+		SocketUDT.epollAdd0(id(), socket.getSocketId(), option.code);
 
 	}
 
-	/** unregister socket from event processing Epoll */
+	/**
+	 * unregister socket from event processing poll
+	 */
 	public void remove(final SocketUDT socket) throws ExceptionUDT {
 
-		log.debug("ep rem {}", socket);
+		log.debug("ep {} rem {}", id(), socket);
 
-		SocketUDT.epollRemove0(id, socket.getSocketId());
+		SocketUDT.epollRemove0(id(), socket.getSocketId());
 
 	}
 
-	/** re-register socket with a new option */
+	/**
+	 * update existing poll/socket registration with changed interest
+	 */
 	public void update(final SocketUDT socket, final Opt option)
 			throws ExceptionUDT {
 
-		log.debug("ep mod {} {}", socket, option);
+		log.debug("ep {} mod {} {}", id(), socket, option);
 
-		// SocketUDT.epollUpdate(this, socket, option);
-		SocketUDT.epollRemove0(id, socket.getSocketId());
-		SocketUDT.epollAdd0(id, socket.getSocketId(), option.code);
+		assert option.isValidInterestRequest();
+
+		SocketUDT.epollUpdate0(id(), socket.getSocketId(), option.code);
+
+	}
+
+	/** report current poll/socket readiness */
+	public Opt verify(final SocketUDT socket) throws ExceptionUDT {
+
+		final int code = SocketUDT.epollVerify0(id(), socket.getSocketId());
+
+		return Opt.from(code);
 
 	}
 

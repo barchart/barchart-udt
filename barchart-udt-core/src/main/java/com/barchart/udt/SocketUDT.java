@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.anno.Native;
 import com.barchart.udt.lib.LibraryLoaderUDT;
+import com.barchart.udt.util.HelpUDT;
 
 /**
  * notes
@@ -543,7 +544,7 @@ public class SocketUDT {
 	 * @see #receive0(int, int, byte[])
 	 */
 	public final int receive(final byte[] array) throws ExceptionUDT {
-		checkArray(array);
+		HelpUDT.checkArray(array);
 		return receive0(socketID, socketType, array);
 	}
 
@@ -557,7 +558,7 @@ public class SocketUDT {
 	 */
 	public final int receive(final byte[] array, final int position,
 			final int limit) throws ExceptionUDT {
-		checkArray(array);
+		HelpUDT.checkArray(array);
 		return receive1(socketID, socketType, array, position, limit);
 	}
 
@@ -571,7 +572,7 @@ public class SocketUDT {
 	 * @see #receive2(int, int, ByteBuffer, int, int)
 	 */
 	public final int receive(final ByteBuffer buffer) throws ExceptionUDT {
-		checkBuffer(buffer);
+		HelpUDT.checkBuffer(buffer);
 		final int position = buffer.position();
 		final int limit = buffer.limit();
 		final int remaining = buffer.remaining();
@@ -604,6 +605,8 @@ public class SocketUDT {
 	 * Basic access to UDT socket readiness selection feature. Based on
 	 * {@link java.nio.DirectIntBuffer} info exchange.Timeout is in
 	 * milliseconds.
+	 * <p>
+	 * note: does not throw exception on timeout
 	 * 
 	 * @param millisTimeout
 	 * 
@@ -634,9 +637,6 @@ public class SocketUDT {
 		assert writeBuffer != null && writeBuffer.isDirect();
 		assert sizeBuffer != null && sizeBuffer.isDirect();
 
-		assert readBuffer.capacity() >= sizeBuffer.get(UDT_READ_INDEX);
-		assert writeBuffer.capacity() >= sizeBuffer.get(UDT_WRITE_INDEX);
-
 		/** revert to documented behavior - no timeout exception */
 
 		try {
@@ -652,7 +652,15 @@ public class SocketUDT {
 		} catch (final ExceptionUDT e) {
 
 			if (e.getError() == ErrorUDT.ETIMEOUT) {
+
+				/** ensure nothing is reported on timeout */
+
+				sizeBuffer.put(UDT_READ_INDEX, 0);
+				sizeBuffer.put(UDT_WRITE_INDEX, 0);
+				sizeBuffer.put(UDT_EXCEPT_INDEX, 0);
+
 				return 0;
+
 			} else {
 				throw e;
 			}
@@ -660,29 +668,6 @@ public class SocketUDT {
 		}
 
 	}
-
-	// ###
-
-	// #############################
-
-	// note: will be inlined by jvm
-	protected static final void checkBuffer(final ByteBuffer buffer) {
-		if (buffer == null) {
-			throw new IllegalArgumentException("buffer == null");
-		}
-		if (!buffer.isDirect()) {
-			throw new IllegalArgumentException("must use DirectByteBuffer");
-		}
-	}
-
-	// note: will be inlined by jvm
-	protected static final void checkArray(final byte[] array) {
-		if (array == null) {
-			throw new IllegalArgumentException("array == null");
-		}
-	}
-
-	// #############################
 
 	/**
 	 * send from a complete byte[] array;
@@ -741,7 +726,7 @@ public class SocketUDT {
 	 * @see #send0(int, int, int, boolean, byte[])
 	 */
 	public final int send(final byte[] array) throws ExceptionUDT {
-		checkArray(array);
+		HelpUDT.checkArray(array);
 		return send0(socketID, socketType, //
 				messageTimeTolive, messageIsOrdered, //
 				array);
@@ -763,7 +748,7 @@ public class SocketUDT {
 	 */
 	public final int send(final byte[] array, final int position,
 			final int limit) throws ExceptionUDT {
-		checkArray(array);
+		HelpUDT.checkArray(array);
 		return send1(socketID, socketType, //
 				messageTimeTolive, messageIsOrdered, //
 				array, position, limit);
@@ -781,7 +766,7 @@ public class SocketUDT {
 	 * @see #send2(int, int, int, boolean, ByteBuffer, int, int)
 	 */
 	public final int send(final ByteBuffer buffer) throws ExceptionUDT {
-		checkBuffer(buffer);
+		HelpUDT.checkBuffer(buffer);
 		final int position = buffer.position();
 		final int limit = buffer.limit();
 		final int remaining = buffer.remaining();
@@ -1408,11 +1393,15 @@ public class SocketUDT {
 	protected static native void epollRemove0( //
 			final int epollID, final int socketID) throws ExceptionUDT;
 
-	/** TODO update epoll mask */
+	/**
+	 * update epoll mask
+	 */
 	protected static native void epollUpdate0(int epollID, int socketID,
 			int epollMask) throws ExceptionUDT;
 
-	/** TODO query epoll mask */
+	/**
+	 * query epoll mask
+	 */
 	protected static native int epollVerify0(int epollID, int socketID)
 			throws ExceptionUDT;
 
@@ -1473,8 +1462,6 @@ public class SocketUDT {
 			final IntBuffer writeBuffer, //
 			final IntBuffer sizeBuffer, //
 			final long millisTimeout) throws ExceptionUDT;
-
-	//
 
 	// ###########################################
 	// ### used for development & testing only

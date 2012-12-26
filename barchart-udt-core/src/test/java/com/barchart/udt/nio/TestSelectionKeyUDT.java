@@ -76,8 +76,8 @@ public class TestSelectionKeyUDT extends TestAny {
 
 		assertEquals(EpollUDT.Opt.READ, keyUDT.epollOpt());
 
-		assertTrue("accept valid", keyUDT.processRead(1));
-		assertFalse("invalid accept", keyUDT.processWrite(1));
+		assertTrue("accept valid", keyUDT.doRead(1));
+		assertFalse("invalid accept", keyUDT.doWrite(1));
 
 		selector.close();
 
@@ -103,10 +103,10 @@ public class TestSelectionKeyUDT extends TestAny {
 
 		assertEquals(EpollUDT.Opt.WRITE, keyUDT.epollOpt());
 
-		assertFalse("surious read", keyUDT.processRead(1));
-		assertTrue("connect 1 ok", keyUDT.processWrite(1));
+		assertFalse("surious read", keyUDT.doRead(1));
+		assertTrue("connect 1 ok", keyUDT.doWrite(1));
 		// assertTrue("connected", keyUDT.isBeyondConnect());
-		assertFalse("connect 2 fail", keyUDT.processWrite(2));
+		assertFalse("connect 2 fail", keyUDT.doWrite(2));
 		// assertTrue("connected", keyUDT.isBeyondConnect());
 
 		selector.close();
@@ -133,13 +133,13 @@ public class TestSelectionKeyUDT extends TestAny {
 
 		assertEquals(EpollUDT.Opt.BOTH, keyUDT.epollOpt());
 
-		assertTrue("connect ok", keyUDT.processWrite(1));
+		assertTrue("connect ok", keyUDT.doWrite(1));
 		// assertTrue("connected", keyUDT.isBeyondConnect());
 
-		assertTrue("valid read 1", keyUDT.processRead(2));
-		assertTrue("valid read 2", keyUDT.processRead(3));
+		assertTrue("valid read 1", keyUDT.doRead(2));
+		assertTrue("valid read 2", keyUDT.doRead(3));
 
-		assertFalse("surious write", keyUDT.processWrite(4));
+		assertFalse("surious write", keyUDT.doWrite(4));
 
 		selector.close();
 
@@ -165,13 +165,13 @@ public class TestSelectionKeyUDT extends TestAny {
 
 		assertEquals(EpollUDT.Opt.WRITE, keyUDT.epollOpt());
 
-		assertTrue("connect ok", keyUDT.processWrite(1));
+		assertTrue("connect ok", keyUDT.doWrite(1));
 		// assertTrue("connected", keyUDT.isBeyondConnect());
 
-		assertTrue("valid write 1", keyUDT.processWrite(2));
-		assertTrue("valid write 2", keyUDT.processWrite(3));
+		assertTrue("valid write 1", keyUDT.doWrite(2));
+		assertTrue("valid write 2", keyUDT.doWrite(3));
 
-		assertFalse("surious read", keyUDT.processRead(4));
+		assertFalse("surious read", keyUDT.doRead(4));
 
 		selector.close();
 

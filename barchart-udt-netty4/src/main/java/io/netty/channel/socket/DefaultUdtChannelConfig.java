@@ -58,7 +58,8 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
 		}
 		if (option == SO_LINGER) {
 			return (T) Integer.valueOf(getSoLinger());
-		} else if (option == SO_BACKLOG) {
+		}
+		if (option == SO_BACKLOG) {
 			return (T) Integer.valueOf(getBacklog());
 		}
 		return super.getOption(option);
