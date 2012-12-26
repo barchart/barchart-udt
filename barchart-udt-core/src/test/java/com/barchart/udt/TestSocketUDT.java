@@ -20,101 +20,76 @@ import util.TestAny;
 
 public class TestSocketUDT extends TestAny {
 
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
 	@Test
-	public void testSelectEx0() {
+	public void acceptListenNone() throws Exception {
 
-		log.info("testSelectEx0");
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
-		try {
+		socket.configureBlocking(false);
 
-			final InetSocketAddress localAddress1 = localSocketAddress();
+		socket.bind(localSocketAddress());
 
-			final InetSocketAddress localAddress2 = localSocketAddress();
+		socket.listen(1);
 
-			final SocketUDT socketServer = new SocketUDT(TypeUDT.DATAGRAM);
-			socketServer.setOption(OptionUDT.UDT_RCVSYN, false);
-			socketServer.setOption(OptionUDT.UDT_SNDSYN, false);
-			socketServer.bind(localAddress1);
-			socketServer.listen(1);
-			// socketServer.accept();
+		assertNull(socket.accept());
 
-			final SocketUDT socketClient = new SocketUDT(TypeUDT.DATAGRAM);
-			socketClient.setOption(OptionUDT.UDT_RCVSYN, false);
-			socketClient.setOption(OptionUDT.UDT_SNDSYN, false);
-			socketClient.bind(localAddress2);
-			socketClient.listen(1);
-			// socketClient.accept();
+		socket.close();
 
-			final long timeout = 1 * 1000 * 1000;
+	}
 
-			final SocketUDT[] selectArray = new SocketUDT[] { socketServer,
-					socketClient };
+	@Test(timeout = 3 * 1000)
+	public void acceptListenOne() throws Exception {
 
-			socketServer.clearError();
+		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
+		accept.configureBlocking(false);
+		accept.bind(localSocketAddress());
 
-			final long timeStart = System.currentTimeMillis();
+		socketAwait(accept, StatusUDT.OPENED);
 
-			// SocketUDT.selectExtended(selectArray, timeout);
+		accept.listen(1);
 
-			final long timeFinish = System.currentTimeMillis();
+		socketAwait(accept, StatusUDT.LISTENING);
 
-			final long timeDiff = timeFinish - timeStart;
-			log.info("timeDiff={}", timeDiff);
+		assertEquals(StatusUDT.LISTENING, accept.getStatus());
 
-			// log.info("isSelectedRead={}", socketServer.isSelectedRead());
-			// log.info("isSelectedWrite={}", socketServer.isSelectedWrite());
-			// log.info("isSelectedException={}", socketServer
-			// .isSelectedException());
+		assertNull(accept.accept());
 
-			log.info("getError={}", socketServer.getError());
-			log.info("getErrorCode={}", socketServer.getErrorCode());
-			log.info("getgetErrorMessage={}", socketServer.getErrorMessage());
+		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
+		client.configureBlocking(false);
+		client.bind(localSocketAddress());
 
-			socketServer.close();
-			socketClient.close();
+		socketAwait(client, StatusUDT.OPENED);
 
-		} catch (final Exception e) {
-			fail("SocketException; " + e.getMessage());
-		}
+		client.connect(accept.getLocalSocketAddress());
+
+		socketAwait(client, StatusUDT.CONNECTED);
+
+		assertNotNull(accept.accept());
+
+		assertNull(accept.accept());
+
+		accept.close();
+		client.close();
 
 	}
 
 	@Test(expected = ExceptionUDT.class)
-	public void testInvalidClose0() throws ExceptionUDT {
+	public void acceptNoListen() throws Exception {
 
-		SocketUDT socket = null;
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
-		try {
+		socket.accept();
 
-			socket = new SocketUDT(TypeUDT.DATAGRAM);
-
-		} catch (final ExceptionUDT e) {
-
-			fail("SocketException; " + e.getMessage());
-
-		}
-
-		final int realID = socket.socketID;
-
-		final int fakeID = realID + 123;
-
-		log.info("real: {} ; fake : {} ; ", realID, fakeID);
-
-		/** must throw */
-		socket.testInvalidClose0(fakeID);
+		socket.close();
 
 	}
 
+	@Before
+	public void setUp() throws Exception {
+	}
+
 	@Test
-	public void testIsOpen() throws Exception {
+	public void socketOpenClose() throws Exception {
 
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 		assertTrue(socket.isOpen());
@@ -141,74 +116,43 @@ public class TestSocketUDT extends TestAny {
 		socket.close();
 		assertFalse(socket.isOpen());
 
-		// log.info("sleep 1");
-		// Thread.sleep(10 * 1000);
+		socket.close();
+		assertTrue(socket.isClosed());
 
 		socket.close();
 		assertTrue(socket.isClosed());
 
-		// log.info("sleep 2");
-		// Thread.sleep(10 * 1000);
-
 		socket.close();
-		assertTrue(socket.isClosed());
 
-		log.info("isOpen pass");
+	}
 
+	@After
+	public void tearDown() throws Exception {
 	}
 
 	@Test(expected = ExceptionUDT.class)
-	public void testAcceptNoListen() throws Exception {
+	public void testInvalidClose0() throws ExceptionUDT {
 
-		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+		SocketUDT socket = null;
 
-		socket.accept();
+		try {
 
-	}
+			socket = new SocketUDT(TypeUDT.DATAGRAM);
 
-	@Test
-	public void testAcceptListenNone() throws Exception {
+		} catch (final ExceptionUDT e) {
 
-		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+			fail("SocketException; " + e.getMessage());
 
-		socket.configureBlocking(false);
+		}
 
-		socket.bind(localSocketAddress());
+		final int realID = socket.socketID;
 
-		socket.listen(1);
+		final int fakeID = realID + 123;
 
-		assertNull(socket.accept());
+		log.info("real: {} ; fake : {} ; ", realID, fakeID);
 
-	}
-
-	@Test
-	public void testAcceptListenOne() throws Exception {
-
-		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
-		accept.configureBlocking(false);
-		accept.bind(localSocketAddress());
-
-		assertEquals(StatusUDT.OPENED, accept.getStatus());
-
-		accept.listen(1);
-
-		assertEquals(StatusUDT.LISTENING, accept.getStatus());
-
-		assertNull(accept.accept());
-
-		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		client.configureBlocking(false);
-		client.bind(localSocketAddress());
-
-		client.connect(accept.getLocalSocketAddress());
-
-		Thread.sleep(100);
-
-		assertNotNull(accept.accept());
-
-		Thread.sleep(100);
-
-		assertNull(accept.accept());
+		/** must throw */
+		socket.testInvalidClose0(fakeID);
 
 	}
 
