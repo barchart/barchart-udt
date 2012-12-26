@@ -567,7 +567,7 @@ JNIEXPORT jobject JNICALL Java_com_barchart_udt_SocketUDT_accept0(JNIEnv* env,
 
 		const jint errorCode = errorInfo.getErrorCode();
 
-		if (errorCode == CUDTException::EASYNCRCV) {
+		if (errorCode == UDT::ERRORINFO::EASYNCRCV) {
 			// not a java exception: non-blocking mode return, when not connections in the queue
 		} else {
 			// really exception
@@ -955,7 +955,7 @@ bool X_IsValidRange(JNIEnv *env, jint socketID, //
 jint UDT_ReturnReceiveError(JNIEnv *env, const jint socketID) {
 	UDT::ERRORINFO errorInfo = UDT::getlasterror();
 	int errorCode = errorInfo.getErrorCode();
-	if (errorCode == CUDTException::EASYNCRCV) {
+	if (errorCode == UDT::ERRORINFO::EASYNCRCV) {
 		// not a java exception: non-blocking mode return when nothing is received
 	} else {
 		// really exception
@@ -1127,7 +1127,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_receive2(JNIEnv *env,
 jint UDT_ReturnSendError(JNIEnv *env, jint socketID) {
 	UDT::ERRORINFO errorInfo = UDT::getlasterror();
 	const int errorCode = errorInfo.getErrorCode();
-	if (errorCode == CUDTException::EASYNCSND) {
+	if (errorCode == UDT::ERRORINFO::EASYNCSND) {
 		// not a java exception: non-blocking mode return when no space in UDT buffer
 	} else {
 		// really exception
