@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: CCC Class Reference</title>
+<title>barchart-udt-core-2.1.0: CCC Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -72,7 +72,7 @@ Inheritance diagram for CCC:</div>
 <div class="dynsection">
 <div class="center"><img src="classCCC__inherit__graph.png" border="0" usemap="#CCC_inherit__map" alt="Inheritance graph"/></div>
 <map name="CCC_inherit__map" id="CCC_inherit__map">
-<area shape="rect" id="node3" href="classCTCP.html" title="CTCP" alt="" coords="5,83,64,112"/><area shape="rect" id="node5" href="classCUDPBlast.html" title="CUDPBlast" alt="" coords="88,83,179,112"/><area shape="rect" id="node7" href="classCUDTCC.html" title="CUDTCC" alt="" coords="203,83,283,112"/></map>
+<area shape="rect" id="node3" href="classCTCP.html" title="CTCP" alt="" coords="5,83,64,112"/><area shape="rect" id="node5" href="classCUDPBlast.html" title="CUDPBlast" alt="" coords="88,83,179,112"/><area shape="rect" id="node7" href="classCUDTCC.html" title="CUDTCC" alt="" coords="203,83,283,112"/><area shape="rect" id="node9" href="classJNICCC.html" title="JNICCC" alt="" coords="307,83,379,112"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for CCC:</div>
@@ -89,10 +89,10 @@ Collaboration diagram for CCC:</div>
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>init</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4be330e3760cd88c06f5fb1c9e9c146"></a><!-- doxytag: member="CCC::close" ref="aa4be330e3760cd88c06f5fb1c9e9c146" args="()" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e6626b6286dd95bd230fea13584193b"></a><!-- doxytag: member="CCC::onACK" ref="a2e6626b6286dd95bd230fea13584193b" args="(const int32_t &amp;)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>onACK</b> (const int32_t &amp;)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8bf328df92b9345f15df68743bc2594"></a><!-- doxytag: member="CCC::onLoss" ref="af8bf328df92b9345f15df68743bc2594" args="(const int32_t *, const int &amp;)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>onLoss</b> (const int32_t *, const int &amp;)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9768a78a2735332e99c22819822c498d"></a><!-- doxytag: member="CCC::onACK" ref="a9768a78a2735332e99c22819822c498d" args="(int32_t)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>onACK</b> (int32_t)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd1dbfa5a1775f33ed8f6fd4dbbec8bc"></a><!-- doxytag: member="CCC::onLoss" ref="afd1dbfa5a1775f33ed8f6fd4dbbec8bc" args="(const int32_t *, int)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>onLoss</b> (const int32_t *, int)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae70e5cf30ed305e85e07965e179ed92"></a><!-- doxytag: member="CCC::onTimeout" ref="aae70e5cf30ed305e85e07965e179ed92" args="()" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>onTimeout</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80d20aa528ae7a8f084df06263ea63f7"></a><!-- doxytag: member="CCC::onPktSent" ref="a80d20aa528ae7a8f084df06263ea63f7" args="(const CPacket *)" -->
@@ -102,18 +102,18 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>onPktReceived
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5f41ad56ca2a2824cc7e22b70c402202"></a><!-- doxytag: member="CCC::processCustomMsg" ref="a5f41ad56ca2a2824cc7e22b70c402202" args="(const CPacket *)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>processCustomMsg</b> (const <a class="el" href="classCPacket.html">CPacket</a> *)</td></tr>
 <tr><td colspan="2"><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a0a9edfbb5960858097714333b47bbd"></a><!-- doxytag: member="CCC::setACKTimer" ref="a9a0a9edfbb5960858097714333b47bbd" args="(const int &amp;msINT)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setACKTimer</b> (const int &amp;msINT)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97510c67ce673650a58cf09543db01e4"></a><!-- doxytag: member="CCC::setACKInterval" ref="a97510c67ce673650a58cf09543db01e4" args="(const int &amp;pktINT)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setACKInterval</b> (const int &amp;pktINT)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9297d1c366eea89730d357675437343e"></a><!-- doxytag: member="CCC::setRTO" ref="a9297d1c366eea89730d357675437343e" args="(const int &amp;usRTO)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setRTO</b> (const int &amp;usRTO)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d55010c097b1563a44101fee9485c70"></a><!-- doxytag: member="CCC::setACKTimer" ref="a8d55010c097b1563a44101fee9485c70" args="(int msINT)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setACKTimer</b> (int msINT)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae20a1af100a77ae7b6d652142f0d5af6"></a><!-- doxytag: member="CCC::setACKInterval" ref="ae20a1af100a77ae7b6d652142f0d5af6" args="(int pktINT)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setACKInterval</b> (int pktINT)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb17128c8afd48b9293e993e0d9f9019"></a><!-- doxytag: member="CCC::setRTO" ref="aeb17128c8afd48b9293e993e0d9f9019" args="(int usRTO)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setRTO</b> (int usRTO)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9907cb24c9a2dd98f1de56b9527e6637"></a><!-- doxytag: member="CCC::sendCustomMsg" ref="a9907cb24c9a2dd98f1de56b9527e6637" args="(CPacket &amp;pkt) const " -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>sendCustomMsg</b> (<a class="el" href="classCPacket.html">CPacket</a> &amp;pkt) const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c7e6ce4c98c3fa28db66dc08a10bca1"></a><!-- doxytag: member="CCC::getPerfInfo" ref="a8c7e6ce4c98c3fa28db66dc08a10bca1" args="()" -->
 const <a class="el" href="structCPerfMon.html">CPerfMon</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>getPerfInfo</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31ee59b357eb3766fcf8e740a9668ad0"></a><!-- doxytag: member="CCC::setUserParam" ref="a31ee59b357eb3766fcf8e740a9668ad0" args="(const char *param, const int &amp;size)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setUserParam</b> (const char *param, const int &amp;size)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7824c6fcf4778bf93e8c30278be62805"></a><!-- doxytag: member="CCC::setUserParam" ref="a7824c6fcf4778bf93e8c30278be62805" args="(const char *param, int size)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>setUserParam</b> (const char *param, int size)</td></tr>
 <tr><td colspan="2"><h2>Protected Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afee4fab572574c2fd4938de98ff89e70"></a><!-- doxytag: member="CCC::m_iSYNInterval" ref="afee4fab572574c2fd4938de98ff89e70" args="" -->
 const int32_t &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>m_iSYNInterval</b></td></tr>
@@ -149,7 +149,7 @@ class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <li>src/main/c++/udt/src/<a class="el" href="ccc_8cpp_source.html">ccc.cpp</a></li>
 </ul>
 </div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

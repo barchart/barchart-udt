@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: src/main/c++/udt/src/buffer.cpp Source File</title>
+<title>barchart-udt-core-2.1.0: src/main/c++/udt/src/buffer.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -113,7 +113,7 @@ window.onload = initDynSections;
 <a name="l00044"></a>00044 
 <a name="l00045"></a>00045 <span class="keyword">using namespace </span>std;
 <a name="l00046"></a>00046 
-<a name="l00047"></a>00047 CSndBuffer::CSndBuffer(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; mss):
+<a name="l00047"></a>00047 CSndBuffer::CSndBuffer(<span class="keywordtype">int</span> size, <span class="keywordtype">int</span> mss):
 <a name="l00048"></a>00048 m_BufLock(),
 <a name="l00049"></a>00049 m_pBlock(NULL),
 <a name="l00050"></a>00050 m_pFirstBlock(NULL),
@@ -186,7 +186,7 @@ window.onload = initDynSections;
 <a name="l00117"></a>00117 <span class="preprocessor">   #endif</span>
 <a name="l00118"></a>00118 <span class="preprocessor"></span>}
 <a name="l00119"></a>00119 
-<a name="l00120"></a>00120 <span class="keywordtype">void</span> CSndBuffer::addBuffer(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; ttl, <span class="keyword">const</span> <span class="keywordtype">bool</span>&amp; order)
+<a name="l00120"></a>00120 <span class="keywordtype">void</span> CSndBuffer::addBuffer(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">int</span> len, <span class="keywordtype">int</span> ttl, <span class="keywordtype">bool</span> order)
 <a name="l00121"></a>00121 {
 <a name="l00122"></a>00122    <span class="keywordtype">int</span> size = len / m_iMSS;
 <a name="l00123"></a>00123    <span class="keywordflow">if</span> ((len % m_iMSS) != 0)
@@ -232,7 +232,7 @@ window.onload = initDynSections;
 <a name="l00163"></a>00163       m_iNextMsgNo = 1;
 <a name="l00164"></a>00164 }
 <a name="l00165"></a>00165 
-<a name="l00166"></a>00166 <span class="keywordtype">int</span> CSndBuffer::addBufferFromFile(fstream&amp; ifs, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len)
+<a name="l00166"></a>00166 <span class="keywordtype">int</span> CSndBuffer::addBufferFromFile(fstream&amp; ifs, <span class="keywordtype">int</span> len)
 <a name="l00167"></a>00167 {
 <a name="l00168"></a>00168    <span class="keywordtype">int</span> size = len / m_iMSS;
 <a name="l00169"></a>00169    <span class="keywordflow">if</span> ((len % m_iMSS) != 0)
@@ -334,7 +334,7 @@ window.onload = initDynSections;
 <a name="l00265"></a>00265    <span class="keywordflow">return</span> readlen;
 <a name="l00266"></a>00266 }
 <a name="l00267"></a>00267 
-<a name="l00268"></a>00268 <span class="keywordtype">void</span> CSndBuffer::ackData(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; offset)
+<a name="l00268"></a>00268 <span class="keywordtype">void</span> CSndBuffer::ackData(<span class="keywordtype">int</span> offset)
 <a name="l00269"></a>00269 {
 <a name="l00270"></a>00270    <a class="code" href="classCGuard.html">CGuard</a> bufferguard(m_BufLock);
 <a name="l00271"></a>00271 
@@ -411,7 +411,7 @@ window.onload = initDynSections;
 <a name="l00342"></a>00342 }
 <a name="l00343"></a>00343 
 <a name="l00345"></a>00345 
-<a name="l00346"></a>00346 CRcvBuffer::CRcvBuffer(<a class="code" href="classCUnitQueue.html">CUnitQueue</a>* queue, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; bufsize):
+<a name="l00346"></a>00346 CRcvBuffer::CRcvBuffer(<a class="code" href="classCUnitQueue.html">CUnitQueue</a>* queue, <span class="keywordtype">int</span> bufsize):
 <a name="l00347"></a>00347 m_pUnit(NULL),
 <a name="l00348"></a>00348 m_iSize(bufsize),
 <a name="l00349"></a>00349 m_pUnitQueue(queue),
@@ -456,7 +456,7 @@ window.onload = initDynSections;
 <a name="l00388"></a>00388    <span class="keywordflow">return</span> 0;
 <a name="l00389"></a>00389 }
 <a name="l00390"></a>00390 
-<a name="l00391"></a>00391 <span class="keywordtype">int</span> CRcvBuffer::readBuffer(<span class="keywordtype">char</span>* data, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len)
+<a name="l00391"></a>00391 <span class="keywordtype">int</span> CRcvBuffer::readBuffer(<span class="keywordtype">char</span>* data, <span class="keywordtype">int</span> len)
 <a name="l00392"></a>00392 {
 <a name="l00393"></a>00393    <span class="keywordtype">int</span> p = m_iStartPos;
 <a name="l00394"></a>00394    <span class="keywordtype">int</span> lastack = m_iLastAckPos;
@@ -493,7 +493,7 @@ window.onload = initDynSections;
 <a name="l00425"></a>00425    <span class="keywordflow">return</span> len - rs;
 <a name="l00426"></a>00426 }
 <a name="l00427"></a>00427 
-<a name="l00428"></a>00428 <span class="keywordtype">int</span> CRcvBuffer::readBufferToFile(fstream&amp; ofs, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len)
+<a name="l00428"></a>00428 <span class="keywordtype">int</span> CRcvBuffer::readBufferToFile(fstream&amp; ofs, <span class="keywordtype">int</span> len)
 <a name="l00429"></a>00429 {
 <a name="l00430"></a>00430    <span class="keywordtype">int</span> p = m_iStartPos;
 <a name="l00431"></a>00431    <span class="keywordtype">int</span> lastack = m_iLastAckPos;
@@ -532,7 +532,7 @@ window.onload = initDynSections;
 <a name="l00464"></a>00464    <span class="keywordflow">return</span> len - rs;
 <a name="l00465"></a>00465 }
 <a name="l00466"></a>00466 
-<a name="l00467"></a>00467 <span class="keywordtype">void</span> CRcvBuffer::ackData(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len)
+<a name="l00467"></a>00467 <span class="keywordtype">void</span> CRcvBuffer::ackData(<span class="keywordtype">int</span> len)
 <a name="l00468"></a>00468 {
 <a name="l00469"></a>00469    m_iLastAckPos = (m_iLastAckPos + len) % m_iSize;
 <a name="l00470"></a>00470    m_iMaxPos -= len;
@@ -556,14 +556,14 @@ window.onload = initDynSections;
 <a name="l00488"></a>00488    <span class="keywordflow">return</span> m_iSize + m_iLastAckPos - m_iStartPos;
 <a name="l00489"></a>00489 }
 <a name="l00490"></a>00490 
-<a name="l00491"></a>00491 <span class="keywordtype">void</span> CRcvBuffer::dropMsg(<span class="keyword">const</span> int32_t&amp; msgno)
+<a name="l00491"></a>00491 <span class="keywordtype">void</span> CRcvBuffer::dropMsg(int32_t msgno)
 <a name="l00492"></a>00492 {
 <a name="l00493"></a>00493    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = m_iStartPos, n = (m_iLastAckPos + m_iMaxPos) % m_iSize; i != n; i = (i + 1) % m_iSize)
 <a name="l00494"></a>00494       <span class="keywordflow">if</span> ((NULL != m_pUnit[i]) &amp;&amp; (msgno == m_pUnit[i]-&gt;m_Packet.m_iMsgNo))
 <a name="l00495"></a>00495          m_pUnit[i]-&gt;m_iFlag = 3;
 <a name="l00496"></a>00496 }
 <a name="l00497"></a>00497 
-<a name="l00498"></a>00498 <span class="keywordtype">int</span> CRcvBuffer::readMsg(<span class="keywordtype">char</span>* data, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len)
+<a name="l00498"></a>00498 <span class="keywordtype">int</span> CRcvBuffer::readMsg(<span class="keywordtype">char</span>* data, <span class="keywordtype">int</span> len)
 <a name="l00499"></a>00499 {
 <a name="l00500"></a>00500    <span class="keywordtype">int</span> p, q;
 <a name="l00501"></a>00501    <span class="keywordtype">bool</span> passack;
@@ -719,7 +719,7 @@ window.onload = initDynSections;
 <a name="l00651"></a>00651    <span class="keywordflow">return</span> found;
 <a name="l00652"></a>00652 }
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

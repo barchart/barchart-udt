@@ -1,0 +1,142 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /**<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright (C) 2009-2012 Barchart, Inc. &lt;http://www.barchart.com/&gt;<a name="line.2"></a>
+<FONT color="green">003</FONT>     *<a name="line.3"></a>
+<FONT color="green">004</FONT>     * All rights reserved. Licensed under the OSI BSD License.<a name="line.4"></a>
+<FONT color="green">005</FONT>     *<a name="line.5"></a>
+<FONT color="green">006</FONT>     * http://www.opensource.org/licenses/bsd-license.php<a name="line.6"></a>
+<FONT color="green">007</FONT>     */<a name="line.7"></a>
+<FONT color="green">008</FONT>    package com.barchart.udt;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    import org.slf4j.Logger;<a name="line.10"></a>
+<FONT color="green">011</FONT>    import org.slf4j.LoggerFactory;<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>    /**<a name="line.13"></a>
+<FONT color="green">014</FONT>     * A wrapper around the base UDT congestion control class<a name="line.14"></a>
+<FONT color="green">015</FONT>     * <a name="line.15"></a>
+<FONT color="green">016</FONT>     * @see &lt;a href="http://udt.sourceforge.net/udt4/doc/ccc.htm"&gt;reference&lt;/a&gt;<a name="line.16"></a>
+<FONT color="green">017</FONT>     * @see &lt;a href="http://udt.sourceforge.net/udt4/doc/t-cc.htm"&gt;tutorial&lt;/a&gt;<a name="line.17"></a>
+<FONT color="green">018</FONT>     * @see FactoryUDT<a name="line.18"></a>
+<FONT color="green">019</FONT>     * @see FactoryInterfaceUDT<a name="line.19"></a>
+<FONT color="green">020</FONT>     * <a name="line.20"></a>
+<FONT color="green">021</FONT>     * @author CCob<a name="line.21"></a>
+<FONT color="green">022</FONT>     */<a name="line.22"></a>
+<FONT color="green">023</FONT>    public class CCC {<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>            /** Force SocketUDT to load JNI if it hasn't already */<a name="line.25"></a>
+<FONT color="green">026</FONT>            private static boolean initOk = SocketUDT.INIT_OK;<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>            /** Used internally by the JNI layer, points to JNICCC class */<a name="line.28"></a>
+<FONT color="green">029</FONT>            private long nativeHandle;<a name="line.29"></a>
+<FONT color="green">030</FONT>    <a name="line.30"></a>
+<FONT color="green">031</FONT>            private int msINT;<a name="line.31"></a>
+<FONT color="green">032</FONT>            private int pktINT;<a name="line.32"></a>
+<FONT color="green">033</FONT>            private int usRTO;<a name="line.33"></a>
+<FONT color="green">034</FONT>            private final Logger log = LoggerFactory.getLogger(CCC.class);<a name="line.34"></a>
+<FONT color="green">035</FONT>    <a name="line.35"></a>
+<FONT color="green">036</FONT>            private native void initNative();<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>            protected native void setACKTimer(final int msINT);<a name="line.38"></a>
+<FONT color="green">039</FONT>    <a name="line.39"></a>
+<FONT color="green">040</FONT>            protected native void setACKInterval(final int pktINT);<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>            protected native void setRTO(final int usRTO);<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>            protected native void setPacketSndPeriod(final double sndPeriod);<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>            protected native void setCWndSize(final double cWndSize);<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>            protected native MonitorUDT getPerfInfo();<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>            public CCC() {<a name="line.50"></a>
+<FONT color="green">051</FONT>                    initNative();<a name="line.51"></a>
+<FONT color="green">052</FONT>            }<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>            public void init() {<a name="line.54"></a>
+<FONT color="green">055</FONT>                    log.info("CCC::init");<a name="line.55"></a>
+<FONT color="green">056</FONT>            }<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>            public void close() {<a name="line.58"></a>
+<FONT color="green">059</FONT>                    log.info("CCC::close");<a name="line.59"></a>
+<FONT color="green">060</FONT>            }<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>            public void onACK(final int ack) {<a name="line.62"></a>
+<FONT color="green">063</FONT>            }<a name="line.63"></a>
+<FONT color="green">064</FONT>    <a name="line.64"></a>
+<FONT color="green">065</FONT>            public void onLoss(final int[] lossList) {<a name="line.65"></a>
+<FONT color="green">066</FONT>            }<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>            public void onTimeout() {<a name="line.68"></a>
+<FONT color="green">069</FONT>            }<a name="line.69"></a>
+<FONT color="green">070</FONT>    <a name="line.70"></a>
+<FONT color="green">071</FONT>            // TODO: implement Java wrapper around CPacket<a name="line.71"></a>
+<FONT color="green">072</FONT>            // public void onPktSent(const CPacket* pkt) {}<a name="line.72"></a>
+<FONT color="green">073</FONT>            // public void onPktReceived(const CPacket* pkt) {}<a name="line.73"></a>
+<FONT color="green">074</FONT>            // public void processCustomMsg(const CPacket&amp; pkt) {}/<a name="line.74"></a>
+<FONT color="green">075</FONT>            // void sendCustomMsg(CPacket&amp; pkt) const;<a name="line.75"></a>
+<FONT color="green">076</FONT>    }<a name="line.76"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

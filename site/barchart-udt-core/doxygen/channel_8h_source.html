@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: src/main/c++/udt/src/channel.h Source File</title>
+<title>barchart-udt-core-2.1.0: src/main/c++/udt/src/channel.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -119,11 +119,11 @@ window.onload = initDynSections;
 <a name="l00050"></a>00050 {
 <a name="l00051"></a>00051 <span class="keyword">public</span>:
 <a name="l00052"></a>00052    <a class="code" href="classCChannel.html">CChannel</a>();
-<a name="l00053"></a>00053    <a class="code" href="classCChannel.html">CChannel</a>(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; version);
+<a name="l00053"></a>00053    <a class="code" href="classCChannel.html">CChannel</a>(<span class="keywordtype">int</span> version);
 <a name="l00054"></a>00054    ~<a class="code" href="classCChannel.html">CChannel</a>();
 <a name="l00055"></a>00055 
 <a name="l00056"></a>00056       <span class="comment">// Functionality:</span>
-<a name="l00057"></a>00057       <span class="comment">//    Opne a UDP channel.</span>
+<a name="l00057"></a>00057       <span class="comment">//    Open a UDP channel.</span>
 <a name="l00058"></a>00058       <span class="comment">// Parameters:</span>
 <a name="l00059"></a>00059       <span class="comment">//    0) [in] addr: The local address that UDP will use.</span>
 <a name="l00060"></a>00060       <span class="comment">// Returned value:</span>
@@ -132,7 +132,7 @@ window.onload = initDynSections;
 <a name="l00063"></a>00063    <span class="keywordtype">void</span> open(<span class="keyword">const</span> sockaddr* addr = NULL);
 <a name="l00064"></a>00064 
 <a name="l00065"></a>00065       <span class="comment">// Functionality:</span>
-<a name="l00066"></a>00066       <span class="comment">//    Opne a UDP channel based on an existing UDP socket.</span>
+<a name="l00066"></a>00066       <span class="comment">//    Open a UDP channel based on an existing UDP socket.</span>
 <a name="l00067"></a>00067       <span class="comment">// Parameters:</span>
 <a name="l00068"></a>00068       <span class="comment">//    0) [in] udpsock: UDP socket descriptor.</span>
 <a name="l00069"></a>00069       <span class="comment">// Returned value:</span>
@@ -174,7 +174,7 @@ window.onload = initDynSections;
 <a name="l00105"></a>00105       <span class="comment">// Returned value:</span>
 <a name="l00106"></a>00106       <span class="comment">//    None.</span>
 <a name="l00107"></a>00107 
-<a name="l00108"></a>00108    <span class="keywordtype">void</span> setSndBufSize(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size);
+<a name="l00108"></a>00108    <span class="keywordtype">void</span> setSndBufSize(<span class="keywordtype">int</span> size);
 <a name="l00109"></a>00109 
 <a name="l00110"></a>00110       <span class="comment">// Functionality:</span>
 <a name="l00111"></a>00111       <span class="comment">//    Set the UDP receiving buffer size.</span>
@@ -183,7 +183,7 @@ window.onload = initDynSections;
 <a name="l00114"></a>00114       <span class="comment">// Returned value:</span>
 <a name="l00115"></a>00115       <span class="comment">//    None.</span>
 <a name="l00116"></a>00116 
-<a name="l00117"></a>00117    <span class="keywordtype">void</span> setRcvBufSize(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size);
+<a name="l00117"></a>00117    <span class="keywordtype">void</span> setRcvBufSize(<span class="keywordtype">int</span> size);
 <a name="l00118"></a>00118 
 <a name="l00119"></a>00119       <span class="comment">// Functionality:</span>
 <a name="l00120"></a>00120       <span class="comment">//    Query the socket address that the channel is using.</span>
@@ -239,7 +239,7 @@ window.onload = initDynSections;
 <a name="l00170"></a>00170 
 <a name="l00171"></a>00171 <span class="preprocessor">#endif</span>
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -21,7 +21,7 @@
 <a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_javadoccomment"> * UDT socket mode type.</em>
 <a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment"> * </em>
 <a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * NOTE: {@link #TypeUDT} means stream vs datagram;</em>
-<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> * {@link com.barchart.udt.nio.Kind} means server vs client.</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> * {@link com.barchart.udt.nio.KindUDT} means server vs client.</em>
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;</em>
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment"> * maps to socket.h constants&lt;br&gt;</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_javadoccomment"> * SOCK_STREAM = 1&lt;br&gt;</em>
@@ -46,7 +46,7 @@
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment">	 * @param code</em>
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment">	 *            the code</em>
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="39" href="#39">39</a>  	<strong class="jxr_keyword">private</strong> <a href="../../../com/barchart/udt/TypeUDT.html">TypeUDT</a>(<strong class="jxr_keyword">int</strong> code) {
+<a class="jxr_linenumber" name="39" href="#39">39</a>  	<strong class="jxr_keyword">private</strong> <a href="../../../com/barchart/udt/TypeUDT.html">TypeUDT</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> code) {
 <a class="jxr_linenumber" name="40" href="#40">40</a>  		<strong class="jxr_keyword">this</strong>.code = code;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  	}
 <a class="jxr_linenumber" name="42" href="#42">42</a>  

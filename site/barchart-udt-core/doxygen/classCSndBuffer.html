@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: CSndBuffer Class Reference</title>
+<title>barchart-udt-core-2.1.0: CSndBuffer Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -79,18 +79,18 @@ Collaboration diagram for CSndBuffer:</div>
 <tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>Block</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>Buffer</b></td></tr>
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b1e12bf31a192d23da591e527468477"></a><!-- doxytag: member="CSndBuffer::CSndBuffer" ref="a5b1e12bf31a192d23da591e527468477" args="(const int &amp;size=32, const int &amp;mss=1500)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>CSndBuffer</b> (const int &amp;size=32, const int &amp;mss=1500)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac07b30c59f1df923e95ad48723e795d5"></a><!-- doxytag: member="CSndBuffer::addBuffer" ref="ac07b30c59f1df923e95ad48723e795d5" args="(const char *data, const int &amp;len, const int &amp;ttl=&#45;1, const bool &amp;order=false)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>addBuffer</b> (const char *data, const int &amp;len, const int &amp;ttl=-1, const bool &amp;order=false)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c927d29ad71d78da8f5a58ef7f3a5c2"></a><!-- doxytag: member="CSndBuffer::addBufferFromFile" ref="a1c927d29ad71d78da8f5a58ef7f3a5c2" args="(std::fstream &amp;ifs, const int &amp;len)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>addBufferFromFile</b> (std::fstream &amp;ifs, const int &amp;len)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78dffe5c7dff01ac5491df6d00fa9698"></a><!-- doxytag: member="CSndBuffer::CSndBuffer" ref="a78dffe5c7dff01ac5491df6d00fa9698" args="(int size=32, int mss=1500)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>CSndBuffer</b> (int size=32, int mss=1500)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af83392fe1991874b5c08ff936238964d"></a><!-- doxytag: member="CSndBuffer::addBuffer" ref="af83392fe1991874b5c08ff936238964d" args="(const char *data, int len, int ttl=&#45;1, bool order=false)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>addBuffer</b> (const char *data, int len, int ttl=-1, bool order=false)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6fdd8c426ea9b428da211bea3f525092"></a><!-- doxytag: member="CSndBuffer::addBufferFromFile" ref="a6fdd8c426ea9b428da211bea3f525092" args="(std::fstream &amp;ifs, int len)" -->
+int&nbsp;</td><td class="memItemRight" valign="bottom"><b>addBufferFromFile</b> (std::fstream &amp;ifs, int len)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2568ab2074839e774d182e4f10c9f8d"></a><!-- doxytag: member="CSndBuffer::readData" ref="ab2568ab2074839e774d182e4f10c9f8d" args="(char **data, int32_t &amp;msgno)" -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>readData</b> (char **data, int32_t &amp;msgno)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa357b3793cdc7a653d93f2c0366af9d9"></a><!-- doxytag: member="CSndBuffer::readData" ref="aa357b3793cdc7a653d93f2c0366af9d9" args="(char **data, const int offset, int32_t &amp;msgno, int &amp;msglen)" -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>readData</b> (char **data, const int offset, int32_t &amp;msgno, int &amp;msglen)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace427ed854e5a2a08ea395679d74a2a4"></a><!-- doxytag: member="CSndBuffer::ackData" ref="ace427ed854e5a2a08ea395679d74a2a4" args="(const int &amp;offset)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>ackData</b> (const int &amp;offset)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb13aba64345e20a153839b1844d5628"></a><!-- doxytag: member="CSndBuffer::ackData" ref="afb13aba64345e20a153839b1844d5628" args="(int offset)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>ackData</b> (int offset)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac09e13faeda5cd57280a1f563232508a"></a><!-- doxytag: member="CSndBuffer::getCurrBufSize" ref="ac09e13faeda5cd57280a1f563232508a" args="() const " -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCurrBufSize</b> () const </td></tr>
 </table>
@@ -102,7 +102,7 @@ int&nbsp;</td><td class="memItemRight" valign="bottom"><b>getCurrBufSize</b> () 
 <li>src/main/c++/udt/src/<a class="el" href="buffer_8cpp_source.html">buffer.cpp</a></li>
 </ul>
 </div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

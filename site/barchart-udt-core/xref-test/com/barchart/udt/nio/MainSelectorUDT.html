@@ -19,15 +19,15 @@
 <a class="jxr_linenumber" name="9" href="#9">9</a>   
 <a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../com/barchart/udt/nio/MainSelectorUDT.html">MainSelectorUDT</a> {
 <a class="jxr_linenumber" name="11" href="#11">11</a>  
-<a class="jxr_linenumber" name="12" href="#12">12</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="12" href="#12">12</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(<strong class="jxr_keyword">final</strong> String[] args) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="13" href="#13">13</a>  
-<a class="jxr_linenumber" name="14" href="#14">14</a>  		TestSelectorUDT test = <strong class="jxr_keyword">new</strong> <a href="../../../../com/barchart/udt/nio/TestSelectorUDT.html">TestSelectorUDT</a>();
+<a class="jxr_linenumber" name="14" href="#14">14</a>  		<strong class="jxr_keyword">final</strong> <a href="../../../../com/barchart/udt/nio/TestSelectorUDT.html">TestSelectorUDT</a> test = <strong class="jxr_keyword">new</strong> <a href="../../../../com/barchart/udt/nio/TestSelectorUDT.html">TestSelectorUDT</a>();
 <a class="jxr_linenumber" name="15" href="#15">15</a>  
-<a class="jxr_linenumber" name="16" href="#16">16</a>  		test.setUp();
+<a class="jxr_linenumber" name="16" href="#16">16</a>  		test.init();
 <a class="jxr_linenumber" name="17" href="#17">17</a>  
 <a class="jxr_linenumber" name="18" href="#18">18</a>  		test.testSelect();
 <a class="jxr_linenumber" name="19" href="#19">19</a>  
-<a class="jxr_linenumber" name="20" href="#20">20</a>  		test.tearDown();
+<a class="jxr_linenumber" name="20" href="#20">20</a>  		test.done();
 <a class="jxr_linenumber" name="21" href="#21">21</a>  
 <a class="jxr_linenumber" name="22" href="#22">22</a>  	}
 <a class="jxr_linenumber" name="23" href="#23">23</a>  

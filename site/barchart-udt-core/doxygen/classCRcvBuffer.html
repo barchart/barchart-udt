@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: CRcvBuffer Class Reference</title>
+<title>barchart-udt-core-2.1.0: CRcvBuffer Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -78,24 +78,24 @@ Collaboration diagram for CRcvBuffer:</div>
 <p><a href="classCRcvBuffer-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad2964af1cb7d0609351f767d75f16292"></a><!-- doxytag: member="CRcvBuffer::CRcvBuffer" ref="ad2964af1cb7d0609351f767d75f16292" args="(CUnitQueue *queue, const int &amp;bufsize=65536)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>CRcvBuffer</b> (<a class="el" href="classCUnitQueue.html">CUnitQueue</a> *queue, const int &amp;bufsize=65536)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c1dcaddfb6300b97336089496fa4a3f"></a><!-- doxytag: member="CRcvBuffer::CRcvBuffer" ref="a8c1dcaddfb6300b97336089496fa4a3f" args="(CUnitQueue *queue, int bufsize=65536)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>CRcvBuffer</b> (<a class="el" href="classCUnitQueue.html">CUnitQueue</a> *queue, int bufsize=65536)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec68f7d5415f6ec11fb985131aec5994"></a><!-- doxytag: member="CRcvBuffer::addData" ref="aec68f7d5415f6ec11fb985131aec5994" args="(CUnit *unit, int offset)" -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>addData</b> (<a class="el" href="structCUnit.html">CUnit</a> *unit, int offset)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7879d519d87a2c303ca68f90c3f1cf2"></a><!-- doxytag: member="CRcvBuffer::readBuffer" ref="aa7879d519d87a2c303ca68f90c3f1cf2" args="(char *data, const int &amp;len)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>readBuffer</b> (char *data, const int &amp;len)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a061c39bb2bab95c3dd6ce9331a32f7fd"></a><!-- doxytag: member="CRcvBuffer::readBufferToFile" ref="a061c39bb2bab95c3dd6ce9331a32f7fd" args="(std::fstream &amp;ofs, const int &amp;len)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>readBufferToFile</b> (std::fstream &amp;ofs, const int &amp;len)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65288b1db2d4ff1426952e8c477afcdb"></a><!-- doxytag: member="CRcvBuffer::ackData" ref="a65288b1db2d4ff1426952e8c477afcdb" args="(const int &amp;len)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>ackData</b> (const int &amp;len)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae85aac713e39cc230fea0423c09fdc9c"></a><!-- doxytag: member="CRcvBuffer::readBuffer" ref="ae85aac713e39cc230fea0423c09fdc9c" args="(char *data, int len)" -->
+int&nbsp;</td><td class="memItemRight" valign="bottom"><b>readBuffer</b> (char *data, int len)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd39f2aa1044e7c9c726f410d4b7b167"></a><!-- doxytag: member="CRcvBuffer::readBufferToFile" ref="abd39f2aa1044e7c9c726f410d4b7b167" args="(std::fstream &amp;ofs, int len)" -->
+int&nbsp;</td><td class="memItemRight" valign="bottom"><b>readBufferToFile</b> (std::fstream &amp;ofs, int len)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85da732cd90b7c881f7f45cf93a5746e"></a><!-- doxytag: member="CRcvBuffer::ackData" ref="a85da732cd90b7c881f7f45cf93a5746e" args="(int len)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>ackData</b> (int len)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d877226cc508e9d87db980f83d06305"></a><!-- doxytag: member="CRcvBuffer::getAvailBufSize" ref="a1d877226cc508e9d87db980f83d06305" args="() const " -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>getAvailBufSize</b> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b16017c060af829e37f620ab09e3c32"></a><!-- doxytag: member="CRcvBuffer::getRcvDataSize" ref="a7b16017c060af829e37f620ab09e3c32" args="() const " -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRcvDataSize</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2bc50293141b93e08b35db6eb8edafe6"></a><!-- doxytag: member="CRcvBuffer::dropMsg" ref="a2bc50293141b93e08b35db6eb8edafe6" args="(const int32_t &amp;msgno)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>dropMsg</b> (const int32_t &amp;msgno)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a199fe240902afb393544c036c9ba1954"></a><!-- doxytag: member="CRcvBuffer::readMsg" ref="a199fe240902afb393544c036c9ba1954" args="(char *data, const int &amp;len)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>readMsg</b> (char *data, const int &amp;len)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0da8dec1dd8c36e10f55a4721b4b2386"></a><!-- doxytag: member="CRcvBuffer::dropMsg" ref="a0da8dec1dd8c36e10f55a4721b4b2386" args="(int32_t msgno)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>dropMsg</b> (int32_t msgno)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8a91d7641bcfe1cca30bafeb516ddbe"></a><!-- doxytag: member="CRcvBuffer::readMsg" ref="ad8a91d7641bcfe1cca30bafeb516ddbe" args="(char *data, int len)" -->
+int&nbsp;</td><td class="memItemRight" valign="bottom"><b>readMsg</b> (char *data, int len)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a05bfa3ce429d75148b93f994651df454"></a><!-- doxytag: member="CRcvBuffer::getRcvMsgNum" ref="a05bfa3ce429d75148b93f994651df454" args="()" -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRcvMsgNum</b> ()</td></tr>
 </table>
@@ -107,7 +107,7 @@ int&nbsp;</td><td class="memItemRight" valign="bottom"><b>getRcvMsgNum</b> ()</t
 <li>src/main/c++/udt/src/<a class="el" href="buffer_8cpp_source.html">buffer.cpp</a></li>
 </ul>
 </div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

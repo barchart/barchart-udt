@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: CEPoll Class Reference</title>
+<title>barchart-udt-core-2.1.0: CEPoll Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -72,7 +72,7 @@ Collaboration diagram for CEPoll:</div>
 <div class="dynsection">
 <div class="center"><img src="classCEPoll__coll__graph.png" border="0" usemap="#CEPoll_coll__map" alt="Collaboration graph"/></div>
 <map name="CEPoll_coll__map" id="CEPoll_coll__map">
-<area shape="rect" id="node4" href="structCEPollDesc.html" title="CEPollDesc" alt="" coords="143,136,236,165"/></map>
+<area shape="rect" id="node4" href="structCEPollDesc.html" title="CEPollDesc" alt="" coords="143,187,236,216"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 
 <p><a href="classCEPoll-members.html">List of all members.</a></p>
@@ -82,37 +82,37 @@ Collaboration diagram for CEPoll:</div>
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>create</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0fb08437988f1f49f45ed99f2cf48b86"></a><!-- doxytag: member="CEPoll::add_usock" ref="a0fb08437988f1f49f45ed99f2cf48b86" args="(const int eid, const UDTSOCKET &amp;u, const int *events=NULL)" -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>add_usock</b> (const int eid, const UDTSOCKET &amp;u, const int *events=NULL)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abfb876a1a3b7e6d5ec08b348221b9a4f"></a><!-- doxytag: member="CEPoll::update_usock" ref="abfb876a1a3b7e6d5ec08b348221b9a4f" args="(const int eid, const UDTSOCKET &amp;u, const int *events=NULL)" -->
+int&nbsp;</td><td class="memItemRight" valign="bottom"><b>update_usock</b> (const int eid, const UDTSOCKET &amp;u, const int *events=NULL)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb8971264e5df835dba79f21ff5b35e8"></a><!-- doxytag: member="CEPoll::verify_usock" ref="afb8971264e5df835dba79f21ff5b35e8" args="(const int eid, const UDTSOCKET &amp;u, int *events)" -->
+int&nbsp;</td><td class="memItemRight" valign="bottom"><b>verify_usock</b> (const int eid, const UDTSOCKET &amp;u, int *events)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeeeafa174942b8fef8ea56a59fc719c4"></a><!-- doxytag: member="CEPoll::add_ssock" ref="aeeeafa174942b8fef8ea56a59fc719c4" args="(const int eid, const SYSSOCKET &amp;s, const int *events=NULL)" -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>add_ssock</b> (const int eid, const SYSSOCKET &amp;s, const int *events=NULL)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab908227892d9111bf89f848d78e20793"></a><!-- doxytag: member="CEPoll::remove_usock" ref="ab908227892d9111bf89f848d78e20793" args="(const int eid, const UDTSOCKET &amp;u, const int *events=NULL)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>remove_usock</b> (const int eid, const UDTSOCKET &amp;u, const int *events=NULL)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5284481c9ee8e3a3081b202c30b95521"></a><!-- doxytag: member="CEPoll::remove_ssock" ref="a5284481c9ee8e3a3081b202c30b95521" args="(const int eid, const SYSSOCKET &amp;s, const int *events=NULL)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>remove_ssock</b> (const int eid, const SYSSOCKET &amp;s, const int *events=NULL)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb991b6ae2c1791c6b73063747efa318"></a><!-- doxytag: member="CEPoll::remove_usock" ref="acb991b6ae2c1791c6b73063747efa318" args="(const int eid, const UDTSOCKET &amp;u)" -->
+int&nbsp;</td><td class="memItemRight" valign="bottom"><b>remove_usock</b> (const int eid, const UDTSOCKET &amp;u)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aff54c5185c158da890044573f2b1d1ca"></a><!-- doxytag: member="CEPoll::remove_ssock" ref="aff54c5185c158da890044573f2b1d1ca" args="(const int eid, const SYSSOCKET &amp;s)" -->
+int&nbsp;</td><td class="memItemRight" valign="bottom"><b>remove_ssock</b> (const int eid, const SYSSOCKET &amp;s)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2b6ab4d3b063cc0731d377b1db475412"></a><!-- doxytag: member="CEPoll::wait" ref="a2b6ab4d3b063cc0731d377b1db475412" args="(const int eid, std::set&lt; UDTSOCKET &gt; *readfds, std::set&lt; UDTSOCKET &gt; *writefds, int64_t msTimeOut, std::set&lt; SYSSOCKET &gt; *lrfds, std::set&lt; SYSSOCKET &gt; *lwfds)" -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>wait</b> (const int eid, std::set&lt; UDTSOCKET &gt; *readfds, std::set&lt; UDTSOCKET &gt; *writefds, int64_t msTimeOut, std::set&lt; SYSSOCKET &gt; *lrfds, std::set&lt; SYSSOCKET &gt; *lwfds)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9257569c569cd3e5b6da2d0d7d2f03cf"></a><!-- doxytag: member="CEPoll::release" ref="a9257569c569cd3e5b6da2d0d7d2f03cf" args="(const int eid)" -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><b>release</b> (const int eid)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae193757e1f700f9bf11e71475a6436e3"></a><!-- doxytag: member="CEPoll::enable_write" ref="ae193757e1f700f9bf11e71475a6436e3" args="(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>enable_write</b> (const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60ff7a5aa81b5588c10b82c48a75b403"></a><!-- doxytag: member="CEPoll::enable_read" ref="a60ff7a5aa81b5588c10b82c48a75b403" args="(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>enable_read</b> (const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa648024dc1811804cc65411a8980edb2"></a><!-- doxytag: member="CEPoll::disable_write" ref="aa648024dc1811804cc65411a8980edb2" args="(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>disable_write</b> (const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59ce62145ba2eef4a59595a20d19b198"></a><!-- doxytag: member="CEPoll::disable_read" ref="a59ce62145ba2eef4a59595a20d19b198" args="(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids)" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>disable_read</b> (const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d211221c4baaff2fbcf20c24410e676"></a><!-- doxytag: member="CEPoll::update_events" ref="a8d211221c4baaff2fbcf20c24410e676" args="(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids, int events, bool enable)" -->
+int&nbsp;</td><td class="memItemRight" valign="bottom"><b>update_events</b> (const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids, int events, bool enable)</td></tr>
 <tr><td colspan="2"><h2>Friends</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab57cfcc7449c8a67433ff025cd6fc999"></a><!-- doxytag: member="CEPoll::CUDT" ref="ab57cfcc7449c8a67433ff025cd6fc999" args="" -->
 class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCEPoll.html#ab57cfcc7449c8a67433ff025cd6fc999">CUDT</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf253e7147453305b0f41e22d6a780a2"></a><!-- doxytag: member="CEPoll::CRendezvousQueue" ref="adf253e7147453305b0f41e22d6a780a2" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCEPoll.html#adf253e7147453305b0f41e22d6a780a2">CRendezvousQueue</a></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 
-<p>Definition at line <a class="el" href="epoll_8h_source.html#l00062">62</a> of file <a class="el" href="epoll_8h_source.html">epoll.h</a>.</p>
+<p>Definition at line <a class="el" href="epoll_8h_source.html#l00065">65</a> of file <a class="el" href="epoll_8h_source.html">epoll.h</a>.</p>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/main/c++/udt/src/<a class="el" href="epoll_8h_source.html">epoll.h</a></li>
 <li>src/main/c++/udt/src/<a class="el" href="epoll_8cpp_source.html">epoll.cpp</a></li>
 </ul>
 </div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

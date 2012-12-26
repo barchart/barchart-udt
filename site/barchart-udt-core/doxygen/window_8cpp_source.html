@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: src/main/c++/udt/src/window.cpp Source File</title>
+<title>barchart-udt-core-2.1.0: src/main/c++/udt/src/window.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -114,7 +114,7 @@ window.onload = initDynSections;
 <a name="l00045"></a>00045 
 <a name="l00046"></a>00046 <span class="keyword">using namespace </span>std;
 <a name="l00047"></a>00047 
-<a name="l00048"></a>00048 CACKWindow::CACKWindow(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size):
+<a name="l00048"></a>00048 CACKWindow::CACKWindow(<span class="keywordtype">int</span> size):
 <a name="l00049"></a>00049 m_piACKSeqNo(NULL),
 <a name="l00050"></a>00050 m_piACK(NULL),
 <a name="l00051"></a>00051 m_pTimeStamp(NULL),
@@ -136,7 +136,7 @@ window.onload = initDynSections;
 <a name="l00067"></a>00067    <span class="keyword">delete</span> [] m_pTimeStamp;
 <a name="l00068"></a>00068 }
 <a name="l00069"></a>00069 
-<a name="l00070"></a>00070 <span class="keywordtype">void</span> CACKWindow::store(<span class="keyword">const</span> int32_t&amp; seq, <span class="keyword">const</span> int32_t&amp; ack)
+<a name="l00070"></a>00070 <span class="keywordtype">void</span> CACKWindow::store(int32_t seq, int32_t ack)
 <a name="l00071"></a>00071 {
 <a name="l00072"></a>00072    m_piACKSeqNo[m_iHead] = seq;
 <a name="l00073"></a>00073    m_piACK[m_iHead] = ack;
@@ -149,7 +149,7 @@ window.onload = initDynSections;
 <a name="l00080"></a>00080       m_iTail = (m_iTail + 1) % m_iSize;
 <a name="l00081"></a>00081 }
 <a name="l00082"></a>00082 
-<a name="l00083"></a>00083 <span class="keywordtype">int</span> CACKWindow::acknowledge(<span class="keyword">const</span> int32_t&amp; seq, int32_t&amp; ack)
+<a name="l00083"></a>00083 <span class="keywordtype">int</span> CACKWindow::acknowledge(int32_t seq, int32_t&amp; ack)
 <a name="l00084"></a>00084 {
 <a name="l00085"></a>00085    <span class="keywordflow">if</span> (m_iHead &gt;= m_iTail)
 <a name="l00086"></a>00086    {
@@ -212,7 +212,7 @@ window.onload = initDynSections;
 <a name="l00143"></a>00143 }
 <a name="l00144"></a>00144 
 <a name="l00146"></a>00146 
-<a name="l00147"></a>00147 CPktTimeWindow::CPktTimeWindow(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; asize, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; psize):
+<a name="l00147"></a>00147 CPktTimeWindow::CPktTimeWindow(<span class="keywordtype">int</span> asize, <span class="keywordtype">int</span> psize):
 <a name="l00148"></a>00148 m_iAWSize(asize),
 <a name="l00149"></a>00149 m_piPktWindow(NULL),
 <a name="l00150"></a>00150 m_iPktWindowPtr(0),
@@ -310,7 +310,7 @@ window.onload = initDynSections;
 <a name="l00242"></a>00242    <span class="keywordflow">return</span> (<span class="keywordtype">int</span>)ceil(1000000.0 / (<span class="keywordtype">double</span>(sum) / <span class="keywordtype">double</span>(count)));
 <a name="l00243"></a>00243 }
 <a name="l00244"></a>00244 
-<a name="l00245"></a>00245 <span class="keywordtype">void</span> CPktTimeWindow::onPktSent(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; currtime)
+<a name="l00245"></a>00245 <span class="keywordtype">void</span> CPktTimeWindow::onPktSent(<span class="keywordtype">int</span> currtime)
 <a name="l00246"></a>00246 {
 <a name="l00247"></a>00247    <span class="keywordtype">int</span> interval = currtime - m_iLastSentTime;
 <a name="l00248"></a>00248 
@@ -353,7 +353,7 @@ window.onload = initDynSections;
 <a name="l00285"></a>00285       m_iProbeWindowPtr = 0;
 <a name="l00286"></a>00286 }
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

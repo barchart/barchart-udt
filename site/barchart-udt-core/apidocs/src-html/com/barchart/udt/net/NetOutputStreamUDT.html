@@ -22,7 +22,7 @@
 <FONT color="green">019</FONT>     */<a name="line.19"></a>
 <FONT color="green">020</FONT>    public class NetOutputStreamUDT extends OutputStream {<a name="line.20"></a>
 <FONT color="green">021</FONT>    <a name="line.21"></a>
-<FONT color="green">022</FONT>            private final SocketUDT socketUDT;<a name="line.22"></a>
+<FONT color="green">022</FONT>            protected final SocketUDT socketUDT;<a name="line.22"></a>
 <FONT color="green">023</FONT>    <a name="line.23"></a>
 <FONT color="green">024</FONT>            /**<a name="line.24"></a>
 <FONT color="green">025</FONT>             * <a name="line.25"></a>
@@ -60,29 +60,35 @@
 <FONT color="green">057</FONT>            public void write(final byte[] bytes, final int off, final int len)<a name="line.57"></a>
 <FONT color="green">058</FONT>                            throws IOException {<a name="line.58"></a>
 <FONT color="green">059</FONT>    <a name="line.59"></a>
-<FONT color="green">060</FONT>                    final int count = socketUDT.send(bytes, off, off + len);<a name="line.60"></a>
+<FONT color="green">060</FONT>                    int bytesRemaining = len;<a name="line.60"></a>
 <FONT color="green">061</FONT>    <a name="line.61"></a>
-<FONT color="green">062</FONT>                    if (count &gt; 0) {<a name="line.62"></a>
-<FONT color="green">063</FONT>                            assert count == len;<a name="line.63"></a>
-<FONT color="green">064</FONT>                            return;<a name="line.64"></a>
-<FONT color="green">065</FONT>                    }<a name="line.65"></a>
+<FONT color="green">062</FONT>                    while (bytesRemaining &gt; 0) {<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>                            final int count = socketUDT.send(bytes, off + len - bytesRemaining,<a name="line.64"></a>
+<FONT color="green">065</FONT>                                            off + len);<a name="line.65"></a>
 <FONT color="green">066</FONT>    <a name="line.66"></a>
-<FONT color="green">067</FONT>                    if (count == 0) {<a name="line.67"></a>
-<FONT color="green">068</FONT>                            throw new ExceptionSendUDT(socketUDT.getSocketId(),<a name="line.68"></a>
-<FONT color="green">069</FONT>                                            ErrorUDT.USER_DEFINED_MESSAGE, "UDT send time out");<a name="line.69"></a>
-<FONT color="green">070</FONT>    <a name="line.70"></a>
-<FONT color="green">071</FONT>                    }<a name="line.71"></a>
-<FONT color="green">072</FONT>    <a name="line.72"></a>
-<FONT color="green">073</FONT>                    throw new IllegalStateException("should not happen");<a name="line.73"></a>
-<FONT color="green">074</FONT>    <a name="line.74"></a>
-<FONT color="green">075</FONT>            }<a name="line.75"></a>
+<FONT color="green">067</FONT>                            if (count &gt; 0) {<a name="line.67"></a>
+<FONT color="green">068</FONT>                                    bytesRemaining -= count;<a name="line.68"></a>
+<FONT color="green">069</FONT>                                    continue;<a name="line.69"></a>
+<FONT color="green">070</FONT>                            }<a name="line.70"></a>
+<FONT color="green">071</FONT>    <a name="line.71"></a>
+<FONT color="green">072</FONT>                            if (count == 0) {<a name="line.72"></a>
+<FONT color="green">073</FONT>                                    throw new ExceptionSendUDT(socketUDT.getSocketId(),<a name="line.73"></a>
+<FONT color="green">074</FONT>                                                    ErrorUDT.USER_DEFINED_MESSAGE, "UDT send time out");<a name="line.74"></a>
+<FONT color="green">075</FONT>                            }<a name="line.75"></a>
 <FONT color="green">076</FONT>    <a name="line.76"></a>
-<FONT color="green">077</FONT>            @Override<a name="line.77"></a>
-<FONT color="green">078</FONT>            public void close() throws IOException {<a name="line.78"></a>
-<FONT color="green">079</FONT>                    socketUDT.close();<a name="line.79"></a>
-<FONT color="green">080</FONT>            }<a name="line.80"></a>
-<FONT color="green">081</FONT>    <a name="line.81"></a>
-<FONT color="green">082</FONT>    }<a name="line.82"></a>
+<FONT color="green">077</FONT>                            throw new IllegalStateException(<a name="line.77"></a>
+<FONT color="green">078</FONT>                                            "Socket has been chaged to non-blocking");<a name="line.78"></a>
+<FONT color="green">079</FONT>                    }<a name="line.79"></a>
+<FONT color="green">080</FONT>    <a name="line.80"></a>
+<FONT color="green">081</FONT>            }<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>            @Override<a name="line.83"></a>
+<FONT color="green">084</FONT>            public void close() throws IOException {<a name="line.84"></a>
+<FONT color="green">085</FONT>                    socketUDT.close();<a name="line.85"></a>
+<FONT color="green">086</FONT>            }<a name="line.86"></a>
+<FONT color="green">087</FONT>    <a name="line.87"></a>
+<FONT color="green">088</FONT>    }<a name="line.88"></a>
 
 
 

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: src/main/c++/udt/src/buffer.h Source File</title>
+<title>barchart-udt-core-2.1.0: src/main/c++/udt/src/buffer.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -119,7 +119,7 @@ window.onload = initDynSections;
 <a name="l00050"></a><a class="code" href="classCSndBuffer.html">00050</a> <span class="keyword">class </span><a class="code" href="classCSndBuffer.html">CSndBuffer</a>
 <a name="l00051"></a>00051 {
 <a name="l00052"></a>00052 <span class="keyword">public</span>:
-<a name="l00053"></a>00053    <a class="code" href="classCSndBuffer.html">CSndBuffer</a>(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size = 32, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; mss = 1500);
+<a name="l00053"></a>00053    <a class="code" href="classCSndBuffer.html">CSndBuffer</a>(<span class="keywordtype">int</span> size = 32, <span class="keywordtype">int</span> mss = 1500);
 <a name="l00054"></a>00054    ~<a class="code" href="classCSndBuffer.html">CSndBuffer</a>();
 <a name="l00055"></a>00055 
 <a name="l00056"></a>00056       <span class="comment">// Functionality:</span>
@@ -132,7 +132,7 @@ window.onload = initDynSections;
 <a name="l00063"></a>00063       <span class="comment">// Returned value:</span>
 <a name="l00064"></a>00064       <span class="comment">//    None.</span>
 <a name="l00065"></a>00065 
-<a name="l00066"></a>00066    <span class="keywordtype">void</span> addBuffer(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; ttl = -1, <span class="keyword">const</span> <span class="keywordtype">bool</span>&amp; order = <span class="keyword">false</span>);
+<a name="l00066"></a>00066    <span class="keywordtype">void</span> addBuffer(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">int</span> len, <span class="keywordtype">int</span> ttl = -1, <span class="keywordtype">bool</span> order = <span class="keyword">false</span>);
 <a name="l00067"></a>00067 
 <a name="l00068"></a>00068       <span class="comment">// Functionality:</span>
 <a name="l00069"></a>00069       <span class="comment">//    Read a block of data from file and insert it into the sending list.</span>
@@ -142,7 +142,7 @@ window.onload = initDynSections;
 <a name="l00073"></a>00073       <span class="comment">// Returned value:</span>
 <a name="l00074"></a>00074       <span class="comment">//    actual size of data added from the file.</span>
 <a name="l00075"></a>00075 
-<a name="l00076"></a>00076    <span class="keywordtype">int</span> addBufferFromFile(std::fstream&amp; ifs, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len);
+<a name="l00076"></a>00076    <span class="keywordtype">int</span> addBufferFromFile(std::fstream&amp; ifs, <span class="keywordtype">int</span> len);
 <a name="l00077"></a>00077 
 <a name="l00078"></a>00078       <span class="comment">// Functionality:</span>
 <a name="l00079"></a>00079       <span class="comment">//    Find data position to pack a DATA packet from the furthest reading point.</span>
@@ -173,7 +173,7 @@ window.onload = initDynSections;
 <a name="l00104"></a>00104       <span class="comment">// Returned value:</span>
 <a name="l00105"></a>00105       <span class="comment">//    None.</span>
 <a name="l00106"></a>00106 
-<a name="l00107"></a>00107    <span class="keywordtype">void</span> ackData(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; offset);
+<a name="l00107"></a>00107    <span class="keywordtype">void</span> ackData(<span class="keywordtype">int</span> offset);
 <a name="l00108"></a>00108 
 <a name="l00109"></a>00109       <span class="comment">// Functionality:</span>
 <a name="l00110"></a>00110       <span class="comment">//    Read size of data still in the sending list.</span>
@@ -230,7 +230,7 @@ window.onload = initDynSections;
 <a name="l00162"></a><a class="code" href="classCRcvBuffer.html">00162</a> <span class="keyword">class </span><a class="code" href="classCRcvBuffer.html">CRcvBuffer</a>
 <a name="l00163"></a>00163 {
 <a name="l00164"></a>00164 <span class="keyword">public</span>:
-<a name="l00165"></a>00165    <a class="code" href="classCRcvBuffer.html">CRcvBuffer</a>(<a class="code" href="classCUnitQueue.html">CUnitQueue</a>* queue, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; bufsize = 65536);
+<a name="l00165"></a>00165    <a class="code" href="classCRcvBuffer.html">CRcvBuffer</a>(<a class="code" href="classCUnitQueue.html">CUnitQueue</a>* queue, <span class="keywordtype">int</span> bufsize = 65536);
 <a name="l00166"></a>00166    ~<a class="code" href="classCRcvBuffer.html">CRcvBuffer</a>();
 <a name="l00167"></a>00167 
 <a name="l00168"></a>00168       <span class="comment">// Functionality:</span>
@@ -251,7 +251,7 @@ window.onload = initDynSections;
 <a name="l00183"></a>00183       <span class="comment">// Returned value:</span>
 <a name="l00184"></a>00184       <span class="comment">//    size of data read.</span>
 <a name="l00185"></a>00185 
-<a name="l00186"></a>00186    <span class="keywordtype">int</span> readBuffer(<span class="keywordtype">char</span>* data, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len);
+<a name="l00186"></a>00186    <span class="keywordtype">int</span> readBuffer(<span class="keywordtype">char</span>* data, <span class="keywordtype">int</span> len);
 <a name="l00187"></a>00187 
 <a name="l00188"></a>00188       <span class="comment">// Functionality:</span>
 <a name="l00189"></a>00189       <span class="comment">//    Read data directly into file.</span>
@@ -261,7 +261,7 @@ window.onload = initDynSections;
 <a name="l00193"></a>00193       <span class="comment">// Returned value:</span>
 <a name="l00194"></a>00194       <span class="comment">//    size of data read.</span>
 <a name="l00195"></a>00195 
-<a name="l00196"></a>00196    <span class="keywordtype">int</span> readBufferToFile(std::fstream&amp; ofs, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len);
+<a name="l00196"></a>00196    <span class="keywordtype">int</span> readBufferToFile(std::fstream&amp; ofs, <span class="keywordtype">int</span> len);
 <a name="l00197"></a>00197 
 <a name="l00198"></a>00198       <span class="comment">// Functionality:</span>
 <a name="l00199"></a>00199       <span class="comment">//    Update the ACK point of the buffer.</span>
@@ -270,7 +270,7 @@ window.onload = initDynSections;
 <a name="l00202"></a>00202       <span class="comment">// Returned value:</span>
 <a name="l00203"></a>00203       <span class="comment">//    1 if a user buffer is fulfilled, otherwise 0.</span>
 <a name="l00204"></a>00204 
-<a name="l00205"></a>00205    <span class="keywordtype">void</span> ackData(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len);
+<a name="l00205"></a>00205    <span class="keywordtype">void</span> ackData(<span class="keywordtype">int</span> len);
 <a name="l00206"></a>00206 
 <a name="l00207"></a>00207       <span class="comment">// Functionality:</span>
 <a name="l00208"></a>00208       <span class="comment">//    Query how many buffer space left for data receiving.</span>
@@ -297,7 +297,7 @@ window.onload = initDynSections;
 <a name="l00229"></a>00229       <span class="comment">// Returned value:</span>
 <a name="l00230"></a>00230       <span class="comment">//    None.</span>
 <a name="l00231"></a>00231 
-<a name="l00232"></a>00232    <span class="keywordtype">void</span> dropMsg(<span class="keyword">const</span> int32_t&amp; msgno);
+<a name="l00232"></a>00232    <span class="keywordtype">void</span> dropMsg(int32_t msgno);
 <a name="l00233"></a>00233 
 <a name="l00234"></a>00234       <span class="comment">// Functionality:</span>
 <a name="l00235"></a>00235       <span class="comment">//    read a message.</span>
@@ -307,7 +307,7 @@ window.onload = initDynSections;
 <a name="l00239"></a>00239       <span class="comment">// Returned value:</span>
 <a name="l00240"></a>00240       <span class="comment">//    actuall size of data read.</span>
 <a name="l00241"></a>00241 
-<a name="l00242"></a>00242    <span class="keywordtype">int</span> readMsg(<span class="keywordtype">char</span>* data, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len);
+<a name="l00242"></a>00242    <span class="keywordtype">int</span> readMsg(<span class="keywordtype">char</span>* data, <span class="keywordtype">int</span> len);
 <a name="l00243"></a>00243 
 <a name="l00244"></a>00244       <span class="comment">// Functionality:</span>
 <a name="l00245"></a>00245       <span class="comment">//    Query how many messages are available now.</span>
@@ -342,7 +342,7 @@ window.onload = initDynSections;
 <a name="l00274"></a>00274 
 <a name="l00275"></a>00275 <span class="preprocessor">#endif</span>
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -17,25 +17,25 @@
 <a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">package</strong> com.barchart.udt.nio;
 <a class="jxr_linenumber" name="9" href="#9">9</a>   
-<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_javadoccomment"> * UDT channel role type.</em>
-<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment"> * </em>
-<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * NOTE: {@link #TypeUDT} means stream vs datagram;</em>
-<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> * {@link com.barchart.udt.nio.Kind} means server vs client.</em>
-<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;</em>
-<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">public</strong> enum <a href="../../../../com/barchart/udt/nio/KindUDT.html">KindUDT</a> {
-<a class="jxr_linenumber" name="18" href="#18">18</a>  
-<a class="jxr_linenumber" name="19" href="#19">19</a>  	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment">	 * The ACCEPTOR. Server mode: listens and accepts connections; generates</em>
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment">	 * CONNECTOR as a result of accept()</em>
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="23" href="#23">23</a>  	ACCEPTOR, <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="24" href="#24">24</a>  
-<a class="jxr_linenumber" name="25" href="#25">25</a>  	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment">	 * The CONNECTOR. Client mode: user-created channel which initiates</em>
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment">	 * connections to servers; Server mode: channel which is a result of</em>
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment">	 * accept();</em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> com.barchart.udt.SocketUDT;
+<a class="jxr_linenumber" name="11" href="#11">11</a>  
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * UDT channel role type.</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> * NOTE: {@link com.barchart.udt#TypeUDT} means stream vs datagram;</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment"> * {@link KindUDT} means server vs client.</em>
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">public</strong> enum <a href="../../../../com/barchart/udt/nio/KindUDT.html">KindUDT</a> {
+<a class="jxr_linenumber" name="19" href="#19">19</a>  
+<a class="jxr_linenumber" name="20" href="#20">20</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment">	 * Server mode: listens and accepts connections; generates {@link #COMMUTER}</em>
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment">	 * as a result of {@link SocketUDT#accept()}</em>
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="24" href="#24">24</a>  	ACCEPTOR, <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="25" href="#25">25</a>  
+<a class="jxr_linenumber" name="26" href="#26">26</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment">	 * Client mode: user-created channel which initiates connections to servers;</em>
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment">	 * Server mode: channel which is a result of accept();</em>
 <a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">	 */</em>
 <a class="jxr_linenumber" name="30" href="#30">30</a>  	CONNECTOR, <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="31" href="#31">31</a>  

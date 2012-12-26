@@ -1,4 +1,7 @@
 com.barchart.udt
+com.barchart.udt.anno
+com.barchart.udt.ccc
 com.barchart.udt.lib
 com.barchart.udt.net
 com.barchart.udt.nio
+com.barchart.udt.util

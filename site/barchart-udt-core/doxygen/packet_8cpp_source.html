@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: src/main/c++/udt/src/packet.cpp Source File</title>
+<title>barchart-udt-core-2.1.0: src/main/c++/udt/src/packet.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -245,12 +245,12 @@ window.onload = initDynSections;
 <a name="l00177"></a>00177    <span class="keywordflow">return</span> m_PacketVector[1].iov_len;
 <a name="l00178"></a>00178 }
 <a name="l00179"></a>00179 
-<a name="l00180"></a>00180 <span class="keywordtype">void</span> CPacket::setLength(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len)
+<a name="l00180"></a>00180 <span class="keywordtype">void</span> CPacket::setLength(<span class="keywordtype">int</span> len)
 <a name="l00181"></a>00181 {
 <a name="l00182"></a>00182    m_PacketVector[1].iov_len = len;
 <a name="l00183"></a>00183 }
 <a name="l00184"></a>00184 
-<a name="l00185"></a>00185 <span class="keywordtype">void</span> CPacket::pack(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; pkttype, <span class="keywordtype">void</span>* lparam, <span class="keywordtype">void</span>* rparam, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size)
+<a name="l00185"></a>00185 <span class="keywordtype">void</span> CPacket::pack(<span class="keywordtype">int</span> pkttype, <span class="keywordtype">void</span>* lparam, <span class="keywordtype">void</span>* rparam, <span class="keywordtype">int</span> size)
 <a name="l00186"></a>00186 {
 <a name="l00187"></a>00187    <span class="comment">// Set (bit-0 = 1) and (bit-1~15 = type)</span>
 <a name="l00188"></a>00188    m_nHeader[0] = 0x80000000 | (pkttype &lt;&lt; 16);
@@ -430,54 +430,55 @@ window.onload = initDynSections;
 <a name="l00362"></a>00362 m_iFlightFlagSize(0),
 <a name="l00363"></a>00363 m_iReqType(0),
 <a name="l00364"></a>00364 m_iID(0),
-<a name="l00365"></a>00365 m_iCookie(0),
-<a name="l00366"></a>00366 m_piPeerIP()
-<a name="l00367"></a>00367 {
-<a name="l00368"></a>00368 }
-<a name="l00369"></a>00369 
-<a name="l00370"></a>00370 <span class="keywordtype">int</span> CHandShake::serialize(<span class="keywordtype">char</span>* buf, <span class="keywordtype">int</span>&amp; size)
-<a name="l00371"></a>00371 {
-<a name="l00372"></a>00372    <span class="keywordflow">if</span> (size &lt; m_iContentSize)
-<a name="l00373"></a>00373       <span class="keywordflow">return</span> -1;
-<a name="l00374"></a>00374 
-<a name="l00375"></a>00375    int32_t* p = (int32_t*)buf;
-<a name="l00376"></a>00376    *p++ = m_iVersion;
-<a name="l00377"></a>00377    *p++ = m_iType;
-<a name="l00378"></a>00378    *p++ = m_iISN;
-<a name="l00379"></a>00379    *p++ = m_iMSS;
-<a name="l00380"></a>00380    *p++ = m_iFlightFlagSize;
-<a name="l00381"></a>00381    *p++ = m_iReqType;
-<a name="l00382"></a>00382    *p++ = m_iID;
-<a name="l00383"></a>00383    *p++ = m_iCookie;
-<a name="l00384"></a>00384    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 4; ++ i)
-<a name="l00385"></a>00385       *p++ = m_piPeerIP[i];
-<a name="l00386"></a>00386 
-<a name="l00387"></a>00387    size = m_iContentSize;
-<a name="l00388"></a>00388 
-<a name="l00389"></a>00389    <span class="keywordflow">return</span> 0;
-<a name="l00390"></a>00390 }
-<a name="l00391"></a>00391 
-<a name="l00392"></a>00392 <span class="keywordtype">int</span> CHandShake::deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span>* buf, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size)
-<a name="l00393"></a>00393 {
-<a name="l00394"></a>00394    <span class="keywordflow">if</span> (size &lt; m_iContentSize)
-<a name="l00395"></a>00395       <span class="keywordflow">return</span> -1;
-<a name="l00396"></a>00396 
-<a name="l00397"></a>00397    int32_t* p = (int32_t*)buf;
-<a name="l00398"></a>00398    m_iVersion = *p++;
-<a name="l00399"></a>00399    m_iType = *p++;
-<a name="l00400"></a>00400    m_iISN = *p++;
-<a name="l00401"></a>00401    m_iMSS = *p++;
-<a name="l00402"></a>00402    m_iFlightFlagSize = *p++;
-<a name="l00403"></a>00403    m_iReqType = *p++;
-<a name="l00404"></a>00404    m_iID = *p++;
-<a name="l00405"></a>00405    m_iCookie = *p++;
-<a name="l00406"></a>00406    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 4; ++ i)
-<a name="l00407"></a>00407       m_piPeerIP[i] = *p++;
-<a name="l00408"></a>00408 
-<a name="l00409"></a>00409    <span class="keywordflow">return</span> 0;
-<a name="l00410"></a>00410 }
+<a name="l00365"></a>00365 m_iCookie(0)
+<a name="l00366"></a>00366 {
+<a name="l00367"></a>00367    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 4; ++ i)
+<a name="l00368"></a>00368       m_piPeerIP[i] = 0;
+<a name="l00369"></a>00369 }
+<a name="l00370"></a>00370 
+<a name="l00371"></a>00371 <span class="keywordtype">int</span> CHandShake::serialize(<span class="keywordtype">char</span>* buf, <span class="keywordtype">int</span>&amp; size)
+<a name="l00372"></a>00372 {
+<a name="l00373"></a>00373    <span class="keywordflow">if</span> (size &lt; m_iContentSize)
+<a name="l00374"></a>00374       <span class="keywordflow">return</span> -1;
+<a name="l00375"></a>00375 
+<a name="l00376"></a>00376    int32_t* p = (int32_t*)buf;
+<a name="l00377"></a>00377    *p++ = m_iVersion;
+<a name="l00378"></a>00378    *p++ = m_iType;
+<a name="l00379"></a>00379    *p++ = m_iISN;
+<a name="l00380"></a>00380    *p++ = m_iMSS;
+<a name="l00381"></a>00381    *p++ = m_iFlightFlagSize;
+<a name="l00382"></a>00382    *p++ = m_iReqType;
+<a name="l00383"></a>00383    *p++ = m_iID;
+<a name="l00384"></a>00384    *p++ = m_iCookie;
+<a name="l00385"></a>00385    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 4; ++ i)
+<a name="l00386"></a>00386       *p++ = m_piPeerIP[i];
+<a name="l00387"></a>00387 
+<a name="l00388"></a>00388    size = m_iContentSize;
+<a name="l00389"></a>00389 
+<a name="l00390"></a>00390    <span class="keywordflow">return</span> 0;
+<a name="l00391"></a>00391 }
+<a name="l00392"></a>00392 
+<a name="l00393"></a>00393 <span class="keywordtype">int</span> CHandShake::deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span>* buf, <span class="keywordtype">int</span> size)
+<a name="l00394"></a>00394 {
+<a name="l00395"></a>00395    <span class="keywordflow">if</span> (size &lt; m_iContentSize)
+<a name="l00396"></a>00396       <span class="keywordflow">return</span> -1;
+<a name="l00397"></a>00397 
+<a name="l00398"></a>00398    int32_t* p = (int32_t*)buf;
+<a name="l00399"></a>00399    m_iVersion = *p++;
+<a name="l00400"></a>00400    m_iType = *p++;
+<a name="l00401"></a>00401    m_iISN = *p++;
+<a name="l00402"></a>00402    m_iMSS = *p++;
+<a name="l00403"></a>00403    m_iFlightFlagSize = *p++;
+<a name="l00404"></a>00404    m_iReqType = *p++;
+<a name="l00405"></a>00405    m_iID = *p++;
+<a name="l00406"></a>00406    m_iCookie = *p++;
+<a name="l00407"></a>00407    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 4; ++ i)
+<a name="l00408"></a>00408       m_piPeerIP[i] = *p++;
+<a name="l00409"></a>00409 
+<a name="l00410"></a>00410    <span class="keywordflow">return</span> 0;
+<a name="l00411"></a>00411 }
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

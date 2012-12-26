@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: src/main/c++/udt/src/packet.h Source File</title>
+<title>barchart-udt-core-2.1.0: src/main/c++/udt/src/packet.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -158,7 +158,7 @@ window.onload = initDynSections;
 <a name="l00089"></a>00089       <span class="comment">// Returned value:</span>
 <a name="l00090"></a>00090       <span class="comment">//    None.</span>
 <a name="l00091"></a>00091 
-<a name="l00092"></a>00092    <span class="keywordtype">void</span> setLength(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; len);
+<a name="l00092"></a>00092    <span class="keywordtype">void</span> setLength(<span class="keywordtype">int</span> len);
 <a name="l00093"></a>00093 
 <a name="l00094"></a>00094       <span class="comment">// Functionality:</span>
 <a name="l00095"></a>00095       <span class="comment">//    Pack a Control packet.</span>
@@ -170,7 +170,7 @@ window.onload = initDynSections;
 <a name="l00101"></a>00101       <span class="comment">// Returned value:</span>
 <a name="l00102"></a>00102       <span class="comment">//    None.</span>
 <a name="l00103"></a>00103 
-<a name="l00104"></a>00104    <span class="keywordtype">void</span> pack(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; pkttype, <span class="keywordtype">void</span>* lparam = NULL, <span class="keywordtype">void</span>* rparam = NULL, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size = 0);
+<a name="l00104"></a>00104    <span class="keywordtype">void</span> pack(<span class="keywordtype">int</span> pkttype, <span class="keywordtype">void</span>* lparam = NULL, <span class="keywordtype">void</span>* rparam = NULL, <span class="keywordtype">int</span> size = 0);
 <a name="l00105"></a>00105 
 <a name="l00106"></a>00106       <span class="comment">// Functionality:</span>
 <a name="l00107"></a>00107       <span class="comment">//    Read the packet vector.</span>
@@ -270,7 +270,7 @@ window.onload = initDynSections;
 <a name="l00202"></a>00202    <a class="code" href="classCHandShake.html">CHandShake</a>();
 <a name="l00203"></a>00203 
 <a name="l00204"></a>00204    <span class="keywordtype">int</span> serialize(<span class="keywordtype">char</span>* buf, <span class="keywordtype">int</span>&amp; size);
-<a name="l00205"></a>00205    <span class="keywordtype">int</span> deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span>* buf, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size);
+<a name="l00205"></a>00205    <span class="keywordtype">int</span> deserialize(<span class="keyword">const</span> <span class="keywordtype">char</span>* buf, <span class="keywordtype">int</span> size);
 <a name="l00206"></a>00206 
 <a name="l00207"></a>00207 <span class="keyword">public</span>:
 <a name="l00208"></a>00208    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> m_iContentSize;     <span class="comment">// Size of hand shake data</span>
@@ -290,7 +290,7 @@ window.onload = initDynSections;
 <a name="l00222"></a>00222 
 <a name="l00223"></a>00223 <span class="preprocessor">#endif</span>
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

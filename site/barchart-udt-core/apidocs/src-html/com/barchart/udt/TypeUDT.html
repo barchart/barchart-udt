@@ -14,7 +14,7 @@
 <FONT color="green">011</FONT>     * UDT socket mode type.<a name="line.11"></a>
 <FONT color="green">012</FONT>     * <a name="line.12"></a>
 <FONT color="green">013</FONT>     * NOTE: {@link #TypeUDT} means stream vs datagram;<a name="line.13"></a>
-<FONT color="green">014</FONT>     * {@link com.barchart.udt.nio.Kind} means server vs client.<a name="line.14"></a>
+<FONT color="green">014</FONT>     * {@link com.barchart.udt.nio.KindUDT} means server vs client.<a name="line.14"></a>
 <FONT color="green">015</FONT>     * &lt;p&gt;<a name="line.15"></a>
 <FONT color="green">016</FONT>     * maps to socket.h constants&lt;br&gt;<a name="line.16"></a>
 <FONT color="green">017</FONT>     * SOCK_STREAM = 1&lt;br&gt;<a name="line.17"></a>
@@ -39,7 +39,7 @@
 <FONT color="green">036</FONT>             * @param code<a name="line.36"></a>
 <FONT color="green">037</FONT>             *            the code<a name="line.37"></a>
 <FONT color="green">038</FONT>             */<a name="line.38"></a>
-<FONT color="green">039</FONT>            private TypeUDT(int code) {<a name="line.39"></a>
+<FONT color="green">039</FONT>            private TypeUDT(final int code) {<a name="line.39"></a>
 <FONT color="green">040</FONT>                    this.code = code;<a name="line.40"></a>
 <FONT color="green">041</FONT>            }<a name="line.41"></a>
 <FONT color="green">042</FONT>    <a name="line.42"></a>

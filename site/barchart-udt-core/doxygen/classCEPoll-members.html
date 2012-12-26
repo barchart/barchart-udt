@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: Member List</title>
+<title>barchart-udt-core-2.1.0: Member List</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -72,18 +72,18 @@ window.onload = initDynSections;
   <tr bgcolor="#f0f0f0"><td><b>add_usock</b>(const int eid, const UDTSOCKET &amp;u, const int *events=NULL) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>CEPoll</b>() (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>create</b>() (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>CRendezvousQueue</b> (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td><code> [friend]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>CUDT</b> (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td><code> [friend]</code></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>disable_read</b>(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>disable_write</b>(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>enable_read</b>(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>enable_write</b>(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>release</b>(const int eid) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>remove_ssock</b>(const int eid, const SYSSOCKET &amp;s, const int *events=NULL) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>remove_usock</b>(const int eid, const UDTSOCKET &amp;u, const int *events=NULL) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>remove_ssock</b>(const int eid, const SYSSOCKET &amp;s) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>remove_usock</b>(const int eid, const UDTSOCKET &amp;u) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>update_events</b>(const UDTSOCKET &amp;uid, std::set&lt; int &gt; &amp;eids, int events, bool enable) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>update_usock</b>(const int eid, const UDTSOCKET &amp;u, const int *events=NULL) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>verify_usock</b>(const int eid, const UDTSOCKET &amp;u, int *events) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>wait</b>(const int eid, std::set&lt; UDTSOCKET &gt; *readfds, std::set&lt; UDTSOCKET &gt; *writefds, int64_t msTimeOut, std::set&lt; SYSSOCKET &gt; *lrfds, std::set&lt; SYSSOCKET &gt; *lwfds) (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>~CEPoll</b>() (defined in <a class="el" href="classCEPoll.html">CEPoll</a>)</td><td><a class="el" href="classCEPoll.html">CEPoll</a></td><td></td></tr>
 </table></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

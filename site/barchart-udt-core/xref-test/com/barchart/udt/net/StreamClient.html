@@ -24,22 +24,22 @@
 <a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
 <a class="jxr_linenumber" name="16" href="#16">16</a>  
-<a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> com.barchart.udt.SocketUDT;
-<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> com.barchart.udt.TypeUDT;
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> com.barchart.udt.util.TestHelp;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../com/barchart/udt/net/StreamClient.html">StreamClient</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../com/barchart/udt/net/StreamBase.html">StreamBase</a> <strong class="jxr_keyword">implements</strong> Runnable {
-<a class="jxr_linenumber" name="22" href="#22">22</a>  
-<a class="jxr_linenumber" name="23" href="#23">23</a>  	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger log = LoggerFactory
-<a class="jxr_linenumber" name="24" href="#24">24</a>  			.getLogger(StreamClient.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="25" href="#25">25</a>  
-<a class="jxr_linenumber" name="26" href="#26">26</a>  	<strong class="jxr_keyword">final</strong> ExecutorService executor;
-<a class="jxr_linenumber" name="27" href="#27">27</a>  
-<a class="jxr_linenumber" name="28" href="#28">28</a>  	StreamClient(<strong class="jxr_keyword">final</strong> TypeUDT type, <strong class="jxr_keyword">final</strong> InetSocketAddress remoteAddress)
-<a class="jxr_linenumber" name="29" href="#29">29</a>  			<strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="30" href="#30">30</a>  
-<a class="jxr_linenumber" name="31" href="#31">31</a>  		<strong class="jxr_keyword">super</strong>(<strong class="jxr_keyword">new</strong> SocketUDT(type), TestHelp.getLocalSocketAddress(),
-<a class="jxr_linenumber" name="32" href="#32">32</a>  				remoteAddress);
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> util.UnitHelp;
+<a class="jxr_linenumber" name="18" href="#18">18</a>  
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> com.barchart.udt.SocketUDT;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> com.barchart.udt.TypeUDT;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../com/barchart/udt/net/StreamClient.html">StreamClient</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../com/barchart/udt/net/StreamBase.html">StreamBase</a> <strong class="jxr_keyword">implements</strong> Runnable {
+<a class="jxr_linenumber" name="23" href="#23">23</a>  
+<a class="jxr_linenumber" name="24" href="#24">24</a>  	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger log = LoggerFactory
+<a class="jxr_linenumber" name="25" href="#25">25</a>  			.getLogger(StreamClient.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="26" href="#26">26</a>  
+<a class="jxr_linenumber" name="27" href="#27">27</a>  	<strong class="jxr_keyword">final</strong> ExecutorService executor;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  
+<a class="jxr_linenumber" name="29" href="#29">29</a>  	StreamClient(<strong class="jxr_keyword">final</strong> TypeUDT type, <strong class="jxr_keyword">final</strong> InetSocketAddress remoteAddress)
+<a class="jxr_linenumber" name="30" href="#30">30</a>  			<strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="31" href="#31">31</a>  
+<a class="jxr_linenumber" name="32" href="#32">32</a>  		<strong class="jxr_keyword">super</strong>(<strong class="jxr_keyword">new</strong> SocketUDT(type), UnitHelp.localSocketAddress(), remoteAddress);
 <a class="jxr_linenumber" name="33" href="#33">33</a>  
 <a class="jxr_linenumber" name="34" href="#34">34</a>  		<strong class="jxr_keyword">this</strong>.executor = Executors.newCachedThreadPool();
 <a class="jxr_linenumber" name="35" href="#35">35</a>  

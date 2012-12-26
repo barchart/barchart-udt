@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: src/main/c++/udt/src/list.h Source File</title>
+<title>barchart-udt-core-2.1.0: src/main/c++/udt/src/list.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -118,7 +118,7 @@ window.onload = initDynSections;
 <a name="l00049"></a><a class="code" href="classCSndLossList.html">00049</a> <span class="keyword">class </span><a class="code" href="classCSndLossList.html">CSndLossList</a>
 <a name="l00050"></a>00050 {
 <a name="l00051"></a>00051 <span class="keyword">public</span>:
-<a name="l00052"></a>00052    <a class="code" href="classCSndLossList.html">CSndLossList</a>(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size = 1024);
+<a name="l00052"></a>00052    <a class="code" href="classCSndLossList.html">CSndLossList</a>(<span class="keywordtype">int</span> size = 1024);
 <a name="l00053"></a>00053    ~<a class="code" href="classCSndLossList.html">CSndLossList</a>();
 <a name="l00054"></a>00054 
 <a name="l00055"></a>00055       <span class="comment">// Functionality:</span>
@@ -129,7 +129,7 @@ window.onload = initDynSections;
 <a name="l00060"></a>00060       <span class="comment">// Returned value:</span>
 <a name="l00061"></a>00061       <span class="comment">//    number of packets that are not in the list previously.</span>
 <a name="l00062"></a>00062 
-<a name="l00063"></a>00063    <span class="keywordtype">int</span> insert(<span class="keyword">const</span> int32_t&amp; seqno1, <span class="keyword">const</span> int32_t&amp; seqno2);
+<a name="l00063"></a>00063    <span class="keywordtype">int</span> insert(int32_t seqno1, int32_t seqno2);
 <a name="l00064"></a>00064 
 <a name="l00065"></a>00065       <span class="comment">// Functionality:</span>
 <a name="l00066"></a>00066       <span class="comment">//    Remove ALL the seq. no. that are not greater than the parameter.</span>
@@ -138,7 +138,7 @@ window.onload = initDynSections;
 <a name="l00069"></a>00069       <span class="comment">// Returned value:</span>
 <a name="l00070"></a>00070       <span class="comment">//    None.</span>
 <a name="l00071"></a>00071 
-<a name="l00072"></a>00072    <span class="keywordtype">void</span> <span class="keyword">remove</span>(<span class="keyword">const</span> int32_t&amp; seqno);
+<a name="l00072"></a>00072    <span class="keywordtype">void</span> <span class="keyword">remove</span>(int32_t seqno);
 <a name="l00073"></a>00073 
 <a name="l00074"></a>00074       <span class="comment">// Functionality:</span>
 <a name="l00075"></a>00075       <span class="comment">//    Read the loss length.</span>
@@ -179,7 +179,7 @@ window.onload = initDynSections;
 <a name="l00111"></a><a class="code" href="classCRcvLossList.html">00111</a> <span class="keyword">class </span><a class="code" href="classCRcvLossList.html">CRcvLossList</a>
 <a name="l00112"></a>00112 {
 <a name="l00113"></a>00113 <span class="keyword">public</span>:
-<a name="l00114"></a>00114    <a class="code" href="classCRcvLossList.html">CRcvLossList</a>(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size = 1024);
+<a name="l00114"></a>00114    <a class="code" href="classCRcvLossList.html">CRcvLossList</a>(<span class="keywordtype">int</span> size = 1024);
 <a name="l00115"></a>00115    ~<a class="code" href="classCRcvLossList.html">CRcvLossList</a>();
 <a name="l00116"></a>00116 
 <a name="l00117"></a>00117       <span class="comment">// Functionality:</span>
@@ -190,7 +190,7 @@ window.onload = initDynSections;
 <a name="l00122"></a>00122       <span class="comment">// Returned value:</span>
 <a name="l00123"></a>00123       <span class="comment">//    None.</span>
 <a name="l00124"></a>00124 
-<a name="l00125"></a>00125    <span class="keywordtype">void</span> insert(<span class="keyword">const</span> int32_t&amp; seqno1, <span class="keyword">const</span> int32_t&amp; seqno2);
+<a name="l00125"></a>00125    <span class="keywordtype">void</span> insert(int32_t seqno1, int32_t seqno2);
 <a name="l00126"></a>00126 
 <a name="l00127"></a>00127       <span class="comment">// Functionality:</span>
 <a name="l00128"></a>00128       <span class="comment">//    Remove a loss seq. no. from the receiver&apos;s loss list.</span>
@@ -199,7 +199,7 @@ window.onload = initDynSections;
 <a name="l00131"></a>00131       <span class="comment">// Returned value:</span>
 <a name="l00132"></a>00132       <span class="comment">//    if the packet is removed (true) or no such lost packet is found (false).</span>
 <a name="l00133"></a>00133 
-<a name="l00134"></a>00134    <span class="keywordtype">bool</span> <span class="keyword">remove</span>(<span class="keyword">const</span> int32_t&amp; seqno);
+<a name="l00134"></a>00134    <span class="keywordtype">bool</span> <span class="keyword">remove</span>(int32_t seqno);
 <a name="l00135"></a>00135 
 <a name="l00136"></a>00136       <span class="comment">// Functionality:</span>
 <a name="l00137"></a>00137       <span class="comment">//    Remove all packets between seqno1 and seqno2.</span>
@@ -209,7 +209,7 @@ window.onload = initDynSections;
 <a name="l00141"></a>00141       <span class="comment">// Returned value:</span>
 <a name="l00142"></a>00142       <span class="comment">//    if the packet is removed (true) or no such lost packet is found (false).</span>
 <a name="l00143"></a>00143 
-<a name="l00144"></a>00144    <span class="keywordtype">bool</span> <span class="keyword">remove</span>(<span class="keyword">const</span> int32_t&amp; seqno1, <span class="keyword">const</span> int32_t&amp; seqno2);
+<a name="l00144"></a>00144    <span class="keywordtype">bool</span> <span class="keyword">remove</span>(int32_t seqno1, int32_t seqno2);
 <a name="l00145"></a>00145 
 <a name="l00146"></a>00146       <span class="comment">// Functionality:</span>
 <a name="l00147"></a>00147       <span class="comment">//    Find if there is any lost packets whose sequence number falling seqno1 and seqno2.</span>
@@ -219,7 +219,7 @@ window.onload = initDynSections;
 <a name="l00151"></a>00151       <span class="comment">// Returned value:</span>
 <a name="l00152"></a>00152       <span class="comment">//    True if found; otherwise false.</span>
 <a name="l00153"></a>00153 
-<a name="l00154"></a>00154    <span class="keywordtype">bool</span> find(<span class="keyword">const</span> int32_t&amp; seqno1, <span class="keyword">const</span> int32_t&amp; seqno2) <span class="keyword">const</span>;
+<a name="l00154"></a>00154    <span class="keywordtype">bool</span> find(int32_t seqno1, int32_t seqno2) <span class="keyword">const</span>;
 <a name="l00155"></a>00155 
 <a name="l00156"></a>00156       <span class="comment">// Functionality:</span>
 <a name="l00157"></a>00157       <span class="comment">//    Read the loss length.</span>
@@ -248,7 +248,7 @@ window.onload = initDynSections;
 <a name="l00180"></a>00180       <span class="comment">// Returned value:</span>
 <a name="l00181"></a>00181       <span class="comment">//    None.</span>
 <a name="l00182"></a>00182 
-<a name="l00183"></a>00183    <span class="keywordtype">void</span> getLossArray(int32_t* array, <span class="keywordtype">int</span>&amp; len, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; limit);
+<a name="l00183"></a>00183    <span class="keywordtype">void</span> getLossArray(int32_t* array, <span class="keywordtype">int</span>&amp; len, <span class="keywordtype">int</span> limit);
 <a name="l00184"></a>00184 
 <a name="l00185"></a>00185 <span class="keyword">private</span>:
 <a name="l00186"></a>00186    int32_t* m_piData1;                  <span class="comment">// sequence number starts</span>
@@ -269,7 +269,7 @@ window.onload = initDynSections;
 <a name="l00201"></a>00201 
 <a name="l00202"></a>00202 <span class="preprocessor">#endif</span>
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

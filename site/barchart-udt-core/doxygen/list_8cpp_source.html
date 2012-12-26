@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.0.1-SNAPSHOT: src/main/c++/udt/src/list.cpp Source File</title>
+<title>barchart-udt-core-2.1.0: src/main/c++/udt/src/list.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -109,7 +109,7 @@ window.onload = initDynSections;
 <a name="l00040"></a>00040 
 <a name="l00041"></a>00041 <span class="preprocessor">#include &quot;list.h&quot;</span>
 <a name="l00042"></a>00042 
-<a name="l00043"></a>00043 CSndLossList::CSndLossList(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size):
+<a name="l00043"></a>00043 CSndLossList::CSndLossList(<span class="keywordtype">int</span> size):
 <a name="l00044"></a>00044 m_piData1(NULL),
 <a name="l00045"></a>00045 m_piData2(NULL),
 <a name="l00046"></a>00046 m_piNext(NULL),
@@ -151,7 +151,7 @@ window.onload = initDynSections;
 <a name="l00082"></a>00082 <span class="preprocessor">   #endif</span>
 <a name="l00083"></a>00083 <span class="preprocessor"></span>}
 <a name="l00084"></a>00084 
-<a name="l00085"></a>00085 <span class="keywordtype">int</span> CSndLossList::insert(<span class="keyword">const</span> int32_t&amp; seqno1, <span class="keyword">const</span> int32_t&amp; seqno2)
+<a name="l00085"></a>00085 <span class="keywordtype">int</span> CSndLossList::insert(int32_t seqno1, int32_t seqno2)
 <a name="l00086"></a>00086 {
 <a name="l00087"></a>00087    <a class="code" href="classCGuard.html">CGuard</a> listguard(m_ListLock);
 <a name="l00088"></a>00088 
@@ -323,7 +323,7 @@ window.onload = initDynSections;
 <a name="l00254"></a>00254    <span class="keywordflow">return</span> m_iLength - origlen;
 <a name="l00255"></a>00255 }
 <a name="l00256"></a>00256 
-<a name="l00257"></a>00257 <span class="keywordtype">void</span> CSndLossList::remove(<span class="keyword">const</span> int32_t&amp; seqno)
+<a name="l00257"></a>00257 <span class="keywordtype">void</span> CSndLossList::remove(int32_t seqno)
 <a name="l00258"></a>00258 {
 <a name="l00259"></a>00259    <a class="code" href="classCGuard.html">CGuard</a> listguard(m_ListLock);
 <a name="l00260"></a>00260 
@@ -487,7 +487,7 @@ window.onload = initDynSections;
 <a name="l00418"></a>00418 }
 <a name="l00419"></a>00419 
 <a name="l00421"></a>00421 
-<a name="l00422"></a>00422 CRcvLossList::CRcvLossList(<span class="keyword">const</span> <span class="keywordtype">int</span>&amp; size):
+<a name="l00422"></a>00422 CRcvLossList::CRcvLossList(<span class="keywordtype">int</span> size):
 <a name="l00423"></a>00423 m_piData1(NULL),
 <a name="l00424"></a>00424 m_piData2(NULL),
 <a name="l00425"></a>00425 m_piNext(NULL),
@@ -518,7 +518,7 @@ window.onload = initDynSections;
 <a name="l00450"></a>00450    <span class="keyword">delete</span> [] m_piPrior;
 <a name="l00451"></a>00451 }
 <a name="l00452"></a>00452 
-<a name="l00453"></a>00453 <span class="keywordtype">void</span> CRcvLossList::insert(<span class="keyword">const</span> int32_t&amp; seqno1, <span class="keyword">const</span> int32_t&amp; seqno2)
+<a name="l00453"></a>00453 <span class="keywordtype">void</span> CRcvLossList::insert(int32_t seqno1, int32_t seqno2)
 <a name="l00454"></a>00454 {
 <a name="l00455"></a>00455    <span class="comment">// Data to be inserted must be larger than all those in the list</span>
 <a name="l00456"></a>00456    <span class="comment">// guaranteed by the UDT receiver</span>
@@ -566,7 +566,7 @@ window.onload = initDynSections;
 <a name="l00498"></a>00498    m_iLength += CSeqNo::seqlen(seqno1, seqno2);
 <a name="l00499"></a>00499 }
 <a name="l00500"></a>00500 
-<a name="l00501"></a>00501 <span class="keywordtype">bool</span> CRcvLossList::remove(<span class="keyword">const</span> int32_t&amp; seqno)
+<a name="l00501"></a>00501 <span class="keywordtype">bool</span> CRcvLossList::remove(int32_t seqno)
 <a name="l00502"></a>00502 {
 <a name="l00503"></a>00503    <span class="keywordflow">if</span> (0 == m_iLength)
 <a name="l00504"></a>00504       <span class="keywordflow">return</span> <span class="keyword">false</span>; 
@@ -696,7 +696,7 @@ window.onload = initDynSections;
 <a name="l00628"></a>00628    <span class="keywordflow">return</span> <span class="keyword">true</span>;
 <a name="l00629"></a>00629 }
 <a name="l00630"></a>00630 
-<a name="l00631"></a>00631 <span class="keywordtype">bool</span> CRcvLossList::remove(<span class="keyword">const</span> int32_t&amp; seqno1, <span class="keyword">const</span> int32_t&amp; seqno2)
+<a name="l00631"></a>00631 <span class="keywordtype">bool</span> CRcvLossList::remove(int32_t seqno1, int32_t seqno2)
 <a name="l00632"></a>00632 {
 <a name="l00633"></a>00633    <span class="keywordflow">if</span> (seqno1 &lt;= seqno2)
 <a name="l00634"></a>00634    {
@@ -714,7 +714,7 @@ window.onload = initDynSections;
 <a name="l00646"></a>00646    <span class="keywordflow">return</span> <span class="keyword">true</span>;
 <a name="l00647"></a>00647 }
 <a name="l00648"></a>00648 
-<a name="l00649"></a>00649 <span class="keywordtype">bool</span> CRcvLossList::find(<span class="keyword">const</span> int32_t&amp; seqno1, <span class="keyword">const</span> int32_t&amp; seqno2)<span class="keyword"> const</span>
+<a name="l00649"></a>00649 <span class="keywordtype">bool</span> CRcvLossList::find(int32_t seqno1, int32_t seqno2)<span class="keyword"> const</span>
 <a name="l00650"></a>00650 <span class="keyword"></span>{
 <a name="l00651"></a>00651    <span class="keywordflow">if</span> (0 == m_iLength)
 <a name="l00652"></a>00652       <span class="keywordflow">return</span> <span class="keyword">false</span>;
@@ -747,7 +747,7 @@ window.onload = initDynSections;
 <a name="l00679"></a>00679    <span class="keywordflow">return</span> m_piData1[m_iHead];
 <a name="l00680"></a>00680 }
 <a name="l00681"></a>00681 
-<a name="l00682"></a>00682 <span class="keywordtype">void</span> CRcvLossList::getLossArray(int32_t* array, <span class="keywordtype">int</span>&amp; len, <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; limit)
+<a name="l00682"></a>00682 <span class="keywordtype">void</span> CRcvLossList::getLossArray(int32_t* array, <span class="keywordtype">int</span>&amp; len, <span class="keywordtype">int</span> limit)
 <a name="l00683"></a>00683 {
 <a name="l00684"></a>00684    len = 0;
 <a name="l00685"></a>00685 
@@ -770,7 +770,7 @@ window.onload = initDynSections;
 <a name="l00702"></a>00702    }
 <a name="l00703"></a>00703 }
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 15 Dec 2012 for barchart-udt-core-2.0.1-SNAPSHOT by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
