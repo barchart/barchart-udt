@@ -508,8 +508,11 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recvmsg()</a>
 	 */
-	protected native int receive0(final int socketID, final int socketType, //
-			final byte[] array) throws ExceptionUDT;
+	protected static native int receive0(//
+			final int socketID, //
+			final int socketType, //
+			final byte[] array //
+	) throws ExceptionUDT;
 
 	/**
 	 * receive into a portion of a byte array
@@ -519,7 +522,7 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recvmsg()</a>
 	 */
-	protected native int receive1( //
+	protected static native int receive1( //
 			final int socketID, //
 			final int socketType, //
 			final byte[] array, //
@@ -535,9 +538,13 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/recv.htm">UDT::recvmsg()</a>
 	 */
-	protected native int receive2(final int socketID, final int socketType, //
-			final ByteBuffer buffer, final int position, final int limit)
-			throws ExceptionUDT;
+	protected static native int receive2( //
+			final int socketID, //
+			final int socketType, //
+			final ByteBuffer buffer, //
+			final int position, //
+			final int limit //
+	) throws ExceptionUDT;
 
 	/**
 	 * receive into byte[] array upto <code>array.length</code> bytes
@@ -548,8 +555,11 @@ public class SocketUDT {
 	 * @see #receive0(int, int, byte[])
 	 */
 	public final int receive(final byte[] array) throws ExceptionUDT {
+
 		HelpUDT.checkArray(array);
+
 		return receive0(socketID, socketType, array);
+
 	}
 
 	/**
@@ -562,8 +572,11 @@ public class SocketUDT {
 	 */
 	public final int receive(final byte[] array, final int position,
 			final int limit) throws ExceptionUDT {
+
 		HelpUDT.checkArray(array);
+
 		return receive1(socketID, socketType, array, position, limit);
+
 	}
 
 	/**
@@ -576,15 +589,20 @@ public class SocketUDT {
 	 * @see #receive2(int, int, ByteBuffer, int, int)
 	 */
 	public final int receive(final ByteBuffer buffer) throws ExceptionUDT {
+
 		HelpUDT.checkBuffer(buffer);
+
 		final int position = buffer.position();
 		final int limit = buffer.limit();
 		final int remaining = buffer.remaining();
-		final int sizeReceived = receive2(socketID, socketType, //
-				buffer, position, limit);
+
+		final int sizeReceived = //
+		receive2(socketID, socketType, buffer, position, limit);
+
 		if (sizeReceived <= 0) {
 			return sizeReceived;
 		}
+
 		if (sizeReceived <= remaining) {
 			buffer.position(position + sizeReceived);
 			return sizeReceived;
@@ -592,6 +610,7 @@ public class SocketUDT {
 			log.error("sizeReceived > remaining");
 			return 0;
 		}
+
 	}
 
 	/**
@@ -660,9 +679,13 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
-	protected native int send0(final int socketID, final int socketType, //
-			final int timeToLive, final boolean isOrdered, //
-			final byte[] array) throws ExceptionUDT;
+	protected static native int send0( //
+			final int socketID, //
+			final int socketType, //
+			final int timeToLive, //
+			final boolean isOrdered, //
+			final byte[] array //
+	) throws ExceptionUDT;
 
 	/**
 	 * send from a portion of a byte[] array;
@@ -674,10 +697,15 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
-	protected native int send1(final int socketID, final int socketType, //
-			final int timeToLive, final boolean isOrdered, //
-			final byte[] array, final int arayPosition, final int arrayLimit)
-			throws ExceptionUDT;
+	protected static native int send1( //
+			final int socketID, //
+			final int socketType, //
+			final int timeToLive, //
+			final boolean isOrdered, //
+			final byte[] array, // /
+			final int arayPosition, //
+			final int arrayLimit //
+	) throws ExceptionUDT;
 
 	/**
 	 * send from {@link java.nio.DirectByteBuffer};
@@ -689,7 +717,7 @@ public class SocketUDT {
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
-	protected native int send2( //
+	protected static native int send2( //
 			final int socketID, //
 			final int socketType, //
 			final int timeToLive, //
@@ -710,10 +738,17 @@ public class SocketUDT {
 	 * @see #send0(int, int, int, boolean, byte[])
 	 */
 	public final int send(final byte[] array) throws ExceptionUDT {
+
 		HelpUDT.checkArray(array);
-		return send0(socketID, socketType, //
-				messageTimeTolive, messageIsOrdered, //
-				array);
+
+		return send0( //
+				socketID, //
+				socketType, //
+				messageTimeTolive, //
+				messageIsOrdered, //
+				array //
+		);
+
 	}
 
 	/**
@@ -730,12 +765,24 @@ public class SocketUDT {
 	 *         <code>>0</code> : normal send, actual sent byte count <br>
 	 * @see #send1(int, int, int, boolean, byte[], int, int)
 	 */
-	public final int send(final byte[] array, final int position,
-			final int limit) throws ExceptionUDT {
+	public final int send( //
+			final byte[] array, //
+			final int position, //
+			final int limit //
+	) throws ExceptionUDT {
+
 		HelpUDT.checkArray(array);
-		return send1(socketID, socketType, //
-				messageTimeTolive, messageIsOrdered, //
-				array, position, limit);
+
+		return send1( //
+				socketID, //
+				socketType, //
+				messageTimeTolive, //
+				messageIsOrdered, //
+				array, //
+				position, //
+				limit //
+		);
+
 	}
 
 	/**
@@ -750,13 +797,23 @@ public class SocketUDT {
 	 * @see #send2(int, int, int, boolean, ByteBuffer, int, int)
 	 */
 	public final int send(final ByteBuffer buffer) throws ExceptionUDT {
+
 		HelpUDT.checkBuffer(buffer);
+
 		final int position = buffer.position();
 		final int limit = buffer.limit();
 		final int remaining = buffer.remaining();
-		final int sizeSent = send2(socketID, socketType, //
-				messageTimeTolive, messageIsOrdered, //
-				buffer, position, limit);
+
+		final int sizeSent = send2( //
+				socketID, //
+				socketType, //
+				messageTimeTolive, //
+				messageIsOrdered, //
+				buffer, //
+				position, //
+				limit //
+		);
+
 		if (sizeSent <= 0) {
 			return sizeSent;
 		}
@@ -767,6 +824,7 @@ public class SocketUDT {
 			log.error("sizeSent > remaining");
 			return 0;
 		}
+
 	}
 
 	/**
