@@ -14,6 +14,7 @@ import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -170,8 +171,10 @@ public class UnitHelp {
 	}
 
 	public static void logSet(final Set<?> set) {
-		for (final Object item : set) {
-			log.info("--- {}", item);
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		final TreeSet<?> treeSet = new TreeSet(set);
+		for (final Object item : treeSet) {
+			log.info("-> {}", item);
 		}
 	}
 

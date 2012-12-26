@@ -32,7 +32,7 @@ import util.UnitHelp;
 
 import com.barchart.udt.StatusUDT;
 
-public class TestSelectorProviderUDT extends TestAny {
+public class TestSelect extends TestAny {
 
 	@Before
 	public void setUp() throws Exception {
@@ -127,7 +127,7 @@ public class TestSelectorProviderUDT extends TestAny {
 
 	}
 
-	@Test
+	@Test(timeout = 5 * 1000)
 	public void testAcceptNone() throws Exception {
 
 		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
@@ -158,7 +158,7 @@ public class TestSelectorProviderUDT extends TestAny {
 
 	}
 
-	@Test
+	@Test(timeout = 3 * 1000)
 	public void testAcceptOne() throws Exception {
 
 		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
@@ -173,7 +173,7 @@ public class TestSelectorProviderUDT extends TestAny {
 		final SelectionKeyUDT acceptKey = (SelectionKeyUDT) acceptChannel
 				.register(selector, OP_ACCEPT);
 
-		assertEquals(StatusUDT.LISTENING, acceptKey.socketUDT().getStatus());
+		socketAwait(acceptKey.socketUDT(), StatusUDT.LISTENING);
 
 		final SocketChannel clientChannel = provider.openSocketChannel();
 		clientChannel.configureBlocking(false);
@@ -182,60 +182,57 @@ public class TestSelectorProviderUDT extends TestAny {
 		final SelectionKeyUDT clientKey = (SelectionKeyUDT) clientChannel
 				.register(selector, OP_CONNECT);
 
-		assertEquals(StatusUDT.OPENED, clientKey.socketUDT().getStatus());
+		socketAwait(clientKey.socketUDT(), StatusUDT.OPENED);
 
-		assertNull("nothing to accept", acceptKey.socketUDT().accept());
+		log.info("acceptKey={}", acceptKey);
+		log.info("clientKey={}", clientKey);
 
 		{
-			log.info("### state 0");
-			final int readyCount = selector.select(1000);
+			log.info("state 0 - nothing to accept");
+			final int readyCount = selector.select(500);
 			final Set<SelectionKey> readySet = selector.selectedKeys();
-			log.info("acceptKey={}", acceptKey);
-			log.info("clientKey={}", clientKey);
 			UnitHelp.logSet(readySet);
 			assertEquals(0, readySet.size());
 			assertEquals(0, readyCount);
 			readySet.clear();
-			assertTrue(selector.selectedKeys().isEmpty());
 		}
 
 		clientChannel.connect(acceptChannel.socket().getLocalSocketAddress());
 
 		socketAwait(clientKey.socketUDT(), StatusUDT.CONNECTED);
 
-		{
-			log.info("acceptKey={}", acceptKey);
-			log.info("clientKey={}", clientKey);
-		}
+		log.info("acceptKey={}", acceptKey);
+		log.info("clientKey={}", clientKey);
 
 		{
-			log.info("### state 1");
+			log.info("state 1 - both accept and client have interest");
 			final int readyCount = selector.select();
 			final Set<SelectionKey> readySet = selector.selectedKeys();
-			log.info("acceptKey={}", acceptKey);
-			log.info("clientKey={}", clientKey);
 			logSet(readySet);
 			assertEquals(2, readyCount);
 			assertEquals(2, readySet.size());
 			assertTrue(readySet.contains(acceptKey));
 			assertTrue(readySet.contains(clientKey));
+			assertTrue(acceptKey.isAcceptable());
+			assertTrue(clientKey.isConnectable());
 			readySet.clear();
-			assertTrue(selector.selectedKeys().isEmpty());
 		}
 
+		log.info("acceptKey={}", acceptKey);
+		log.info("clientKey={}", clientKey);
+
 		{
-			log.info("### state 2");
+			log.info("state 2 - verify same interest reported");
 			final int readyCount = selector.select();
 			final Set<SelectionKey> readySet = selector.selectedKeys();
-			log.info("acceptKey={}", acceptKey);
-			log.info("clientKey={}", clientKey);
 			logSet(readySet);
 			assertEquals(2, readySet.size());
 			assertEquals(2, readyCount);
 			assertTrue(readySet.contains(acceptKey));
 			assertTrue(readySet.contains(clientKey));
+			assertTrue(acceptKey.isAcceptable());
+			assertTrue(clientKey.isConnectable());
 			readySet.clear();
-			assertTrue(selector.selectedKeys().isEmpty());
 		}
 
 		final SocketChannel serverChannel = acceptChannel.accept();
@@ -249,18 +246,22 @@ public class TestSelectorProviderUDT extends TestAny {
 
 		socketAwait(serverKey.socketUDT(), StatusUDT.CONNECTED);
 
+		log.info("acceptKey={}", acceptKey);
+		log.info("clientKey={}", clientKey);
+
 		{
-			log.info("### state 3");
+			log.info("state 3 - post accept interest");
 			final int readyCount = selector.select();
 			final Set<SelectionKey> readySet = selector.selectedKeys();
-			log.info("acceptKey={}", acceptKey);
-			log.info("clientKey={}", clientKey);
 			UnitHelp.logSet(readySet);
 			assertEquals(1, readyCount);
 			assertEquals(1, readySet.size());
 			assertTrue(readySet.contains(clientKey));
+			assertTrue(acceptKey.isAcceptable()); // XXX
+			assertTrue(clientKey.isConnectable()); // XXX
+			assertFalse(clientKey.isReadable());
+			assertFalse(clientKey.isWritable());
 			readySet.clear();
-			assertTrue(selector.selectedKeys().isEmpty());
 		}
 
 		assertFalse(serverChannel.isConnectionPending());
@@ -269,16 +270,57 @@ public class TestSelectorProviderUDT extends TestAny {
 		assertTrue(clientChannel.finishConnect());
 		assertFalse(clientChannel.isConnectionPending());
 
+		log.info("acceptKey={}", acceptKey);
+		log.info("clientKey={}", clientKey);
+
+		clientKey.interestOps(OP_READ | OP_WRITE);
+
 		{
-			log.info("### state 4");
+			log.info("state 4 - client is connected");
 			final int readyCount = selector.select();
 			final Set<SelectionKey> readySet = selector.selectedKeys();
-			log.info("acceptKey={}", acceptKey);
-			log.info("clientKey={}", clientKey);
+			UnitHelp.logSet(readySet);
+			assertEquals(1, readyCount);
+			assertEquals(1, readySet.size());
+			assertFalse(clientKey.isReadable());
+			assertTrue(clientKey.isWritable());
+			readySet.clear();
+		}
+
+		log.info("acceptKey={}", acceptKey);
+		log.info("clientKey={}", clientKey);
+
+		clientKey.interestOps(0);
+
+		{
+			log.info("state 5 - client is connected");
+			final int readyCount = selector.select(500);
+			final Set<SelectionKey> readySet = selector.selectedKeys();
 			UnitHelp.logSet(readySet);
 			assertEquals(0, readyCount);
 			assertEquals(0, readySet.size());
+			readySet.clear();
 		}
+
+		log.info("acceptKey={}", acceptKey);
+		log.info("clientKey={}", clientKey);
+
+		clientKey.interestOps(OP_WRITE);
+
+		{
+			log.info("state 6 - client is connected");
+			final int readyCount = selector.select(500);
+			final Set<SelectionKey> readySet = selector.selectedKeys();
+			UnitHelp.logSet(readySet);
+			assertEquals(1, readyCount);
+			assertEquals(1, readySet.size());
+			assertFalse(clientKey.isReadable());
+			assertTrue(clientKey.isWritable());
+			readySet.clear();
+		}
+
+		log.info("acceptKey={}", acceptKey);
+		log.info("clientKey={}", clientKey);
 
 		serverChannel.close();
 		clientChannel.close();
@@ -288,7 +330,7 @@ public class TestSelectorProviderUDT extends TestAny {
 
 	}
 
-	@Test
+	@Test(timeout = 5 * 1000)
 	public void testSelectCycle() throws Exception {
 
 		final SelectorProviderUDT provider = SelectorProviderUDT.DATAGRAM;
@@ -311,18 +353,21 @@ public class TestSelectorProviderUDT extends TestAny {
 		final SelectionKeyUDT acceptKey = (SelectionKeyUDT) acceptChannel
 				.register(selector, OP_ACCEPT);
 
+		socketAwait(acceptKey.socketUDT(), StatusUDT.LISTENING);
+
 		final SelectionKeyUDT clientKey = (SelectionKeyUDT) clientChannel
-				.register(selector, OP_CONNECT | OP_READ | OP_WRITE);
+				.register(selector, OP_CONNECT);
 
 		clientSocket.connect(acceptSocket.getLocalSocketAddress());
 
 		socketAwait(clientKey.socketUDT(), StatusUDT.CONNECTED);
 
-		log.info("connect");
+		log.info("accept : {}", acceptKey);
+		log.info("client : {}", clientKey);
 
 		{
 
-			log.info("### state 0");
+			log.info("state 0 - accept / client setup");
 
 			final int readyCount = selector.select();
 			log.info("readyCount={}", readyCount);
@@ -334,8 +379,8 @@ public class TestSelectorProviderUDT extends TestAny {
 
 			assertEquals(2, keySet.size());
 
-			assertTrue(keySet.contains(clientKey));
 			assertTrue(keySet.contains(acceptKey));
+			assertTrue(keySet.contains(clientKey));
 
 			assertTrue(acceptKey.isValid());
 			assertTrue(clientKey.isValid());
@@ -345,10 +390,10 @@ public class TestSelectorProviderUDT extends TestAny {
 			assertFalse("accept w/o read", acceptKey.isReadable());
 			assertFalse("accept w/o write", acceptKey.isWritable());
 
-			assertFalse("no accept", clientKey.isAcceptable());
-			assertTrue("connection", clientKey.isConnectable());
-			assertFalse("no read", clientKey.isReadable());
-			assertFalse("no write", clientKey.isWritable());
+			assertFalse("client w/o accept", clientKey.isAcceptable());
+			assertTrue("client has connect", clientKey.isConnectable());
+			assertFalse("client w/o read", clientKey.isReadable());
+			assertFalse("client w/o write", clientKey.isWritable());
 
 			assertTrue(clientChannel.isConnected());
 
@@ -357,37 +402,34 @@ public class TestSelectorProviderUDT extends TestAny {
 		}
 
 		final SocketChannel serverChannel = acceptChannel.accept();
-
-		assertTrue(serverChannel.isConnected());
-
 		serverChannel.configureBlocking(false);
-
 		final SelectionKey serverKey = serverChannel.register( //
 				selector, OP_READ | OP_WRITE);
+		assertTrue("server connect", serverChannel.isConnected());
 
-		assertTrue("consumer must ack", clientChannel.finishConnect());
+		assertTrue("client connect", clientChannel.finishConnect());
+		clientKey.interestOps(OP_READ | OP_WRITE);
+
+		log.info("server : {}", serverKey);
+		log.info("client : {}", clientKey);
 
 		{
 
-			log.info("### state 1");
+			log.info("state 1 - process accept");
 
 			final int readyCount = selector.select();
 			log.info("readyCount={}", readyCount);
-
-			assertEquals(2, readyCount);
-
 			final Set<SelectionKey> keySet = selector.selectedKeys();
 			UnitHelp.logSet(keySet);
 
+			assertEquals(2, readyCount);
 			assertEquals(2, keySet.size());
 
 			assertTrue(keySet.contains(serverKey));
 			assertTrue(keySet.contains(clientKey));
-			assertFalse("key is not reported", keySet.contains(acceptKey));
-			assertTrue("yet key is not cleared", acceptKey.isAcceptable());
 
-			assertTrue("has write", serverKey.isWritable());
-			assertTrue("has write", clientKey.isWritable());
+			assertTrue("server has write", serverKey.isWritable());
+			assertTrue("client has write", clientKey.isWritable());
 
 			keySet.clear();
 
@@ -399,9 +441,12 @@ public class TestSelectorProviderUDT extends TestAny {
 		final byte[] writeArray = new byte[SIZE];
 		random.nextBytes(writeArray);
 
+		log.info("server : {}", serverKey);
+		log.info("client : {}", clientKey);
+
 		{
 
-			log.info("### state 2");
+			log.info("state 2 - client write to server");
 
 			final ByteBuffer buffer = ByteBuffer.allocate(SIZE);
 			buffer.put(writeArray);
@@ -415,12 +460,10 @@ public class TestSelectorProviderUDT extends TestAny {
 
 			final int readyCount = selector.select();
 			log.info("readyCount={}", readyCount);
-
-			assertEquals(2, readyCount);
-
 			final Set<SelectionKey> keySet = selector.selectedKeys();
 			UnitHelp.logSet(keySet);
 
+			assertEquals(2, readyCount);
 			assertEquals(2, keySet.size());
 
 			assertTrue(keySet.contains(serverKey));
@@ -440,9 +483,12 @@ public class TestSelectorProviderUDT extends TestAny {
 
 		}
 
+		log.info("server : {}", serverKey);
+		log.info("client : {}", clientKey);
+
 		{
 
-			log.info("### state 3");
+			log.info("state 3 - server read from client");
 
 			final ByteBuffer buffer = ByteBuffer.allocate(SIZE);
 
@@ -464,6 +510,9 @@ public class TestSelectorProviderUDT extends TestAny {
 			keySet.clear();
 
 		}
+
+		log.info("server : {}", serverKey);
+		log.info("client : {}", clientKey);
 
 		serverChannel.close();
 		clientChannel.close();

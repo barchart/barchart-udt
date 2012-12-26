@@ -1407,11 +1407,11 @@ void UDT_CopySetToArray(set<UDTSOCKET>* udSet, jint* array, const jsize size) {
 	}
 }
 
-// sizeArray parameters
 #define UDT_READ_INDEX		com_barchart_udt_SocketUDT_UDT_READ_INDEX
 #define UDT_WRITE_INDEX		com_barchart_udt_SocketUDT_UDT_WRITE_INDEX
 #define UDT_EXCEPT_INDEX	com_barchart_udt_SocketUDT_UDT_EXCEPT_INDEX
 #define UDT_SIZE_COUNT		com_barchart_udt_SocketUDT_UDT_SIZE_COUNT
+#define UDT_SELECT_LIMIT	com_barchart_udt_SocketUDT_DEFAULT_MAX_SELECTOR_SIZE
 
 JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_getStatus0(JNIEnv *env,
 		jobject self) {
@@ -1438,7 +1438,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollCreate0( //
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
-		UDT_ThrowExceptionUDT_ErrorInfo(env, 0, "epollCreate", &errorInfo);
+		UDT_ThrowExceptionUDT_ErrorInfo(env, 0, "epollCreate0", &errorInfo);
 		return JNI_ERR;
 	}
 
@@ -1458,7 +1458,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRelease0( //
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
-		UDT_ThrowExceptionUDT_ErrorInfo(env, 0, "epollRelease", &errorInfo);
+		UDT_ThrowExceptionUDT_ErrorInfo(env, 0, "epollRelease0", &errorInfo);
 		return;
 	}
 
@@ -1483,7 +1483,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollAdd0( //
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
-		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollAdd", &errorInfo);
+		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollAdd0", &errorInfo);
 		return;
 	}
 
@@ -1503,7 +1503,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove0( //
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
-		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollRemove",
+		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollRemove0",
 				&errorInfo);
 		return;
 	}
@@ -1547,7 +1547,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollVerify0( //
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
-		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollUpdate0",
+		UDT_ThrowExceptionUDT_ErrorInfo(env, socketID, "epollVerify0",
 				&errorInfo);
 		return JNI_ERR;
 	}
@@ -1558,7 +1558,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollVerify0( //
 
 JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		JNIEnv *env, //
-		jclass clsSocketUDT, //
+		const jclass clsSocketUDT, //
 		const jint pollID, //
 		const jobject objReadBuffer, //
 		const jobject objWriteBuffer, //
@@ -1568,17 +1568,13 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 
 	UNUSED(clsSocketUDT);
 
-	// empty sets
+	// readiness sets
 	set<UDTSOCKET> readSet;
 	set<UDTSOCKET> writeSet;
 
-	// do select
+	// get readiness report
 	const int rv = UDT::epoll_wait( //
 			pollID, &readSet, &writeSet, millisTimeout, NULL, NULL);
-
-//	printf ("function:%s rv=%d \n", __func__, rv);
-//	printf ("function:%s pollID=%d \n", __func__, pollID);
-//	printf ("function:%s millisTimeout=%d \n", __func__, millisTimeout);
 
 	// process timeout & errors
 	if (rv <= 0) { // UDT::ERROR is '-1'; UDT_TIMEOUT is '=0';
@@ -1586,50 +1582,41 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 			return JNI_OK;
 		} else {
 			UDT::ERRORINFO errorInfo = UDT::getlasterror();
-			UDT_ThrowExceptionUDT_ErrorInfo(env, 0, "epollWait", &errorInfo);
+			UDT_ThrowExceptionUDT_ErrorInfo(env, 0, "epollWait0", &errorInfo);
 			return JNI_ERR;
 		}
 	}
 
-	//
-
 	// get interest report size array
-	jint* const sizeArray = static_cast<jint*> //
-			(env->GetDirectBufferAddress(objSizeBuffer));
+	jint* const sizeArray = //
+			static_cast<jint*>(env->GetDirectBufferAddress(objSizeBuffer));
 
-	{ // return read interest
-
-		const jsize readSize = readSet.size();
-
-//		printf("function:%s readSize=%d \n", __func__, readSize);
-
-		sizeArray[UDT_READ_INDEX] = readSize;
-
-		if (readSize > 0) {
-			jint* const readArray = static_cast<jint*>( //
-					env->GetDirectBufferAddress(objReadBuffer));
-			UDT_CopySetToArray(&readSet, readArray, readSize);
+	// return read interest
+	const jsize readSize = readSet.size();
+	sizeArray[UDT_READ_INDEX] = readSize;
+	if (readSize > 0) {
+		if (readSize > env->GetDirectBufferCapacity(objReadBuffer)) {
+			UDT_ThrowExceptionUDT_Message(env, 0,
+					"readSize > objReadBuffer capacity");
+			return JNI_ERR;
 		}
-
+		jint* const readArray = //
+				static_cast<jint*>(env->GetDirectBufferAddress(objReadBuffer));
+		UDT_CopySetToArray(&readSet, readArray, readSize);
 	}
 
-	{ // return write interest
-
-		const jsize writeSize = writeSet.size();
-
-//		printf("function:%s writeSize=%d \n", __func__, writeSize);
-
-		sizeArray[UDT_WRITE_INDEX] = writeSize;
-
-		if (writeSize > 0) {
-
-			jint* const writeArray = static_cast<jint*>( //
-					env->GetDirectBufferAddress(objWriteBuffer));
-
-			UDT_CopySetToArray(&writeSet, writeArray, writeSize);
-
+	// return write interest
+	const jsize writeSize = writeSet.size();
+	sizeArray[UDT_WRITE_INDEX] = writeSize;
+	if (writeSize > 0) {
+		if (writeSize > env->GetDirectBufferCapacity(objWriteBuffer)) {
+			UDT_ThrowExceptionUDT_Message(env, 0,
+					"writeSize > objWriteBuffer capacity");
+			return JNI_ERR;
 		}
-
+		jint* const writeArray = //
+				static_cast<jint*>(env->GetDirectBufferAddress(objWriteBuffer));
+		UDT_CopySetToArray(&writeSet, writeArray, writeSize);
 	}
 
 	return rv;

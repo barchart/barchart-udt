@@ -9,10 +9,8 @@
 -->
 <!--
 
-	produce bundle;
-	
-	assume nar is valid, re-build jar, run no tests
- 
+	produce nar and jar, run not tests
+
 -->
 <project default="maven" basedir="./..">
 
@@ -33,7 +31,7 @@
 			<arg value="install" />
 
 			<arg value="--activate-profiles" />
-			<arg value="modules,artifact-version,package-bundle" />
+			<arg value="nar" />
 
 			<arg value="--define" />
 			<arg value="skipTests" />

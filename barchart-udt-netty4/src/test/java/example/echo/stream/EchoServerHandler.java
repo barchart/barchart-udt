@@ -20,8 +20,8 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundByteHandlerAdapter;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handler implementation for the echo server.
@@ -29,8 +29,10 @@ import java.util.logging.Logger;
 @Sharable
 public class EchoServerHandler extends ChannelInboundByteHandlerAdapter {
 
-	private static final Logger logger = Logger
+	private static final Logger log = LoggerFactory
 			.getLogger(EchoServerHandler.class.getName());
+
+	private volatile long count;
 
 	@Override
 	public void inboundBufferUpdated(final ChannelHandlerContext ctx,
@@ -44,18 +46,28 @@ public class EchoServerHandler extends ChannelInboundByteHandlerAdapter {
 
 		ctx.flush();
 
+		if (count % 10000 == 0) {
+			log.info("count {}", count);
+		}
+
+		count++;
+
 	}
 
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext ctx,
 			final Throwable cause) {
 
-		// Close the connection when an exception is raised.
-
-		logger.log(Level.WARNING, "Unexpected exception from downstream.",
-				cause);
+		log.error("close the connection when an exception is raised", cause);
 
 		ctx.close();
+
+	}
+
+	@Override
+	public void channelActive(final ChannelHandlerContext ctx) throws Exception {
+
+		log.info("ECHO active {}", this);
 
 	}
 

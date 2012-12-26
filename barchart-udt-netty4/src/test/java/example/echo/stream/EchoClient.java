@@ -60,13 +60,12 @@ public class EchoClient {
 
 	private final String host;
 	private final int port;
-	private final int firstMessageSize;
+	private final int messageSize;
 
-	public EchoClient(final String host, final int port,
-			final int firstMessageSize) {
+	public EchoClient(final String host, final int port, final int messageSize) {
 		this.host = host;
 		this.port = port;
-		this.firstMessageSize = firstMessageSize;
+		this.messageSize = messageSize;
 	}
 
 	public void run() throws Exception {
@@ -92,7 +91,7 @@ public class EchoClient {
 								throws Exception {
 							ch.pipeline().addLast(
 									new LoggingHandler(LogLevel.INFO),
-									new EchoClientHandler(firstMessageSize));
+									new EchoClientHandler(messageSize));
 						}
 					});
 
@@ -117,9 +116,9 @@ public class EchoClient {
 
 		final String host = "localhost";
 		final int port = 1234;
-		final int firstMessageSize = 256;
+		final int messageSize = 64 * 1024;
 
-		new EchoClient(host, port, firstMessageSize).run();
+		new EchoClient(host, port, messageSize).run();
 
 		log.info("done");
 

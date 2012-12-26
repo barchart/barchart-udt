@@ -80,7 +80,7 @@ public class SelectorUDT extends AbstractSelector {
 		return provider.openSelector();
 	}
 
-	protected final EpollUDT epoll;
+	protected final EpollUDT epollUDT = new EpollUDT();
 
 	/**
 	 */
@@ -135,8 +135,6 @@ public class SelectorUDT extends AbstractSelector {
 		readBuffer = HelpUDT.newDirectIntBufer(maximumSelectorSize);
 		writeBuffer = HelpUDT.newDirectIntBufer(maximumSelectorSize);
 		sizeBuffer = HelpUDT.newDirectIntBufer(UDT_SIZE_COUNT);
-
-		epoll = new EpollUDT();
 
 	}
 
@@ -302,11 +300,15 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	/** cancel store */
+	/** cancel queue */
 	protected void cancel(final SelectionKeyUDT keyUDT) {
+
+		log.debug("cancel queue {}", keyUDT);
+
 		synchronized (cancelledKeys()) {
 			cancelledKeys().add(keyUDT);
 		}
+
 	}
 
 	/** cancel apply */
@@ -323,10 +325,9 @@ public class SelectorUDT extends AbstractSelector {
 				final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
 
 				if (keyUDT.isValid()) {
-					keyUDT.interestOps(0);
-					keyUDT.setValid(false);
+					log.debug("cancel apply {}", keyUDT);
+					keyUDT.makeValid(false);
 					registeredKeyMap.remove(keyUDT.socketId());
-					log.debug("### cancel : {}", keyUDT);
 				}
 
 			}
@@ -364,7 +365,7 @@ public class SelectorUDT extends AbstractSelector {
 
 			keyUDT.socketUDT().isOpen();
 
-			if (keyUDT.processRead(processCount)) {
+			if (keyUDT.doRead(processCount)) {
 				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
 			}
 
@@ -382,7 +383,7 @@ public class SelectorUDT extends AbstractSelector {
 
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 
-			if (keyUDT.processWrite(processCount)) {
+			if (keyUDT.doWrite(processCount)) {
 				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
 			}
 
@@ -442,7 +443,7 @@ public class SelectorUDT extends AbstractSelector {
 
 	protected int doEpollSelectUDT(final long timeout) throws ExceptionUDT {
 		return SocketUDT.selectEpoll(//
-				epoll.id(), //
+				epollUDT.id(), //
 				readBuffer, //
 				writeBuffer, //
 				sizeBuffer, //
