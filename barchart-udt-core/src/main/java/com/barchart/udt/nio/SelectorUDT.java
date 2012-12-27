@@ -55,12 +55,6 @@ public class SelectorUDT extends AbstractSelector {
 	protected static final Logger log = LoggerFactory
 			.getLogger(SelectorUDT.class);
 
-	/** block epoll till event arrives */
-	public static long UDT_TIMEOUT_INFINITE = -1;
-
-	/** return immediately from epoll */
-	public static long UDT_TIMEOUT_NONE = 0;
-
 	/**
 	 * use this call to instantiate a selector for UDT
 	 */
@@ -220,7 +214,7 @@ public class SelectorUDT extends AbstractSelector {
 		} else if (timeout > 0) {
 			return doEpollEnter(timeout);
 		} else {
-			return doEpollEnter(UDT_TIMEOUT_INFINITE);
+			return doEpollEnter(SocketUDT.TIMEOUT_INFINITE);
 		}
 	}
 
@@ -235,7 +229,7 @@ public class SelectorUDT extends AbstractSelector {
 
 	@Override
 	public int selectNow() throws IOException {
-		return doEpollEnter(UDT_TIMEOUT_NONE);
+		return doEpollEnter(SocketUDT.TIMEOUT_NONE);
 	}
 
 	/**

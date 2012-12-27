@@ -52,14 +52,20 @@ public class SocketUDT {
 	public static final int INFINITE_TTL = -1;
 
 	/**
-	 * blocking send/receive infinite call timeout;
+	 * infinite timeout:
+	 * <p>
+	 * blocking send/receive
+	 * <p>
+	 * epoll wait
 	 */
-	public static final int INFINITE_TIMEOUT = -1;
+	public static final int TIMEOUT_INFINITE = -1;
 
 	/**
-	 * unlimited bandwidth option value;
+	 * zero timeout:
+	 * <p>
+	 * epoll wait
 	 */
-	public static final long UNLIMITED_BW = -1L;
+	public static long TIMEOUT_NONE = 0;
 
 	/**
 	 * Maximum number of connections queued in listening mode by
@@ -456,7 +462,7 @@ public class SocketUDT {
 	 * @see #setOption0(int, Class, Object)
 	 */
 	public <T> void setOption( //
-			final OptionUDT option, //
+			final OptionUDT<T> option, //
 			final T value //
 	) throws ExceptionUDT {
 
@@ -1254,7 +1260,7 @@ public class SocketUDT {
 		}
 		if (millisTimeout == 0) {
 			// UDT uses different value for "infinite"
-			millisTimeout = INFINITE_TIMEOUT;
+			millisTimeout = TIMEOUT_INFINITE;
 		}
 		setOption(OptionUDT.Send_Timeout, millisTimeout);
 		setOption(OptionUDT.Receive_Timeout, millisTimeout);

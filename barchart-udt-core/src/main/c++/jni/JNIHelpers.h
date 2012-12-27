@@ -102,11 +102,10 @@ extern jfieldID udt_clsCCC_fld_nativeHandleID;
 #define __func__ __FUNCTION__
 #endif
 
+//
 // null pointer safety
 //
 #define CHK_LOG(title,comment) printf ("%s function: %s comment: %s", title, __func__, comment);
-// do not use cout; else will introduce GLIBCXX_3.4.9 dependency with 'g++ -O2'
-//#define CHK_LOG(title,comment) cout << title << " function: " << __func__ << " comment: " << comment << endl;
 //
 #define CHK_NUL_RET_RET(reference,comment) if ((reference) == NULL) \
 	{ CHK_LOG("CHK_NUL_RET_RET;",comment); return; }

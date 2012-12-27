@@ -74,7 +74,7 @@ public class TestEpollWait extends TestAny {
 			clear(writeBuffer);
 
 			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
-					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+					writeBuffer, sizeBuffer, SocketUDT.TIMEOUT_INFINITE);
 
 			log.info("readyCount : {}", readyCount);
 
@@ -105,7 +105,7 @@ public class TestEpollWait extends TestAny {
 			clear(writeBuffer);
 
 			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
-					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+					writeBuffer, sizeBuffer, SocketUDT.TIMEOUT_INFINITE);
 
 			log.info("readyCount : {}", readyCount);
 
@@ -134,7 +134,7 @@ public class TestEpollWait extends TestAny {
 			clear(writeBuffer);
 
 			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
-					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+					writeBuffer, sizeBuffer, SocketUDT.TIMEOUT_INFINITE);
 
 			log.info("readyCount : {}", readyCount);
 
@@ -204,7 +204,7 @@ public class TestEpollWait extends TestAny {
 			clear(readBuffer);
 
 			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
-					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+					writeBuffer, sizeBuffer, SocketUDT.TIMEOUT_INFINITE);
 
 			log.info("readyCount : {}", readyCount);
 			logBuffer("read: ", readBuffer);
@@ -353,7 +353,7 @@ public class TestEpollWait extends TestAny {
 			clear(writeBuffer);
 
 			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
-					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+					writeBuffer, sizeBuffer, SocketUDT.TIMEOUT_INFINITE);
 
 			log.info("readyCount : {}", readyCount);
 			logBuffer("read: ", readBuffer);
@@ -371,7 +371,7 @@ public class TestEpollWait extends TestAny {
 			clear(writeBuffer);
 
 			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
-					writeBuffer, sizeBuffer, SocketUDT.INFINITE_TIMEOUT);
+					writeBuffer, sizeBuffer, SocketUDT.TIMEOUT_INFINITE);
 
 			log.info("readyCount : {}", readyCount);
 			logBuffer("read: ", readBuffer);
