@@ -1,6 +1,7 @@
 <!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com /> All 
 	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -79,6 +80,28 @@
 			<version>2.2.0</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- native arch/os stats -->
+		<dependency>
+			<groupId>org.fusesource</groupId>
+			<artifactId>sigar</artifactId>
+			<version>1.6.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.fusesource</groupId>
+			<artifactId>sigar</artifactId>
+			<version>1.6.4</version>
+			<classifier>native</classifier>
+			<scope>test</scope>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.fusesource</groupId> -->
+		<!-- <artifactId>libsigar-x86-linux</artifactId> -->
+		<!-- <version>1.6.4</version> -->
+		<!-- <type>so</type> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
 
 	</dependencies>
 
@@ -682,7 +705,8 @@
 								<phase>generate-sources</phase>
 								<configuration>
 									<target>
-										<exec executable="git" output="src/main/patches/${moduleUDT}/result.patch" error="target/result.patch.error">
+										<exec executable="git"
+											output="src/main/patches/${moduleUDT}/result.patch" error="target/result.patch.error">
 											<arg value="diff" />
 											<arg value="--no-index" />
 											<arg value="--no-prefix" />

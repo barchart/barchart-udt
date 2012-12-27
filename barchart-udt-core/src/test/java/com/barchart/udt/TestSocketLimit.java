@@ -11,7 +11,6 @@ import util.UnitHelp;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
-// FIXME
 public class TestSocketLimit extends TestAny {
 
 	private void socketBindLimit(final int limit) throws Exception {
@@ -20,21 +19,42 @@ public class TestSocketLimit extends TestAny {
 
 		for (int index = 0; index < limit; index++) {
 
-			log.info("index {}", index);
-
 			final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
-			socket.bind(UnitHelp.localSocketAddress());
+			try {
+
+				socket.bind(UnitHelp.localSocketAddress());
+
+			} catch (final ExceptionUDT e) {
+
+				if (e.getError() == ErrorUDT.ETHREAD) {
+					break;
+				}
+
+			}
 
 			list.add(socket);
 
+		}
+
+		log.info("socket limit : {}", list.size());
+
+		for (final SocketUDT socket : list) {
+			socket.close();
 		}
 
 	}
 
 	@Test
 	public void socketBindLimt() throws Exception {
-		// socketBindLimit(SocketUDT.DEFAULT_MAX_SELECTOR_SIZE);
+		socketBindLimit(SocketUDT.DEFAULT_MAX_SELECTOR_SIZE);
+	}
+
+	@Test
+	public void sigar() throws Exception {
+
+		// Sigar.getPid();
+
 	}
 
 	@BeforeClass
