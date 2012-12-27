@@ -53,8 +53,8 @@ public class OptionUDT<T> {
 	public static final OptionUDT<Integer> UDT_MSS = //
 	NEW(0, Integer.class, DECIMAL);
 	/** the Maximum Transfer Unit., bytes */
-	public static final OptionUDT<Integer> Maximum_Transfer_Unit = NEW(0,
-			Integer.class, DECIMAL);
+	public static final OptionUDT<Integer> Maximum_Transfer_Unit = //
+	NEW(0, Integer.class, DECIMAL);
 
 	/** if sending is blocking. */
 	public static final OptionUDT<Boolean> UDT_SNDSYN = //
