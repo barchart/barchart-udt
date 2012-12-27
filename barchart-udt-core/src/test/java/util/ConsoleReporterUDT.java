@@ -238,25 +238,25 @@ public class ConsoleReporterUDT extends AbstractPollingReporter implements
 		processMeter(name, timer, stream);
 		final String durationUnit = abbrev(timer.durationUnit());
 		final Snapshot snapshot = timer.getSnapshot();
-		stream.printf(locale, "               min = %,2.2f%s\n", timer.min(),
+		stream.printf(locale, "               min = %,2.2f %s\n", timer.min(),
 				durationUnit);
-		stream.printf(locale, "               max = %,2.2f%s\n", timer.max(),
+		stream.printf(locale, "               max = %,2.2f %s\n", timer.max(),
 				durationUnit);
-		stream.printf(locale, "              mean = %,2.2f%s\n", timer.mean(),
+		stream.printf(locale, "              mean = %,2.2f %s\n", timer.mean(),
 				durationUnit);
-		stream.printf(locale, "            stddev = %,2.2f%s\n",
+		stream.printf(locale, "            stddev = %,2.2f %s\n",
 				timer.stdDev(), durationUnit);
-		stream.printf(locale, "            median = %,2.2f%s\n",
+		stream.printf(locale, "            median = %,2.2f %s\n",
 				snapshot.getMedian(), durationUnit);
-		stream.printf(locale, "              75%% <= %,2.2f%s\n",
+		stream.printf(locale, "              75%% <= %,2.2f %s\n",
 				snapshot.get75thPercentile(), durationUnit);
-		stream.printf(locale, "              95%% <= %,2.2f%s\n",
+		stream.printf(locale, "              95%% <= %,2.2f %s\n",
 				snapshot.get95thPercentile(), durationUnit);
-		stream.printf(locale, "              98%% <= %,2.2f%s\n",
+		stream.printf(locale, "              98%% <= %,2.2f %s\n",
 				snapshot.get98thPercentile(), durationUnit);
-		stream.printf(locale, "              99%% <= %,2.2f%s\n",
+		stream.printf(locale, "              99%% <= %,2.2f %s\n",
 				snapshot.get99thPercentile(), durationUnit);
-		stream.printf(locale, "            99.9%% <= %,2.2f%s\n",
+		stream.printf(locale, "            99.9%% <= %,2.2f %s\n",
 				snapshot.get999thPercentile(), durationUnit);
 	}
 

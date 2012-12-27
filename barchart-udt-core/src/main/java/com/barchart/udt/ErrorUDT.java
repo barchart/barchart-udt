@@ -132,7 +132,7 @@ public enum ErrorUDT {
 	public static String descriptionFrom(final int socketID,
 			final int errorCode, final String errorComment) {
 		final ErrorUDT error = ErrorUDT.errorFrom(errorCode);
-		return String.format("UDT Error : %d : %s : %s (socketID=%d)", //
+		return String.format("UDT Error : %d : %s : %s [id: 0x%08x]", //
 				errorCode, error.description, errorComment, socketID);
 	}
 

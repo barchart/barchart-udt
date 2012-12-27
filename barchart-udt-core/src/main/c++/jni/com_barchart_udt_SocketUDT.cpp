@@ -49,6 +49,43 @@
 
 #include "JNIHelpers.h"
 
+//
+// stack trace support
+//
+#ifdef LINUX
+
+#include <signal.h>
+#include <stdlib.h>
+#include <execinfo.h>
+
+void X_PrintStackTrace() {
+
+	const size_t max_depth = 100;
+
+	size_t stack_depth;
+	void *stack_addrs[max_depth];
+	char **stack_strings;
+
+	stack_depth = backtrace(stack_addrs, max_depth);
+	stack_strings = backtrace_symbols(stack_addrs, stack_depth);
+
+	printf("stack trace \n");
+
+	for (size_t index = 1; index < stack_depth; index++) {
+		printf("   %s\n", stack_strings[index]);
+	}
+
+	free(stack_strings);
+
+}
+#else
+
+void X_PrintStackTrace() {
+	// TODO
+}
+
+#endif
+
 // do not use cout; else will introduce GLIBCXX_3.4.9 dependency with 'g++ -O2'
 //#include <iostream>
 
