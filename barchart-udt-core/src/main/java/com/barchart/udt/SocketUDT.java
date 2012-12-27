@@ -438,7 +438,7 @@ public class SocketUDT {
 			throw new IllegalArgumentException("option == null");
 		}
 
-		return (T) getOption0(option.getCode(), option.getKlaz());
+		return (T) getOption0(option.code(), option.type());
 
 	}
 
@@ -465,7 +465,7 @@ public class SocketUDT {
 					"option == null || value == null");
 		}
 
-		setOption0(option.getCode(), option.getKlaz(), value);
+		setOption0(option.code(), option.type(), value);
 
 	}
 

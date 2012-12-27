@@ -44,6 +44,11 @@ import com.barchart.udt.util.HelpUDT;
  */
 public class OptionUDT<T> {
 
+	static {
+		log = LoggerFactory.getLogger(OptionUDT.class);
+		values = new CopyOnWriteArrayList<OptionUDT<?>>();
+	}
+
 	/** the Maximum Transfer Unit. */
 	public static final OptionUDT<Integer> UDT_MSS = //
 	NEW(0, Integer.class, DECIMAL);
@@ -190,8 +195,11 @@ public class OptionUDT<T> {
 	protected OptionUDT(final int code, final Class<T> klaz, final Format format) {
 
 		this.code = code;
-		this.klaz = klaz;
+		this.type = klaz;
 		this.format = format;
+
+		values.add(this);
+
 	}
 
 	protected static <T> OptionUDT<T> NEW(final int code, final Class<T> klaz,
@@ -243,25 +251,20 @@ public class OptionUDT<T> {
 	protected static final Logger log;
 	protected static final List<OptionUDT<?>> values;
 
-	static {
-		log = LoggerFactory.getLogger(OptionUDT.class);
-		values = new CopyOnWriteArrayList<OptionUDT<?>>();
-	}
-
 	private final int code;
-	private final Class<?> klaz;
+	private final Class<?> type;
 	private final Format format;
 	private String name;
 
-	public int getCode() {
+	public int code() {
 		return code;
 	}
 
-	public Class<?> getKlaz() {
-		return klaz;
+	public Class<?> type() {
+		return type;
 	}
 
-	public Format getFormat() {
+	public Format format() {
 		return format;
 	}
 
@@ -284,7 +287,7 @@ public class OptionUDT<T> {
 					final long number = ((Number) value).longValue();
 					return String.format("%,d", number);
 				}
-				return "invalid value";
+				return "invalid format";
 			}
 		}, //
 
@@ -295,7 +298,7 @@ public class OptionUDT<T> {
 					final long number = ((Number) value).longValue();
 					return String.format("%,d (%,d K)", number, number / 1024);
 				}
-				return "invalid value";
+				return "invalid format";
 			}
 		}, //
 
@@ -306,7 +309,7 @@ public class OptionUDT<T> {
 					final boolean bool = ((Boolean) value).booleanValue();
 					return String.format("%b", bool);
 				}
-				return "invalid value";
+				return "invalid format";
 			}
 		}, //
 
