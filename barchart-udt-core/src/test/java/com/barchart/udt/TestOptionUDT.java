@@ -20,14 +20,6 @@ import util.TestAny;
 
 public class TestOptionUDT extends TestAny {
 
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
 	@Test
 	public void testOptionBasic() throws Exception {
 
@@ -124,6 +116,14 @@ public class TestOptionUDT extends TestAny {
 		log.info("client options:{}", clientSocket.toStringOptions());
 		log.info("accept options:{}", acceptSocket.toStringOptions());
 
+	}
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
 	}
 
 }

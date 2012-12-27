@@ -1,18 +1,14 @@
-/**
- * Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
- *
- * All rights reserved. Licensed under the OSI BSD License.
- *
- * http://www.opensource.org/licenses/bsd-license.php
- */
 package com.barchart.udt;
 
 import static com.barchart.udt.OptionUDT.Format.*;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.barchart.udt.anno.Native;
+import com.barchart.udt.util.HelpUDT;
 
 /**
  * The Enum OptionUDT.
@@ -46,115 +42,240 @@ import com.barchart.udt.anno.Native;
  * UDT_RCVDATA // size of data available for recv
  * </pre>
  */
-public enum OptionUDT {
+public class OptionUDT<T> {
 
 	/** the Maximum Transfer Unit. */
-	UDT_MSS(0, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDT_MSS = //
+	NEW(0, Integer.class, DECIMAL);
 	/** the Maximum Transfer Unit., bytes */
-	Maximum_Transfer_Unit(0, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Maximum_Transfer_Unit = NEW(0,
+			Integer.class, DECIMAL);
 
 	/** if sending is blocking. */
-	UDT_SNDSYN(1, Boolean.class, BOOLEAN), //
+	public static final OptionUDT<Boolean> UDT_SNDSYN = //
+	NEW(1, Boolean.class, BOOLEAN);
 	/** if sending is blocking., true/false */
-	Is_Send_Synchronous(1, Boolean.class, BOOLEAN), //
+	public static final OptionUDT<Boolean> Is_Send_Synchronous = //
+	NEW(1, Boolean.class, BOOLEAN);
 
 	/** if receiving is blocking. */
-	UDT_RCVSYN(2, Boolean.class, BOOLEAN), //
+	public static final OptionUDT<Boolean> UDT_RCVSYN = //
+	NEW(2, Boolean.class, BOOLEAN);
 	/** if receiving is blocking, true/false */
-	Is_Receive_Synchronous(2, Boolean.class, BOOLEAN), //
+	public static final OptionUDT<Boolean> Is_Receive_Synchronous = //
+	NEW(2, Boolean.class, BOOLEAN);
 
 	/** custom congestion control algorithm */
-	UDT_CC(3, FactoryUDT.class, DEFAULT), //
+	@SuppressWarnings("rawtypes")
+	public static final OptionUDT<FactoryUDT> UDT_CC = //
+	NEW(3, FactoryUDT.class, DEFAULT);
 	/** custom congestion control algorithm, class factory */
-	Custom_Congestion_Control(3, FactoryUDT.class, DEFAULT), //
+	@SuppressWarnings("rawtypes")
+	public static final OptionUDT<FactoryUDT> Custom_Congestion_Control = //
+	NEW(3, FactoryUDT.class, DEFAULT);
 
 	/** Flight flag size (window size). */
-	UDT_FC(4, Integer.class, BINARY), //
+	public static final OptionUDT<Integer> UDT_FC = //
+	NEW(4, Integer.class, BINARY);
 	/** Flight flag size (window size), bytes */
-	Flight_Window_Size(4, Integer.class, BINARY), //
+	public static final OptionUDT<Integer> Flight_Window_Size = //
+	NEW(4, Integer.class, BINARY);
 
 	/** maximum buffer in sending queue. */
-	UDT_SNDBUF(5, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDT_SNDBUF = //
+	NEW(5, Integer.class, DECIMAL);
 	/** maximum buffer in sending queue. */
-	Protocol_Send_Buffer_Size(5, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Protocol_Send_Buffer_Size = //
+	NEW(5, Integer.class, DECIMAL);
 
 	/** UDT receiving buffer size. */
-	UDT_RCVBUF(6, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDT_RCVBUF = //
+	NEW(6, Integer.class, DECIMAL);
 	/** UDT receiving buffer size limit, bytes */
-	Protocol_Receive_Buffer_Size(6, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Protocol_Receive_Buffer_Size = //
+	NEW(6, Integer.class, DECIMAL);
 
 	/** waiting for unsent data when closing. */
-	UDT_LINGER(7, LingerUDT.class, DECIMAL), //
+	public static final OptionUDT<LingerUDT> UDT_LINGER = //
+	NEW(7, LingerUDT.class, DECIMAL);
 	/** waiting for unsent data when closing. true/false and timeout, seconds */
-	Time_To_Linger_On_Close(7, LingerUDT.class, DECIMAL), //
+	public static final OptionUDT<LingerUDT> Time_To_Linger_On_Close = //
+	NEW(7, LingerUDT.class, DECIMAL);
 
 	/** UDP sending buffer size. */
-	UDP_SNDBUF(8, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDP_SNDBUF = //
+	NEW(8, Integer.class, DECIMAL);
 	/** UDP sending buffer size limit, bytes */
-	Kernel_Send_Buffer_Size(8, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Kernel_Send_Buffer_Size = //
+	NEW(8, Integer.class, DECIMAL);
 
 	/** UDP receiving buffer size. */
-	UDP_RCVBUF(9, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDP_RCVBUF = //
+	NEW(9, Integer.class, DECIMAL);
 	/** UDP receiving buffer size limit, bytes */
-	Kernel_Receive_Buffer_Size(9, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Kernel_Receive_Buffer_Size = //
+	NEW(9, Integer.class, DECIMAL);
 
 	/* maximum datagram message size */
-	// UDT_MAXMSG(10, Integer.class, DECIMAL), // no support in udt core
+	// UDT_MAXMSG(10, Integer.class, DECIMAL); no support in udt core
 
 	/* time-to-live of a datagram message */
-	// UDT_MSGTTL(11, Integer.class, DECIMAL), // no support in udt core
+	// UDT_MSGTTL(11, Integer.class, DECIMAL); no support in udt core
 
 	/** rendezvous connection mode. */
-	UDT_RENDEZVOUS(12, Boolean.class, BOOLEAN), //
+	public static final OptionUDT<Boolean> UDT_RENDEZVOUS = //
+	NEW(12, Boolean.class, BOOLEAN);
 	/** rendezvous connection mode, enabled/disabled */
-	Is_Randezvous_Connect_Enabled(12, Boolean.class, BOOLEAN), //
+	public static final OptionUDT<Boolean> Is_Randezvous_Connect_Enabled = //
+	NEW(12, Boolean.class, BOOLEAN);
 
 	/** send() timeout. */
-	UDT_SNDTIMEO(13, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDT_SNDTIMEO = //
+	NEW(13, Integer.class, DECIMAL);
 	/** send() timeout. milliseconds */
-	Send_Timeout(13, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Send_Timeout = //
+	NEW(13, Integer.class, DECIMAL);
 
 	/** recv() timeout. */
-	UDT_RCVTIMEO(14, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDT_RCVTIMEO = //
+	NEW(14, Integer.class, DECIMAL);
 	/** recv() timeout. milliseconds */
-	Receive_Timeout(14, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Receive_Timeout = //
+	NEW(14, Integer.class, DECIMAL);
 
-	/** reuse an existing port or create a new one. */
-	UDT_REUSEADDR(15, Boolean.class, BOOLEAN), //
-	/** reuse an existing port or create a new one. true/false */
-	Is_Address_Reuse_Enabled(15, Boolean.class, BOOLEAN), //
+	/** reuse an existing port or create a one. */
+	public static final OptionUDT<Boolean> UDT_REUSEADDR = //
+	NEW(15, Boolean.class, BOOLEAN);
+	/** reuse an existing port or create a one. true/false */
+	public static final OptionUDT<Boolean> Is_Address_Reuse_Enabled = //
+	NEW(15, Boolean.class, BOOLEAN);
 
 	/** maximum bandwidth (bytes per second) that the connection can use. */
-	UDT_MAXBW(16, Long.class, DECIMAL), //
+	public static final OptionUDT<Long> UDT_MAXBW = //
+	NEW(16, Long.class, DECIMAL);
 	/** maximum bandwidth (bytes per second) that the connection can use. */
-	Maximum_Bandwidth(16, Long.class, DECIMAL), //
+	public static final OptionUDT<Long> Maximum_Bandwidth = //
+	NEW(16, Long.class, DECIMAL);
 
 	/** current socket state, see UDTSTATUS, read only */
-	UDT_STATE(17, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDT_STATE = //
+	NEW(17, Integer.class, DECIMAL);
 	/** current socket status code, see {@link StatusUDT#getCode()}, read only */
-	Status_Code(17, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Status_Code = //
+	NEW(17, Integer.class, DECIMAL);
 
 	/** current available events associated with the socket */
-	UDT_EVENT(18, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDT_EVENT = //
+	NEW(18, Integer.class, DECIMAL);
 	/** current available epoll events, see {@link EpollUDT.Opt#code} */
-	Epoll_Event_Mask(18, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Epoll_Event_Mask = //
+	NEW(18, Integer.class, DECIMAL);
 
 	/** size of data in the sending buffer */
-	UDT_SNDDATA(19, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDT_SNDDATA = //
+	NEW(19, Integer.class, DECIMAL);
 	/** current consumed sending buffer utilization, read only, bytes */
-	Send_Buffer_Consumed(19, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Send_Buffer_Consumed = //
+	NEW(19, Integer.class, DECIMAL);
 
 	/** size of data available for recv */
-	UDT_RCVDATA(20, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> UDT_RCVDATA = //
+	NEW(20, Integer.class, DECIMAL);
 	/** current available receiving buffer capacity, read only, bytes */
-	Receive_Buffer_Available(20, Integer.class, DECIMAL), //
+	public static final OptionUDT<Integer> Receive_Buffer_Available = //
+	NEW(20, Integer.class, DECIMAL);
 
-	;
+	//
+
+	protected OptionUDT(final int code, final Class<T> klaz, final Format format) {
+
+		this.code = code;
+		this.klaz = klaz;
+		this.format = format;
+	}
+
+	protected static <T> OptionUDT<T> NEW(final int code, final Class<T> klaz,
+			final Format format) {
+		return new OptionUDT<T>(code, klaz, format);
+	}
+
+	public static void appendSnapshot( //
+			final SocketUDT socketUDT, //
+			final StringBuilder text //
+	) {
+
+		text.append("\n\t");
+		text.append("socketID");
+		text.append(" = ");
+		text.append(socketUDT.socketID);
+
+		for (final OptionUDT<?> option : values) {
+			int optionCode = 0;
+			String optionName = null;
+			String optionValue = null;
+			try {
+
+				optionCode = option.code;
+				optionName = option.name();
+
+				optionValue = option.format.convert(//
+						socketUDT.getOption(option));
+
+				if (optionName.startsWith("UD")) {
+					continue;
+				}
+
+				text.append("\n\t");
+				text.append(optionCode);
+				text.append(") ");
+				text.append(optionName);
+				text.append(" = ");
+				text.append(optionValue);
+
+			} catch (final Exception e) {
+				log.error("unexpected; " + optionName, e);
+			}
+
+		}
+
+	}
+
+	protected static final Logger log;
+	protected static final List<OptionUDT<?>> values;
+
+	static {
+		log = LoggerFactory.getLogger(OptionUDT.class);
+		values = new CopyOnWriteArrayList<OptionUDT<?>>();
+	}
+
+	private final int code;
+	private final Class<?> klaz;
+	private final Format format;
+	private String name;
+
+	public int getCode() {
+		return code;
+	}
+
+	public Class<?> getKlaz() {
+		return klaz;
+	}
+
+	public Format getFormat() {
+		return format;
+	}
+
+	public String name() {
+		if (name == null) {
+			name = HelpUDT.constantFieldName(getClass(), this);
+		}
+		return name;
+	}
 
 	/**
 	 * render options in human format
 	 */
-	public static enum Format {
+	public enum Format {
 
 		DECIMAL() {
 			@Override
@@ -199,93 +320,6 @@ public enum OptionUDT {
 		;
 
 		public abstract String convert(Object value);
-
-	}
-
-	private final int code;
-
-	public int getCode() {
-		return code;
-	}
-
-	/** The klaz. */
-	private final Class<?> klaz;
-
-	public Class<?> getKlaz() {
-		return klaz;
-	}
-
-	/** The format. */
-	private final Format format;
-
-	public Format getFormat() {
-		return format;
-	}
-
-	/**
-	 * Instantiates a new option udt.
-	 * 
-	 * @param code
-	 *            the code
-	 * @param klaz
-	 *            the klaz
-	 * @param format
-	 *            the format
-	 */
-	@Native
-	private OptionUDT(final int code, final Class<?> klaz, final Format format) {
-		this.code = code;
-		this.klaz = klaz;
-		this.format = format;
-	}
-
-	/** The log. */
-	private static final Logger log = LoggerFactory.getLogger(OptionUDT.class);
-
-	/**
-	 * show all option values.
-	 * 
-	 * @param socketUDT
-	 *            the socket
-	 * @param text
-	 *            the text
-	 */
-	public static void appendSnapshot(final SocketUDT socketUDT,
-			final StringBuilder text) {
-
-		text.append("\n\t");
-		text.append("socketID");
-		text.append(" = ");
-		text.append(socketUDT.socketID);
-
-		for (final OptionUDT option : values()) {
-			int optionCode = 0;
-			String optionName = null;
-			String optionValue = null;
-			try {
-
-				optionCode = option.code;
-				optionName = option.name();
-				optionValue = option.format.convert(//
-						socketUDT.getOption(option));
-
-				// TODO fix this hack
-				if (optionName.startsWith("UD")) {
-					continue;
-				}
-
-				text.append("\n\t");
-				text.append(optionCode);
-				text.append(") ");
-				text.append(optionName);
-				text.append(" = ");
-				text.append(optionValue);
-
-			} catch (final Exception e) {
-				log.error("unexpected; " + optionName, e);
-			}
-
-		}
 
 	}
 

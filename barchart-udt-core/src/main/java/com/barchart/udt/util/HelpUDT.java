@@ -7,6 +7,8 @@
  */
 package com.barchart.udt.util;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -242,6 +244,37 @@ public class HelpUDT {
 		if (array == null) {
 			throw new IllegalArgumentException("array == null");
 		}
+	}
+
+	public static String constantFieldName(final Class<?> klaz,
+			final Object instance) {
+
+		final Field[] filedArray = klaz.getDeclaredFields();
+
+		for (final Field field : filedArray) {
+
+			final int modifiers = field.getModifiers();
+
+			final boolean isConstant = true && //
+					Modifier.isPublic(modifiers) && //
+					Modifier.isStatic(modifiers) && //
+					Modifier.isFinal(modifiers) //
+			;
+
+			if (isConstant) {
+				try {
+					if (instance == field.get(null)) {
+						return field.getName();
+					}
+				} catch (final Throwable e) {
+					log.debug("", e);
+				}
+			}
+
+		}
+
+		return "unknown";
+
 	}
 
 }

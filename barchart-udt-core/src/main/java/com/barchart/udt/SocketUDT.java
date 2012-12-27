@@ -431,37 +431,42 @@ public class SocketUDT {
 	/**
 	 * @see #getOption0(int, Class)
 	 */
-	public Object getOption(final OptionUDT option) throws ExceptionUDT {
+	@SuppressWarnings("unchecked")
+	public <T> T getOption(final OptionUDT<T> option) throws ExceptionUDT {
+
 		if (option == null) {
 			throw new IllegalArgumentException("option == null");
 		}
-		return getOption0(option.getCode(), option.getKlaz());
+
+		return (T) getOption0(option.getCode(), option.getKlaz());
+
 	}
 
 	/**
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/opt.htm">UDT::setsockopt()</a>
 	 */
-	protected native void setOption0(final int code, final Class<?> klaz,
-			final Object value) throws ExceptionUDT;
+	protected native void setOption0( //
+			final int code, //
+			final Class<?> klaz, //
+			final Object value //
+	) throws ExceptionUDT;
 
 	/**
 	 * @see #setOption0(int, Class, Object)
 	 */
-	public void setOption(final OptionUDT option, final Object value)
-			throws ExceptionUDT {
+	public <T> void setOption( //
+			final OptionUDT option, //
+			final T value //
+	) throws ExceptionUDT {
+
 		if (option == null || value == null) {
 			throw new IllegalArgumentException(
 					"option == null || value == null");
 		}
-		if (value.getClass() == option.getKlaz()) {
-			setOption0(option.getCode(), option.getKlaz(), value);
-		} else {
-			throw new ExceptionUDT(socketID, ErrorUDT.WRAPPER_MESSAGE,
-					"option and value types do not match: "
-							+ option.getKlaz().getName() + " vs "
-							+ value.getClass().getName());
-		}
+
+		setOption0(option.getCode(), option.getKlaz(), value);
+
 	}
 
 	/**
@@ -1093,8 +1098,8 @@ public class SocketUDT {
 	public final boolean isBlocking() {
 		try {
 			if (isOpen()) {
-				final boolean isReceiveBlocking = (Boolean) getOption(OptionUDT.Is_Receive_Synchronous);
-				final boolean isSendBlocking = (Boolean) getOption(OptionUDT.Is_Send_Synchronous);
+				final boolean isReceiveBlocking = getOption(OptionUDT.Is_Receive_Synchronous);
+				final boolean isSendBlocking = getOption(OptionUDT.Is_Send_Synchronous);
 				return isReceiveBlocking && isSendBlocking;
 			}
 		} catch (final Exception e) {
@@ -1115,8 +1120,8 @@ public class SocketUDT {
 	public final boolean isNonBlocking() {
 		try {
 			if (isOpen()) {
-				final boolean isReceiveBlocking = (Boolean) getOption(OptionUDT.Is_Receive_Synchronous);
-				final boolean isSendBlocking = (Boolean) getOption(OptionUDT.Is_Send_Synchronous);
+				final boolean isReceiveBlocking = getOption(OptionUDT.Is_Receive_Synchronous);
+				final boolean isSendBlocking = getOption(OptionUDT.Is_Send_Synchronous);
 				return !isReceiveBlocking && !isSendBlocking;
 			}
 		} catch (final Exception e) {
@@ -1132,8 +1137,8 @@ public class SocketUDT {
 	 * @see java.net.Socket#getSendBufferSize()
 	 */
 	public final int getSendBufferSize() throws ExceptionUDT {
-		final int protocolSize = (Integer) getOption(OptionUDT.Protocol_Send_Buffer_Size);
-		final int kernelSize = (Integer) getOption(OptionUDT.Kernel_Send_Buffer_Size);
+		final int protocolSize = getOption(OptionUDT.Protocol_Send_Buffer_Size);
+		final int kernelSize = getOption(OptionUDT.Kernel_Send_Buffer_Size);
 		return Math.min(protocolSize, kernelSize);
 	}
 
@@ -1144,8 +1149,8 @@ public class SocketUDT {
 	 * @see java.net.Socket#getReceiveBufferSize()
 	 */
 	public final int getReceiveBufferSize() throws ExceptionUDT {
-		final int protocolSize = (Integer) getOption(OptionUDT.Protocol_Receive_Buffer_Size);
-		final int kernelSize = (Integer) getOption(OptionUDT.Kernel_Receive_Buffer_Size);
+		final int protocolSize = getOption(OptionUDT.Protocol_Receive_Buffer_Size);
+		final int kernelSize = getOption(OptionUDT.Kernel_Receive_Buffer_Size);
 		return Math.min(protocolSize, kernelSize);
 	}
 
@@ -1155,7 +1160,7 @@ public class SocketUDT {
 	 * @see java.net.Socket#getReuseAddress()
 	 */
 	public final boolean getReuseAddress() throws ExceptionUDT {
-		return (Boolean) getOption(OptionUDT.Is_Address_Reuse_Enabled);
+		return getOption(OptionUDT.Is_Address_Reuse_Enabled);
 	}
 
 	/**
@@ -1164,8 +1169,7 @@ public class SocketUDT {
 	 * @see java.net.Socket#getSoLinger()
 	 */
 	public final int getSoLinger() throws ExceptionUDT {
-		return ((LingerUDT) getOption(OptionUDT.Time_To_Linger_On_Close))
-				.intValue();
+		return getOption(OptionUDT.Time_To_Linger_On_Close).intValue();
 	}
 
 	/**
@@ -1177,8 +1181,8 @@ public class SocketUDT {
 	 * @see java.net.Socket#getSoTimeout()
 	 */
 	public final int getSoTimeout() throws ExceptionUDT {
-		final int sendTimeout = (Integer) getOption(OptionUDT.Send_Timeout);
-		final int receiveTimeout = (Integer) getOption(OptionUDT.Receive_Timeout);
+		final int sendTimeout = getOption(OptionUDT.Send_Timeout);
+		final int receiveTimeout = getOption(OptionUDT.Receive_Timeout);
 		final int millisTimeout;
 		if (sendTimeout != receiveTimeout) {
 			log.error("sendTimeout != receiveTimeout");
