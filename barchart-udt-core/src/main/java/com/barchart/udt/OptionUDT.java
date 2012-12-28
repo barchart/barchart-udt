@@ -213,9 +213,7 @@ public class OptionUDT<T> {
 	) {
 
 		text.append("\n\t");
-		text.append("socketID");
-		text.append(" = ");
-		text.append(socketUDT.socketID);
+		text.append(String.format("[id: 0x%08x]", socketUDT.socketID));
 
 		for (final OptionUDT<?> option : values) {
 			int optionCode = 0;

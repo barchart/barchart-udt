@@ -38,6 +38,8 @@
 			<arg value="--define" />
 			<arg value="skipTests" />
 
+			<arg value="--update-snapshots" />
+
 		</exec>
 
 	</target>

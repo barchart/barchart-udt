@@ -17,49 +17,46 @@ package io.netty.channel.socket.nio;
 
 import io.netty.buffer.BufType;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.MessageBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelMetadata;
 import io.netty.channel.socket.DefaultUdtChannelConfig;
 import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.UdtChannelConfig;
-import io.netty.channel.socket.UdtMessage;
 import io.netty.logging.InternalLogger;
 import io.netty.logging.InternalLoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 
 import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
- * Metty Message Connector for UDT Datagrams
+ * TODO Netty Byte Channel Rendezvous for UDT Streams
  */
-public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
+public class NioUdtByteRendezvousChannel extends AbstractNioByteChannel
         implements UdtChannel {
 
     protected static final InternalLogger logger = //
-    InternalLoggerFactory.getInstance(NioUdtMessageConnectorChannel.class);
+    InternalLoggerFactory.getInstance(NioUdtByteRendezvousChannel.class);
 
     protected static final ChannelMetadata METADATA = //
-    new ChannelMetadata(BufType.MESSAGE, false);
+    new ChannelMetadata(BufType.BYTE, false);
 
     private final UdtChannelConfig config;
 
-    protected NioUdtMessageConnectorChannel() {
-        this(TypeUDT.DATAGRAM);
+    protected NioUdtByteRendezvousChannel() {
+        this(TypeUDT.STREAM);
     }
 
-    protected NioUdtMessageConnectorChannel(//
+    protected NioUdtByteRendezvousChannel(//
             final Channel parent, //
             final Integer id, //
             final SocketChannelUDT channelUDT //
     ) {
-        super(parent, id, channelUDT, SelectionKey.OP_READ);
+        super(parent, id, channelUDT);
         try {
             channelUDT.configureBlocking(false);
             config = new DefaultUdtChannelConfig();
@@ -76,15 +73,15 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
                     logger.warn("Failed to close channel.", e2);
                 }
             }
-            throw new ChannelException("Failed to configure channel.", e);
+            throw new ChannelException("Failed configure channel.", e);
         }
     }
 
-    protected NioUdtMessageConnectorChannel(final SocketChannelUDT channelUDT) {
+    protected NioUdtByteRendezvousChannel(final SocketChannelUDT channelUDT) {
         this(null, channelUDT.socketUDT().id(), channelUDT);
     }
 
-    protected NioUdtMessageConnectorChannel(final TypeUDT type) {
+    protected NioUdtByteRendezvousChannel(final TypeUDT type) {
         this(NioUdtProvider.newConnectorChannelUDT(type));
     }
 
@@ -140,81 +137,32 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
     }
 
     @Override
-    protected int doReadMessages(final MessageBuf<Object> buf) throws Exception {
-
-        final int maximumMessageSize = config.getReceiveBufferSize();
-
-        final ByteBuf byteBuf = config.getAllocator().directBuffer(
-                maximumMessageSize);
-
-        final int receivedMessageSize = byteBuf.writeBytes(javaChannel(),
-                maximumMessageSize);
-
-        if (receivedMessageSize <= 0) {
-            byteBuf.free();
-            return 0;
-        }
-
-        if (receivedMessageSize >= maximumMessageSize) {
-            javaChannel().close();
-            throw new ChannelException(
-                    "invalid config : increase receive buffer size to avoid message truncation");
-        }
-
-        buf.add(new UdtMessage(byteBuf));
-
-        return 1;
+    protected int doReadBytes(final ByteBuf byteBuf) throws Exception {
+        return byteBuf.writeBytes(javaChannel(), byteBuf.writableBytes());
     }
 
     @Override
-    protected int doWriteMessages(final MessageBuf<Object> messageQueue,
-            final boolean lastSpin) throws Exception {
-
-        final UdtMessage message = (UdtMessage) messageQueue.peek();
-
-        final ByteBuf byteBuf = message.data();
-
-        final int messageSize = byteBuf.readableBytes();
-
-        ByteBuffer buffer;
-        if (byteBuf.nioBufferCount() == 1) {
-            buffer = byteBuf.nioBuffer();
-        } else {
-            throw new ChannelException("TODO");
-        }
-
-        final int writtenBytes = javaChannel().write(buffer);
-
+    protected int doWriteBytes(final ByteBuf byteBuf, final boolean lastSpin)
+            throws Exception {
+        final int pendingBytes = byteBuf.readableBytes();
+        final int writtenBytes = byteBuf.readBytes(//
+                javaChannel(), pendingBytes);
         final SelectionKey key = selectionKey();
         final int interestOps = key.interestOps();
-
-        // did not write the message
-        if (writtenBytes <= 0 && messageSize > 0) {
-            if (lastSpin) {
+        if (writtenBytes >= pendingBytes) {
+            // wrote the buffer completely - clear OP_WRITE.
+            if ((interestOps & SelectionKey.OP_WRITE) != 0) {
+                key.interestOps(interestOps & ~SelectionKey.OP_WRITE);
+            }
+        } else {
+            // wrote partial or nothing - ensure OP_WRITE
+            if (writtenBytes > 0 || lastSpin) {
                 if ((interestOps & SelectionKey.OP_WRITE) == 0) {
                     key.interestOps(interestOps | SelectionKey.OP_WRITE);
                 }
             }
-            return 0;
         }
-
-        // wrote message completely
-        if (writtenBytes != messageSize) {
-            throw new ChannelException("provider error");
-        }
-
-        // wrote the message queue completely - clear OP_WRITE.
-        if (messageQueue.isEmpty()) {
-            if ((interestOps & SelectionKey.OP_WRITE) != 0) {
-                key.interestOps(interestOps & ~SelectionKey.OP_WRITE);
-            }
-        }
-
-        message.free();
-
-        messageQueue.remove();
-
-        return 1;
+        return writtenBytes;
     }
 
     @Override

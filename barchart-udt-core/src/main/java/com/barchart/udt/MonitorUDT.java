@@ -316,9 +316,7 @@ public class MonitorUDT {
 	public void appendSnapshot(final StringBuilder text) {
 
 		text.append("\n\t");
-		text.append("socketID");
-		text.append(" = ");
-		text.append(socketUDT.socketID);
+		text.append(String.format("[id: 0x%08x]", socketUDT.socketID));
 
 		final Field fieldArray[] = MonitorUDT.class.getDeclaredFields();
 

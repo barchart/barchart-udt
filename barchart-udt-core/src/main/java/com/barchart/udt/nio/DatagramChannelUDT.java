@@ -10,11 +10,11 @@ import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
 
 /**
- * TODO
+ * TODO rendezvous
  */
-public class ChannelDatagramUDT extends DatagramChannel implements ChannelUDT {
+public class DatagramChannelUDT extends DatagramChannel implements ChannelUDT {
 
-	protected ChannelDatagramUDT(final SelectorProviderUDT provider) {
+	protected DatagramChannelUDT(final SelectorProviderUDT provider) {
 
 		super(provider);
 
@@ -59,15 +59,8 @@ public class ChannelDatagramUDT extends DatagramChannel implements ChannelUDT {
 	}
 
 	@Override
-	public boolean isOpenSocketUDT() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public KindUDT kindUDT() {
-		// TODO Auto-generated method stub
-		return null;
+		return KindUDT.RENDEZVOUS;
 	}
 
 	@Override

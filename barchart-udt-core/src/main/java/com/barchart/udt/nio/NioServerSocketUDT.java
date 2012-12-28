@@ -11,19 +11,16 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-import com.barchart.udt.SocketUDT;
 import com.barchart.udt.net.NetServerSocketUDT;
 
-public class AdapterServerSocketUDT extends NetServerSocketUDT {
+public class NioServerSocketUDT extends NetServerSocketUDT {
 
-	protected final ChannelServerSocketUDT channelUDT;
+	protected final ServerSocketChannelUDT channelUDT;
 
-	protected AdapterServerSocketUDT( //
-			final ChannelServerSocketUDT channelUDT, //
-			final SocketUDT socketUDT //
-	) throws IOException {
+	protected NioServerSocketUDT(final ServerSocketChannelUDT channelUDT)
+			throws IOException {
 
-		super(socketUDT);
+		super(channelUDT.socketUDT());
 		this.channelUDT = channelUDT;
 
 	}
@@ -44,7 +41,7 @@ public class AdapterServerSocketUDT extends NetServerSocketUDT {
 	}
 
 	@Override
-	public ChannelServerSocketUDT getChannel() {
+	public ServerSocketChannelUDT getChannel() {
 		return channelUDT;
 	}
 

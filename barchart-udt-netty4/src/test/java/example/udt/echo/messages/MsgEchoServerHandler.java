@@ -16,9 +16,12 @@
 package example.udt.echo.messages;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.MessageBuf;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
+import io.netty.channel.socket.UdtMessage;
+import io.netty.channel.socket.nio.NioUdtProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +30,8 @@ import org.slf4j.LoggerFactory;
  * Handler implementation for the echo server.
  */
 @Sharable
-public class MsgEchoServerHandler extends ChannelInboundMessageHandlerAdapter {
+public class MsgEchoServerHandler extends
+        ChannelInboundMessageHandlerAdapter<UdtMessage> {
 
     private static final Logger log = LoggerFactory
             .getLogger(MsgEchoServerHandler.class.getName());
@@ -45,19 +49,20 @@ public class MsgEchoServerHandler extends ChannelInboundMessageHandlerAdapter {
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
 
-        log.info("ECHO active {}", this);
+        log.info("ECHO active {}", NioUdtProvider.socketUDT(ctx.channel())
+                .toStringOptions());
 
     }
 
     @Override
     protected void messageReceived(final ChannelHandlerContext ctx,
-            final Object msg) throws Exception {
+            final UdtMessage message) throws Exception {
 
-        final ByteBuf out = ctx.nextOutboundByteBuffer();
+        final ByteBuf byteBuf = message.data();
 
-        out.discardReadBytes();
+        final MessageBuf<Object> out = ctx.nextOutboundMessageBuffer();
 
-        // out.writeBytes(in);
+        out.add(message);
 
         ctx.flush();
 

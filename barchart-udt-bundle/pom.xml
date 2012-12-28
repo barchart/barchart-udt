@@ -215,7 +215,7 @@
 									${dependencyUnpack},
 									${basedir}/target/classes,
 								</Include-Resource>
-								<Bundle-DocURL>${url}</Bundle-DocURL>
+								<Bundle-DocURL>${project.url}</Bundle-DocURL>
 							</instructions>
 						</configuration>
 					</plugin>

@@ -18,6 +18,9 @@ import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
 
 /**
+ * {@link ServerSocketChannel}-like wrapper for {@link SocketUDT} can be either
+ * stream or message oriented, depending on {@link TypeUDT}
+ * <p>
  * you must use {@link SelectorProviderUDT#openServerSocketChannel()} to obtain
  * instance of this class; do not use JDK
  * {@link java.nio.channels.ServerSocketChannel#open()};
@@ -35,18 +38,18 @@ import com.barchart.udt.TypeUDT;
  * assert connectChannel.isConnected();
  * </pre>
  */
-public class ChannelServerSocketUDT extends ServerSocketChannel implements
+public class ServerSocketChannelUDT extends ServerSocketChannel implements
 		ChannelUDT {
 
 	protected static final Logger log = LoggerFactory
-			.getLogger(ChannelServerSocketUDT.class);
+			.getLogger(ServerSocketChannelUDT.class);
 
 	/** guarded by 'this' */
 	protected ServerSocket socketAdapter;
 
 	protected final SocketUDT socketUDT;
 
-	protected ChannelServerSocketUDT( //
+	protected ServerSocketChannelUDT( //
 			final SelectorProviderUDT provider, //
 			final SocketUDT socketUDT //
 	) {
@@ -57,7 +60,7 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	}
 
 	@Override
-	public ChannelSocketUDT accept() throws IOException {
+	public SocketChannelUDT accept() throws IOException {
 		try {
 
 			begin();
@@ -70,7 +73,7 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 
 			} else {
 
-				return new ChannelSocketUDT( //
+				return new SocketChannelUDT( //
 						providerUDT(), //
 						clientUDT, //
 						clientUDT.isConnected() //
@@ -99,11 +102,6 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 	}
 
 	@Override
-	public boolean isOpenSocketUDT() {
-		return socketUDT.isOpen();
-	}
-
-	@Override
 	public KindUDT kindUDT() {
 		return KindUDT.ACCEPTOR;
 	}
@@ -118,8 +116,9 @@ public class ChannelServerSocketUDT extends ServerSocketChannel implements
 		synchronized (this) {
 			if (socketAdapter == null) {
 				try {
-					socketAdapter = new AdapterServerSocketUDT(this, socketUDT);
-				} catch (final IOException e) {
+					socketAdapter = new NioServerSocketUDT(this);
+				} catch (final Exception e) {
+					log.error("failed to make socket");
 					return null;
 				}
 			}

@@ -130,7 +130,7 @@ public class EpollUDT {
 		isActive = true;
 
 		socketUDT = new SocketUDT(TypeUDT.DATAGRAM);
-		SocketUDT.epollAdd0(id, socketUDT.getSocketId(), Opt.BOTH.code);
+		SocketUDT.epollAdd0(id, socketUDT.id(), Opt.BOTH.code);
 
 		log.debug("ep {} create", id());
 
@@ -141,7 +141,7 @@ public class EpollUDT {
 	 */
 	public void destroy() throws ExceptionUDT {
 
-		SocketUDT.epollRemove0(id(), socketUDT.getSocketId());
+		SocketUDT.epollRemove0(id(), socketUDT.id());
 		socketUDT.close();
 
 		isActive = false;
@@ -193,7 +193,7 @@ public class EpollUDT {
 
 		assert option.isValidInterestRequest();
 
-		SocketUDT.epollAdd0(id(), socket.getSocketId(), option.code);
+		SocketUDT.epollAdd0(id(), socket.id(), option.code);
 
 	}
 
@@ -204,7 +204,7 @@ public class EpollUDT {
 
 		log.debug("ep {} rem {}", id(), socket);
 
-		SocketUDT.epollRemove0(id(), socket.getSocketId());
+		SocketUDT.epollRemove0(id(), socket.id());
 
 	}
 
@@ -218,14 +218,14 @@ public class EpollUDT {
 
 		assert option.isValidInterestRequest();
 
-		SocketUDT.epollUpdate0(id(), socket.getSocketId(), option.code);
+		SocketUDT.epollUpdate0(id(), socket.id(), option.code);
 
 	}
 
 	/** report current poll/socket readiness */
 	public Opt verify(final SocketUDT socket) throws ExceptionUDT {
 
-		final int code = SocketUDT.epollVerify0(id(), socket.getSocketId());
+		final int code = SocketUDT.epollVerify0(id(), socket.id());
 
 		return Opt.from(code);
 

@@ -7,31 +7,27 @@
  */
 package com.barchart.udt.nio;
 
-import java.io.IOException;
+import java.nio.channels.Channel;
 
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
 
 /**
- * convenience interface shared by client and server
+ * convenience interface shared by client, server, rendezvous
  */
-public interface ChannelUDT {
+public interface ChannelUDT extends Channel {
 
 	KindUDT kindUDT();
 
 	SocketUDT socketUDT();
 
-	void close() throws IOException;
-
-	boolean isOpenSocketUDT();
-
 	/**
 	 * was connection attempt acknowledged by
-	 * {@link ChannelSocketUDT#finishConnect()}
+	 * {@link SocketChannelUDT#finishConnect()}
 	 */
 	boolean isConnectFinished();
 
-	public int validOps();
+	int validOps();
 
 	SelectorProviderUDT providerUDT();
 

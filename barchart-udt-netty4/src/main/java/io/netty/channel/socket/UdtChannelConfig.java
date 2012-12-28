@@ -21,8 +21,8 @@ import io.netty.channel.ChannelOption;
 import java.io.IOException;
 
 import com.barchart.udt.OptionUDT;
-import com.barchart.udt.nio.ChannelServerSocketUDT;
-import com.barchart.udt.nio.ChannelSocketUDT;
+import com.barchart.udt.nio.ServerSocketChannelUDT;
+import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
  * TODO expose more of {@link OptionUDT}
@@ -60,20 +60,20 @@ import com.barchart.udt.nio.ChannelSocketUDT;
 public interface UdtChannelConfig extends ChannelConfig {
 
     ChannelOption<Integer> PROTOCOL_RECEIVE_BUFFER_SIZE = //
-    new ChannelOption<Integer>("");
+    new ChannelOption<Integer>("PROTOCOL_RECEIVE_BUFFER_SIZE");
 
     ChannelOption<Integer> PROTOCOL_SEND_BUFFER_SIZE = //
-    new ChannelOption<Integer>("");
+    new ChannelOption<Integer>("PROTOCOL_SEND_BUFFER_SIZE");
 
     ChannelOption<Integer> SYSTEM_RECEIVE_BUFFER_SIZE = //
-    new ChannelOption<Integer>("");
+    new ChannelOption<Integer>("SYSTEM_RECEIVE_BUFFER_SIZE");
 
     ChannelOption<Integer> SYSTEM_SEND_BUFFER_SIZE = //
-    new ChannelOption<Integer>("");
+    new ChannelOption<Integer>("SYSTEM_SEND_BUFFER_SIZE");
 
-    void apply(final ChannelServerSocketUDT channelUDT) throws IOException;
+    void apply(final ServerSocketChannelUDT channelUDT) throws IOException;
 
-    void apply(final ChannelSocketUDT channelUDT) throws IOException;
+    void apply(final SocketChannelUDT channelUDT) throws IOException;
 
     int getBacklog();
 

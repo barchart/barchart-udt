@@ -28,7 +28,7 @@ public class TestEpollLimit extends TestAny {
 		}
 
 		for (int k = 0; k < limit; k++) {
-			final int id = list.get(k).getSocketId();
+			final int id = list.get(k).id();
 			SocketUDT.epollAdd0(epollID, id, Opt.BOTH.code);
 		}
 

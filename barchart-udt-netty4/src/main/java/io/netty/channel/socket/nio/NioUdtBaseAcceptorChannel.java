@@ -31,10 +31,10 @@ import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 
 import com.barchart.udt.TypeUDT;
-import com.barchart.udt.nio.ChannelServerSocketUDT;
+import com.barchart.udt.nio.ServerSocketChannelUDT;
 
 /**
- * Common base for Byte and Message UDT acceptors.
+ * Common base for Netty Byte/Message UDT Stream/Datagram acceptors.
  */
 public abstract class NioUdtBaseAcceptorChannel extends
         AbstractNioMessageChannel implements UdtChannel {
@@ -49,10 +49,10 @@ public abstract class NioUdtBaseAcceptorChannel extends
 
     protected final UdtChannelConfig config;
 
-    protected NioUdtBaseAcceptorChannel(final ChannelServerSocketUDT channelUDT) {
+    protected NioUdtBaseAcceptorChannel(final ServerSocketChannelUDT channelUDT) {
         super(//
                 null, //
-                channelUDT.socketUDT().getSocketId(), //
+                channelUDT.socketUDT().id(), //
                 channelUDT, //
                 SelectionKey.OP_ACCEPT //
         );
@@ -122,8 +122,8 @@ public abstract class NioUdtBaseAcceptorChannel extends
     }
 
     @Override
-    protected ChannelServerSocketUDT javaChannel() {
-        return (ChannelServerSocketUDT) super.javaChannel();
+    protected ServerSocketChannelUDT javaChannel() {
+        return (ServerSocketChannelUDT) super.javaChannel();
     }
 
     @Override

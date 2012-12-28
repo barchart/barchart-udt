@@ -182,7 +182,7 @@ public class SelectorUDT extends AbstractSelector {
 
 		final ChannelUDT channelUDT = (ChannelUDT) channel;
 
-		final Integer socketId = channelUDT.socketUDT().getSocketId();
+		final Integer socketId = channelUDT.socketUDT().id();
 
 		SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 

@@ -9,16 +9,14 @@ package com.barchart.udt.nio;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 
 /**
  * {@link OutputStream} for UDT sockets.
  */
-public class AdapterOutputStreamUDT extends OutputStream {
+public class NioOutputStreamUDT extends OutputStream {
 
-	protected final SocketChannel channel;
+	protected final SocketChannelUDT channel;
 
 	/**
 	 * Creates a new UDT output stream.
@@ -28,8 +26,7 @@ public class AdapterOutputStreamUDT extends OutputStream {
 	 * @param socketUDT
 	 *            The UDT socket.
 	 */
-	protected AdapterOutputStreamUDT(final SocketChannel channel,
-			final Socket socketUDT) {
+	protected NioOutputStreamUDT(final SocketChannelUDT channel) {
 		this.channel = channel;
 	}
 

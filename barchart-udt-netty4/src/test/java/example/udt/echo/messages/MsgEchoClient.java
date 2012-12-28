@@ -33,9 +33,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yammer.metrics.reporting.ConsoleReporter;
-
-import example.udt.util.ThreadFactoryUDT;
+import util.ConsoleReporterUDT;
+import util.ThreadFactoryUDT;
 
 /**
  * UDT STREAM client
@@ -120,7 +119,7 @@ public class MsgEchoClient {
 
         log.info("init");
 
-        ConsoleReporter.enable(3, TimeUnit.SECONDS);
+        ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
 
         final String host = "localhost";
         final int port = 1234;

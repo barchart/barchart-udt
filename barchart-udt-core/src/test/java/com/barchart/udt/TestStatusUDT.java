@@ -49,16 +49,16 @@ public class TestStatusUDT extends TestAny {
 	public void testSocketStatus1() throws Exception {
 
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
-		assertEquals(StatusUDT.INIT, socket.getStatus());
+		assertEquals(StatusUDT.INIT, socket.status());
 
 		final InetSocketAddress localAddress1 = UnitHelp.localSocketAddress();
 
 		socket.bind(localAddress1);
-		assertEquals(StatusUDT.OPENED, socket.getStatus());
+		assertEquals(StatusUDT.OPENED, socket.status());
 
 		socket.close();
 
-		assertEquals(StatusUDT.CLOSED, socket.getStatus());
+		assertEquals(StatusUDT.CLOSED, socket.status());
 
 	}
 
@@ -66,18 +66,18 @@ public class TestStatusUDT extends TestAny {
 	public void testSocketStatus2() throws Exception {
 
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
-		assertEquals(StatusUDT.INIT, socket.getStatus());
+		assertEquals(StatusUDT.INIT, socket.status());
 
 		final InetSocketAddress localAddress1 = UnitHelp.localSocketAddress();
 
 		socket.bind(localAddress1);
-		assertEquals(StatusUDT.OPENED, socket.getStatus());
+		assertEquals(StatusUDT.OPENED, socket.status());
 
 		socket.listen(1);
-		assertEquals(StatusUDT.LISTENING, socket.getStatus());
+		assertEquals(StatusUDT.LISTENING, socket.status());
 
 		socket.close();
-		assertEquals(StatusUDT.BROKEN, socket.getStatus());
+		assertEquals(StatusUDT.BROKEN, socket.status());
 
 	}
 
@@ -91,23 +91,23 @@ public class TestStatusUDT extends TestAny {
 		//
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		assertEquals(StatusUDT.INIT, client.getStatus());
+		assertEquals(StatusUDT.INIT, client.status());
 
 		final SocketUDT server = new SocketUDT(TypeUDT.DATAGRAM);
-		assertEquals(StatusUDT.INIT, server.getStatus());
+		assertEquals(StatusUDT.INIT, server.status());
 
 		//
 
 		client.bind(clientAddress);
-		assertEquals(StatusUDT.OPENED, client.getStatus());
+		assertEquals(StatusUDT.OPENED, client.status());
 
 		server.bind(serverAddress);
-		assertEquals(StatusUDT.OPENED, server.getStatus());
+		assertEquals(StatusUDT.OPENED, server.status());
 
 		//
 
 		server.listen(10);
-		assertEquals(StatusUDT.LISTENING, server.getStatus());
+		assertEquals(StatusUDT.LISTENING, server.status());
 
 		//
 

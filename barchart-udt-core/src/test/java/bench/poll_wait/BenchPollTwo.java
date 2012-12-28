@@ -58,7 +58,7 @@ public class BenchPollTwo extends SocketUDT {
 		log.info("init");
 
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
-		final int socketID = socket.getSocketId();
+		final int socketID = socket.id();
 		final int epollID = BenchPollTwo.epollCreate0();
 
 		BenchPollTwo.epollAdd0(epollID, socketID, EpollUDT.Opt.BOTH.code);

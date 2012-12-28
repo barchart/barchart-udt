@@ -50,7 +50,7 @@ public class TestSocketUDT extends TestAny {
 
 		socketAwait(accept, StatusUDT.LISTENING);
 
-		assertEquals(StatusUDT.LISTENING, accept.getStatus());
+		assertEquals(StatusUDT.LISTENING, accept.status());
 
 		assertNull(accept.accept());
 

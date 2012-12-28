@@ -17,7 +17,7 @@ public class TestSocketLimit extends TestAny {
 
 		final List<SocketUDT> list = new ArrayList<SocketUDT>();
 
-		for (int index = 0; index < limit; index++) {
+		allocate: for (int index = 0; index < limit; index++) {
 
 			final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
@@ -27,10 +27,17 @@ public class TestSocketLimit extends TestAny {
 
 			} catch (final ExceptionUDT e) {
 
-				if (e.getError() == ErrorUDT.ETHREAD) {
-					break;
+				switch (e.getError()) {
+				case ETHREAD:
+					log.error("reached udt limit : {}", e.getMessage());
+					break allocate;
+				default:
+					throw e;
 				}
 
+			} catch (final Throwable e) {
+				log.error("reached system limit : {}", e.getMessage());
+				break allocate;
 			}
 
 			list.add(socket);

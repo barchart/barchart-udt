@@ -18,14 +18,13 @@ import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.anno.Native;
 import com.barchart.udt.lib.LibraryLoaderUDT;
+import com.barchart.udt.nio.KindUDT;
 import com.barchart.udt.util.HelpUDT;
 
 /**
- * notes
+ * UDT native socket wrapper
  * <p>
- * current implementation supports IPv4 only (no IPv6)
- * <p>
- * do not change fields annotated with {@link Native}
+ * note: current implementation supports IPv4 only (no IPv6)
  */
 public class SocketUDT {
 
@@ -39,12 +38,8 @@ public class SocketUDT {
 	 * platforms; failure to match will abort native library load, as an
 	 * indication of inconsistent build
 	 */
-	/*
-	 * do not use automatic signature based on time stamp until all platforms
-	 * are built at once by hudson
-	 */
 	@Native
-	public static final int SIGNATURE_JNI = 20121214; // VersionUDT.BUILDTIME;
+	public static final int SIGNATURE_JNI = 20121228; // VersionUDT.BUILDTIME;
 
 	/**
 	 * infinite message time to live;
@@ -149,15 +144,9 @@ public class SocketUDT {
 	@Native
 	protected final int socketID;
 
-	public int getSocketId() {
+	public int id() {
 		return socketID;
 	}
-
-	/**
-	 * native socket type; SOCK_DGRAM / SOCK_STREAM
-	 */
-	@Native
-	protected final int socketType;
 
 	/**
 	 * native address family; read by JNI
@@ -173,7 +162,7 @@ public class SocketUDT {
 	@Native
 	protected final TypeUDT type;
 
-	public TypeUDT getType() {
+	public TypeUDT type() {
 		return type;
 	}
 
@@ -499,7 +488,6 @@ public class SocketUDT {
 		if (queueSize <= 0) {
 			throw new IllegalArgumentException("queueSize <= 0");
 		}
-		// publisher for volatile
 		listenQueueSize = queueSize;
 		listen0(queueSize);
 	}
@@ -569,7 +557,7 @@ public class SocketUDT {
 
 		HelpUDT.checkArray(array);
 
-		return receive0(socketID, socketType, array);
+		return receive0(socketID, type.code, array);
 
 	}
 
@@ -586,7 +574,7 @@ public class SocketUDT {
 
 		HelpUDT.checkArray(array);
 
-		return receive1(socketID, socketType, array, position, limit);
+		return receive1(socketID, type.code, array, position, limit);
 
 	}
 
@@ -608,7 +596,7 @@ public class SocketUDT {
 		final int remaining = buffer.remaining();
 
 		final int sizeReceived = //
-		receive2(socketID, socketType, buffer, position, limit);
+		receive2(socketID, type.code, buffer, position, limit);
 
 		if (sizeReceived <= 0) {
 			return sizeReceived;
@@ -754,7 +742,7 @@ public class SocketUDT {
 
 		return send0( //
 				socketID, //
-				socketType, //
+				type.code, //
 				messageTimeTolive, //
 				messageIsOrdered, //
 				array //
@@ -786,7 +774,7 @@ public class SocketUDT {
 
 		return send1( //
 				socketID, //
-				socketType, //
+				type.code, //
 				messageTimeTolive, //
 				messageIsOrdered, //
 				array, //
@@ -817,7 +805,7 @@ public class SocketUDT {
 
 		final int sizeSent = send2( //
 				socketID, //
-				socketType, //
+				type.code, //
 				messageTimeTolive, //
 				messageIsOrdered, //
 				buffer, //
@@ -845,7 +833,6 @@ public class SocketUDT {
 	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
 	public final void setMessageTimeTolLive(final int timeToLive) {
-		// publisher to volatile
 		messageTimeTolive = timeToLive;
 	}
 
@@ -856,7 +843,6 @@ public class SocketUDT {
 	 *      href="http://udt.sourceforge.net/udt4/doc/sendmsg.htm">UDT::sendmsg()</a>
 	 */
 	public final void setMessageIsOdered(final boolean isOrdered) {
-		// publisher to volatile
 		messageIsOrdered = isOrdered;
 	}
 
@@ -947,11 +933,16 @@ public class SocketUDT {
 	 * @see StatusUDT#isOpenEmulateJDK()
 	 */
 	public final boolean isOpen() {
-
-		final StatusUDT status = getStatus();
-
-		return status.isOpenEmulateJDK();
-
+		switch (status()) {
+		case INIT:
+		case OPENED:
+		case LISTENING:
+		case CONNECTING:
+		case CONNECTED:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	/**
@@ -959,7 +950,7 @@ public class SocketUDT {
 	 * 
 	 * @see #isOpen()
 	 */
-	public boolean isClosed() {
+	public final boolean isClosed() {
 		return !isOpen();
 	}
 
@@ -973,7 +964,7 @@ public class SocketUDT {
 	/**
 	 * returns native status of underlying native UDT socket
 	 */
-	public StatusUDT getStatus() {
+	public StatusUDT status() {
 		return StatusUDT.from(getStatus0());
 	}
 
@@ -1006,7 +997,6 @@ public class SocketUDT {
 			this.type = type;
 			this.monitor = new MonitorUDT(this);
 			this.socketID = initInstance0(type.code);
-			this.socketType = type.code;
 			this.socketAddressFamily = 2; // ipv4
 			setDefaultMessageSendMode();
 		}
@@ -1026,7 +1016,6 @@ public class SocketUDT {
 			this.type = type;
 			this.monitor = new MonitorUDT(this);
 			this.socketID = initInstance1(socketID);
-			this.socketType = type.code;
 			this.socketAddressFamily = 2; // ipv4
 			setDefaultMessageSendMode();
 		}
@@ -1040,24 +1029,30 @@ public class SocketUDT {
 	 *         false : otherwise<br>
 	 */
 	public final boolean isBound() {
-		if (isClosed()) {
-			return false;
-		}
-		try {
-			return getLocalSocketAddress() != null;
-		} catch (final Exception e) {
+		switch (status()) {
+		case OPENED:
+		case CONNECTING:
+		case CONNECTED:
+		case LISTENING:
+			return true;
+		default:
 			return false;
 		}
 	}
 
 	/**
-	 * Check if socket is connected. (JDK semantics)
+	 * Check if {@link KindUDT#CONNECTOR} socket is connected. (JDK semantics)
 	 * 
 	 * @return true : {@link #connect(InetSocketAddress)} was successful<br>
 	 *         false : otherwise<br>
 	 */
 	public final boolean isConnected() {
-		return getStatus() == StatusUDT.CONNECTED;
+		switch (status()) {
+		case CONNECTED:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	/**
@@ -1370,7 +1365,7 @@ public class SocketUDT {
 				"[id: 0x%08x] %s %s bind=%s:%s peer=%s:%s", //
 				socketID, //
 				type, //
-				getStatus(), //
+				status(), //
 				getLocalInetAddress(), //
 				getLocalInetPort(), //
 				getRemoteInetAddress(), //

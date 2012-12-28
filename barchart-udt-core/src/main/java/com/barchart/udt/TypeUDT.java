@@ -19,22 +19,21 @@ package com.barchart.udt;
  */
 public enum TypeUDT {
 
-	/** The STREAM type. Defines stream - oriented UDT mode. */
+	/** The STREAM type. Defines "byte stream" UDT mode. */
 	STREAM(1), //
 
-	/** The DATAGRAM. Defines datagram/message - oriented UDT mode. */
+	/** The DATAGRAM. Defines "datagram or message" UDT mode. */
 	DATAGRAM(2), //
 
 	;
 
-	/** The code */
+	/** native UDT constant */
 	public final int code;
 
 	/**
-	 * Instantiates a new type udt.
 	 * 
 	 * @param code
-	 *            the code
+	 *            native UDT constant
 	 */
 	private TypeUDT(final int code) {
 		this.code = code;

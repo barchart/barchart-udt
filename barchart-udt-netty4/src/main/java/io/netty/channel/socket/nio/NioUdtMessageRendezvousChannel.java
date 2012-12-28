@@ -37,24 +37,24 @@ import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
- * Metty Message Connector for UDT Datagrams
+ * TODO Netty Message Rendezvous for UDT Datagrams
  */
-public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
+public class NioUdtMessageRendezvousChannel extends AbstractNioMessageChannel
         implements UdtChannel {
 
     protected static final InternalLogger logger = //
-    InternalLoggerFactory.getInstance(NioUdtMessageConnectorChannel.class);
+    InternalLoggerFactory.getInstance(NioUdtMessageRendezvousChannel.class);
 
     protected static final ChannelMetadata METADATA = //
     new ChannelMetadata(BufType.MESSAGE, false);
 
     private final UdtChannelConfig config;
 
-    protected NioUdtMessageConnectorChannel() {
+    protected NioUdtMessageRendezvousChannel() {
         this(TypeUDT.DATAGRAM);
     }
 
-    protected NioUdtMessageConnectorChannel(//
+    protected NioUdtMessageRendezvousChannel(//
             final Channel parent, //
             final Integer id, //
             final SocketChannelUDT channelUDT //
@@ -80,11 +80,11 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         }
     }
 
-    protected NioUdtMessageConnectorChannel(final SocketChannelUDT channelUDT) {
+    protected NioUdtMessageRendezvousChannel(final SocketChannelUDT channelUDT) {
         this(null, channelUDT.socketUDT().id(), channelUDT);
     }
 
-    protected NioUdtMessageConnectorChannel(final TypeUDT type) {
+    protected NioUdtMessageRendezvousChannel(final TypeUDT type) {
         this(NioUdtProvider.newConnectorChannelUDT(type));
     }
 

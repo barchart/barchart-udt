@@ -63,7 +63,7 @@ class StreamServer extends StreamBase {
 		assert socket.isBound();
 
 		socket.listen(1);
-		assert socket.getStatus() == StatusUDT.LISTENING;
+		assert socket.status() == StatusUDT.LISTENING;
 
 		executor.submit(this);
 

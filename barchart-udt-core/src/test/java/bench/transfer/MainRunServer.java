@@ -42,7 +42,7 @@ public class MainRunServer {
 		try {
 
 			final SocketUDT acceptor = new SocketUDT(TypeUDT.DATAGRAM);
-			log.info("init; acceptor={}", acceptor.getSocketId());
+			log.info("init; acceptor={}", acceptor.id());
 
 			InetSocketAddress localSocketAddress = new InetSocketAddress(
 					bindAddress, localPort);
@@ -56,9 +56,9 @@ public class MainRunServer {
 
 			final SocketUDT receiver = acceptor.accept();
 
-			log.info("accept; receiver={}", receiver.getSocketId());
+			log.info("accept; receiver={}", receiver.id());
 
-			assert receiver.getSocketId() != acceptor.getSocketId();
+			assert receiver.id() != acceptor.id();
 
 			final long timeStart = System.currentTimeMillis();
 

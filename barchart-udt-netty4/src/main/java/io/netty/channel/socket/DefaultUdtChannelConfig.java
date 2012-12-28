@@ -24,8 +24,8 @@ import java.util.Map;
 
 import com.barchart.udt.OptionUDT;
 import com.barchart.udt.SocketUDT;
-import com.barchart.udt.nio.ChannelServerSocketUDT;
-import com.barchart.udt.nio.ChannelSocketUDT;
+import com.barchart.udt.nio.ServerSocketChannelUDT;
+import com.barchart.udt.nio.SocketChannelUDT;
 import com.barchart.udt.nio.ChannelUDT;
 
 /**
@@ -52,7 +52,7 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
     private volatile boolean reuseAddress = true;
 
     @Override
-    public void apply(final ChannelServerSocketUDT channelUDT)
+    public void apply(final ServerSocketChannelUDT channelUDT)
             throws IOException {
         apply((ChannelUDT) channelUDT);
         final SocketUDT socketUDT = channelUDT.socketUDT();
@@ -60,7 +60,7 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
     }
 
     @Override
-    public void apply(final ChannelSocketUDT channelUDT) throws IOException {
+    public void apply(final SocketChannelUDT channelUDT) throws IOException {
         apply((ChannelUDT) channelUDT);
         final SocketUDT socketUDT = channelUDT.socketUDT();
         // TODO connector specific
@@ -70,19 +70,19 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
         final SocketUDT socketUDT = channelUDT.socketUDT();
         socketUDT.setReuseAddress(isReuseAddress());
         socketUDT.setSendBufferSize(getSendBufferSize());
-        if (getSoLinger() < 0) {
+        if (getSoLinger() <= 0) {
             socketUDT.setSoLinger(false, 0);
         } else {
             socketUDT.setSoLinger(true, getSoLinger());
         }
-        socketUDT.setOption(OptionUDT.Kernel_Receive_Buffer_Size,
-                getSystemReceiveBufferSize());
-        socketUDT.setOption(OptionUDT.Kernel_Send_Buffer_Size,
-                getSystemSendBufferSize());
         socketUDT.setOption(OptionUDT.Protocol_Receive_Buffer_Size,
                 getProtocolReceiveBufferSize());
         socketUDT.setOption(OptionUDT.Protocol_Send_Buffer_Size,
                 getProtocolSendBufferSize());
+        socketUDT.setOption(OptionUDT.System_Receive_Buffer_Size,
+                getSystemReceiveBufferSize());
+        socketUDT.setOption(OptionUDT.System_Send_Buffer_Size,
+                getSystemSendBufferSize());
     }
 
     @Override
@@ -103,6 +103,12 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
         }
         if (option == PROTOCOL_SEND_BUFFER_SIZE) {
             return (T) Integer.valueOf(getProtocolSendBufferSize());
+        }
+        if (option == SYSTEM_RECEIVE_BUFFER_SIZE) {
+            return (T) Integer.valueOf(getSystemReceiveBufferSize());
+        }
+        if (option == SYSTEM_SEND_BUFFER_SIZE) {
+            return (T) Integer.valueOf(getSystemSendBufferSize());
         }
         if (option == SO_RCVBUF) {
             return (T) Integer.valueOf(getReceiveBufferSize());
@@ -172,6 +178,18 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
     @Override
     public <T> boolean setOption(final ChannelOption<T> option, final T value) {
         validate(option, value);
+        if (option == PROTOCOL_RECEIVE_BUFFER_SIZE) {
+            setProtocolReceiveBufferSize((Integer) value);
+        }
+        if (option == PROTOCOL_SEND_BUFFER_SIZE) {
+            setProtocolSendBufferSize((Integer) value);
+        }
+        if (option == SYSTEM_RECEIVE_BUFFER_SIZE) {
+            setSystemReceiveBufferSize((Integer) value);
+        }
+        if (option == SYSTEM_SEND_BUFFER_SIZE) {
+            setSystemSendBufferSize((Integer) value);
+        }
         if (option == SO_RCVBUF) {
             setReceiveBufferSize((Integer) value);
         } else if (option == SO_SNDBUF) {

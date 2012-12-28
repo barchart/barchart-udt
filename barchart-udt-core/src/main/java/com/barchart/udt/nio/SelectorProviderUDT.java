@@ -94,15 +94,15 @@ public class SelectorProviderUDT extends SelectorProvider {
 	}
 
 	@Override
-	public ChannelServerSocketUDT openServerSocketChannel() throws IOException {
+	public ServerSocketChannelUDT openServerSocketChannel() throws IOException {
 		final SocketUDT serverSocketUDT = new SocketUDT(type);
-		return new ChannelServerSocketUDT(this, serverSocketUDT);
+		return new ServerSocketChannelUDT(this, serverSocketUDT);
 	}
 
 	@Override
-	public ChannelSocketUDT openSocketChannel() throws IOException {
+	public SocketChannelUDT openSocketChannel() throws IOException {
 		final SocketUDT socketUDT = new SocketUDT(type);
-		return new ChannelSocketUDT(this, socketUDT);
+		return new SocketChannelUDT(this, socketUDT);
 	}
 
 }

@@ -1019,19 +1019,26 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_listen0( //
 
 // #########################################################################
 
-bool X_IsValidRange(JNIEnv *env, jint socketID, //
-		jlong position, jlong limit, jlong capacity) {
+bool X_IsValidRange( //
+		JNIEnv * const env, //
+		const jint socketID, //
+		const jlong position, //
+		const jlong limit, //
+		const jlong capacity //
+		) {
 	if (!X_IsInRange(0, position, capacity)) {
-		UDT_ThrowExceptionUDT_Message(env, socketID,
-				"position is out of range");
+		UDT_ThrowExceptionUDT_Message( //
+				env, socketID, "position is out of range");
 		return false;
 	}
 	if (!X_IsInRange(0, limit, capacity)) {
-		UDT_ThrowExceptionUDT_Message(env, socketID, "limit is out of range");
+		UDT_ThrowExceptionUDT_Message( //
+				env, socketID, "limit is out of range");
 		return false;
 	}
 	if (position > limit) {
-		UDT_ThrowExceptionUDT_Message(env, socketID, "position > limit");
+		UDT_ThrowExceptionUDT_Message( //
+				env, socketID, "position > limit");
 		return false;
 	}
 	return true;
@@ -1371,16 +1378,15 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_send2( //
 
 	UNUSED(clsSocketUDT);
 
+	const jbyte* address = //
+			static_cast<jbyte*>(env->GetDirectBufferAddress(bufferObj));
 	const jlong capacity = env->GetDirectBufferCapacity(bufferObj);
 
 	if (!X_IsValidRange(env, socketID, position, limit, capacity)) {
 		return JNI_ERR;
 	}
 
-	jbyte* bufferAddress = static_cast<jbyte*>(env->GetDirectBufferAddress(
-			bufferObj));
-
-	const jbyte* data = bufferAddress + position;
+	const jbyte* data = address + position;
 	const jsize size = static_cast<jsize>(limit - position);
 
 	// memory boundary test

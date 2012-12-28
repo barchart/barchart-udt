@@ -89,7 +89,7 @@ public class NetInputStreamUDT extends InputStream {
 		}
 
 		if (count == 0) {
-			throw new ExceptionReceiveUDT(socketUDT.getSocketId(),
+			throw new ExceptionReceiveUDT(socketUDT.id(),
 					ErrorUDT.USER_DEFINED_MESSAGE, "UDT receive time out");
 		}
 

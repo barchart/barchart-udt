@@ -177,7 +177,7 @@ public class TestEpollWait extends TestAny {
 		accept.bind0(localSocketAddress());
 		accept.listen0(1);
 		socketAwait(accept, StatusUDT.LISTENING);
-		log.info("accept listen : {}", accept.getSocketId());
+		log.info("accept listen : {}", accept.id());
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
 		client.configureBlocking(true);
@@ -194,7 +194,7 @@ public class TestEpollWait extends TestAny {
 		client.connect0(accept.getLocalSocketAddress());
 
 		socketAwait(client, StatusUDT.CONNECTED);
-		log.info("client connect : {}", client.getSocketId());
+		log.info("client connect : {}", client.id());
 
 		{
 			// accept : r
@@ -223,7 +223,7 @@ public class TestEpollWait extends TestAny {
 		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.NONE.code);
 
 		socketAwait(server, StatusUDT.CONNECTED);
-		log.info("server connect : {}", server.getSocketId());
+		log.info("server connect : {}", server.id());
 
 		{
 

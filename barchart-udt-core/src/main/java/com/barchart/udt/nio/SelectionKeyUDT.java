@@ -318,13 +318,13 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 		return String
 				.format("[id: 0x%08x] poll=%s ready=%s inter=%s %s %s %s bind=%s:%s peer=%s:%s", //
-						socketUDT().getSocketId(), //
+						socketUDT().id(), //
 						epollOpt, //
 						toStringOps(readyOps), //
 						toStringOps(interestOps), //
 						channelUDT.typeUDT(), //
 						channelUDT.kindUDT(), //
-						socketUDT().getStatus(), //
+						socketUDT().status(), //
 						socketUDT().getLocalInetAddress(), //
 						socketUDT().getLocalInetPort(), //
 						socketUDT().getRemoteInetAddress(), //
@@ -339,7 +339,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 	}
 
 	protected int socketId() {
-		return socketUDT().getSocketId();
+		return socketUDT().id();
 	}
 
 	protected KindUDT kindUDT() {

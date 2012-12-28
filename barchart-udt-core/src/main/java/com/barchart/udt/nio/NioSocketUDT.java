@@ -10,32 +10,27 @@ package com.barchart.udt.nio;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.SocketChannel;
 
-import com.barchart.udt.SocketUDT;
 import com.barchart.udt.net.NetSocketUDT;
 
-public class AdapterSocketUDT extends NetSocketUDT {
+public class NioSocketUDT extends NetSocketUDT {
 
-	protected final ChannelSocketUDT channelUDT;
+	protected final SocketChannelUDT channelUDT;
 
-	protected AdapterSocketUDT( //
-			final ChannelSocketUDT channelUDT, //
-			final SocketUDT socketUDT //
-	) {
-		super(socketUDT);
+	protected NioSocketUDT(final SocketChannelUDT channelUDT) {
+		super(channelUDT.socketUDT());
 		this.channelUDT = channelUDT;
 	}
 
 	@Override
-	public ChannelSocketUDT getChannel() {
+	public SocketChannelUDT getChannel() {
 		return channelUDT;
 	}
 
 	@Override
 	public synchronized InputStream getInputStream() throws IOException {
 		if (inputStream == null) {
-			inputStream = new AdapterInputStreamUDT(this.channelUDT, this);
+			inputStream = new NioInputStreamUDT(channelUDT);
 		}
 		return inputStream;
 	}
@@ -43,7 +38,7 @@ public class AdapterSocketUDT extends NetSocketUDT {
 	@Override
 	public synchronized OutputStream getOutputStream() throws IOException {
 		if (outputStream == null) {
-			outputStream = new AdapterOutputStreamUDT(this.channelUDT, this);
+			outputStream = new NioOutputStreamUDT(channelUDT);
 		}
 		return outputStream;
 	}

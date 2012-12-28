@@ -18,15 +18,23 @@ import com.barchart.udt.SocketUDT;
 public enum KindUDT {
 
 	/**
-	 * Server mode: listens and accepts connections; generates {@link #COMMUTER}
-	 * as a result of {@link SocketUDT#accept()}
+	 * Server mode: listens and accepts connections; generates
+	 * {@link #CONNECTOR} as a result of {@link SocketUDT#accept()}
 	 */
 	ACCEPTOR, //
 
 	/**
 	 * Client mode: user-created channel which initiates connections to servers;
-	 * Server mode: channel which is a result of accept();
+	 * options are user-provided
+	 * <p>
+	 * Server mode: channel which is a result of accept(); inherits options from
+	 * parent {@link #ACCEPTOR}
 	 */
 	CONNECTOR, //
+
+	/**
+	 * TODO
+	 */
+	RENDEZVOUS, //
 
 }

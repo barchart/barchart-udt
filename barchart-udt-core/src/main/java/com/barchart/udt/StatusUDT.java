@@ -27,19 +27,19 @@ public enum StatusUDT {
 	/** newly created socket; both connector and acceptor */
 	INIT(1), //
 
-	/** just bound socket; both connector and acceptor */
+	/** bound socket; both connector and acceptor */
 	OPENED(2), //
 
-	/** bound + listening acceptor socket */
+	/** bound and listening acceptor socket */
 	LISTENING(3), //
 
-	/** connector socket trying to connect */
+	/** bound connector socket trying to connect */
 	CONNECTING(4), //
 
-	/** connected connector socket */
+	/** bound and connected connector socket */
 	CONNECTED(5), //
 
-	/** acceptor socket after close() */
+	/** acceptor socket after close(), connector socket after remote unreachable */
 	BROKEN(6), //
 
 	/** connector socket while close() is in progress */
@@ -95,22 +95,6 @@ public enum StatusUDT {
 			return UNKNOWN;
 		}
 
-	}
-
-	/**
-	 * map UDT socket status to emulate JDK expected behavior
-	 */
-	public boolean isOpenEmulateJDK() {
-		switch (this) {
-		case INIT:
-		case OPENED:
-		case LISTENING:
-		case CONNECTING:
-		case CONNECTED:
-			return true;
-		default:
-			return false;
-		}
 	}
 
 }

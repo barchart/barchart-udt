@@ -22,11 +22,12 @@ import io.netty.channel.ChannelException;
 import java.io.IOException;
 import java.nio.channels.spi.SelectorProvider;
 
+import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
-import com.barchart.udt.nio.ChannelServerSocketUDT;
-import com.barchart.udt.nio.ChannelSocketUDT;
 import com.barchart.udt.nio.KindUDT;
 import com.barchart.udt.nio.SelectorProviderUDT;
+import com.barchart.udt.nio.ServerSocketChannelUDT;
+import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
  * Netty UDT component provider:
@@ -45,6 +46,9 @@ public class NioUdtProvider implements ChannelFactory {
     public static final ChannelFactory BYTE_CONNECTOR = //
     new NioUdtProvider(TypeUDT.STREAM, KindUDT.CONNECTOR);
 
+    public static final ChannelFactory BYTE_RENDEZVOUS = //
+    new NioUdtProvider(TypeUDT.STREAM, KindUDT.RENDEZVOUS);
+
     public static final SelectorProvider BYTE_PROVIDER = //
     SelectorProviderUDT.STREAM;
 
@@ -56,12 +60,15 @@ public class NioUdtProvider implements ChannelFactory {
     public static final ChannelFactory MESSAGE_CONNECTOR = //
     new NioUdtProvider(TypeUDT.DATAGRAM, KindUDT.CONNECTOR);
 
+    public static final ChannelFactory MESSAGE_RENDEZVOUS = //
+    new NioUdtProvider(TypeUDT.DATAGRAM, KindUDT.RENDEZVOUS);
+
     public static final SelectorProvider MESSAGE_PROVIDER = //
     SelectorProviderUDT.DATAGRAM;
 
     //
 
-    protected static ChannelServerSocketUDT newAcceptorChannelUDT(
+    protected static ServerSocketChannelUDT newAcceptorChannelUDT(
             final TypeUDT type) {
         try {
             return SelectorProviderUDT.from(type).openServerSocketChannel();
@@ -70,7 +77,7 @@ public class NioUdtProvider implements ChannelFactory {
         }
     }
 
-    protected static ChannelSocketUDT newConnectorChannelUDT(final TypeUDT type) {
+    protected static SocketChannelUDT newConnectorChannelUDT(final TypeUDT type) {
         try {
             return SelectorProviderUDT.from(type).openSocketChannel();
         } catch (final IOException e) {
@@ -111,6 +118,26 @@ public class NioUdtProvider implements ChannelFactory {
         default:
             throw new IllegalStateException("wrong kind=" + kind);
         }
+    }
+
+    public static SocketUDT socketUDT(final Channel channel) {
+        if (channel instanceof NioUdtMessageAcceptorChannel) {
+            return ((NioUdtMessageAcceptorChannel) channel).javaChannel()
+                    .socketUDT();
+        }
+        if (channel instanceof NioUdtByteAcceptorChannel) {
+            return ((NioUdtByteAcceptorChannel) channel).javaChannel()
+                    .socketUDT();
+        }
+        if (channel instanceof NioUdtMessageConnectorChannel) {
+            return ((NioUdtMessageConnectorChannel) channel).javaChannel()
+                    .socketUDT();
+        }
+        if (channel instanceof NioUdtByteConnectorChannel) {
+            return ((NioUdtByteConnectorChannel) channel).javaChannel()
+                    .socketUDT();
+        }
+        return null;
     }
 
 }

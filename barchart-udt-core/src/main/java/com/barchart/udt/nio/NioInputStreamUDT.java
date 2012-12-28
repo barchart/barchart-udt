@@ -9,17 +9,15 @@ package com.barchart.udt.nio;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.IllegalBlockingModeException;
-import java.nio.channels.SocketChannel;
 
 /**
  * {@link InputStream} implementation for UDT sockets.
  */
-public class AdapterInputStreamUDT extends InputStream {
+public class NioInputStreamUDT extends InputStream {
 
-	protected final SocketChannel channel;
+	protected final SocketChannelUDT channel;
 
 	/**
 	 * Creates a new input stream for the specified channel.
@@ -29,10 +27,9 @@ public class AdapterInputStreamUDT extends InputStream {
 	 * @param socketUDT
 	 *            The UDT socket.
 	 */
-	protected AdapterInputStreamUDT(final SocketChannel channel,
-			final Socket socketUDT) {
+	protected NioInputStreamUDT(final SocketChannelUDT channel) {
 		if (channel == null) {
-			throw new NullPointerException("Null SocketChannel");
+			throw new NullPointerException("channel == null");
 		}
 		if (!channel.isBlocking()) {
 			throw new IllegalBlockingModeException();
@@ -76,10 +73,10 @@ public class AdapterInputStreamUDT extends InputStream {
 	public int read(final byte[] bytes, final int off, final int len)
 			throws IOException {
 
-		final ByteBuffer bb = ByteBuffer.wrap(bytes);
-		bb.position(off);
+		final ByteBuffer buffer = ByteBuffer.wrap(bytes);
+		buffer.position(off);
 
-		final int read = channel.read(bb);
+		final int read = channel.read(buffer);
 		return read;
 	}
 

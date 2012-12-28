@@ -281,7 +281,7 @@ public class TestStreamUDT extends TestAny {
 		assertTrue("Acceptor should be bound", acceptorSocket.isBound());
 
 		acceptorSocket.listen(1);
-		assertEquals("Acceptor should be listenin", acceptorSocket.getStatus(),
+		assertEquals("Acceptor should be listenin", acceptorSocket.status(),
 				StatusUDT.LISTENING);
 
 		readyToAccept.set(true);

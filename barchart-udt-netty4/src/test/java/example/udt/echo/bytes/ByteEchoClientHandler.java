@@ -19,6 +19,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundByteHandlerAdapter;
+import io.netty.channel.socket.nio.NioUdtProvider;
 
 import java.util.concurrent.TimeUnit;
 
@@ -56,7 +57,8 @@ public class ByteEchoClientHandler extends ChannelInboundByteHandlerAdapter {
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
 
-        log.info("ECHO active {}", this);
+        log.info("ECHO active {}", NioUdtProvider.socketUDT(ctx.channel())
+                .toStringOptions());
 
         ctx.write(message);
 

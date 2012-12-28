@@ -16,9 +16,12 @@
 package example.udt.echo.messages;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.MessageBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
+import io.netty.channel.socket.UdtMessage;
+import io.netty.channel.socket.nio.NioUdtProvider;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,20 +36,23 @@ import com.yammer.metrics.core.Meter;
  * traffic between the echo client and server by sending the first message to
  * the server on activation.
  */
-public class MsgEchoClientHandler extends ChannelInboundMessageHandlerAdapter {
+public class MsgEchoClientHandler extends
+        ChannelInboundMessageHandlerAdapter<UdtMessage> {
 
     private static final Logger log = LoggerFactory
             .getLogger(MsgEchoClientHandler.class.getName());
 
-    private final ByteBuf message;
+    private final UdtMessage message;
 
     public MsgEchoClientHandler(final int messageSize) {
 
-        message = Unpooled.buffer(messageSize);
+        final ByteBuf byteBuf = Unpooled.buffer(messageSize);
 
-        for (int i = 0; i < message.capacity(); i++) {
-            message.writeByte((byte) i);
+        for (int i = 0; i < byteBuf.capacity(); i++) {
+            byteBuf.writeByte((byte) i);
         }
+
+        message = new UdtMessage(byteBuf);
 
     }
 
@@ -56,9 +62,14 @@ public class MsgEchoClientHandler extends ChannelInboundMessageHandlerAdapter {
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
 
-        log.info("ECHO active {}", this);
+        log.info("ECHO active {}", NioUdtProvider.socketUDT(ctx.channel())
+                .toStringOptions());
 
-        ctx.write(message);
+        final MessageBuf<Object> out = ctx.nextOutboundMessageBuffer();
+
+        out.add(message);
+
+        ctx.flush();
 
     }
 
@@ -74,15 +85,15 @@ public class MsgEchoClientHandler extends ChannelInboundMessageHandlerAdapter {
 
     @Override
     protected void messageReceived(final ChannelHandlerContext ctx,
-            final Object msg) throws Exception {
+            final UdtMessage message) throws Exception {
 
-        // meter.mark(in.readableBytes());
+        final ByteBuf byteBuf = message.data();
 
-        final ByteBuf out = ctx.nextOutboundByteBuffer();
+        meter.mark(byteBuf.readableBytes());
 
-        out.discardReadBytes();
+        final MessageBuf<Object> out = ctx.nextOutboundMessageBuffer();
 
-        // out.writeBytes(in);
+        out.add(message);
 
         ctx.flush();
 

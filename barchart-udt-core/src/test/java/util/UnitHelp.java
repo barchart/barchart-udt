@@ -8,6 +8,7 @@
 package util;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.IntBuffer;
@@ -44,16 +45,32 @@ public class UnitHelp {
 
 	}
 
-	/** allocate available local address / port */
-	public synchronized static InetSocketAddress localSocketAddress()
+	public static InetSocketAddress hostedSocketAddress(final String host)
 			throws Exception {
 
-		final int port = findLocalPort();
+		for (int k = 0; k < 10; k++) {
 
-		final InetSocketAddress address = //
-		new InetSocketAddress("localhost", port);
+			final InetSocketAddress address = findLocalAddress(host);
 
-		return address;
+			if (address == null) {
+				Thread.sleep(500);
+				continue;
+			}
+
+			return address;
+
+		}
+
+		throw new Exception("failed to allocate address");
+
+	}
+
+	/**
+	 * allocate available local address / port or throw exception
+	 */
+	public static InetSocketAddress localSocketAddress() throws Exception {
+
+		return hostedSocketAddress("localhost");
 
 	}
 
@@ -127,21 +144,26 @@ public class UnitHelp {
 	}
 
 	/**
+	 * @return newly allocated address or null for failure
 	 */
-	public synchronized static int findLocalPort() throws Exception {
+	public synchronized static InetSocketAddress findLocalAddress(
+			final String host) {
 
 		ServerSocket socket = null;
 
 		try {
 
-			/**
-			 * "A port of <code>0</code> creates a socket on any free port."
-			 */
-			socket = new ServerSocket(0);
+			final InetAddress address = InetAddress.getByName(host);
 
-			return socket.getLocalPort();
+			socket = new ServerSocket(0, 3, address);
+
+			return (InetSocketAddress) socket.getLocalSocketAddress();
 
 		} catch (final Exception e) {
+
+			log.error("failed to find addess");
+
+			return null;
 
 		} finally {
 
@@ -149,12 +171,11 @@ public class UnitHelp {
 				try {
 					socket.close();
 				} catch (final Exception e) {
+					log.error("failed to close socket");
 				}
 			}
 
 		}
-
-		throw new Exception("can not allocate port");
 
 	}
 
@@ -191,7 +212,7 @@ public class UnitHelp {
 	public static void socketAwait(final SocketUDT socket,
 			final StatusUDT status) throws Exception {
 		while (true) {
-			if (socket.getStatus() == status) {
+			if (socket.status() == status) {
 				return;
 			} else {
 				Thread.sleep(50);
@@ -202,7 +223,7 @@ public class UnitHelp {
 	public static boolean socketPresent(final SocketUDT socket,
 			final IntBuffer buffer) {
 		for (int index = 0; index < buffer.capacity(); index++) {
-			if (buffer.get(index) == socket.getSocketId()) {
+			if (buffer.get(index) == socket.id()) {
 				return true;
 			}
 		}

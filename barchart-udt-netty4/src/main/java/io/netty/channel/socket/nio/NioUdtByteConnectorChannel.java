@@ -31,10 +31,10 @@ import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 
 import com.barchart.udt.TypeUDT;
-import com.barchart.udt.nio.ChannelSocketUDT;
+import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
- * Nio Byte Channel Connector for UDT Streams
+ * Netty Byte Channel Connector for UDT Streams
  */
 public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         implements UdtChannel {
@@ -54,13 +54,17 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
     protected NioUdtByteConnectorChannel(//
             final Channel parent, //
             final Integer id, //
-            final ChannelSocketUDT channelUDT //
+            final SocketChannelUDT channelUDT //
     ) {
         super(parent, id, channelUDT);
         try {
             channelUDT.configureBlocking(false);
             config = new DefaultUdtChannelConfig();
-            config.apply(channelUDT);
+            switch (channelUDT.socketUDT().status()) {
+            case INIT:
+            case OPENED:
+                config.apply(channelUDT);
+            }
         } catch (final IOException e) {
             try {
                 channelUDT.close();
@@ -73,8 +77,8 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         }
     }
 
-    protected NioUdtByteConnectorChannel(final ChannelSocketUDT channelUDT) {
-        this(null, channelUDT.socketUDT().getSocketId(), channelUDT);
+    protected NioUdtByteConnectorChannel(final SocketChannelUDT channelUDT) {
+        this(null, channelUDT.socketUDT().id(), channelUDT);
     }
 
     protected NioUdtByteConnectorChannel(final TypeUDT type) {
@@ -163,14 +167,14 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 
     @Override
     public boolean isActive() {
-        final ChannelSocketUDT channelUDT = javaChannel();
+        final SocketChannelUDT channelUDT = javaChannel();
         return channelUDT.isOpen() && channelUDT.isConnected()
                 && channelUDT.isConnectFinished();
     }
 
     @Override
-    protected ChannelSocketUDT javaChannel() {
-        return (ChannelSocketUDT) super.javaChannel();
+    protected SocketChannelUDT javaChannel() {
+        return (SocketChannelUDT) super.javaChannel();
     }
 
     @Override

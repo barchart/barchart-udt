@@ -70,7 +70,7 @@ public class NetOutputStreamUDT extends OutputStream {
 			}
 
 			if (count == 0) {
-				throw new ExceptionSendUDT(socketUDT.getSocketId(),
+				throw new ExceptionSendUDT(socketUDT.id(),
 						ErrorUDT.USER_DEFINED_MESSAGE, "UDT send time out");
 			}
 

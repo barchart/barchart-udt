@@ -10,8 +10,6 @@ package com.barchart.udt;
 import static org.junit.Assert.*;
 import static util.UnitHelp.*;
 
-import java.net.InetSocketAddress;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -96,25 +94,24 @@ public class TestOptionUDT extends TestAny {
 	@Test
 	public void testOptionsPrint() throws Exception {
 
-		final SocketUDT serverSocket = new SocketUDT(TypeUDT.DATAGRAM);
-		final InetSocketAddress serverAddress = localSocketAddress();
-		serverSocket.bind(serverAddress);
-		serverSocket.listen(1);
-		assertTrue(serverSocket.isBound());
+		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
+		accept.bind(localSocketAddress());
+		accept.listen(1);
+		assertTrue(accept.isBound());
 
-		final SocketUDT clientSocket = new SocketUDT(TypeUDT.DATAGRAM);
-		final InetSocketAddress clientAddress = localSocketAddress();
-		clientSocket.bind(clientAddress);
-		assertTrue(clientSocket.isBound());
+		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
+		client.bind(localSocketAddress());
+		log.info("client {}", client);
+		assertTrue(client.isBound());
 
-		clientSocket.connect(serverAddress);
-		assertTrue(clientSocket.isConnected());
+		client.connect(accept.getLocalSocketAddress());
+		assertTrue(client.isConnected());
 
-		final SocketUDT acceptSocket = serverSocket.accept();
-		assertTrue(acceptSocket.isConnected());
+		final SocketUDT server = accept.accept();
+		assertTrue(server.isConnected());
 
-		log.info("client options:{}", clientSocket.toStringOptions());
-		log.info("accept options:{}", acceptSocket.toStringOptions());
+		log.info("client options:{}", client.toStringOptions());
+		log.info("server options:{}", server.toStringOptions());
 
 	}
 
