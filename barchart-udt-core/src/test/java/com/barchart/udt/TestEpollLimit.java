@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import util.TestAny;
@@ -12,7 +13,8 @@ import ch.qos.logback.classic.Logger;
 
 import com.barchart.udt.EpollUDT.Opt;
 
-// FIXME
+//FIXME increase ulimit on build farm
+@Ignore
 public class TestEpollLimit extends TestAny {
 
 	private void epollWait0_Limit(final int limit) throws Exception {
@@ -34,8 +36,7 @@ public class TestEpollLimit extends TestAny {
 
 	}
 
-	// @Test(expected = ExceptionUDT.class)
-	@Test
+	@Test(expected = ExceptionUDT.class)
 	public void epollWait0_Limit_ERR() throws Exception {
 		epollWait0_Limit(SocketUDT.DEFAULT_MAX_SELECTOR_SIZE + 1);
 	}
