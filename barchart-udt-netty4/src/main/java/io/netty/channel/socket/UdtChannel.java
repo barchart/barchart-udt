@@ -22,10 +22,10 @@ import io.netty.channel.Channel;
  */
 public interface UdtChannel extends Channel {
 
-	/**
-	 * Returns the {@link UdtChannelConfig} configuration of the channel.
-	 */
-	@Override
-	UdtChannelConfig config();
+    /**
+     * Returns the {@link UdtChannelConfig} configuration of the channel.
+     */
+    @Override
+    UdtChannelConfig config();
 
 }

@@ -34,216 +34,158 @@ import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.ChannelSocketUDT;
 
 /**
- * 
+ * Nio Byte Channel Connector for UDT Streams
  */
 public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
-		implements UdtChannel {
+        implements UdtChannel {
 
-	protected static final InternalLogger logger = //
-	InternalLoggerFactory.getInstance(NioUdtByteConnectorChannel.class);
+    protected static final InternalLogger logger = //
+    InternalLoggerFactory.getInstance(NioUdtByteConnectorChannel.class);
 
-	protected static final ChannelMetadata METADATA = //
-	new ChannelMetadata(BufType.BYTE, false);
+    protected static final ChannelMetadata METADATA = //
+    new ChannelMetadata(BufType.BYTE, false);
 
-	private final UdtChannelConfig config;
+    private final UdtChannelConfig config;
 
-	/**
-	 */
-	protected NioUdtByteConnectorChannel() {
-		this(TypeUDT.STREAM);
-	}
+    protected NioUdtByteConnectorChannel() {
+        this(TypeUDT.STREAM);
+    }
 
-	/**
-	 */
-	protected NioUdtByteConnectorChannel( //
-			final Channel parent, //
-			final Integer id, //
-			final ChannelSocketUDT channelUDT //
-	) {
+    protected NioUdtByteConnectorChannel(//
+            final Channel parent, //
+            final Integer id, //
+            final ChannelSocketUDT channelUDT //
+    ) {
+        super(parent, id, channelUDT);
+        try {
+            channelUDT.configureBlocking(false);
+            config = new DefaultUdtChannelConfig();
+            config.apply(channelUDT);
+        } catch (final IOException e) {
+            try {
+                channelUDT.close();
+            } catch (final IOException e2) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Failed to close channel.", e2);
+                }
+            }
+            throw new ChannelException("Failed configure channel.", e);
+        }
+    }
 
-		super(parent, id, channelUDT);
+    protected NioUdtByteConnectorChannel(final ChannelSocketUDT channelUDT) {
+        this(null, channelUDT.socketUDT().getSocketId(), channelUDT);
+    }
 
-		try {
+    protected NioUdtByteConnectorChannel(final TypeUDT type) {
+        this(NioUdtProvider.newConnectorChannelUDT(type));
+    }
 
-			channelUDT.configureBlocking(false);
+    @Override
+    public UdtChannelConfig config() {
+        return config;
+    }
 
-			config = new DefaultUdtChannelConfig(channelUDT.socketUDT());
+    @Override
+    protected void doBind(final SocketAddress localAddress) throws Exception {
+        javaChannel().bind(localAddress);
+    }
 
-		} catch (final IOException e) {
-			try {
-				channelUDT.close();
-			} catch (final IOException e2) {
-				if (logger.isWarnEnabled()) {
-					logger.warn("Failed to close channel.", e2);
-				}
-			}
-			throw new ChannelException("Failed to enter non-blocking mode.", e);
-		}
-	}
+    @Override
+    protected void doClose() throws Exception {
+        javaChannel().close();
+    }
 
-	/**
-	 */
-	protected NioUdtByteConnectorChannel(final ChannelSocketUDT channelUDT) {
-		this(null, channelUDT.socketUDT().getSocketId(), channelUDT);
-	}
+    @Override
+    protected boolean doConnect(final SocketAddress remoteAddress,
+            final SocketAddress localAddress) throws Exception {
+        if (localAddress != null) {
+            javaChannel().bind(localAddress);
+        }
+        boolean success = false;
+        try {
+            final boolean connected = javaChannel().connect(remoteAddress);
+            if (connected) {
+                selectionKey().interestOps(SelectionKey.OP_READ);
+            } else {
+                selectionKey().interestOps(SelectionKey.OP_CONNECT);
+            }
+            success = true;
+            return connected;
+        } finally {
+            if (!success) {
+                doClose();
+            }
+        }
+    }
 
-	/**
-	 */
-	protected NioUdtByteConnectorChannel(final TypeUDT type) {
-		this(NioUdtProvider.newConnectorChannelUDT(type));
-	}
+    @Override
+    protected void doDisconnect() throws Exception {
+        doClose();
+    }
 
-	@Override
-	public UdtChannelConfig config() {
-		return config;
-	}
+    @Override
+    protected void doFinishConnect() throws Exception {
+        if (!javaChannel().finishConnect()) {
+            throw new Error("provider error");
+        }
+        selectionKey().interestOps(SelectionKey.OP_READ);
+    }
 
-	@Override
-	protected void doBind(final SocketAddress localAddress) throws Exception {
+    @Override
+    protected int doReadBytes(final ByteBuf byteBuf) throws Exception {
+        return byteBuf.writeBytes(javaChannel(), byteBuf.writableBytes());
+    }
 
-		logger.debug("CON bind = " + localAddress);
+    @Override
+    protected int doWriteBytes(final ByteBuf byteBuf, final boolean lastSpin)
+            throws Exception {
+        final int pendingBytes = byteBuf.readableBytes();
+        final int writtenBytes = byteBuf.readBytes(//
+                javaChannel(), pendingBytes);
+        final SelectionKey key = selectionKey();
+        final int interestOps = key.interestOps();
+        if (writtenBytes >= pendingBytes) {
+            // wrote the buffer completely - clear OP_WRITE.
+            if ((interestOps & SelectionKey.OP_WRITE) != 0) {
+                key.interestOps(interestOps & ~SelectionKey.OP_WRITE);
+            }
+        } else {
+            // wrote partial or nothing - ensure OP_WRITE
+            if (writtenBytes > 0 || lastSpin) {
+                if ((interestOps & SelectionKey.OP_WRITE) == 0) {
+                    key.interestOps(interestOps | SelectionKey.OP_WRITE);
+                }
+            }
+        }
+        return writtenBytes;
+    }
 
-		javaChannel().bind(localAddress);
+    @Override
+    public boolean isActive() {
+        final ChannelSocketUDT channelUDT = javaChannel();
+        return channelUDT.isOpen() && channelUDT.isConnected()
+                && channelUDT.isConnectFinished();
+    }
 
-	}
+    @Override
+    protected ChannelSocketUDT javaChannel() {
+        return (ChannelSocketUDT) super.javaChannel();
+    }
 
-	@Override
-	protected void doClose() throws Exception {
-		javaChannel().close();
-	}
+    @Override
+    protected SocketAddress localAddress0() {
+        return javaChannel().socket().getLocalSocketAddress();
+    }
 
-	@Override
-	protected boolean doConnect(final SocketAddress remoteAddress,
-			final SocketAddress localAddress) throws Exception {
+    @Override
+    public ChannelMetadata metadata() {
+        return METADATA;
+    }
 
-		logger.debug("CON connect " + javaChannel());
-
-		if (localAddress != null) {
-			javaChannel().bind(localAddress);
-		}
-
-		boolean success = false;
-
-		try {
-
-			final boolean connected = javaChannel().connect(remoteAddress);
-
-			logger.debug("CON connected=" + connected);
-
-			if (connected) {
-				selectionKey().interestOps(SelectionKey.OP_READ);
-			} else {
-				selectionKey().interestOps(SelectionKey.OP_CONNECT);
-			}
-
-			success = true;
-
-			return connected;
-
-		} finally {
-			if (!success) {
-				doClose();
-			}
-			logger.debug("CON success=" + success);
-		}
-
-	}
-
-	@Override
-	protected void doDisconnect() throws Exception {
-
-		logger.debug("CON disconnect");
-
-		doClose();
-
-	}
-
-	@Override
-	protected void doFinishConnect() throws Exception {
-
-		logger.debug("CON finsish");
-
-		if (!javaChannel().finishConnect()) {
-			throw new Error("provider error");
-		}
-
-		selectionKey().interestOps(SelectionKey.OP_READ);
-
-	}
-
-	@Override
-	protected int doReadBytes(final ByteBuf byteBuf) throws Exception {
-
-		// logger.debug("CON read");
-
-		return byteBuf.writeBytes(javaChannel(), byteBuf.writableBytes());
-
-	}
-
-	@Override
-	protected int doWriteBytes(final ByteBuf byteBuf, final boolean lastSpin)
-			throws Exception {
-
-		// logger.debug("CON write");
-
-		final int pendingBytes = byteBuf.readableBytes();
-
-		final int writtenBytes = byteBuf.readBytes( //
-				javaChannel(), pendingBytes);
-
-		final SelectionKey key = selectionKey();
-
-		final int interestOps = key.interestOps();
-
-		if (writtenBytes >= pendingBytes) {
-			// wrote the buffer completely - clear OP_WRITE.
-			if ((interestOps & SelectionKey.OP_WRITE) != 0) {
-				key.interestOps(interestOps & ~SelectionKey.OP_WRITE);
-			}
-		} else {
-			// wrote partial or nothing - ensure OP_WRITE
-			if (writtenBytes > 0 || lastSpin) {
-				if ((interestOps & SelectionKey.OP_WRITE) == 0) {
-					key.interestOps(interestOps | SelectionKey.OP_WRITE);
-				}
-			}
-		}
-
-		return writtenBytes;
-
-	}
-
-	// FIXME review
-	@Override
-	public boolean isActive() {
-
-		final ChannelSocketUDT channelUDT = javaChannel();
-
-		return channelUDT.isOpen() && channelUDT.isConnected()
-				&& channelUDT.isConnectFinished();
-
-	}
-
-	@Override
-	protected ChannelSocketUDT javaChannel() {
-
-		return (ChannelSocketUDT) super.javaChannel();
-
-	}
-
-	@Override
-	protected SocketAddress localAddress0() {
-		return javaChannel().socket().getLocalSocketAddress();
-	}
-
-	@Override
-	public ChannelMetadata metadata() {
-		return METADATA;
-	}
-
-	@Override
-	protected SocketAddress remoteAddress0() {
-		return javaChannel().socket().getRemoteSocketAddress();
-	}
+    @Override
+    protected SocketAddress remoteAddress0() {
+        return javaChannel().socket().getRemoteSocketAddress();
+    }
 
 }

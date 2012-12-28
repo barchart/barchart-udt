@@ -1144,7 +1144,7 @@ public class SocketUDT {
 	 */
 	public final int getSendBufferSize() throws ExceptionUDT {
 		final int protocolSize = getOption(OptionUDT.Protocol_Send_Buffer_Size);
-		final int kernelSize = getOption(OptionUDT.Kernel_Send_Buffer_Size);
+		final int kernelSize = getOption(OptionUDT.System_Send_Buffer_Size);
 		return Math.min(protocolSize, kernelSize);
 	}
 
@@ -1156,7 +1156,7 @@ public class SocketUDT {
 	 */
 	public final int getReceiveBufferSize() throws ExceptionUDT {
 		final int protocolSize = getOption(OptionUDT.Protocol_Receive_Buffer_Size);
-		final int kernelSize = getOption(OptionUDT.Kernel_Receive_Buffer_Size);
+		final int kernelSize = getOption(OptionUDT.System_Receive_Buffer_Size);
 		return Math.min(protocolSize, kernelSize);
 	}
 
@@ -1217,7 +1217,7 @@ public class SocketUDT {
 	 */
 	public final void setSendBufferSize(final int size) throws ExceptionUDT {
 		setOption(OptionUDT.Protocol_Send_Buffer_Size, size);
-		setOption(OptionUDT.Kernel_Send_Buffer_Size, size);
+		setOption(OptionUDT.System_Send_Buffer_Size, size);
 	}
 
 	/**
@@ -1226,7 +1226,7 @@ public class SocketUDT {
 	 */
 	public final void setReceiveBufferSize(final int size) throws ExceptionUDT {
 		setOption(OptionUDT.Protocol_Receive_Buffer_Size, size);
-		setOption(OptionUDT.Kernel_Receive_Buffer_Size, size);
+		setOption(OptionUDT.System_Receive_Buffer_Size, size);
 	}
 
 	public final void setReuseAddress(final boolean on) throws ExceptionUDT {

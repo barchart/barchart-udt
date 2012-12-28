@@ -1,7 +1,23 @@
+/*
+ * Copyright 2011 The Netty Project
+ *
+ * The Netty Project licenses this file to you under the Apache License,
+ * version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
 package io.netty.channel.socket.nio;
 
 import io.netty.buffer.BufType;
 import io.netty.buffer.MessageBuf;
+import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelMetadata;
 import io.netty.channel.socket.DefaultUdtChannelConfig;
 import io.netty.channel.socket.UdtChannel;
@@ -9,6 +25,7 @@ import io.netty.channel.socket.UdtChannelConfig;
 import io.netty.logging.InternalLogger;
 import io.netty.logging.InternalLoggerFactory;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
@@ -17,118 +34,116 @@ import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.ChannelServerSocketUDT;
 
 /**
- * emulate jdk server socket channel for netty
+ * Common base for Byte and Message UDT acceptors.
  */
 public abstract class NioUdtBaseAcceptorChannel extends
-		AbstractNioMessageChannel implements UdtChannel {
+        AbstractNioMessageChannel implements UdtChannel {
 
-	protected static final InternalLogger logger = //
-	InternalLoggerFactory.getInstance(NioUdtBaseAcceptorChannel.class);
+    protected static final InternalLogger logger = //
+    InternalLoggerFactory.getInstance(NioUdtBaseAcceptorChannel.class);
 
-	protected static final ChannelMetadata METADATA = //
-	new ChannelMetadata(BufType.MESSAGE, false);
+    protected static final ChannelMetadata METADATA = //
+    new ChannelMetadata(BufType.MESSAGE, false);
 
-	//
+    //
 
-	protected final UdtChannelConfig config;
+    protected final UdtChannelConfig config;
 
-	protected NioUdtBaseAcceptorChannel(final ChannelServerSocketUDT channelUDT) {
+    protected NioUdtBaseAcceptorChannel(final ChannelServerSocketUDT channelUDT) {
+        super(//
+                null, //
+                channelUDT.socketUDT().getSocketId(), //
+                channelUDT, //
+                SelectionKey.OP_ACCEPT //
+        );
+        try {
+            channelUDT.configureBlocking(false);
+            config = new DefaultUdtChannelConfig();
+            config.apply(channelUDT);
+        } catch (final IOException e) {
+            try {
+                channelUDT.close();
+            } catch (final IOException e2) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Failed to close channel.", e2);
+                }
+            }
+            throw new ChannelException("Failed configure channel.", e);
+        }
+    }
 
-		super( //
-				null, //
-				channelUDT.socketUDT().getSocketId(), //
-				channelUDT, //
-				SelectionKey.OP_ACCEPT //
-		);
+    protected NioUdtBaseAcceptorChannel(final TypeUDT type) {
+        this(NioUdtProvider.newAcceptorChannelUDT(type));
+    }
 
-		config = new DefaultUdtChannelConfig(channelUDT.socketUDT());
+    @Override
+    public UdtChannelConfig config() {
+        return config;
+    }
 
-	}
+    @Override
+    protected void doBind(final SocketAddress localAddress) throws Exception {
+        javaChannel().socket().bind(localAddress, config.getBacklog());
+        final SelectionKey selectionKey = selectionKey();
+        selectionKey.interestOps(//
+                selectionKey.interestOps() | SelectionKey.OP_ACCEPT);
+    }
 
-	protected NioUdtBaseAcceptorChannel(final TypeUDT type) {
-		this(NioUdtProvider.newAcceptorChannelUDT(type));
-	}
+    @Override
+    protected void doClose() throws Exception {
+        javaChannel().close();
+    }
 
-	@Override
-	public UdtChannelConfig config() {
-		return config;
-	}
+    @Override
+    protected boolean doConnect(final SocketAddress remoteAddress,
+            final SocketAddress localAddress) throws Exception {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	protected void doBind(final SocketAddress localAddress) throws Exception {
+    @Override
+    protected void doDisconnect() throws Exception {
+        throw new UnsupportedOperationException();
+    }
 
-		javaChannel().socket().bind(localAddress, config.getBacklog());
+    @Override
+    protected void doFinishConnect() throws Exception {
+        throw new UnsupportedOperationException();
+    }
 
-		final SelectionKey selectionKey = selectionKey();
+    @Override
+    protected int doWriteMessages(final MessageBuf<Object> buf,
+            final boolean lastSpin) throws Exception {
+        throw new UnsupportedOperationException();
+    }
 
-		selectionKey.interestOps( //
-				selectionKey.interestOps() | SelectionKey.OP_ACCEPT);
+    @Override
+    public boolean isActive() {
+        return javaChannel().socket().isBound();
+    }
 
-	}
+    @Override
+    protected ChannelServerSocketUDT javaChannel() {
+        return (ChannelServerSocketUDT) super.javaChannel();
+    }
 
-	@Override
-	protected void doClose() throws Exception {
+    @Override
+    protected SocketAddress localAddress0() {
+        return javaChannel().socket().getLocalSocketAddress();
+    }
 
-		javaChannel().close();
+    @Override
+    public ChannelMetadata metadata() {
+        return METADATA;
+    }
 
-	}
+    @Override
+    public InetSocketAddress remoteAddress() {
+        return null;
+    }
 
-	@Override
-	protected boolean doConnect(final SocketAddress remoteAddress,
-			final SocketAddress localAddress) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void doDisconnect() throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void doFinishConnect() throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected int doWriteMessages(final MessageBuf<Object> buf,
-			final boolean lastSpin) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean isActive() {
-
-		return javaChannel().socket().isBound();
-
-	}
-
-	@Override
-	protected ChannelServerSocketUDT javaChannel() {
-
-		return (ChannelServerSocketUDT) super.javaChannel();
-
-	}
-
-	@Override
-	protected SocketAddress localAddress0() {
-
-		return javaChannel().socket().getLocalSocketAddress();
-
-	}
-
-	@Override
-	public ChannelMetadata metadata() {
-		return METADATA;
-	}
-
-	@Override
-	public InetSocketAddress remoteAddress() {
-		return null;
-	}
-
-	@Override
-	protected SocketAddress remoteAddress0() {
-		return null;
-	}
+    @Override
+    protected SocketAddress remoteAddress0() {
+        return null;
+    }
 
 }

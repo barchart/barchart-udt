@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package example.echo.stream;
+package example.udt.echo.bytes;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -27,48 +27,40 @@ import org.slf4j.LoggerFactory;
  * Handler implementation for the echo server.
  */
 @Sharable
-public class EchoServerHandler extends ChannelInboundByteHandlerAdapter {
+public class ByteEchoServerHandler extends ChannelInboundByteHandlerAdapter {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(EchoServerHandler.class.getName());
+    private static final Logger log = LoggerFactory
+            .getLogger(ByteEchoServerHandler.class.getName());
 
-	private volatile long count;
+    @Override
+    public void inboundBufferUpdated(final ChannelHandlerContext ctx,
+            final ByteBuf in) {
 
-	@Override
-	public void inboundBufferUpdated(final ChannelHandlerContext ctx,
-			final ByteBuf in) {
+        final ByteBuf out = ctx.nextOutboundByteBuffer();
 
-		final ByteBuf out = ctx.nextOutboundByteBuffer();
+        out.discardReadBytes();
 
-		out.discardReadBytes();
+        out.writeBytes(in);
 
-		out.writeBytes(in);
+        ctx.flush();
 
-		ctx.flush();
+    }
 
-		if (count % 10000 == 0) {
-			log.info("count {}", count);
-		}
+    @Override
+    public void exceptionCaught(final ChannelHandlerContext ctx,
+            final Throwable cause) {
 
-		count++;
+        log.error("close the connection when an exception is raised", cause);
 
-	}
+        ctx.close();
 
-	@Override
-	public void exceptionCaught(final ChannelHandlerContext ctx,
-			final Throwable cause) {
+    }
 
-		log.error("close the connection when an exception is raised", cause);
+    @Override
+    public void channelActive(final ChannelHandlerContext ctx) throws Exception {
 
-		ctx.close();
+        log.info("ECHO active {}", this);
 
-	}
-
-	@Override
-	public void channelActive(final ChannelHandlerContext ctx) throws Exception {
-
-		log.info("ECHO active {}", this);
-
-	}
+    }
 
 }

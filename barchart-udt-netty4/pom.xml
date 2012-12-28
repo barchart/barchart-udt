@@ -22,12 +22,12 @@
 	<properties>
 
 		<!-- http://search.maven.org/#search|ga|1|barchart-udt-bundle -->
-		<barchartBundleVersion>2.1.0-SNAPSHOT</barchartBundleVersion>
+		<barchartBundleVersion>2.1.0</barchartBundleVersion>
 
 		<!-- http://search.maven.org/#search|ga|1|io.netty -->
 		<barchartNettyVersion>4.0.0.Beta1-SNAPSHOT</barchartNettyVersion>
 
-		<projectJavaVersion>1.7</projectJavaVersion>
+		<projectJavaVersion>1.6</projectJavaVersion>
 
 	</properties>
 
@@ -82,5 +82,47 @@
 		</dependency>
 
 	</dependencies>
+
+
+	<profiles>
+		<profile>
+			<id>checkstyle</id>
+			<build>
+
+				<plugins>
+
+					<plugin>
+						<artifactId>maven-checkstyle-plugin</artifactId>
+						<version>2.9.1</version>
+						<executions>
+							<execution>
+								<id>check-style</id>
+								<goals>
+									<goal>check</goal>
+								</goals>
+								<phase>validate</phase>
+								<configuration>
+									<consoleOutput>true</consoleOutput>
+									<logViolationsToConsole>true</logViolationsToConsole>
+									<failsOnError>true</failsOnError>
+									<failOnViolation>true</failOnViolation>
+									<configLocation>io/netty/checkstyle.xml</configLocation>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>io.netty</groupId>
+								<artifactId>netty-build</artifactId>
+								<version>13</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+
+				</plugins>
+
+			</build>
+		</profile>
+	</profiles>
 
 </project>

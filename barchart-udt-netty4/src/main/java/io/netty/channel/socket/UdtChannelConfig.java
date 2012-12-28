@@ -18,20 +18,21 @@ package io.netty.channel.socket;
 import io.netty.channel.ChannelConfig;
 import io.netty.channel.ChannelOption;
 
-import java.net.StandardSocketOptions;
+import java.io.IOException;
 
 import com.barchart.udt.OptionUDT;
+import com.barchart.udt.nio.ChannelServerSocketUDT;
+import com.barchart.udt.nio.ChannelSocketUDT;
 
 /**
  * TODO expose more of {@link OptionUDT}
- * 
+ * <p>
  * A {@link ChannelConfig} for a {@link SocketChannel}.
- * 
+ * <p>
  * <h3>Available options</h3>
- * 
  * In addition to the options provided by {@link ChannelConfig},
  * {@link UdtChannelConfig} allows the following options in the option map:
- * 
+ * <p>
  * <table border="1" cellspacing="0" cellpadding="6">
  * <tr>
  * <th>Name</th>
@@ -58,51 +59,82 @@ import com.barchart.udt.OptionUDT;
  */
 public interface UdtChannelConfig extends ChannelConfig {
 
-	ChannelOption<Integer> UDT_XXX = //
-	new ChannelOption<Integer>("UDT_XXX");
+    ChannelOption<Integer> PROTOCOL_RECEIVE_BUFFER_SIZE = //
+    new ChannelOption<Integer>("");
 
-	/**
-	 * Gets the {@link StandardSocketOptions#SO_RCVBUF} option.
-	 */
-	int getReceiveBufferSize();
+    ChannelOption<Integer> PROTOCOL_SEND_BUFFER_SIZE = //
+    new ChannelOption<Integer>("");
 
-	/**
-	 * Gets the {@link StandardSocketOptions#SO_SNDBUF} option.
-	 */
-	int getSendBufferSize();
+    ChannelOption<Integer> SYSTEM_RECEIVE_BUFFER_SIZE = //
+    new ChannelOption<Integer>("");
 
-	/**
-	 * Gets the {@link StandardSocketOptions#SO_LINGER} option.
-	 */
-	int getSoLinger();
+    ChannelOption<Integer> SYSTEM_SEND_BUFFER_SIZE = //
+    new ChannelOption<Integer>("");
 
-	/**
-	 * Gets the {@link StandardSocketOptions#SO_REUSEADDR} option.
-	 */
-	boolean isReuseAddress();
+    void apply(final ChannelServerSocketUDT channelUDT) throws IOException;
 
-	/**
-	 * Sets the {@link StandardSocketOptions#SO_RCVBUF} option.
-	 */
-	UdtChannelConfig setReceiveBufferSize(int receiveBufferSize);
+    void apply(final ChannelSocketUDT channelUDT) throws IOException;
 
-	/**
-	 * Sets the {@link StandardSocketOptions#SO_REUSEADDR} option.
-	 */
-	UdtChannelConfig setReuseAddress(boolean reuseAddress);
+    int getBacklog();
 
-	/**
-	 * Sets the {@link StandardSocketOptions#SO_SNDBUF} option.
-	 */
-	UdtChannelConfig setSendBufferSize(int sendBufferSize);
+    /**
+     * Gets the {@link StandardSocketOptions#SO_RCVBUF} option.
+     */
+    int getReceiveBufferSize();
 
-	/**
-	 * Sets the {@link StandardSocketOptions#SO_LINGER} option.
-	 */
-	UdtChannelConfig setSoLinger(int soLinger);
+    /**
+     * Gets the {@link StandardSocketOptions#SO_SNDBUF} option.
+     */
+    int getSendBufferSize();
 
-	UdtChannelConfig setBacklog(int backlog);
+    /**
+     * Gets the {@link StandardSocketOptions#SO_LINGER} option.
+     */
+    int getSoLinger();
 
-	int getBacklog();
+    /**
+     * Gets the {@link StandardSocketOptions#SO_REUSEADDR} option.
+     */
+    boolean isReuseAddress();
+
+    UdtChannelConfig setBacklog(int backlog);
+
+    /**
+     * Sets the {@link StandardSocketOptions#SO_RCVBUF} option.
+     */
+    UdtChannelConfig setReceiveBufferSize(int receiveBufferSize);
+
+    /**
+     * Sets the {@link StandardSocketOptions#SO_REUSEADDR} option.
+     */
+    UdtChannelConfig setReuseAddress(boolean reuseAddress);
+
+    /**
+     * Sets the {@link StandardSocketOptions#SO_SNDBUF} option.
+     */
+    UdtChannelConfig setSendBufferSize(int sendBufferSize);
+
+    /**
+     * Sets the {@link StandardSocketOptions#SO_LINGER} option.
+     */
+    UdtChannelConfig setSoLinger(int soLinger);
+
+    //
+
+    int getProtocolReceiveBufferSize();
+
+    UdtChannelConfig setProtocolReceiveBufferSize(int size);
+
+    int getProtocolSendBufferSize();
+
+    UdtChannelConfig setProtocolSendBufferSize(int size);
+
+    int getSystemReceiveBufferSize();
+
+    UdtChannelConfig setSystemReceiveBufferSize(int size);
+
+    int getSystemSendBufferSize();
+
+    UdtChannelConfig setSystemSendBufferSize(int size);
 
 }

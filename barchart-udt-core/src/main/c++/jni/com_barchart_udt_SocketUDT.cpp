@@ -719,7 +719,8 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_close0( //
 
 //
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_connect0( //
-		JNIEnv * const env, const jobject self, //
+		JNIEnv * const env, //
+		const jobject self, //
 		const jobject objRemoteSocketAddress //
 		) {
 

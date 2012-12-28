@@ -111,14 +111,14 @@ public class OptionUDT<T> {
 	public static final OptionUDT<Integer> UDP_SNDBUF = //
 	NEW(8, Integer.class, DECIMAL);
 	/** UDP sending buffer size limit, bytes */
-	public static final OptionUDT<Integer> Kernel_Send_Buffer_Size = //
+	public static final OptionUDT<Integer> System_Send_Buffer_Size = //
 	NEW(8, Integer.class, DECIMAL);
 
 	/** UDP receiving buffer size. */
 	public static final OptionUDT<Integer> UDP_RCVBUF = //
 	NEW(9, Integer.class, DECIMAL);
 	/** UDP receiving buffer size limit, bytes */
-	public static final OptionUDT<Integer> Kernel_Receive_Buffer_Size = //
+	public static final OptionUDT<Integer> System_Receive_Buffer_Size = //
 	NEW(9, Integer.class, DECIMAL);
 
 	/* maximum datagram message size */

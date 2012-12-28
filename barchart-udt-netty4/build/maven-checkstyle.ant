@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (C) 2011-2012 Barchart, Inc. <http://www.barchart.com/>
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
 
     All rights reserved. Licensed under the OSI BSD License.
 
@@ -21,15 +21,14 @@
 		</condition>
 
 		<exec executable="${executable}">
-			
-			<arg value="clean" />
-			<arg value="compile" />
-			<arg value="test-compile" />
-			
+
+			<arg value="validate" />
+
 			<arg value="--activate-profiles" />
-			<arg value="license" />
-			
+			<arg value="checkstyle" />
+
 		</exec>
+
 	</target>
 
 </project>

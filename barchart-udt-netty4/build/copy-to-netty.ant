@@ -1,0 +1,32 @@
+<!--
+
+    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project default="copy" basedir="./..">
+
+	<echo message="basedir : ${basedir}" />
+
+	<property name="source" value="${basedir}/src" />
+	<property name="target" value="${basedir}/../../netty-udt/transport/src" />
+
+	<target name="copy">
+
+		<copy todir="${target}" verbose="true" overwrite="true">
+
+			<fileset dir="${source}">
+
+				<exclude name="**/logback-test.xml" />
+				<exclude name="**/package-info.java" />
+
+			</fileset>
+
+		</copy>
+
+	</target>
+
+</project>

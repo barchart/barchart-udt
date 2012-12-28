@@ -16,197 +16,236 @@
 package io.netty.channel.socket;
 
 import static io.netty.channel.ChannelOption.*;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.DefaultChannelConfig;
 
-import java.net.SocketException;
+import java.io.IOException;
 import java.util.Map;
 
+import com.barchart.udt.OptionUDT;
 import com.barchart.udt.SocketUDT;
+import com.barchart.udt.nio.ChannelServerSocketUDT;
+import com.barchart.udt.nio.ChannelSocketUDT;
+import com.barchart.udt.nio.ChannelUDT;
 
 /**
  * The default {@link UdtChannelConfig} implementation.
  */
 public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
-		UdtChannelConfig {
+        UdtChannelConfig {
 
-	private final SocketUDT socket;
+    static final int K = 1024;
+    static final int M = K * K;
 
-	/**
-	 * Creates a new instance.
-	 */
-	public DefaultUdtChannelConfig(final SocketUDT socket) {
-		if (socket == null) {
-			throw new NullPointerException("socket");
-		}
-		this.socket = socket;
-	}
+    private volatile int protocolReceiveBuferSize = 10 * M;
+    private volatile int protocolSendBuferSize = 10 * M;
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getOption(final ChannelOption<T> option) {
-		if (option == SO_RCVBUF) {
-			return (T) Integer.valueOf(getReceiveBufferSize());
-		}
-		if (option == SO_SNDBUF) {
-			return (T) Integer.valueOf(getSendBufferSize());
-		}
-		if (option == SO_REUSEADDR) {
-			return (T) Boolean.valueOf(isReuseAddress());
-		}
-		if (option == SO_LINGER) {
-			return (T) Integer.valueOf(getSoLinger());
-		}
-		if (option == SO_BACKLOG) {
-			return (T) Integer.valueOf(getBacklog());
-		}
-		return super.getOption(option);
-	}
+    private volatile int systemReceiveBufferSize = 1 * M;
+    private volatile int systemSendBuferSize = 1 * M;
 
-	@Override
-	public Map<ChannelOption<?>, Object> getOptions() {
-		return getOptions( //
-				super.getOptions(), //
-				SO_RCVBUF, //
-				SO_SNDBUF, //
-				SO_REUSEADDR, //
-				SO_LINGER, //
-				SO_BACKLOG);
-	}
+    private volatile int allocatorReceiveBufferSize = 128 * K;
+    private volatile int allocatorSendBufferSize = 128 * K;
 
-	@Override
-	public int getReceiveBufferSize() {
-		try {
-			return socket.getReceiveBufferSize();
-		} catch (final SocketException e) {
-			throw new ChannelException(e);
-		}
-	}
+    private volatile int backlog = 64;
+    private volatile int soLinger = 0;
 
-	@Override
-	public int getSendBufferSize() {
-		try {
-			return socket.getSendBufferSize();
-		} catch (final SocketException e) {
-			throw new ChannelException(e);
-		}
-	}
+    private volatile boolean reuseAddress = true;
 
-	@Override
-	public int getSoLinger() {
-		try {
-			return socket.getSoLinger();
-		} catch (final SocketException e) {
-			throw new ChannelException(e);
-		}
-	}
+    @Override
+    public void apply(final ChannelServerSocketUDT channelUDT)
+            throws IOException {
+        apply((ChannelUDT) channelUDT);
+        final SocketUDT socketUDT = channelUDT.socketUDT();
+        // TODO acceptor specific
+    }
 
-	@Override
-	public boolean isReuseAddress() {
-		try {
-			return socket.getReuseAddress();
-		} catch (final SocketException e) {
-			throw new ChannelException(e);
-		}
-	}
+    @Override
+    public void apply(final ChannelSocketUDT channelUDT) throws IOException {
+        apply((ChannelUDT) channelUDT);
+        final SocketUDT socketUDT = channelUDT.socketUDT();
+        // TODO connector specific
+    }
 
-	@Override
-	public UdtChannelConfig setAllocator(final ByteBufAllocator allocator) {
-		return (UdtChannelConfig) super.setAllocator(allocator);
-	}
+    public void apply(final ChannelUDT channelUDT) throws IOException {
+        final SocketUDT socketUDT = channelUDT.socketUDT();
+        socketUDT.setReuseAddress(isReuseAddress());
+        socketUDT.setSendBufferSize(getSendBufferSize());
+        if (getSoLinger() < 0) {
+            socketUDT.setSoLinger(false, 0);
+        } else {
+            socketUDT.setSoLinger(true, getSoLinger());
+        }
+        socketUDT.setOption(OptionUDT.Kernel_Receive_Buffer_Size,
+                getSystemReceiveBufferSize());
+        socketUDT.setOption(OptionUDT.Kernel_Send_Buffer_Size,
+                getSystemSendBufferSize());
+        socketUDT.setOption(OptionUDT.Protocol_Receive_Buffer_Size,
+                getProtocolReceiveBufferSize());
+        socketUDT.setOption(OptionUDT.Protocol_Send_Buffer_Size,
+                getProtocolSendBufferSize());
+    }
 
-	@Override
-	public UdtChannelConfig setConnectTimeoutMillis(
-			final int connectTimeoutMillis) {
-		return (UdtChannelConfig) super
-				.setConnectTimeoutMillis(connectTimeoutMillis);
-	}
+    @Override
+    public int getProtocolReceiveBufferSize() {
+        return protocolReceiveBuferSize;
+    }
 
-	@Override
-	public <T> boolean setOption(final ChannelOption<T> option, final T value) {
+    @Override
+    public int getBacklog() {
+        return backlog;
+    }
 
-		validate(option, value);
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getOption(final ChannelOption<T> option) {
+        if (option == PROTOCOL_RECEIVE_BUFFER_SIZE) {
+            return (T) Integer.valueOf(getProtocolReceiveBufferSize());
+        }
+        if (option == PROTOCOL_SEND_BUFFER_SIZE) {
+            return (T) Integer.valueOf(getProtocolSendBufferSize());
+        }
+        if (option == SO_RCVBUF) {
+            return (T) Integer.valueOf(getReceiveBufferSize());
+        }
+        if (option == SO_SNDBUF) {
+            return (T) Integer.valueOf(getSendBufferSize());
+        }
+        if (option == SO_REUSEADDR) {
+            return (T) Boolean.valueOf(isReuseAddress());
+        }
+        if (option == SO_LINGER) {
+            return (T) Integer.valueOf(getSoLinger());
+        }
+        if (option == SO_BACKLOG) {
+            return (T) Integer.valueOf(getBacklog());
+        }
+        return super.getOption(option);
+    }
 
-		if (option == SO_RCVBUF) {
-			setReceiveBufferSize((Integer) value);
-		} else if (option == SO_SNDBUF) {
-			setSendBufferSize((Integer) value);
-		} else if (option == SO_REUSEADDR) {
-			setReuseAddress((Boolean) value);
-		} else if (option == SO_LINGER) {
-			setSoLinger((Integer) value);
-		} else if (option == SO_BACKLOG) {
-			setBacklog((Integer) value);
-		} else {
-			return super.setOption(option, value);
-		}
+    @Override
+    public Map<ChannelOption<?>, Object> getOptions() {
+        return getOptions(//
+                super.getOptions(), //
+                PROTOCOL_RECEIVE_BUFFER_SIZE, //
+                PROTOCOL_SEND_BUFFER_SIZE, //
+                SYSTEM_RECEIVE_BUFFER_SIZE, //
+                SYSTEM_SEND_BUFFER_SIZE, //
+                SO_RCVBUF, //
+                SO_SNDBUF, //
+                SO_REUSEADDR, //
+                SO_LINGER, //
+                SO_BACKLOG);
+    }
 
-		return true;
+    @Override
+    public int getReceiveBufferSize() {
+        return allocatorReceiveBufferSize;
+    }
 
-	}
+    @Override
+    public int getSendBufferSize() {
+        return allocatorSendBufferSize;
+    }
 
-	@Override
-	public UdtChannelConfig setReceiveBufferSize(final int receiveBufferSize) {
-		try {
-			socket.setReceiveBufferSize(receiveBufferSize);
-		} catch (final SocketException e) {
-			throw new ChannelException(e);
-		}
-		return this;
-	}
+    @Override
+    public int getSoLinger() {
+        return soLinger;
+    }
 
-	@Override
-	public UdtChannelConfig setReuseAddress(final boolean reuseAddress) {
-		try {
-			socket.setReuseAddress(reuseAddress);
-		} catch (final SocketException e) {
-			throw new ChannelException(e);
-		}
-		return this;
-	}
+    @Override
+    public boolean isReuseAddress() {
+        return reuseAddress;
+    }
 
-	@Override
-	public UdtChannelConfig setSendBufferSize(final int sendBufferSize) {
-		try {
-			socket.setSendBufferSize(sendBufferSize);
-		} catch (final SocketException e) {
-			throw new ChannelException(e);
-		}
-		return this;
-	}
+    @Override
+    public UdtChannelConfig setProtocolReceiveBufferSize(final int allocator) {
+        this.protocolReceiveBuferSize = allocator;
+        return this;
+    }
 
-	@Override
-	public UdtChannelConfig setSoLinger(final int soLinger) {
-		try {
-			if (soLinger < 0) {
-				socket.setSoLinger(false, 0);
-			} else {
-				socket.setSoLinger(true, soLinger);
-			}
-		} catch (final SocketException e) {
-			throw new ChannelException(e);
-		}
-		return this;
-	}
+    @Override
+    public UdtChannelConfig setBacklog(final int backlog) {
+        this.backlog = backlog;
+        return this;
+    }
 
-	@Override
-	public UdtChannelConfig setWriteSpinCount(final int writeSpinCount) {
-		return (UdtChannelConfig) super.setWriteSpinCount(writeSpinCount);
-	}
+    @Override
+    public <T> boolean setOption(final ChannelOption<T> option, final T value) {
+        validate(option, value);
+        if (option == SO_RCVBUF) {
+            setReceiveBufferSize((Integer) value);
+        } else if (option == SO_SNDBUF) {
+            setSendBufferSize((Integer) value);
+        } else if (option == SO_REUSEADDR) {
+            setReuseAddress((Boolean) value);
+        } else if (option == SO_LINGER) {
+            setSoLinger((Integer) value);
+        } else if (option == SO_BACKLOG) {
+            setBacklog((Integer) value);
+        } else {
+            return super.setOption(option, value);
+        }
+        return true;
+    }
 
-	private int backlog = 100;
+    @Override
+    public UdtChannelConfig setReceiveBufferSize(final int receiveBufferSize) {
+        allocatorReceiveBufferSize = receiveBufferSize;
+        return this;
+    }
 
-	@Override
-	public UdtChannelConfig setBacklog(final int backlog) {
-		this.backlog = backlog;
-		return this;
-	}
+    @Override
+    public UdtChannelConfig setReuseAddress(final boolean reuseAddress) {
+        this.reuseAddress = reuseAddress;
+        return this;
+    }
 
-	@Override
-	public int getBacklog() {
-		return backlog;
-	}
+    @Override
+    public UdtChannelConfig setSendBufferSize(final int sendBufferSize) {
+        allocatorSendBufferSize = sendBufferSize;
+        return this;
+    }
+
+    @Override
+    public UdtChannelConfig setSoLinger(final int soLinger) {
+        this.soLinger = soLinger;
+        return this;
+    }
+
+    @Override
+    public int getSystemReceiveBufferSize() {
+        return systemReceiveBufferSize;
+    }
+
+    @Override
+    public UdtChannelConfig setSystemSendBufferSize(
+            final int systemReceiveBufferSize) {
+        this.systemReceiveBufferSize = systemReceiveBufferSize;
+        return this;
+    }
+
+    @Override
+    public int getProtocolSendBufferSize() {
+        return protocolSendBuferSize;
+    }
+
+    @Override
+    public UdtChannelConfig setProtocolSendBufferSize(
+            final int protocolSendBuferSize) {
+        this.protocolSendBuferSize = protocolSendBuferSize;
+        return this;
+    }
+
+    @Override
+    public UdtChannelConfig setSystemReceiveBufferSize(
+            final int systemSendBuferSize) {
+        this.systemSendBuferSize = systemSendBuferSize;
+        return this;
+    }
+
+    @Override
+    public int getSystemSendBufferSize() {
+        return systemSendBuferSize;
+    }
 
 }

@@ -16,10 +16,12 @@
 package io.netty.channel.socket.nio;
 
 import io.netty.buffer.BufType;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.MessageBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelMetadata;
+import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.DefaultUdtChannelConfig;
 import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.UdtChannelConfig;
@@ -35,171 +37,160 @@ import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.ChannelSocketUDT;
 
 /**
- * 
+ * Nio Byte Acceptor for UDT Streams
  */
 public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
-		implements UdtChannel {
+        implements UdtChannel {
 
-	protected static final InternalLogger logger = //
-	InternalLoggerFactory.getInstance(NioUdtMessageConnectorChannel.class);
+    protected static final InternalLogger logger = //
+    InternalLoggerFactory.getInstance(NioUdtMessageConnectorChannel.class);
 
-	protected static final ChannelMetadata METADATA = //
-	new ChannelMetadata(BufType.MESSAGE, false);
+    protected static final ChannelMetadata METADATA = //
+    new ChannelMetadata(BufType.MESSAGE, false);
 
-	private final UdtChannelConfig config;
+    private final UdtChannelConfig config;
 
-	/**
-	 * Create a new instance
-	 */
-	protected NioUdtMessageConnectorChannel() {
-		this(TypeUDT.DATAGRAM);
-	}
+    protected NioUdtMessageConnectorChannel() {
+        this(TypeUDT.DATAGRAM);
+    }
 
-	/**
-	 * Create a new instance
-	 * 
-	 * @param parent
-	 *            the {@link Channel} which is the parent of this
-	 *            {@link NioUdtMessageConnectorChannel} or {@code null}.
-	 * @param id
-	 *            the id to use for this instance or {@code null} if a new once
-	 *            should be generated
-	 * @param channelUDT
-	 *            the underlying {@link SctpChannel}
-	 */
-	protected NioUdtMessageConnectorChannel( //
-			final Channel parent, //
-			final Integer id, //
-			final ChannelSocketUDT channelUDT //
-	) {
+    protected NioUdtMessageConnectorChannel(//
+            final Channel parent, //
+            final Integer id, //
+            final ChannelSocketUDT channelUDT //
+    ) {
+        super(parent, id, channelUDT, SelectionKey.OP_READ);
+        try {
+            channelUDT.configureBlocking(false);
+            config = new DefaultUdtChannelConfig();
+            config.apply(channelUDT);
+        } catch (final IOException e) {
+            try {
+                channelUDT.close();
+            } catch (final IOException e2) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Failed to close channel.", e2);
+                }
+            }
+            throw new ChannelException("Failed to configure channel.", e);
+        }
+    }
 
-		super(parent, id, channelUDT, SelectionKey.OP_READ);
+    protected NioUdtMessageConnectorChannel(final ChannelSocketUDT channelUDT) {
+        this(null, channelUDT.socketUDT().getSocketId(), channelUDT);
+    }
 
-		try {
+    protected NioUdtMessageConnectorChannel(final TypeUDT type) {
+        this(NioUdtProvider.newConnectorChannelUDT(type));
+    }
 
-			channelUDT.configureBlocking(false);
+    @Override
+    public UdtChannelConfig config() {
+        return config;
+    }
 
-			config = new DefaultUdtChannelConfig(channelUDT.socketUDT());
+    @Override
+    protected void doBind(final SocketAddress localAddress) throws Exception {
+        javaChannel().bind(localAddress);
+    }
 
-		} catch (final IOException e) {
-			try {
-				channelUDT.close();
-			} catch (final IOException e2) {
-				if (logger.isWarnEnabled()) {
-					logger.warn("Failed to close channel.", e2);
-				}
-			}
-			throw new ChannelException("Failed to enter non-blocking mode.", e);
-		}
-	}
+    @Override
+    protected void doClose() throws Exception {
+        javaChannel().close();
+    }
 
-	/**
-	 */
-	protected NioUdtMessageConnectorChannel(final ChannelSocketUDT channelUDT) {
-		this(null, channelUDT.socketUDT().getSocketId(), channelUDT);
-	}
+    @Override
+    protected boolean doConnect(final SocketAddress remoteAddress,
+            final SocketAddress localAddress) throws Exception {
+        if (localAddress != null) {
+            javaChannel().bind(localAddress);
+        }
+        boolean success = false;
+        try {
+            final boolean connected = javaChannel().connect(remoteAddress);
+            if (connected) {
+                selectionKey().interestOps(SelectionKey.OP_READ);
+            } else {
+                selectionKey().interestOps(SelectionKey.OP_CONNECT);
+            }
+            success = true;
+            return connected;
+        } finally {
+            if (!success) {
+                doClose();
+            }
+        }
+    }
 
-	/**
-	 */
-	protected NioUdtMessageConnectorChannel(final TypeUDT type) {
-		this(NioUdtProvider.newConnectorChannelUDT(type));
-	}
+    @Override
+    protected void doDisconnect() throws Exception {
+        doClose();
+    }
 
-	@Override
-	public UdtChannelConfig config() {
-		return config;
-	}
+    @Override
+    protected void doFinishConnect() throws Exception {
+        if (!javaChannel().finishConnect()) {
+            throw new Error("provider error");
+        }
+        selectionKey().interestOps(SelectionKey.OP_READ);
+    }
 
-	@Override
-	protected void doBind(final SocketAddress localAddress) throws Exception {
-		javaChannel().bind(localAddress);
-	}
+    @Override
+    protected int doReadMessages(final MessageBuf<Object> buf) throws Exception {
 
-	@Override
-	protected void doClose() throws Exception {
-		javaChannel().close();
-	}
+        final int maximumMessageSize = config.getProtocolReceiveBufferSize();
 
-	@Override
-	protected boolean doConnect(final SocketAddress remoteAddress,
-			final SocketAddress localAddress) throws Exception {
+        final ByteBuf byteBuf = config.getAllocator().directBuffer(
+                maximumMessageSize);
 
-		if (localAddress != null) {
-			javaChannel().bind(localAddress);
-		}
+        final int receivedMessageSize = javaChannel().read(byteBuf.nioBuffer());
 
-		boolean success = false;
+        if (receivedMessageSize <= 0) {
+            return 0;
+        }
 
-		try {
-			final boolean connected = javaChannel().connect(remoteAddress);
-			if (connected) {
-				selectionKey().interestOps(SelectionKey.OP_READ);
-			} else {
-				selectionKey().interestOps(SelectionKey.OP_CONNECT);
-			}
-			success = true;
-			return connected;
-		} finally {
-			if (!success) {
-				doClose();
-			}
-		}
+        if (receivedMessageSize >= maximumMessageSize) {
+            javaChannel().close();
+            throw new ChannelException(
+                    "invalid config : increase receive buffer size to avoid message truncation");
+        }
 
-	}
+        buf.add(new DatagramPacket(byteBuf, null));
 
-	@Override
-	protected void doDisconnect() throws Exception {
-		doClose();
-	}
+        return 1;
+    }
 
-	@Override
-	protected void doFinishConnect() throws Exception {
+    @Override
+    protected int doWriteMessages(final MessageBuf<Object> buf,
+            final boolean lastSpin) throws Exception {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-		if (!javaChannel().finishConnect()) {
-			throw new Error("provider error");
-		}
+    @Override
+    public boolean isActive() {
+        final SocketChannel ch = javaChannel();
+        return ch.isOpen() && ch.isConnected();
+    }
 
-		selectionKey().interestOps(SelectionKey.OP_READ);
+    @Override
+    protected ChannelSocketUDT javaChannel() {
+        return (ChannelSocketUDT) super.javaChannel();
+    }
 
-	}
+    @Override
+    protected SocketAddress localAddress0() {
+        return javaChannel().socket().getLocalSocketAddress();
+    }
 
-	@Override
-	public boolean isActive() {
-		final SocketChannel ch = javaChannel();
-		return ch.isOpen() && ch.isConnected();
-	}
+    @Override
+    public ChannelMetadata metadata() {
+        return METADATA;
+    }
 
-	@Override
-	protected ChannelSocketUDT javaChannel() {
-		return (ChannelSocketUDT) super.javaChannel();
-	}
-
-	@Override
-	protected SocketAddress localAddress0() {
-		return javaChannel().socket().getLocalSocketAddress();
-	}
-
-	@Override
-	public ChannelMetadata metadata() {
-		return METADATA;
-	}
-
-	@Override
-	protected SocketAddress remoteAddress0() {
-		return javaChannel().socket().getRemoteSocketAddress();
-	}
-
-	@Override
-	protected int doReadMessages(final MessageBuf<Object> buf) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	protected int doWriteMessages(final MessageBuf<Object> buf,
-			final boolean lastSpin) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    protected SocketAddress remoteAddress0() {
+        return javaChannel().socket().getRemoteSocketAddress();
+    }
 
 }
