@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package example.udt.echo.bytes;
+package io.netty.example.udt.echo.bytes;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -36,33 +36,23 @@ public class ByteEchoServerHandler extends ChannelInboundByteHandlerAdapter {
     @Override
     public void inboundBufferUpdated(final ChannelHandlerContext ctx,
             final ByteBuf in) {
-
         final ByteBuf out = ctx.nextOutboundByteBuffer();
-
         out.discardReadBytes();
-
         out.writeBytes(in);
-
         ctx.flush();
-
     }
 
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx,
             final Throwable cause) {
-
         log.error("close the connection when an exception is raised", cause);
-
         ctx.close();
-
     }
 
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
-
-        log.info("ECHO active {}", NioUdtProvider.socketUDT(ctx.channel())
-                .toStringOptions());
-
+        log.info("ECHO active {}", //
+                NioUdtProvider.socketUDT(ctx.channel()).toStringOptions());
     }
 
 }

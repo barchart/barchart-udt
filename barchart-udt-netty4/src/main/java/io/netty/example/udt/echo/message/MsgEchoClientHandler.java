@@ -13,12 +13,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package example.udt.echo.bytes;
+package io.netty.example.udt.echo.message;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.MessageBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundByteHandlerAdapter;
+import io.netty.channel.ChannelInboundMessageHandlerAdapter;
+import io.netty.channel.socket.UdtMessage;
 import io.netty.channel.socket.nio.NioUdtProvider;
 
 import java.util.concurrent.TimeUnit;
@@ -34,60 +36,49 @@ import com.yammer.metrics.core.Meter;
  * traffic between the echo client and server by sending the first message to
  * the server on activation.
  */
-public class ByteEchoClientHandler extends ChannelInboundByteHandlerAdapter {
+public class MsgEchoClientHandler extends
+        ChannelInboundMessageHandlerAdapter<UdtMessage> {
 
     private static final Logger log = LoggerFactory
-            .getLogger(ByteEchoClientHandler.class.getName());
+            .getLogger(MsgEchoClientHandler.class.getName());
 
-    private final ByteBuf message;
+    private final UdtMessage message;
 
-    public ByteEchoClientHandler(final int messageSize) {
-
-        message = Unpooled.buffer(messageSize);
-
-        for (int i = 0; i < message.capacity(); i++) {
-            message.writeByte((byte) i);
+    public MsgEchoClientHandler(final int messageSize) {
+        final ByteBuf byteBuf = Unpooled.buffer(messageSize);
+        for (int i = 0; i < byteBuf.capacity(); i++) {
+            byteBuf.writeByte((byte) i);
         }
-
+        message = new UdtMessage(byteBuf);
     }
 
-    final Meter meter = Metrics.newMeter(ByteEchoClientHandler.class, "rate",
+    final Meter meter = Metrics.newMeter(MsgEchoClientHandler.class, "rate",
             "bytes", TimeUnit.SECONDS);
 
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
-
-        log.info("ECHO active {}", NioUdtProvider.socketUDT(ctx.channel())
-                .toStringOptions());
-
-        ctx.write(message);
-
-    }
-
-    @Override
-    public void inboundBufferUpdated(final ChannelHandlerContext ctx,
-            final ByteBuf in) {
-
-        meter.mark(in.readableBytes());
-
-        final ByteBuf out = ctx.nextOutboundByteBuffer();
-
-        out.discardReadBytes();
-
-        out.writeBytes(in);
-
+        log.info("ECHO active {}", //
+                NioUdtProvider.socketUDT(ctx.channel()).toStringOptions());
+        final MessageBuf<Object> out = ctx.nextOutboundMessageBuffer();
+        out.add(message);
         ctx.flush();
-
     }
 
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx,
             final Throwable cause) {
-
         log.error("close the connection when an exception is raised", cause);
-
         ctx.close();
+    }
 
+    @Override
+    protected void messageReceived(final ChannelHandlerContext ctx,
+            final UdtMessage message) throws Exception {
+        final ByteBuf byteBuf = message.data();
+        meter.mark(byteBuf.readableBytes());
+        final MessageBuf<Object> out = ctx.nextOutboundMessageBuffer();
+        out.add(message);
+        ctx.flush();
     }
 
 }

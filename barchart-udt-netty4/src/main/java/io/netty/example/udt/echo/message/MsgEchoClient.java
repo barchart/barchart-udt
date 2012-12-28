@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package example.udt.echo.bytes;
+package io.netty.example.udt.echo.message;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -21,6 +21,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioUdtProvider;
+import io.netty.example.udt.util.ConsoleReporterUDT;
+import io.netty.example.udt.util.ThreadFactoryUDT;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.logging.InternalLoggerFactory;
@@ -33,10 +35,6 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import util.ConsoleReporterUDT;
-import util.ThreadFactoryUDT;
-
-
 /**
  * UDT STREAM client
  * <p>
@@ -45,29 +43,25 @@ import util.ThreadFactoryUDT;
  * between the echo client and server by sending the first message to the
  * server.
  */
-public class ByteEchoClient {
+public class MsgEchoClient {
 
-    static Logger log = LoggerFactory.getLogger(ByteEchoClient.class);
+    static Logger log = LoggerFactory.getLogger(MsgEchoClient.class);
 
     /**
      * use slf4j provider for io.netty.logging.InternalLogger
      */
     static {
-
         final InternalLoggerFactory defaultFactory = new Slf4JLoggerFactory();
-
         InternalLoggerFactory.setDefaultFactory(defaultFactory);
-
         log.info("InternalLoggerFactory={}", InternalLoggerFactory
                 .getDefaultFactory().getClass().getName());
-
     }
 
     private final String host;
     private final int port;
     private final int messageSize;
 
-    public ByteEchoClient(final String host, final int port,
+    public MsgEchoClient(final String host, final int port,
             final int messageSize) {
         this.host = host;
         this.port = port;
@@ -75,20 +69,14 @@ public class ByteEchoClient {
     }
 
     public void run() throws Exception {
-
         // Configure the client.
-
         final Bootstrap boot = new Bootstrap();
-
         final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
-
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(//
-                1, connectFactory, NioUdtProvider.BYTE_PROVIDER);
-
+                1, connectFactory, NioUdtProvider.MESSAGE_PROVIDER);
         try {
-
             boot.group(connectGroup)
-                    .channelFactory(NioUdtProvider.BYTE_CONNECTOR)
+                    .channelFactory(NioUdtProvider.MESSAGE_CONNECTOR)
                     .localAddress("localhost", 0)
                     .remoteAddress(new InetSocketAddress(host, port))
                     .handler(new ChannelInitializer<UdtChannel>() {
@@ -97,39 +85,27 @@ public class ByteEchoClient {
                                 throws Exception {
                             ch.pipeline().addLast(
                                     new LoggingHandler(LogLevel.INFO),
-                                    new ByteEchoClientHandler(messageSize));
+                                    new MsgEchoClientHandler(messageSize));
                         }
                     });
-
             // Start the client.
             final ChannelFuture f = boot.connect().sync();
-
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();
-
         } finally {
-
             // Shut down the event loop to terminate all threads.
             boot.shutdown();
-
         }
-
     }
 
     public static void main(final String[] args) throws Exception {
-
         log.info("init");
-
         ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
-
         final String host = "localhost";
         final int port = 1234;
         final int messageSize = 64 * 1024;
-
-        new ByteEchoClient(host, port, messageSize).run();
-
+        new MsgEchoClient(host, port, messageSize).run();
         log.info("done");
-
     }
 
 }

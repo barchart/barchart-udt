@@ -9,6 +9,8 @@ package bench.udt;
 
 import static util.UnitHelp.*;
 
+import io.netty.example.udt.util.ConsoleReporterUDT;
+
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import util.ConsoleReporterUDT;
 
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.StatusUDT;

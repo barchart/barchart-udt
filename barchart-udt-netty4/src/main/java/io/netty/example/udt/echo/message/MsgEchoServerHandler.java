@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package example.udt.echo.messages;
+package io.netty.example.udt.echo.message;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.MessageBuf;
@@ -39,33 +39,23 @@ public class MsgEchoServerHandler extends
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx,
             final Throwable cause) {
-
         log.error("close the connection when an exception is raised", cause);
-
         ctx.close();
-
     }
 
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
-
-        log.info("ECHO active {}", NioUdtProvider.socketUDT(ctx.channel())
-                .toStringOptions());
-
+        log.info("ECHO active {}", //
+                NioUdtProvider.socketUDT(ctx.channel()).toStringOptions());
     }
 
     @Override
     protected void messageReceived(final ChannelHandlerContext ctx,
             final UdtMessage message) throws Exception {
-
         final ByteBuf byteBuf = message.data();
-
         final MessageBuf<Object> out = ctx.nextOutboundMessageBuffer();
-
         out.add(message);
-
         ctx.flush();
-
     }
 
 }

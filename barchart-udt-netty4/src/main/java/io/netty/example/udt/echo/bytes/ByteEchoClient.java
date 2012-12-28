@@ -13,114 +13,99 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package example.udt.echo.bytes;
+package io.netty.example.udt.echo.bytes;
 
-import io.netty.bootstrap.ServerBootstrap;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioUdtProvider;
+import io.netty.example.udt.util.ConsoleReporterUDT;
+import io.netty.example.udt.util.ThreadFactoryUDT;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.logging.InternalLoggerFactory;
 import io.netty.logging.Slf4JLoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import util.ThreadFactoryUDT;
-
-
 /**
- * UDT STREAM server
+ * UDT STREAM client
  * <p>
- * Echoes back any received data from a client.
+ * Sends one message when a connection is open and echoes back any received data
+ * to the server. Simply put, the echo client initiates the ping-pong traffic
+ * between the echo client and server by sending the first message to the
+ * server.
  */
-public class ByteEchoServer {
+public class ByteEchoClient {
 
-    static Logger log = LoggerFactory.getLogger(ByteEchoServer.class);
+    static Logger log = LoggerFactory.getLogger(ByteEchoClient.class);
 
     /**
      * use slf4j provider for io.netty.logging.InternalLogger
      */
     static {
-
         final InternalLoggerFactory defaultFactory = new Slf4JLoggerFactory();
-
         InternalLoggerFactory.setDefaultFactory(defaultFactory);
-
         log.info("InternalLoggerFactory={}", InternalLoggerFactory
                 .getDefaultFactory().getClass().getName());
-
     }
 
+    private final String host;
     private final int port;
+    private final int messageSize;
 
-    public ByteEchoServer(final int port) {
+    public ByteEchoClient(final String host, final int port,
+            final int messageSize) {
+        this.host = host;
         this.port = port;
+        this.messageSize = messageSize;
     }
 
     public void run() throws Exception {
-
-        final ThreadFactory acceptFactory = new ThreadFactoryUDT("accept");
-
+        // Configure the client.
+        final Bootstrap boot = new Bootstrap();
         final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
-
-        final NioEventLoopGroup acceptGroup = new NioEventLoopGroup( //
-                1, acceptFactory, NioUdtProvider.BYTE_PROVIDER);
-
-        final NioEventLoopGroup connectGroup = new NioEventLoopGroup( //
+        final NioEventLoopGroup connectGroup = new NioEventLoopGroup(//
                 1, connectFactory, NioUdtProvider.BYTE_PROVIDER);
-
-        // Configure the server.
-        final ServerBootstrap boot = new ServerBootstrap();
-
         try {
-
-            boot.group(acceptGroup, connectGroup)
-                    .channelFactory(NioUdtProvider.BYTE_ACCEPTOR)
-                    .option(ChannelOption.SO_BACKLOG, 10)
-                    .localAddress("localhost", port)
-                    .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new ChannelInitializer<UdtChannel>() {
+            boot.group(connectGroup)
+                    .channelFactory(NioUdtProvider.BYTE_CONNECTOR)
+                    .localAddress("localhost", 0)
+                    .remoteAddress(new InetSocketAddress(host, port))
+                    .handler(new ChannelInitializer<UdtChannel>() {
                         @Override
                         public void initChannel(final UdtChannel ch)
                                 throws Exception {
                             ch.pipeline().addLast(
                                     new LoggingHandler(LogLevel.INFO),
-                                    new ByteEchoServerHandler());
+                                    new ByteEchoClientHandler(messageSize));
                         }
                     });
-
-            // Start the server.
-            final ChannelFuture future = boot.bind().sync();
-
-            // Wait until the server socket is closed.
-            future.channel().closeFuture().sync();
-
+            // Start the client.
+            final ChannelFuture f = boot.connect().sync();
+            // Wait until the connection is closed.
+            f.channel().closeFuture().sync();
         } finally {
-
-            // Shut down all event loops to terminate all threads.
+            // Shut down the event loop to terminate all threads.
             boot.shutdown();
-
         }
-
     }
 
     public static void main(final String[] args) throws Exception {
-
         log.info("init");
-
+        ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
+        final String host = "localhost";
         final int port = 1234;
-
-        new ByteEchoServer(port).run();
-
+        final int messageSize = 64 * 1024;
+        new ByteEchoClient(host, port, messageSize).run();
         log.info("done");
-
     }
 
 }

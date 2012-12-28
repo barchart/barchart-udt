@@ -77,7 +77,7 @@
 			<groupId>io.netty</groupId>
 			<artifactId>netty-handler</artifactId>
 			<version>${barchartNettyVersion}</version>
-			<scope>test</scope>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- use yammer metrics for benchmarks -->
@@ -85,7 +85,6 @@
 			<groupId>com.yammer.metrics</groupId>
 			<artifactId>metrics-core</artifactId>
 			<version>2.2.0</version>
-			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
