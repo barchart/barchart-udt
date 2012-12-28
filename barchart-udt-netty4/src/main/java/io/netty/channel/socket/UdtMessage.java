@@ -26,9 +26,6 @@ public final class UdtMessage {
 
     /**
      * Create a new instance
-     * 
-     * @param data
-     *            the {@link ByteBuf} which holds the data of the packet
      */
     public UdtMessage(final ByteBuf data) {
         if (data == null) {

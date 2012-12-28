@@ -47,7 +47,7 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
     private volatile int allocatorSendBufferSize = 128 * K;
 
     private volatile int backlog = 64;
-    private volatile int soLinger = 0;
+    private volatile int soLinger;
 
     private volatile boolean reuseAddress = true;
 
