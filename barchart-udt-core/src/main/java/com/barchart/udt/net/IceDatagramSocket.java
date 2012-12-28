@@ -16,6 +16,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.channels.DatagramChannel;
 
+/**
+ * compatibility verification interface
+ */
 public interface IceDatagramSocket {
 
 	/**
@@ -23,7 +26,7 @@ public interface IceDatagramSocket {
 	 * <p>
 	 * If the address is <code>null</code>, then the system will pick up an
 	 * ephemeral port and a valid local address to bind the socket.
-	 *<p>
+	 * <p>
 	 * 
 	 * @param addr
 	 *            The address & port to bind to.

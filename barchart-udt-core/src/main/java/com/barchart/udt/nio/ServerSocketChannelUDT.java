@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
+import com.barchart.udt.anno.ThreadSafe;
 
 /**
  * {@link ServerSocketChannel}-like wrapper for {@link SocketUDT} can be either
@@ -44,7 +45,7 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 	protected static final Logger log = LoggerFactory
 			.getLogger(ServerSocketChannelUDT.class);
 
-	/** guarded by 'this' */
+	@ThreadSafe("this")
 	protected ServerSocket socketAdapter;
 
 	protected final SocketUDT socketUDT;
@@ -118,7 +119,7 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 				try {
 					socketAdapter = new NioServerSocketUDT(this);
 				} catch (final Exception e) {
-					log.error("failed to make socket");
+					log.error("failed to make socket", e);
 					return null;
 				}
 			}

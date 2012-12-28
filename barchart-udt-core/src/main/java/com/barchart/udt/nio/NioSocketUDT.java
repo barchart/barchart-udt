@@ -11,13 +11,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.net.NetSocketUDT;
 
 public class NioSocketUDT extends NetSocketUDT {
 
 	protected final SocketChannelUDT channelUDT;
 
-	protected NioSocketUDT(final SocketChannelUDT channelUDT) {
+	protected NioSocketUDT(final SocketChannelUDT channelUDT)
+			throws ExceptionUDT {
 		super(channelUDT.socketUDT());
 		this.channelUDT = channelUDT;
 	}

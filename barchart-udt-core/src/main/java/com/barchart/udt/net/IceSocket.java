@@ -17,6 +17,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.channels.SocketChannel;
 
+/**
+ * compatibility verification interface
+ */
 public interface IceSocket {
 
 	/**
@@ -695,6 +698,7 @@ public interface IceSocket {
 	 * 
 	 * @return a string representation of this socket.
 	 */
+	@Override
 	String toString();
 
 	/**

@@ -21,8 +21,10 @@ import java.nio.channels.UnresolvedAddressException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
+import com.barchart.udt.anno.ThreadSafe;
 
 /**
  * {@link SocketChannel}-like wrapper for {@link SocketUDT}, can be either
@@ -64,7 +66,7 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 
 	protected volatile boolean isConnectionPending;
 
-	/** guarded by 'this' */
+	@ThreadSafe("this")
 	protected Socket socketAdapter;
 
 	protected final SocketUDT socketUDT;
@@ -359,7 +361,11 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 	public Socket socket() {
 		synchronized (this) {
 			if (socketAdapter == null) {
-				socketAdapter = new NioSocketUDT(this);
+				try {
+					socketAdapter = new NioSocketUDT(this);
+				} catch (final ExceptionUDT e) {
+					log.error("failed to make socket", e);
+				}
 			}
 			return socketAdapter;
 		}

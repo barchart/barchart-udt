@@ -20,21 +20,28 @@ import java.nio.channels.SocketChannel;
 import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
+import com.barchart.udt.anno.ThreadSafe;
 
+/**
+ * {@link Socket} - like wrapper for {@link SocketUDT}
+ */
 public class NetSocketUDT extends Socket implements IceSocket {
 
+	@ThreadSafe("this")
 	protected InputStream inputStream;
+	@ThreadSafe("this")
 	protected OutputStream outputStream;
 
 	protected final SocketUDT socketUDT;
 
+	/** uses {@link TypeUDT#STREAM} socket in blocking mode */
 	public NetSocketUDT() throws ExceptionUDT {
-		this.socketUDT = new SocketUDT(TypeUDT.STREAM);
+		this(new SocketUDT(TypeUDT.STREAM));
 		this.socketUDT.configureBlocking(true);
 	}
 
-	/** NOTE: you just carefully choose TypeUDT */
-	public NetSocketUDT(final SocketUDT socketUDT) {
+	/** uses provided socket keeping blocking mode */
+	protected NetSocketUDT(final SocketUDT socketUDT) throws ExceptionUDT {
 		this.socketUDT = socketUDT;
 	}
 

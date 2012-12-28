@@ -19,8 +19,6 @@ import com.barchart.udt.SocketUDT;
  */
 public class NetInputStreamUDT extends InputStream {
 
-	public static int EOF = -1;
-
 	protected final SocketUDT socketUDT;
 
 	/**
@@ -77,6 +75,7 @@ public class NetInputStreamUDT extends InputStream {
 
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public int read(final byte[] bytes, final int off, final int len)
 			throws IOException {
@@ -90,7 +89,8 @@ public class NetInputStreamUDT extends InputStream {
 
 		if (count == 0) {
 			throw new ExceptionReceiveUDT(socketUDT.id(),
-					ErrorUDT.USER_DEFINED_MESSAGE, "UDT receive time out");
+					ErrorUDT.USER_DEFINED_MESSAGE, "UDT receive time out") {
+			};
 		}
 
 		throw new IllegalStateException("should not happen");
@@ -116,12 +116,12 @@ public class NetInputStreamUDT extends InputStream {
 	}
 
 	@Override
-	public synchronized void mark(final int readlimit) {
+	public void mark(final int readlimit) {
 		throw new UnsupportedOperationException("mark not supported");
 	}
 
 	@Override
-	public synchronized void reset() throws IOException {
+	public void reset() throws IOException {
 		throw new UnsupportedOperationException("reset not supported");
 	}
 

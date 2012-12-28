@@ -15,6 +15,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.channels.ServerSocketChannel;
 
+/**
+ * compatibility verification interface
+ */
 public interface IceServerSocket {
 
 	/**
@@ -265,6 +268,7 @@ public interface IceServerSocket {
 	 * 
 	 * @return a string representation of this socket.
 	 */
+	@Override
 	String toString();
 
 	/**

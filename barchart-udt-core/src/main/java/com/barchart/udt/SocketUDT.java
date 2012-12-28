@@ -296,17 +296,6 @@ public class SocketUDT {
 		return accept0();
 	}
 
-	protected void checkSocketAddress(final InetSocketAddress socketAddress) {
-		if (socketAddress == null) {
-			throw new IllegalArgumentException("socketAddress can't be null");
-		}
-		if (socketAddress.isUnresolved()) {
-			// can not use; internal InetAddress field is null
-			throw new IllegalArgumentException("socketAddress is unresolved : "
-					+ socketAddress + " : check your DNS settings");
-		}
-	}
-
 	/**
 	 * @see <a
 	 *      href="http://udt.sourceforge.net/udt4/doc/bind.htm">UDT::bind()</a>
@@ -316,7 +305,7 @@ public class SocketUDT {
 
 	public void bind(final InetSocketAddress localSocketAddress) //
 			throws ExceptionUDT, IllegalArgumentException {
-		checkSocketAddress(localSocketAddress);
+		HelpUDT.checkSocketAddress(localSocketAddress);
 		bind0(localSocketAddress);
 	}
 
@@ -368,7 +357,7 @@ public class SocketUDT {
 	 */
 	public void connect(final InetSocketAddress remoteSocketAddress) //
 			throws ExceptionUDT, IllegalArgumentException {
-		checkSocketAddress(remoteSocketAddress);
+		HelpUDT.checkSocketAddress(remoteSocketAddress);
 		connect0(remoteSocketAddress);
 	}
 

@@ -20,16 +20,21 @@ import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
 
+/**
+ * {@link ServerSocket} - like wrapper for {@link SocketUDT}
+ */
 public class NetServerSocketUDT extends ServerSocket implements IceServerSocket {
 
 	protected final SocketUDT socketUDT;
 
+	/** uses {@link TypeUDT#STREAM} socket in blocking mode */
 	public NetServerSocketUDT() throws IOException {
-		this.socketUDT = new SocketUDT(TypeUDT.STREAM);
+		this(new SocketUDT(TypeUDT.STREAM));
 		this.socketUDT.configureBlocking(true);
 	}
 
-	public NetServerSocketUDT(final SocketUDT socketUDT) throws IOException {
+	/** uses provided socket keeping blocking mode */
+	protected NetServerSocketUDT(final SocketUDT socketUDT) throws IOException {
 		this.socketUDT = socketUDT;
 	}
 

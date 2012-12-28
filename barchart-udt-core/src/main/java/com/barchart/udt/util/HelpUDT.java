@@ -9,6 +9,7 @@ package com.barchart.udt.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -275,6 +276,17 @@ public class HelpUDT {
 
 		return "unknown";
 
+	}
+
+	public static void checkSocketAddress(final InetSocketAddress socketAddress) {
+		if (socketAddress == null) {
+			throw new IllegalArgumentException("socketAddress can't be null");
+		}
+		if (socketAddress.isUnresolved()) {
+			// can not use; internal InetAddress field is null
+			throw new IllegalArgumentException("socketAddress is unresolved : "
+					+ socketAddress + " : check your DNS settings");
+		}
 	}
 
 }
