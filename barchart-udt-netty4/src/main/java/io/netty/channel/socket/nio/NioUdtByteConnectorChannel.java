@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The Netty Project
+ * Copyright 2012 The Netty Project
  *
  * The Netty Project licenses this file to you under the Apache License,
  * version 2.0 (the "License"); you may not use this file except in compliance
@@ -39,11 +39,11 @@ import com.barchart.udt.nio.SocketChannelUDT;
 public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         implements UdtChannel {
 
-    protected static final InternalLogger logger = //
-    InternalLoggerFactory.getInstance(NioUdtByteConnectorChannel.class);
+    protected static final InternalLogger logger = InternalLoggerFactory
+            .getInstance(NioUdtByteConnectorChannel.class);
 
-    protected static final ChannelMetadata METADATA = //
-    new ChannelMetadata(BufType.BYTE, false);
+    protected static final ChannelMetadata METADATA = new ChannelMetadata(
+            BufType.BYTE, false);
 
     private final UdtChannelConfig config;
 
@@ -51,11 +51,8 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         this(TypeUDT.STREAM);
     }
 
-    protected NioUdtByteConnectorChannel(//
-            final Channel parent, //
-            final Integer id, //
-            final SocketChannelUDT channelUDT //
-    ) {
+    protected NioUdtByteConnectorChannel(final Channel parent,
+            final Integer id, final SocketChannelUDT channelUDT) {
         super(parent, id, channelUDT);
         try {
             channelUDT.configureBlocking(false);
@@ -145,8 +142,7 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
     protected int doWriteBytes(final ByteBuf byteBuf, final boolean lastSpin)
             throws Exception {
         final int pendingBytes = byteBuf.readableBytes();
-        final int writtenBytes = byteBuf.readBytes(//
-                javaChannel(), pendingBytes);
+        final int writtenBytes = byteBuf.readBytes(javaChannel(), pendingBytes);
         final SelectionKey key = selectionKey();
         final int interestOps = key.interestOps();
         if (writtenBytes >= pendingBytes) {

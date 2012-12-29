@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The Netty Project
+ * Copyright 2012 The Netty Project
  *
  * The Netty Project licenses this file to you under the Apache License,
  * version 2.0 (the "License"); you may not use this file except in compliance
@@ -42,11 +42,11 @@ import com.barchart.udt.nio.SocketChannelUDT;
 public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         implements UdtChannel {
 
-    protected static final InternalLogger logger = //
-    InternalLoggerFactory.getInstance(NioUdtMessageConnectorChannel.class);
+    protected static final InternalLogger logger = InternalLoggerFactory
+            .getInstance(NioUdtMessageConnectorChannel.class);
 
-    protected static final ChannelMetadata METADATA = //
-    new ChannelMetadata(BufType.MESSAGE, false);
+    protected static final ChannelMetadata METADATA = new ChannelMetadata(
+            BufType.MESSAGE, false);
 
     private final UdtChannelConfig config;
 
@@ -54,11 +54,8 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         this(TypeUDT.DATAGRAM);
     }
 
-    protected NioUdtMessageConnectorChannel(//
-            final Channel parent, //
-            final Integer id, //
-            final SocketChannelUDT channelUDT //
-    ) {
+    protected NioUdtMessageConnectorChannel(final Channel parent,
+            final Integer id, final SocketChannelUDT channelUDT) {
         super(parent, id, channelUDT, SelectionKey.OP_READ);
         try {
             channelUDT.configureBlocking(false);

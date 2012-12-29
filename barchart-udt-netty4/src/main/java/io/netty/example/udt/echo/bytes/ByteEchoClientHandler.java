@@ -19,6 +19,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundByteHandlerAdapter;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.nio.NioUdtProvider;
 
 import java.util.concurrent.TimeUnit;
@@ -73,6 +74,13 @@ public class ByteEchoClientHandler extends ChannelInboundByteHandlerAdapter {
             final Throwable cause) {
         log.error("close the connection when an exception is raised", cause);
         ctx.close();
+    }
+
+    @Override
+    public ByteBuf newInboundBuffer(final ChannelHandlerContext ctx)
+            throws Exception {
+        return ctx.alloc().directBuffer(
+                ctx.channel().config().getOption(ChannelOption.SO_RCVBUF));
     }
 
 }

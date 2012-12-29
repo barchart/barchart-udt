@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The Netty Project
+ * Copyright 2012 The Netty Project
  *
  * The Netty Project licenses this file to you under the Apache License,
  * version 2.0 (the "License"); you may not use this file except in compliance
@@ -39,23 +39,17 @@ import com.barchart.udt.nio.ServerSocketChannelUDT;
 public abstract class NioUdtBaseAcceptorChannel extends
         AbstractNioMessageChannel implements UdtChannel {
 
-    protected static final InternalLogger logger = //
-    InternalLoggerFactory.getInstance(NioUdtBaseAcceptorChannel.class);
+    protected static final InternalLogger logger = InternalLoggerFactory
+            .getInstance(NioUdtBaseAcceptorChannel.class);
 
-    protected static final ChannelMetadata METADATA = //
-    new ChannelMetadata(BufType.MESSAGE, false);
-
-    //
+    protected static final ChannelMetadata METADATA = new ChannelMetadata(
+            BufType.MESSAGE, false);
 
     protected final UdtChannelConfig config;
 
     protected NioUdtBaseAcceptorChannel(final ServerSocketChannelUDT channelUDT) {
-        super(//
-                null, //
-                channelUDT.socketUDT().id(), //
-                channelUDT, //
-                SelectionKey.OP_ACCEPT //
-        );
+        super(null, channelUDT.socketUDT().id(), channelUDT,
+                SelectionKey.OP_ACCEPT);
         try {
             channelUDT.configureBlocking(false);
             config = new DefaultUdtChannelConfig();
@@ -85,8 +79,8 @@ public abstract class NioUdtBaseAcceptorChannel extends
     protected void doBind(final SocketAddress localAddress) throws Exception {
         javaChannel().socket().bind(localAddress, config.getBacklog());
         final SelectionKey selectionKey = selectionKey();
-        selectionKey.interestOps(//
-                selectionKey.interestOps() | SelectionKey.OP_ACCEPT);
+        selectionKey.interestOps(selectionKey.interestOps()
+                | SelectionKey.OP_ACCEPT);
     }
 
     @Override

@@ -24,9 +24,9 @@ import java.util.Map;
 
 import com.barchart.udt.OptionUDT;
 import com.barchart.udt.SocketUDT;
+import com.barchart.udt.nio.ChannelUDT;
 import com.barchart.udt.nio.ServerSocketChannelUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
-import com.barchart.udt.nio.ChannelUDT;
 
 /**
  * The default {@link UdtChannelConfig} implementation.
@@ -34,8 +34,8 @@ import com.barchart.udt.nio.ChannelUDT;
 public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
         UdtChannelConfig {
 
-    static final int K = 1024;
-    static final int M = K * K;
+    public static final int K = 1024;
+    public static final int M = K * K;
 
     private volatile int protocolReceiveBuferSize = 10 * M;
     private volatile int protocolSendBuferSize = 10 * M;
@@ -140,7 +140,8 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
                 SO_SNDBUF, //
                 SO_REUSEADDR, //
                 SO_LINGER, //
-                SO_BACKLOG);
+                SO_BACKLOG //
+        );
     }
 
     @Override

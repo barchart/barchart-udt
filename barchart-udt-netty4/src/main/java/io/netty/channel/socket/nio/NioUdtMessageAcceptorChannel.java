@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The Netty Project
+ * Copyright 2012 The Netty Project
  *
  * The Netty Project licenses this file to you under the Apache License,
  * version 2.0 (the "License"); you may not use this file except in compliance
@@ -35,8 +35,8 @@ public class NioUdtMessageAcceptorChannel extends NioUdtBaseAcceptorChannel {
         if (channelUDT == null) {
             return 0;
         } else {
-            buf.add(new NioUdtMessageConnectorChannel(//
-                    this, channelUDT.socketUDT().id(), channelUDT));
+            buf.add(new NioUdtMessageConnectorChannel(this, channelUDT
+                    .socketUDT().id(), channelUDT));
             return 1;
         }
     }

@@ -19,6 +19,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundByteHandlerAdapter;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.nio.NioUdtProvider;
 
 import org.slf4j.Logger;
@@ -53,6 +54,13 @@ public class ByteEchoServerHandler extends ChannelInboundByteHandlerAdapter {
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
         log.info("ECHO active {}", //
                 NioUdtProvider.socketUDT(ctx.channel()).toStringOptions());
+    }
+
+    @Override
+    public ByteBuf newInboundBuffer(final ChannelHandlerContext ctx)
+            throws Exception {
+        return ctx.alloc().directBuffer(
+                ctx.channel().config().getOption(ChannelOption.SO_RCVBUF));
     }
 
 }

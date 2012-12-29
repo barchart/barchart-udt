@@ -17,8 +17,10 @@ package io.netty.channel.socket;
 
 import io.netty.buffer.ByteBuf;
 
+import com.barchart.udt.TypeUDT;
+
 /**
- * The message container that is used for UDT datagram messages
+ * The message container that is used for {@link TypeUDT#DATAGRAM} messages.
  */
 public final class UdtMessage {
 
@@ -35,15 +37,19 @@ public final class UdtMessage {
     }
 
     /**
-     * Return the data which is container. May return an empty {@link ByteBuf}
+     * Return the container data.
      */
     public ByteBuf data() {
         return data;
     }
 
-    /** free underlying direct buffer, if any */
+    /**
+     * Free underlying data.
+     */
     public void free() {
-        if (data.isDirect() && !data.isFreed()) {
+        if (data.isFreed()) {
+            return;
+        } else {
             data.free();
         }
     }

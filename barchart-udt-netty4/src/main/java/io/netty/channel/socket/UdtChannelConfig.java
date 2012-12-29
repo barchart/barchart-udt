@@ -16,18 +16,20 @@
 package io.netty.channel.socket;
 
 import io.netty.channel.ChannelConfig;
+import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelOption;
 
 import java.io.IOException;
+import java.net.StandardSocketOptions;
 
 import com.barchart.udt.OptionUDT;
+import com.barchart.udt.TypeUDT;
+import com.barchart.udt.nio.KindUDT;
 import com.barchart.udt.nio.ServerSocketChannelUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
- * TODO expose more of {@link OptionUDT}
- * <p>
- * A {@link ChannelConfig} for a {@link SocketChannel}.
+ * A {@link ChannelConfig} for a {@link UdtChannel}.
  * <p>
  * <h3>Available options</h3>
  * In addition to the options provided by {@link ChannelConfig},
@@ -55,27 +57,70 @@ import com.barchart.udt.nio.SocketChannelUDT;
  * <td>{@link #setSendBufferSize(int)}</td>
  * </tr>
  * <tr>
+ * <td>{@code "protocolReceiveBuferSize"}</td>
+ * <td>{@link #setProtocolBufferSize(int)}</td>
+ * <tr>
+ * <tr>
+ * <td>{@code "systemReceiveBufferSize"}</td>
+ * <td>{@link #setSystemBufferSize(int)}</td>
+ * <tr>
  * </table>
+ * <p>
+ * Note that {@link TypeUDT#DATAGRAM} message oriented channels treat
+ * {@code "receiveBufferSize"} and {@code "sendBufferSize"} as maximum message
+ * size. If received or sent message does not fit specified sizes,
+ * {@link ChannelException} will be thrown.
  */
 public interface UdtChannelConfig extends ChannelConfig {
 
+    /**
+     * See {@link OptionUDT#Protocol_Receive_Buffer_Size}.
+     */
     ChannelOption<Integer> PROTOCOL_RECEIVE_BUFFER_SIZE = //
     new ChannelOption<Integer>("PROTOCOL_RECEIVE_BUFFER_SIZE");
 
+    /**
+     * See {@link OptionUDT#Protocol_Send_Buffer_Size}.
+     */
     ChannelOption<Integer> PROTOCOL_SEND_BUFFER_SIZE = //
     new ChannelOption<Integer>("PROTOCOL_SEND_BUFFER_SIZE");
 
+    /**
+     * See {@link OptionUDT#System_Receive_Buffer_Size}.
+     */
     ChannelOption<Integer> SYSTEM_RECEIVE_BUFFER_SIZE = //
     new ChannelOption<Integer>("SYSTEM_RECEIVE_BUFFER_SIZE");
 
+    /**
+     * See {@link OptionUDT#System_Send_Buffer_Size}.
+     */
     ChannelOption<Integer> SYSTEM_SEND_BUFFER_SIZE = //
     new ChannelOption<Integer>("SYSTEM_SEND_BUFFER_SIZE");
 
+    /**
+     * Apply configuration to the {@link KindUDT#ACCEPTOR} channel.
+     */
     void apply(final ServerSocketChannelUDT channelUDT) throws IOException;
 
+    /**
+     * Apply configuration to the {@link KindUDT#CONNECTOR} channel.
+     */
     void apply(final SocketChannelUDT channelUDT) throws IOException;
 
+    /**
+     * Gets {@link KindUDT#ACCEPTOR} channel backlog.
+     */
     int getBacklog();
+
+    /**
+     * Gets {@link OptionUDT#Protocol_Receive_Buffer_Size}
+     */
+    int getProtocolReceiveBufferSize();
+
+    /**
+     * Gets {@link OptionUDT#Protocol_Send_Buffer_Size}
+     */
+    int getProtocolSendBufferSize();
 
     /**
      * Gets the {@link StandardSocketOptions#SO_RCVBUF} option.
@@ -93,11 +138,34 @@ public interface UdtChannelConfig extends ChannelConfig {
     int getSoLinger();
 
     /**
+     * Gets {@link OptionUDT#System_Receive_Buffer_Size}
+     */
+    int getSystemReceiveBufferSize();
+
+    /**
+     * Gets {@link OptionUDT#System_Send_Buffer_Size}
+     */
+    int getSystemSendBufferSize();
+
+    /**
      * Gets the {@link StandardSocketOptions#SO_REUSEADDR} option.
      */
     boolean isReuseAddress();
 
+    /**
+     * Sets {@link KindUDT#ACCEPTOR} channel backlog.
+     */
     UdtChannelConfig setBacklog(int backlog);
+
+    /**
+     * Sets {@link OptionUDT#Protocol_Receive_Buffer_Size}
+     */
+    UdtChannelConfig setProtocolReceiveBufferSize(int size);
+
+    /**
+     * Sets {@link OptionUDT#Protocol_Send_Buffer_Size}
+     */
+    UdtChannelConfig setProtocolSendBufferSize(int size);
 
     /**
      * Sets the {@link StandardSocketOptions#SO_RCVBUF} option.
@@ -119,22 +187,14 @@ public interface UdtChannelConfig extends ChannelConfig {
      */
     UdtChannelConfig setSoLinger(int soLinger);
 
-    //
-
-    int getProtocolReceiveBufferSize();
-
-    UdtChannelConfig setProtocolReceiveBufferSize(int size);
-
-    int getProtocolSendBufferSize();
-
-    UdtChannelConfig setProtocolSendBufferSize(int size);
-
-    int getSystemReceiveBufferSize();
-
+    /**
+     * Sets {@link OptionUDT#System_Receive_Buffer_Size}
+     */
     UdtChannelConfig setSystemReceiveBufferSize(int size);
 
-    int getSystemSendBufferSize();
-
+    /**
+     * Sets {@link OptionUDT#System_Send_Buffer_Size}
+     */
     UdtChannelConfig setSystemSendBufferSize(int size);
 
 }
