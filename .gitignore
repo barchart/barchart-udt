@@ -6,13 +6,29 @@
 # http://www.opensource.org/licenses/bsd-license.php
 #
 
-/.project
-/.classpath
-/.settings
+#
+# idea metadata
+#
+*.iml
+*.ipr
+*.iws
+.idea/
 
+#
+# eclipse metadata
+#
+.project
+.classpath
+.settings
 
+#
+# build folders
+#
 /bin
 /target
 
+#
+# release artifacts
+#
 /release.properties
 /pom.xml.*
