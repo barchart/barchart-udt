@@ -19,6 +19,7 @@ enum LibraryUDT {
 
 	I386_LINUX_GPP("i386.Linux.gpp", null), //
 	AMD64_LINUX_GPP("amd64.Linux.gpp", null), //
+	ARM_LINUX_GPP("arm.Linux.gpp",null), //
 
 	I386_MACOSX_GPP("i386.MacOSX.gpp", null), //
 	X86_64_MACOSX_GPP("x86_64.MacOSX.gpp", null), //
