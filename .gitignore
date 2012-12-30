@@ -9,6 +9,7 @@
 #
 # idea metadata
 #
+*.eml
 *.iml
 *.ipr
 *.iws
