@@ -57,8 +57,8 @@ public class MsgEchoClientHandler extends
 
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
-        log.info("ECHO active {}", //
-                NioUdtProvider.socketUDT(ctx.channel()).toStringOptions());
+        log.info("ECHO active {}", NioUdtProvider.socketUDT(ctx.channel())
+                .toStringOptions());
         final MessageBuf<Object> out = ctx.nextOutboundMessageBuffer();
         out.add(message);
         ctx.flush();

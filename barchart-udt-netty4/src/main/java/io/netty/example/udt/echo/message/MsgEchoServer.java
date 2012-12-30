@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
  */
 public class MsgEchoServer {
 
-    static Logger log = LoggerFactory.getLogger(MsgEchoServer.class);
+    private static final Logger log = LoggerFactory
+            .getLogger(MsgEchoServer.class);
 
     /**
      * use slf4j provider for io.netty.logging.InternalLogger
@@ -61,10 +62,10 @@ public class MsgEchoServer {
     public void run() throws Exception {
         final ThreadFactory acceptFactory = new ThreadFactoryUDT("accept");
         final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
-        final NioEventLoopGroup acceptGroup = new NioEventLoopGroup(//
-                1, acceptFactory, NioUdtProvider.MESSAGE_PROVIDER);
-        final NioEventLoopGroup connectGroup = new NioEventLoopGroup(//
-                1, connectFactory, NioUdtProvider.MESSAGE_PROVIDER);
+        final NioEventLoopGroup acceptGroup = new NioEventLoopGroup(1,
+                acceptFactory, NioUdtProvider.MESSAGE_PROVIDER);
+        final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
+                connectFactory, NioUdtProvider.MESSAGE_PROVIDER);
         // Configure the server.
         final ServerBootstrap boot = new ServerBootstrap();
         try {

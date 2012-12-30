@@ -128,7 +128,8 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
     @Override
     protected void doFinishConnect() throws Exception {
         if (!javaChannel().finishConnect()) {
-            throw new Error("provider error");
+            throw new Error(
+                    "Provider error: failed to finish connect. Provider library should be upgraded.");
         }
         selectionKey().interestOps(SelectionKey.OP_READ);
     }

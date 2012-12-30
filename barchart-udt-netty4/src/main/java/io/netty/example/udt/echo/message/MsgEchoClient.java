@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
  */
 public class MsgEchoClient {
 
-    static Logger log = LoggerFactory.getLogger(MsgEchoClient.class);
+    private static final Logger log = LoggerFactory
+            .getLogger(MsgEchoClient.class);
 
     /**
      * use slf4j provider for io.netty.logging.InternalLogger
@@ -72,8 +73,8 @@ public class MsgEchoClient {
         // Configure the client.
         final Bootstrap boot = new Bootstrap();
         final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
-        final NioEventLoopGroup connectGroup = new NioEventLoopGroup(//
-                1, connectFactory, NioUdtProvider.MESSAGE_PROVIDER);
+        final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
+                connectFactory, NioUdtProvider.MESSAGE_PROVIDER);
         try {
             boot.group(connectGroup)
                     .channelFactory(NioUdtProvider.MESSAGE_CONNECTOR)

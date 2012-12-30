@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ByteEchoClient {
 
-    static Logger log = LoggerFactory.getLogger(ByteEchoClient.class);
+    private static final Logger log = LoggerFactory
+            .getLogger(ByteEchoClient.class);
 
     /**
      * use slf4j provider for io.netty.logging.InternalLogger
@@ -72,8 +73,8 @@ public class ByteEchoClient {
         // Configure the client.
         final Bootstrap boot = new Bootstrap();
         final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
-        final NioEventLoopGroup connectGroup = new NioEventLoopGroup(//
-                1, connectFactory, NioUdtProvider.BYTE_PROVIDER);
+        final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
+                connectFactory, NioUdtProvider.BYTE_PROVIDER);
         try {
             boot.group(connectGroup)
                     .channelFactory(NioUdtProvider.BYTE_CONNECTOR)

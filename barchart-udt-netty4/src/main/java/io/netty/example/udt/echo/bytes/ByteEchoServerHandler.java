@@ -52,8 +52,8 @@ public class ByteEchoServerHandler extends ChannelInboundByteHandlerAdapter {
 
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
-        log.info("ECHO active {}", //
-                NioUdtProvider.socketUDT(ctx.channel()).toStringOptions());
+        log.info("ECHO active {}", NioUdtProvider.socketUDT(ctx.channel())
+                .toStringOptions());
     }
 
     @Override
