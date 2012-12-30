@@ -1093,7 +1093,7 @@ public class SocketUDT {
 				return isReceiveBlocking && isSendBlocking;
 			}
 		} catch (final Exception e) {
-			log.error("unexpected;", e);
+			log.error("failed to get option", e);
 		}
 		return false;
 	}
@@ -1115,9 +1115,24 @@ public class SocketUDT {
 				return !isReceiveBlocking && !isSendBlocking;
 			}
 		} catch (final Exception e) {
-			log.error("unexpected;", e);
+			log.error("failed to get option", e);
 		}
 		return false;
+	}
+
+	public final boolean isRendezvous() {
+		try {
+			if (isOpen()) {
+				return getOption(OptionUDT.Is_Randezvous_Connect_Enabled);
+			}
+		} catch (final Exception e) {
+			log.error("failed to get option", e);
+		}
+		return false;
+	}
+
+	public final void setRendezvous(final boolean isOn) throws ExceptionUDT {
+		setOption(OptionUDT.Is_Randezvous_Connect_Enabled, isOn);
 	}
 
 	/**
@@ -1263,8 +1278,8 @@ public class SocketUDT {
 			} else {
 				return remote.getAddress();
 			}
-		} catch (final ExceptionUDT e) {
-			log.debug("unexpected", e);
+		} catch (final Exception e) {
+			log.debug("failed to get remote address", e);
 			return null;
 		}
 	}
@@ -1281,8 +1296,8 @@ public class SocketUDT {
 			} else {
 				return remote.getPort();
 			}
-		} catch (final ExceptionUDT e) {
-			log.debug("unexpected", e);
+		} catch (final Exception e) {
+			log.debug("failed to get remote port", e);
 			return 0;
 		}
 	}
@@ -1300,8 +1315,8 @@ public class SocketUDT {
 			} else {
 				return local.getAddress();
 			}
-		} catch (final ExceptionUDT e) {
-			log.debug("unexpected", e);
+		} catch (final Exception e) {
+			log.debug("failed to get local address", e);
 			return null;
 		}
 	}
@@ -1318,8 +1333,8 @@ public class SocketUDT {
 			} else {
 				return local.getPort();
 			}
-		} catch (final ExceptionUDT e) {
-			log.debug("unexpected", e);
+		} catch (final Exception e) {
+			log.debug("failed to get local port", e);
 			return 0;
 		}
 	}
@@ -1384,7 +1399,7 @@ public class SocketUDT {
 		try {
 			updateMonitor(false);
 		} catch (final Exception e) {
-			return "updateMonitor failed;" + e.getMessage();
+			return "failed to update monitor : " + e.getMessage();
 		}
 
 		final StringBuilder text = new StringBuilder(1024);
