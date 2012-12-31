@@ -462,9 +462,35 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
-	public long write(final ByteBuffer[] srcs, final int offset,
+	public long write(final ByteBuffer[] bufferArray, final int offset,
 			final int length) throws IOException {
-		throw new RuntimeException("feature not available");
+
+		try {
+
+			long total = 0;
+
+			for (int index = offset; index < offset + length; index++) {
+
+				final ByteBuffer buffer = bufferArray[index];
+
+				final int remaining = buffer.remaining();
+				final int processed = write(buffer);
+
+				if (remaining == processed) {
+					total += processed;
+				} else {
+					throw new IllegalStateException(
+							"failed to write buffer in array");
+				}
+
+			}
+
+			return total;
+
+		} catch (final Throwable e) {
+			throw new IOException("failed to write buffer array", e);
+		}
+
 	}
 
 	@Override

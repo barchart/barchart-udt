@@ -30,7 +30,6 @@ import io.netty.logging.InternalLoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 
 import com.barchart.udt.TypeUDT;
@@ -131,7 +130,8 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
     @Override
     protected void doFinishConnect() throws Exception {
         if (!javaChannel().finishConnect()) {
-            throw new Error("provider error");
+            throw new Error(
+                    "Provider error: failed to finish connect. Provider library should be upgraded.");
         }
         selectionKey().interestOps(SelectionKey.OP_READ);
     }
@@ -155,7 +155,7 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         if (receivedMessageSize >= maximumMessageSize) {
             javaChannel().close();
             throw new ChannelException(
-                    "invalid config : increase receive buffer size to avoid message truncation");
+                    "Invalid config : increase receive buffer size to avoid message truncation");
         }
 
         buf.add(new UdtMessage(byteBuf));
@@ -173,14 +173,12 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
 
         final int messageSize = byteBuf.readableBytes();
 
-        ByteBuffer buffer;
+        final long writtenBytes;
         if (byteBuf.nioBufferCount() == 1) {
-            buffer = byteBuf.nioBuffer();
+            writtenBytes = javaChannel().write(byteBuf.nioBuffer());
         } else {
-            throw new ChannelException("TODO");
+            writtenBytes = javaChannel().write(byteBuf.nioBuffers());
         }
-
-        final int writtenBytes = javaChannel().write(buffer);
 
         final SelectionKey key = selectionKey();
         final int interestOps = key.interestOps();
@@ -197,7 +195,8 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
 
         // wrote message completely
         if (writtenBytes != messageSize) {
-            throw new ChannelException("provider error");
+            throw new Error(
+                    "Provider error: failed to write message. Provider library should be upgraded.");
         }
 
         // wrote the message queue completely - clear OP_WRITE.

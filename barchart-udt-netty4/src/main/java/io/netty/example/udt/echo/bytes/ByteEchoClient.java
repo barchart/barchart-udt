@@ -101,11 +101,16 @@ public class ByteEchoClient {
 
     public static void main(final String[] args) throws Exception {
         log.info("init");
+
         ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
+
         final String host = "localhost";
         final int port = 1234;
+
         final int messageSize = 64 * 1024;
+
         new ByteEchoClient(host, port, messageSize).run();
+
         log.info("done");
     }
 

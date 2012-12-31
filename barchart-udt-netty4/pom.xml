@@ -35,7 +35,7 @@
 
 		<!-- MAIN -->
 
-		<!-- convenience dependency for IDE refactoring  -->
+		<!-- convenience dependency for IDE refactoring -->
 		<dependency>
 			<groupId>com.barchart.udt</groupId>
 			<artifactId>barchart-udt-core</artifactId>
@@ -70,8 +70,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- TEST -->
-
 		<!-- netty logging handler -->
 		<dependency>
 			<groupId>io.netty</groupId>
@@ -80,15 +78,17 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- use yammer metrics for benchmarks -->
+		<!-- netty yammer metrics for benchmarks -->
 		<dependency>
-			<groupId>com.yammer.metrics</groupId>
-			<artifactId>metrics-core</artifactId>
-			<version>2.2.0</version>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-metrics-yammer</artifactId>
+			<version>${barchartNettyVersion}</version>
+			<scope>provided</scope>
 		</dependency>
 
-	</dependencies>
+		<!-- TEST -->
 
+	</dependencies>
 
 	<profiles>
 		<profile>

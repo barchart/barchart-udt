@@ -155,7 +155,7 @@ public class NioUdtMessageRendezvousChannel extends AbstractNioMessageChannel
         if (receivedMessageSize >= maximumMessageSize) {
             javaChannel().close();
             throw new ChannelException(
-                    "invalid config : increase receive buffer size to avoid message truncation");
+                    "Invalid config : increase receive buffer size to avoid message truncation");
         }
 
         buf.add(new UdtMessage(byteBuf));
