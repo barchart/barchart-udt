@@ -495,7 +495,7 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 
 	@Override
 	public TypeUDT typeUDT() {
-		return providerUDT().type;
+		return providerUDT().type();
 	}
 
 	/** java 7 */

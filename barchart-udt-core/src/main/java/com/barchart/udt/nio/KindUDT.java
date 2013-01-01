@@ -8,32 +8,40 @@
 package com.barchart.udt.nio;
 
 import com.barchart.udt.SocketUDT;
+import com.barchart.udt.TypeUDT;
 
 /**
- * UDT channel role type.
- * 
- * NOTE: {@link com.barchart.udt#TypeUDT} means stream vs datagram;
- * {@link KindUDT} means server vs client.
+ * UDT channel role type, or kind.
+ * <p>
+ * {@link TypeUDT} means stream (byte oriented) vs datagram (message oriented).
+ * <p>
+ * {@link KindUDT} gives distinction between server vs client vs peer.
  */
 public enum KindUDT {
 
 	/**
 	 * Server mode: listens and accepts connections; generates
 	 * {@link #CONNECTOR} as a result of {@link SocketUDT#accept()}
+	 * 
+	 * @see {@link ServerSocketChannelUDT}
 	 */
 	ACCEPTOR, //
 
 	/**
-	 * Client mode: user-created channel which initiates connections to servers;
-	 * options are user-provided
+	 * Client mode: channel which initiates connections to servers; options are
+	 * user-provided.
 	 * <p>
 	 * Server mode: channel which is a result of accept(); inherits options from
-	 * parent {@link #ACCEPTOR}
+	 * parent {@link #ACCEPTOR}.
+	 * 
+	 * @see {@link SocketChannelUDT}
 	 */
 	CONNECTOR, //
 
 	/**
-	 * TODO
+	 * Rendezvous mode: symmetric peer channel on each side of the connection.
+	 * 
+	 * @see {@link RendezvousChannelUDT}
 	 */
 	RENDEZVOUS, //
 

@@ -74,11 +74,19 @@ public class SelectorUDT extends AbstractSelector {
 		return provider.openSelector();
 	}
 
-	protected final EpollUDT epollUDT = new EpollUDT();
+	private final EpollUDT epollUDT = new EpollUDT();
 
 	/**
 	 */
 	public final int maximimSelectorSize;
+
+	/**
+	 * tracks correlation read with write for the same key
+	 */
+	private int resultIndex;
+
+	/** list of epoll sockets with read interest */
+	private final IntBuffer readBuffer;
 
 	/** [ socket-id : selection-key ] */
 	private final ConcurrentMap<Integer, SelectionKeyUDT> //
@@ -106,16 +114,13 @@ public class SelectorUDT extends AbstractSelector {
 	/** reported epoll socket list sizes */
 	private final IntBuffer sizeBuffer;
 
-	/** list of epoll sockets with read interest */
-	private final IntBuffer readBuffer;
-
-	/** list of epoll sockets with write interest */
-	private final IntBuffer writeBuffer;
-
 	/** guarded by {@link #doSelectLocked} */
 	private volatile int wakeupBaseCount;
 
 	private volatile int wakeupStepCount;
+
+	/** list of epoll sockets with write interest */
+	private final IntBuffer writeBuffer;
 
 	protected SelectorUDT( //
 			final SelectorProvider provider, //
@@ -132,104 +137,42 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	@Override
-	protected void implCloseSelector() throws IOException {
+	/** cancel queue */
+	protected void cancel(final SelectionKeyUDT keyUDT) {
 
-		wakeup();
+		log.debug("cancel queue {}", keyUDT);
 
-		try {
-			selectLock.lock();
-			cancelledKeys().addAll(registeredKeySet);
-		} finally {
-			selectLock.unlock();
+		synchronized (cancelledKeys()) {
+			cancelledKeys().add(keyUDT);
 		}
 
-		doCancel();
-
 	}
 
-	protected boolean wakeupIsPending() {
-		return wakeupBaseCount != wakeupStepCount;
-	}
+	/** cancel apply */
+	protected void doCancel() {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<SelectionKey> keys() {
-		if (!isOpen()) {
-			throw new ClosedSelectorException();
-		}
-		return (Set<SelectionKey>) registeredKeySet;
-	}
+		synchronized (cancelledKeys()) {
 
-	/** 
-	 */
-	@Override
-	protected SelectionKey register( //
-			final AbstractSelectableChannel channel, //
-			final int interestOps, //
-			final Object attachment //
-	) {
+			if (cancelledKeys().isEmpty()) {
+				return;
+			}
 
-		if (registeredKeyMap.size() == maximimSelectorSize) {
-			log.error("reached maximimSelectorSize");
-			throw new IllegalSelectorException();
+			for (final SelectionKey key : cancelledKeys()) {
+
+				final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
+
+				if (keyUDT.isValid()) {
+					log.debug("cancel apply {}", keyUDT);
+					keyUDT.makeValid(false);
+					registeredKeyMap.remove(keyUDT.socketId());
+				}
+
+			}
+
+			cancelledKeys().clear();
+
 		}
 
-		if (!(channel instanceof ChannelUDT)) {
-			log.error("!(channel instanceof ChannelUDT)");
-			throw new IllegalSelectorException();
-		}
-
-		final ChannelUDT channelUDT = (ChannelUDT) channel;
-
-		final Integer socketId = channelUDT.socketUDT().id();
-
-		SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
-
-		if (keyUDT == null) {
-			keyUDT = new SelectionKeyUDT(this, channelUDT, attachment);
-			registeredKeyMap.putIfAbsent(socketId, keyUDT);
-			keyUDT = registeredKeyMap.get(socketId);
-		}
-
-		keyUDT.interestOps(interestOps);
-
-		return keyUDT;
-
-	}
-
-	protected void wakeupMarkBase() {
-		wakeupBaseCount = wakeupStepCount;
-	}
-
-	@Override
-	public int select() throws IOException {
-		return select(0);
-	}
-
-	@Override
-	public int select(final long timeout) throws IOException {
-		if (timeout < 0) {
-			throw new IllegalArgumentException("negative timeout");
-		} else if (timeout > 0) {
-			return doEpollEnter(timeout);
-		} else {
-			return doEpollEnter(SocketUDT.TIMEOUT_INFINITE);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<SelectionKey> selectedKeys() {
-		if (!isOpen()) {
-			throw new ClosedSelectorException();
-		}
-		return (Set<SelectionKey>) selectedKeySet;
-	}
-
-	@Override
-	public int selectNow() throws IOException {
-		return doEpollEnter(SocketUDT.TIMEOUT_NONE);
 	}
 
 	/**
@@ -294,97 +237,6 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	/** cancel queue */
-	protected void cancel(final SelectionKeyUDT keyUDT) {
-
-		log.debug("cancel queue {}", keyUDT);
-
-		synchronized (cancelledKeys()) {
-			cancelledKeys().add(keyUDT);
-		}
-
-	}
-
-	/** cancel apply */
-	protected void doCancel() {
-
-		synchronized (cancelledKeys()) {
-
-			if (cancelledKeys().isEmpty()) {
-				return;
-			}
-
-			for (final SelectionKey key : cancelledKeys()) {
-
-				final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
-
-				if (keyUDT.isValid()) {
-					log.debug("cancel apply {}", keyUDT);
-					keyUDT.makeValid(false);
-					registeredKeyMap.remove(keyUDT.socketId());
-				}
-
-			}
-
-			cancelledKeys().clear();
-
-		}
-
-	}
-
-	/**
-	 * tracks correlation read with write for the same key
-	 */
-	private int processCount;
-
-	protected void doResults() {
-
-		processCount++;
-
-		doResultsRead(processCount);
-
-		doResultsWrite(processCount);
-
-	}
-
-	protected void doResultsRead(final int processCount) {
-
-		final int readSize = sizeBuffer.get(UDT_READ_INDEX);
-
-		for (int index = 0; index < readSize; index++) {
-
-			final int socketId = readBuffer.get(index);
-
-			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
-
-			keyUDT.socketUDT().isOpen();
-
-			if (keyUDT.doRead(processCount)) {
-				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
-			}
-
-		}
-
-	}
-
-	protected void doResultsWrite(final int processCount) {
-
-		final int writeSize = sizeBuffer.get(UDT_WRITE_INDEX);
-
-		for (int index = 0; index < writeSize; index++) {
-
-			final int socketId = writeBuffer.get(index);
-
-			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
-
-			if (keyUDT.doWrite(processCount)) {
-				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
-			}
-
-		}
-
-	}
-
 	/**
 	 * @param millisTimeout
 	 * 
@@ -445,11 +297,163 @@ public class SelectorUDT extends AbstractSelector {
 				);
 	}
 
+	protected void doResults() {
+
+		resultIndex++;
+
+		doResultsRead(resultIndex);
+
+		doResultsWrite(resultIndex);
+
+	}
+
+	protected void doResultsRead(final int resultIndex) {
+
+		final int readSize = sizeBuffer.get(UDT_READ_INDEX);
+
+		for (int index = 0; index < readSize; index++) {
+
+			final int socketId = readBuffer.get(index);
+
+			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
+
+			keyUDT.socketUDT().isOpen();
+
+			if (keyUDT.doRead(resultIndex)) {
+				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
+			}
+
+		}
+
+	}
+
+	protected void doResultsWrite(final int resultIndex) {
+
+		final int writeSize = sizeBuffer.get(UDT_WRITE_INDEX);
+
+		for (int index = 0; index < writeSize; index++) {
+
+			final int socketId = writeBuffer.get(index);
+
+			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
+
+			if (keyUDT.doWrite(resultIndex)) {
+				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
+			}
+
+		}
+
+	}
+
+	protected EpollUDT epollUDT() {
+		return epollUDT;
+	}
+
+	@Override
+	protected void implCloseSelector() throws IOException {
+
+		wakeup();
+
+		try {
+			selectLock.lock();
+			cancelledKeys().addAll(registeredKeySet);
+		} finally {
+			selectLock.unlock();
+		}
+
+		doCancel();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<SelectionKey> keys() {
+		if (!isOpen()) {
+			throw new ClosedSelectorException();
+		}
+		return (Set<SelectionKey>) registeredKeySet;
+	}
+
+	/** 
+	 */
+	@Override
+	protected SelectionKey register( //
+			final AbstractSelectableChannel channel, //
+			final int interestOps, //
+			final Object attachment //
+	) {
+
+		if (registeredKeyMap.size() == maximimSelectorSize) {
+			log.error("reached maximimSelectorSize");
+			throw new IllegalSelectorException();
+		}
+
+		if (!(channel instanceof ChannelUDT)) {
+			log.error("!(channel instanceof ChannelUDT)");
+			throw new IllegalSelectorException();
+		}
+
+		final ChannelUDT channelUDT = (ChannelUDT) channel;
+
+		final Integer socketId = channelUDT.socketUDT().id();
+
+		SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
+
+		if (keyUDT == null) {
+			keyUDT = new SelectionKeyUDT(this, channelUDT, attachment);
+			registeredKeyMap.putIfAbsent(socketId, keyUDT);
+			keyUDT = registeredKeyMap.get(socketId);
+		}
+
+		keyUDT.interestOps(interestOps);
+
+		return keyUDT;
+
+	}
+
+	@Override
+	public int select() throws IOException {
+		return select(0);
+	}
+
+	@Override
+	public int select(final long timeout) throws IOException {
+		if (timeout < 0) {
+			throw new IllegalArgumentException("negative timeout");
+		} else if (timeout > 0) {
+			return doEpollEnter(timeout);
+		} else {
+			return doEpollEnter(SocketUDT.TIMEOUT_INFINITE);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<SelectionKey> selectedKeys() {
+		if (!isOpen()) {
+			throw new ClosedSelectorException();
+		}
+		return (Set<SelectionKey>) selectedKeySet;
+	}
+
+	@Override
+	public int selectNow() throws IOException {
+		return doEpollEnter(SocketUDT.TIMEOUT_NONE);
+	}
+
 	@Override
 	public Selector wakeup() {
 		/** publisher for volatile */
 		wakeupStepCount++;
 		return this;
+	}
+
+	protected boolean wakeupIsPending() {
+		return wakeupBaseCount != wakeupStepCount;
+	}
+
+	protected void wakeupMarkBase() {
+		wakeupBaseCount = wakeupStepCount;
 	}
 
 }

@@ -139,7 +139,7 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 
 	@Override
 	public TypeUDT typeUDT() {
-		return providerUDT().type;
+		return providerUDT().type();
 	}
 
 }
