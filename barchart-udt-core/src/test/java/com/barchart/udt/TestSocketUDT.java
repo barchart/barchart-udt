@@ -165,4 +165,41 @@ public class TestSocketUDT extends TestAny {
 
 	}
 
+	/** udt uses hard coded connect timeout of 3 seconds */
+	@Test(timeout = 10 * 1000)
+	public void connectTimeout() throws Exception {
+
+		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
+
+		long timeStart = 0;
+		long timeFinish = 0;
+
+		try {
+
+			socket.bind(localSocketAddress());
+
+			timeStart = System.currentTimeMillis();
+
+			socket.connect(localSocketAddress());
+
+		} catch (final ExceptionUDT e) {
+
+			switch (e.getError()) {
+			case NOSERVER:
+				timeFinish = System.currentTimeMillis();
+				return;
+			}
+
+		} finally {
+
+			socket.close();
+
+			final long timeDiff = timeFinish - timeStart;
+
+			log.info("timeout = {} seconds", timeDiff / 1000);
+
+		}
+
+	}
+
 }

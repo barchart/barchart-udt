@@ -592,13 +592,22 @@ public class SocketUDT {
 	protected native void close0() throws ExceptionUDT;
 
 	/**
-	 * can be blocking or non blocking call; see
+	 * Connect to remote UDT socket.
+	 * <p>
+	 * Can be blocking or non blocking call; depending on
 	 * {@link OptionUDT#Is_Receive_Synchronous}
+	 * <p>
+	 * Timing: UDT uses hard coded connect timeout:
+	 * <p>
+	 * normal socket: 3 seconds
+	 * <p>
+	 * rendezvous socket: 30 seconds; when
+	 * {@link OptionUDT#Is_Randezvous_Connect_Enabled} is true
 	 * 
 	 * @see #connect0(InetSocketAddress)
 	 */
 	public void connect(final InetSocketAddress remoteSocketAddress) //
-			throws ExceptionUDT, IllegalArgumentException {
+			throws ExceptionUDT {
 		HelpUDT.checkSocketAddress(remoteSocketAddress);
 		connect0(remoteSocketAddress);
 	}
