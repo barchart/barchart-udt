@@ -27,12 +27,14 @@ public class TestNioUdtProvider {
      */
     @Test
     public void provide() {
-        // byte
+        // bytes
         assertNotNull(NioUdtProvider.BYTE_ACCEPTOR.newChannel());
         assertNotNull(NioUdtProvider.BYTE_CONNECTOR.newChannel());
+        assertNotNull(NioUdtProvider.BYTE_RENDEZVOUS.newChannel());
         // message
         assertNotNull(NioUdtProvider.MESSAGE_ACCEPTOR.newChannel());
         assertNotNull(NioUdtProvider.MESSAGE_CONNECTOR.newChannel());
+        assertNotNull(NioUdtProvider.MESSAGE_RENDEZVOUS.newChannel());
     }
 
 }

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package io.netty.example.udt.echo.message;
+package io.netty.example.udt.echo.rendevous;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -21,7 +21,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioUdtProvider;
-import io.netty.example.udt.util.ConsoleReporterUDT;
 import io.netty.example.udt.util.ThreadFactoryUDT;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -30,23 +29,20 @@ import io.netty.logging.Slf4JLoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * UDT Message Flow client
+ * UDT Message Flow Peer
  * <p>
  * Sends one message when a connection is open and echoes back any received data
- * to the server. Simply put, the echo client initiates the ping-pong traffic
- * between the echo client and server by sending the first message to the
- * server.
+ * to the other peer.
  */
-public class MsgEchoClient {
+public abstract class MsgEchoPeerBase {
 
-    private static final Logger log = LoggerFactory
-            .getLogger(MsgEchoClient.class);
+    protected static final Logger log = LoggerFactory
+            .getLogger(MsgEchoPeerBase.class);
 
     /**
      * use slf4j provider for io.netty.logging.InternalLogger
@@ -58,38 +54,37 @@ public class MsgEchoClient {
                 .getDefaultFactory().getClass().getName());
     }
 
-    private final String host;
-    private final int port;
-    private final int messageSize;
+    protected final int messageSize;
+    protected final InetSocketAddress self;
+    protected final InetSocketAddress peer;
 
-    public MsgEchoClient(final String host, final int port,
-            final int messageSize) {
-        this.host = host;
-        this.port = port;
+    public MsgEchoPeerBase(final InetSocketAddress self,
+            final InetSocketAddress peer, final int messageSize) {
         this.messageSize = messageSize;
+        this.self = self;
+        this.peer = peer;
     }
 
     public void run() throws Exception {
-        // Configure the client.
+        // Configure the peer.
         final Bootstrap boot = new Bootstrap();
-        final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
+        final ThreadFactory connectFactory = new ThreadFactoryUDT("rendezvous");
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
                 connectFactory, NioUdtProvider.MESSAGE_PROVIDER);
         try {
             boot.group(connectGroup)
-                    .channelFactory(NioUdtProvider.MESSAGE_CONNECTOR)
-                    .localAddress("localhost", 0)
-                    .remoteAddress(new InetSocketAddress(host, port))
+                    .channelFactory(NioUdtProvider.MESSAGE_RENDEZVOUS)
+                    .localAddress(self).remoteAddress(peer)
                     .handler(new ChannelInitializer<UdtChannel>() {
                         @Override
                         public void initChannel(final UdtChannel ch)
                                 throws Exception {
                             ch.pipeline().addLast(
                                     new LoggingHandler(LogLevel.INFO),
-                                    new MsgEchoClientHandler(messageSize));
+                                    new MsgEchoPeerHandler(messageSize));
                         }
                     });
-            // Start the client.
+            // Start the peer.
             final ChannelFuture f = boot.connect().sync();
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();
@@ -97,22 +92,6 @@ public class MsgEchoClient {
             // Shut down the event loop to terminate all threads.
             boot.shutdown();
         }
-    }
-
-    public static void main(final String[] args) throws Exception {
-        log.info("init");
-
-        // client is reporting metrics
-        ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
-
-        final String host = "localhost";
-
-        final int port = 1234;
-        final int messageSize = 64 * 1024;
-
-        new MsgEchoClient(host, port, messageSize).run();
-
-        log.info("done");
     }
 
 }

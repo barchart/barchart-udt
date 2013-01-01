@@ -27,6 +27,7 @@ import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.ChannelUDT;
 import com.barchart.udt.nio.KindUDT;
+import com.barchart.udt.nio.RendezvousChannelUDT;
 import com.barchart.udt.nio.SelectorProviderUDT;
 import com.barchart.udt.nio.ServerSocketChannelUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
@@ -101,7 +102,7 @@ public class NioUdtProvider implements ChannelFactory {
      *         {@link UdtChannel}
      */
     public static ChannelUDT channelUDT(final Channel channel) {
-        // byte
+        // bytes
         if (channel instanceof NioUdtByteAcceptorChannel) {
             return ((NioUdtByteAcceptorChannel) channel).javaChannel();
         }
@@ -124,6 +125,9 @@ public class NioUdtProvider implements ChannelFactory {
         return null;
     }
 
+    /**
+     * Convenience factory for {@link KindUDT#ACCEPTOR} channels.
+     */
     protected static ServerSocketChannelUDT newAcceptorChannelUDT(
             final TypeUDT type) {
         try {
@@ -133,9 +137,24 @@ public class NioUdtProvider implements ChannelFactory {
         }
     }
 
+    /**
+     * Convenience factory for {@link KindUDT#CONNECTOR} channels.
+     */
     protected static SocketChannelUDT newConnectorChannelUDT(final TypeUDT type) {
         try {
             return SelectorProviderUDT.from(type).openSocketChannel();
+        } catch (final IOException e) {
+            throw new ChannelException("Failed to open channel");
+        }
+    }
+
+    /**
+     * Convenience factory for {@link KindUDT#RENDEZVOUS} channels.
+     */
+    protected static RendezvousChannelUDT newRendezvousChannelUDT(
+            final TypeUDT type) {
+        try {
+            return SelectorProviderUDT.from(type).openRendezvousChannel();
         } catch (final IOException e) {
             throw new ChannelException("Failed to open channel");
         }
@@ -159,6 +178,9 @@ public class NioUdtProvider implements ChannelFactory {
     private final KindUDT kind;
     private final TypeUDT type;
 
+    /**
+     * {@link ChannelFactory} for given {@link TypeUDT} and {@link KindUDT}
+     */
     protected NioUdtProvider(final TypeUDT type, final KindUDT kind) {
         this.type = type;
         this.kind = kind;
@@ -193,6 +215,15 @@ public class NioUdtProvider implements ChannelFactory {
                 return new NioUdtMessageConnectorChannel();
             case STREAM:
                 return new NioUdtByteConnectorChannel();
+            default:
+                throw new IllegalStateException("wrong type=" + type);
+            }
+        case RENDEZVOUS:
+            switch (type) {
+            case DATAGRAM:
+                return new NioUdtMessageRendezvousChannel();
+            case STREAM:
+                return new NioUdtByteRendezvousChannel();
             default:
                 throw new IllegalStateException("wrong type=" + type);
             }

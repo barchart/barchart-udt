@@ -19,6 +19,8 @@ import io.netty.channel.socket.UdtChannel;
 import io.netty.logging.InternalLogger;
 import io.netty.logging.InternalLoggerFactory;
 
+import com.barchart.udt.TypeUDT;
+
 /**
  * Netty Byte Channel Rendezvous for UDT Streams
  */
@@ -27,5 +29,9 @@ public class NioUdtByteRendezvousChannel extends NioUdtByteConnectorChannel
 
     protected static final InternalLogger logger = InternalLoggerFactory
             .getInstance(NioUdtByteRendezvousChannel.class);
+
+    protected NioUdtByteRendezvousChannel() {
+        super(NioUdtProvider.newRendezvousChannelUDT(TypeUDT.STREAM));
+    }
 
 }

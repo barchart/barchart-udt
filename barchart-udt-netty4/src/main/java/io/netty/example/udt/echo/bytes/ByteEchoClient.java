@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * UDT STREAM client
+ * UDT Byte Stream Client
  * <p>
  * Sends one message when a connection is open and echoes back any received data
  * to the server. Simply put, the echo client initiates the ping-pong traffic
@@ -102,6 +102,7 @@ public class ByteEchoClient {
     public static void main(final String[] args) throws Exception {
         log.info("init");
 
+        // client is reporting metrics
         ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
 
         final String host = "localhost";

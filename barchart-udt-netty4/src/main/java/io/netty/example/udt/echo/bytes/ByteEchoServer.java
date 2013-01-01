@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * UDT STREAM server
+ * UDT Byte Stream Server
  * <p>
  * Echoes back any received data from a client.
  */
@@ -95,8 +95,11 @@ public class ByteEchoServer {
 
     public static void main(final String[] args) throws Exception {
         log.info("init");
+
         final int port = 1234;
+
         new ByteEchoServer(port).run();
+
         log.info("done");
     }
 
