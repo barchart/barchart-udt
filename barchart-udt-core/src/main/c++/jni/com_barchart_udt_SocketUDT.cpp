@@ -1221,9 +1221,41 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_receive2( //
 
 }
 
-/*
- * sendXXX call is shared for both send() and sendmsg()
- */
+JNIEXPORT jlong JNICALL Java_com_barchart_udt_SocketUDT_receiveFile0(
+		JNIEnv * const env, //
+		const jclass clsSocketUDT, //
+		const jint socketID, //
+		const jstring path, //
+		const jlong offset, //
+		const jlong length, //
+		const jint block //
+		) {
+
+	UNUSED(clsSocketUDT);
+
+	const char * filePath = env->GetStringUTFChars(path, NULL);
+	int64_t fileOffset = static_cast<int64_t>(offset);
+	int64_t fileLength = static_cast<int64_t>(length);
+	int fileBlock = static_cast<int>(block);
+
+	printf("filePath   =%s\n", filePath);
+	printf("fileOffset =%d\n", fileOffset);
+	printf("fileLength =%d\n", fileLength);
+	printf("fileBlock  =%d\n", fileBlock);
+
+	const int64_t rv = UDT::recvfile2( //
+			socketID, filePath, &fileOffset, fileLength, fileBlock);
+
+	if (rv == UDT::ERROR) {
+		UDT::ERRORINFO errorInfo = UDT::getlasterror();
+		UDT_ThrowExceptionUDT_ErrorInfo( //
+				env, socketID, "receiveFile0:recvfile2", &errorInfo);
+		return JNI_ERR;
+	}
+
+	return static_cast<jlong>(rv);
+
+}
 
 // return values, if exception is NOT thrown
 // -1 : no buffer space (non-blocking only )
@@ -1408,6 +1440,42 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_send2( //
 	} else { // ==0; UDT_TIMEOUT
 		return UDT_TIMEOUT;
 	}
+
+}
+
+JNIEXPORT jlong JNICALL Java_com_barchart_udt_SocketUDT_sendFile0( //
+		JNIEnv * const env, //
+		const jclass clsSocketUDT, //
+		const jint socketID, //
+		const jstring path, //
+		const jlong offset, //
+		const jlong length, //
+		const jint block //
+		) {
+
+	UNUSED(clsSocketUDT);
+
+	const char * filePath = env->GetStringUTFChars(path, NULL);
+	int64_t fileOffset = static_cast<int64_t>(offset);
+	int64_t fileLength = static_cast<int64_t>(length);
+	int fileBlock = static_cast<int>(block);
+
+	printf("filePath   =%s\n", filePath);
+	printf("fileOffset =%d\n", fileOffset);
+	printf("fileLength =%d\n", fileLength);
+	printf("fileBlock  =%d\n", fileBlock);
+
+	const int64_t rv = UDT::sendfile2( //
+			socketID, filePath, &fileOffset, fileLength, fileBlock);
+
+	if (rv == UDT::ERROR) {
+		UDT::ERRORINFO errorInfo = UDT::getlasterror();
+		UDT_ThrowExceptionUDT_ErrorInfo( //
+				env, socketID, "sendFile0:sendfile2", &errorInfo);
+		return JNI_ERR;
+	}
+
+	return static_cast<jlong>(rv);
 
 }
 
@@ -1697,19 +1765,19 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 
 	UNUSED(clsSocketUDT);
 
-	// readiness sets
+// readiness sets
 	set<UDTSOCKET> readSet;
 	set<UDTSOCKET> writeSet;
 
-	// readiness report
+// readiness report
 	const int rv = UDT::epoll_wait( //
 			pollID, &readSet, &writeSet, millisTimeout, NULL, NULL);
 
-	// readiness reports size array
+// readiness reports size array
 	jint* const sizeArray = //
 			static_cast<jint*>(env->GetDirectBufferAddress(objSizeBuffer));
 
-	// process timeout & errors
+// process timeout & errors
 	if (rv <= 0) { // UDT::ERROR is '-1'
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
 		if (errorInfo.getErrorCode() == UDT::ERRORINFO::ETIMEOUT) {
@@ -1726,7 +1794,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		}
 	}
 
-	// return read interest
+// return read interest
 	const jsize readSize = readSet.size();
 	sizeArray[UDT_READ_INDEX] = readSize;
 	if (readSize > 0) {
@@ -1740,7 +1808,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		UDT_CopySetToArray(&readSet, readArray, readSize);
 	}
 
-	// return write interest
+// return write interest
 	const jsize writeSize = writeSet.size();
 	sizeArray[UDT_WRITE_INDEX] = writeSize;
 	if (writeSize > 0) {
@@ -1845,7 +1913,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testGetSetArray0( //
 
 	jint* data = env->GetIntArrayElements(objArray, &isCopy);
 
-	//	jsize size = env->GetArrayLength(objArray);
+//	jsize size = env->GetArrayLength(objArray);
 
 	if (isReturn == JNI_TRUE) {
 		env->ReleaseIntArrayElements(objArray, data, JNI_UPDATE);

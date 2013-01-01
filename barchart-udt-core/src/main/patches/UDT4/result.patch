@@ -1,5 +1,5 @@
 diff --git work/git/barchart-udt/barchart-udt-core/target/udt/UDT4/src/api.cpp work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/api.cpp
-index ea0fc24..2c7e38f 100644
+index ea0fc24..5c83456 100644
 --- work/git/barchart-udt/barchart-udt-core/target/udt/UDT4/src/api.cpp
 +++ work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/api.cpp
 @@ -1104,6 +1104,32 @@ int CUDTUnited::epoll_add_usock(const int eid, const UDTSOCKET u, const int* eve
@@ -98,6 +98,15 @@ index ea0fc24..2c7e38f 100644
  int CUDT::epoll_add_ssock(const int eid, const SYSSOCKET s, const int* events)
  {
     try
+@@ -2264,7 +2326,7 @@ int64_t sendfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size,
+ int64_t recvfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block)
+ {
+    fstream ofs(path, ios::binary | ios::out);
+-   int64_t ret = CUDT::sendfile(u, ofs, *offset, size, block);
++   int64_t ret = CUDT::recvfile(u, ofs, *offset, size, block);
+    ofs.close();
+    return ret;
+ }
 @@ -2289,6 +2351,18 @@ int epoll_add_usock(int eid, UDTSOCKET u, const int* events)
     return CUDT::epoll_add_usock(eid, u, events);
  }

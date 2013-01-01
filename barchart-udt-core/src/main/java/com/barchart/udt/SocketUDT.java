@@ -7,6 +7,7 @@
  */
 package com.barchart.udt;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -34,7 +35,10 @@ public class SocketUDT {
 	 */
 	public static final int DEFAULT_ACCEPT_QUEUE_SIZE = 256;
 
-	//
+	/**
+	 * Block size used by {@link #sendFile(File, int, int)}
+	 */
+	public static final int DEFAULT_FILE_BLOCK_SIZE = 1 * 1024 * 1024;
 
 	/**
 	 * Maximum number sockets that can participate in a
@@ -292,6 +296,20 @@ public class SocketUDT {
 	) throws ExceptionUDT;
 
 	/**
+	 * Receive file.
+	 * 
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/sendfile.htm">UDT::recvfile</a>
+	 */
+	protected static native long receiveFile0( //
+			final int socketID, //
+			final String path, //
+			long offset, //
+			long length, //
+			int block //
+	) throws ExceptionUDT;
+
+	/**
 	 * Basic access to UDT socket readiness selection feature. Based on
 	 * {@link java.nio.DirectIntBuffer} info exchange.Timeout is in
 	 * milliseconds.
@@ -396,6 +414,20 @@ public class SocketUDT {
 			final ByteBuffer buffer, //
 			final int bufferPosition, //
 			final int bufferLimit //
+	) throws ExceptionUDT;
+
+	/**
+	 * Send file.
+	 * 
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/sendfile.htm">UDT::sendfile</a>
+	 */
+	protected static native long sendFile0( //
+			final int socketID, //
+			final String path, //
+			long offset, //
+			long length, //
+			int block //
 	) throws ExceptionUDT;
 
 	/**
@@ -1183,14 +1215,44 @@ public class SocketUDT {
 	//
 
 	/**
-	 * WRAPPER_UNIMPLEMENTED
+	 * Receive file from remote peer.
 	 * 
-	 * @see <a
-	 *      href="http://udt.sourceforge.net/udt4/doc/recvfile.htm">UDT::recvfile()</a>
+	 * @see #receiveFile0()
 	 */
-	public int receiveFile(final ByteBuffer buffer) throws ExceptionUDT {
-		throw new ExceptionUDT(//
-				socketID, ErrorUDT.WRAPPER_UNIMPLEMENTED, "receiveFile");
+	public long receiveFile( //
+			final File file, //
+			final long offset, //
+			final long length//
+	) throws ExceptionUDT {
+
+		if (type == TypeUDT.DATAGRAM) {
+			throw new IllegalStateException("invalid socket type : " + type);
+		}
+
+		if (file == null || !file.exists() || !file.isFile()
+				|| !file.canWrite()) {
+			throw new IllegalArgumentException("invalid file : " + file);
+		}
+
+		if (offset < 0 || offset > file.length()) {
+			throw new IllegalArgumentException("invalid offset : " + offset);
+		}
+
+		if (length < 0 || offset + length > file.length()) {
+			throw new IllegalArgumentException("invalid length : " + length);
+		}
+
+		final String path = file.getAbsolutePath();
+
+		final int block;
+		if (length > DEFAULT_FILE_BLOCK_SIZE) {
+			block = DEFAULT_FILE_BLOCK_SIZE;
+		} else {
+			block = (int) length;
+		}
+
+		return receiveFile0(id(), path, offset, length, block);
+
 	}
 
 	/**
@@ -1294,14 +1356,43 @@ public class SocketUDT {
 	}
 
 	/**
-	 * WRAPPER_UNIMPLEMENTED
+	 * Send file to remote peer.
 	 * 
-	 * @see <a
-	 *      href="http://udt.sourceforge.net/udt4/doc/sendfile.htm">UDT::sendfile()</a>
+	 * @see #sendFile0()
 	 */
-	public int sendFile(final ByteBuffer buffer) throws ExceptionUDT {
-		throw new ExceptionUDT(//
-				socketID, ErrorUDT.WRAPPER_UNIMPLEMENTED, "sendFile");
+	public long sendFile( //
+			final File file, //
+			final long offset, //
+			final long length//
+	) throws ExceptionUDT {
+
+		if (type == TypeUDT.DATAGRAM) {
+			throw new IllegalStateException("invalid socket type : " + type);
+		}
+
+		if (file == null || !file.exists() || !file.isFile() || !file.canRead()) {
+			throw new IllegalArgumentException("invalid file : " + file);
+		}
+
+		if (offset < 0 || offset > file.length()) {
+			throw new IllegalArgumentException("invalid offset : " + offset);
+		}
+
+		if (length < 0 || offset + length > file.length()) {
+			throw new IllegalArgumentException("invalid length : " + length);
+		}
+
+		final String path = file.getAbsolutePath();
+
+		final int block;
+		if (length > DEFAULT_FILE_BLOCK_SIZE) {
+			block = DEFAULT_FILE_BLOCK_SIZE;
+		} else {
+			block = (int) length;
+		}
+
+		return sendFile0(id(), path, offset, length, block);
+
 	}
 
 	//

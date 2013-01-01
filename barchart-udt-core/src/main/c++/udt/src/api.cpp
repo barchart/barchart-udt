@@ -2326,7 +2326,7 @@ int64_t sendfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, 
 int64_t recvfile2(UDTSOCKET u, const char* path, int64_t* offset, int64_t size, int block)
 {
    fstream ofs(path, ios::binary | ios::out);
-   int64_t ret = CUDT::sendfile(u, ofs, *offset, size, block);
+   int64_t ret = CUDT::recvfile(u, ofs, *offset, size, block);
    ofs.close();
    return ret;
 }
