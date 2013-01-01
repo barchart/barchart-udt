@@ -25,7 +25,7 @@ public class TestSocketUDT extends TestAny {
 
 		final SocketUDT socket = new SocketUDT(TypeUDT.DATAGRAM);
 
-		socket.configureBlocking(false);
+		socket.setBlocking(false);
 
 		socket.bind(localSocketAddress());
 
@@ -41,7 +41,7 @@ public class TestSocketUDT extends TestAny {
 	public void acceptListenOne() throws Exception {
 
 		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
-		accept.configureBlocking(false);
+		accept.setBlocking(false);
 		accept.bind(localSocketAddress());
 
 		socketAwait(accept, StatusUDT.OPENED);
@@ -55,7 +55,7 @@ public class TestSocketUDT extends TestAny {
 		assertNull(accept.accept());
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		client.configureBlocking(false);
+		client.setBlocking(false);
 		client.bind(localSocketAddress());
 
 		socketAwait(client, StatusUDT.OPENED);
@@ -145,14 +145,14 @@ public class TestSocketUDT extends TestAny {
 
 		}
 
-		final int realID = socket.socketID;
+		final int realID = socket.id();
 
 		final int fakeID = realID + 123;
 
 		log.info("real: {} ; fake : {} ; ", realID, fakeID);
 
 		/** must throw */
-		socket.testInvalidClose0(fakeID);
+		SocketUDT.testInvalidClose0(fakeID);
 
 	}
 

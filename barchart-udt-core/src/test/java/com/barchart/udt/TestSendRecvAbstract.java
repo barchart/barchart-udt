@@ -165,8 +165,8 @@ public abstract class TestSendRecvAbstract<T> extends TestAny {
 		server = new SocketUDT(TypeUDT.DATAGRAM);
 		client = new SocketUDT(TypeUDT.DATAGRAM);
 
-		server.configureBlocking(true);
-		client.configureBlocking(true);
+		server.setBlocking(true);
+		client.setBlocking(true);
 
 		serverAddress = UnitHelp.localSocketAddress();
 		clientAddress = UnitHelp.localSocketAddress();

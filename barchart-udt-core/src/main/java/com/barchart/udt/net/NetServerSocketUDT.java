@@ -30,7 +30,7 @@ public class NetServerSocketUDT extends ServerSocket implements IceServerSocket 
 	/** uses {@link TypeUDT#STREAM} socket in blocking mode */
 	public NetServerSocketUDT() throws IOException {
 		this(new SocketUDT(TypeUDT.STREAM));
-		this.socketUDT.configureBlocking(true);
+		this.socketUDT.setBlocking(true);
 	}
 
 	/** uses provided socket keeping blocking mode */

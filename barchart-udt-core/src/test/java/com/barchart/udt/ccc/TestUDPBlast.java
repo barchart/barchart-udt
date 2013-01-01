@@ -88,7 +88,7 @@ public class TestUDPBlast extends TestAny {
 
 				clientSocket.updateMonitor(true);
 
-				final MonitorUDT mon = clientSocket.getMonitor();
+				final MonitorUDT mon = clientSocket.monitor();
 
 				log.info(String.format("Current Rate: %.2f Mbs",
 						mon.mbpsSendRate()));

@@ -26,10 +26,10 @@ public class TestEpollWait extends TestAny {
 		final int epollID = SocketUDT.epollCreate0();
 
 		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
-		accept.configureBlocking(true);
+		accept.setBlocking(true);
 		accept.bind0(localSocketAddress());
 
-		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, accept.id(), EpollUDT.Opt.BOTH.code);
 
 		socketAwait(accept, StatusUDT.OPENED);
 		log.info("accept OPENED");
@@ -39,10 +39,10 @@ public class TestEpollWait extends TestAny {
 		}
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		client.configureBlocking(true);
+		client.setBlocking(true);
 		client.bind0(localSocketAddress());
 
-		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, client.id(), EpollUDT.Opt.BOTH.code);
 
 		socketAwait(client, StatusUDT.OPENED);
 		log.info("client OPENED");
@@ -89,8 +89,8 @@ public class TestEpollWait extends TestAny {
 
 		final SocketUDT server = accept.accept0();
 		assertNotNull(server);
-		server.configureBlocking(true);
-		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.BOTH.code);
+		server.setBlocking(true);
+		SocketUDT.epollAdd0(epollID, server.id(), EpollUDT.Opt.BOTH.code);
 
 		socketAwait(server, StatusUDT.CONNECTED);
 		log.info("server CONNECTED");
@@ -173,18 +173,18 @@ public class TestEpollWait extends TestAny {
 		final int epollID = SocketUDT.epollCreate0();
 
 		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
-		accept.configureBlocking(true);
+		accept.setBlocking(true);
 		accept.bind0(localSocketAddress());
 		accept.listen0(1);
 		socketAwait(accept, StatusUDT.LISTENING);
 		log.info("accept listen : {}", accept.id());
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		client.configureBlocking(true);
+		client.setBlocking(true);
 		client.bind0(localSocketAddress());
 
-		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.READ.code);
-		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.NONE.code);
+		SocketUDT.epollAdd0(epollID, accept.id(), EpollUDT.Opt.READ.code);
+		SocketUDT.epollAdd0(epollID, client.id(), EpollUDT.Opt.NONE.code);
 
 		// SocketUDT
 		// .epollUpdate0(epollID, accept.socketID, EpollUDT.Opt.NONE.code);
@@ -219,8 +219,8 @@ public class TestEpollWait extends TestAny {
 
 		final SocketUDT server = accept.accept0();
 		assertNotNull(server);
-		server.configureBlocking(true);
-		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.NONE.code);
+		server.setBlocking(true);
+		SocketUDT.epollAdd0(epollID, server.id(), EpollUDT.Opt.NONE.code);
 
 		socketAwait(server, StatusUDT.CONNECTED);
 		log.info("server connect : {}", server.id());
@@ -323,14 +323,14 @@ public class TestEpollWait extends TestAny {
 		final int epollID = SocketUDT.epollCreate0();
 
 		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
-		accept.configureBlocking(true);
+		accept.setBlocking(true);
 		accept.bind0(localSocketAddress());
 		accept.listen0(10);
 		socketAwait(accept, StatusUDT.LISTENING);
 		log.info("accept : {}", accept);
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		client.configureBlocking(true);
+		client.setBlocking(true);
 		client.bind0(localSocketAddress());
 
 		client.connect0(accept.getLocalSocketAddress());
@@ -342,28 +342,10 @@ public class TestEpollWait extends TestAny {
 		socketAwait(server, StatusUDT.CONNECTED);
 		log.info("server {}", server);
 
-		SocketUDT.epollAdd0(epollID, accept.socketID, EpollUDT.Opt.READ.code);
+		SocketUDT.epollAdd0(epollID, accept.id(), EpollUDT.Opt.READ.code);
 
-		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.BOTH.code);
-		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.BOTH.code);
-
-		{
-
-			clear(readBuffer);
-			clear(writeBuffer);
-
-			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
-					writeBuffer, sizeBuffer, SocketUDT.TIMEOUT_INFINITE);
-
-			log.info("readyCount : {}", readyCount);
-			logBuffer("read: ", readBuffer);
-			logBuffer("write:", writeBuffer);
-
-			assertEquals(2, readyCount);
-			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
-			assertEquals(2, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
-
-		}
+		SocketUDT.epollAdd0(epollID, client.id(), EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, server.id(), EpollUDT.Opt.BOTH.code);
 
 		{
 
@@ -383,8 +365,26 @@ public class TestEpollWait extends TestAny {
 
 		}
 
-		SocketUDT.epollRemove0(epollID, client.socketID);
-		SocketUDT.epollRemove0(epollID, server.socketID);
+		{
+
+			clear(readBuffer);
+			clear(writeBuffer);
+
+			final int readyCount = SocketUDT.epollWait0(epollID, readBuffer,
+					writeBuffer, sizeBuffer, SocketUDT.TIMEOUT_INFINITE);
+
+			log.info("readyCount : {}", readyCount);
+			logBuffer("read: ", readBuffer);
+			logBuffer("write:", writeBuffer);
+
+			assertEquals(2, readyCount);
+			assertEquals(0, sizeBuffer.get(SocketUDT.UDT_READ_INDEX));
+			assertEquals(2, sizeBuffer.get(SocketUDT.UDT_WRITE_INDEX));
+
+		}
+
+		SocketUDT.epollRemove0(epollID, client.id());
+		SocketUDT.epollRemove0(epollID, server.id());
 
 		{
 
@@ -404,8 +404,8 @@ public class TestEpollWait extends TestAny {
 
 		}
 
-		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.BOTH.code);
-		SocketUDT.epollAdd0(epollID, server.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, client.id(), EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, server.id(), EpollUDT.Opt.BOTH.code);
 
 		{
 

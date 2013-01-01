@@ -9,13 +9,11 @@ package com.barchart.udt;
 
 import static org.junit.Assert.*;
 
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import util.TestAny;
-
 
 public class TestEpollBasic extends TestAny {
 
@@ -39,9 +37,9 @@ public class TestEpollBasic extends TestAny {
 
 		assertTrue(epollID > 0);
 
-		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.BOTH.code);
-		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.BOTH.code);
-		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, socket.id(), EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, socket.id(), EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, socket.id(), EpollUDT.Opt.BOTH.code);
 
 		SocketUDT.epollRelease0(epollID);
 
@@ -78,9 +76,9 @@ public class TestEpollBasic extends TestAny {
 
 		assertTrue(epollID > 0);
 
-		SocketUDT.epollAdd0(epollID, socket.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, socket.id(), EpollUDT.Opt.BOTH.code);
 
-		SocketUDT.epollRemove0(epollID, socket.socketID);
+		SocketUDT.epollRemove0(epollID, socket.id());
 
 		SocketUDT.epollRelease0(epollID);
 

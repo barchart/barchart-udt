@@ -33,7 +33,7 @@ abstract class StreamBase implements Runnable {
 		assert socket.isOpen();
 		assert socket.isBlocking();
 
-		socket.configureBlocking(true);
+		socket.setBlocking(true);
 
 		streamIn = new NetInputStreamUDT(socket);
 		streamOut = new NetOutputStreamUDT(socket);

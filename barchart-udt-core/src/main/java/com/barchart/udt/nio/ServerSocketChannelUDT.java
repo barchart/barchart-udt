@@ -94,7 +94,7 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 	@Override
 	protected void implConfigureBlocking(final boolean block)
 			throws IOException {
-		socketUDT.configureBlocking(block);
+		socketUDT.setBlocking(block);
 	}
 
 	@Override

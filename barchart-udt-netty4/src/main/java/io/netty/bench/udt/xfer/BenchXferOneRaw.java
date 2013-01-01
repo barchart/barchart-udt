@@ -74,14 +74,14 @@ public final class BenchXferOneRaw {
         log.info("init");
 
         final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
-        accept.configureBlocking(true);
+        accept.setBlocking(true);
         accept.bind(localSocketAddress());
         accept.listen(1);
         socketAwait(accept, StatusUDT.LISTENING);
         log.info("accept : {}", accept);
 
         final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-        client.configureBlocking(true);
+        client.setBlocking(true);
         client.bind(localSocketAddress());
         socketAwait(client, StatusUDT.OPENED);
         client.connect(accept.getLocalSocketAddress());
@@ -89,7 +89,7 @@ public final class BenchXferOneRaw {
         log.info("client : {}", client);
 
         final SocketUDT server = accept.accept();
-        server.configureBlocking(true);
+        server.setBlocking(true);
         socketAwait(server, StatusUDT.CONNECTED);
         log.info("server : {}", server);
 

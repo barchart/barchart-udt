@@ -33,17 +33,17 @@ public class TestEpollMask extends TestAny {
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
 
-		SocketUDT.epollRemove0(epollID, client.socketID);
+		SocketUDT.epollRemove0(epollID, client.id());
 
-		SocketUDT.epollUpdate0(epollID, client.socketID, opt.code);
+		SocketUDT.epollUpdate0(epollID, client.id(), opt.code);
 
-		final int code = SocketUDT.epollVerify0(epollID, client.socketID);
+		final int code = SocketUDT.epollVerify0(epollID, client.id());
 
 		log.info("code {}", code);
 
 		assertEquals(code, opt.code);
 
-		SocketUDT.epollRemove0(epollID, client.socketID);
+		SocketUDT.epollRemove0(epollID, client.id());
 
 		SocketUDT.epollRelease0(epollID);
 
@@ -75,17 +75,17 @@ public class TestEpollMask extends TestAny {
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
 
-		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.NONE.code);
+		SocketUDT.epollAdd0(epollID, client.id(), EpollUDT.Opt.NONE.code);
 
-		SocketUDT.epollUpdate0(epollID, client.socketID, opt.code);
+		SocketUDT.epollUpdate0(epollID, client.id(), opt.code);
 
-		final int code = SocketUDT.epollVerify0(epollID, client.socketID);
+		final int code = SocketUDT.epollVerify0(epollID, client.id());
 
 		log.info("code {}", code);
 
 		assertEquals(code, opt.code);
 
-		SocketUDT.epollRemove0(epollID, client.socketID);
+		SocketUDT.epollRemove0(epollID, client.id());
 
 		SocketUDT.epollRelease0(epollID);
 

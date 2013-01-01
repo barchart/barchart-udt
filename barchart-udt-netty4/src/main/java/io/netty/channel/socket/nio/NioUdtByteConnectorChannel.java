@@ -70,7 +70,7 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
                     logger.warn("Failed to close channel.", e2);
                 }
             }
-            throw new ChannelException("Failed configure channel.", e);
+            throw new ChannelException("Failed to configure channel.", e);
         }
     }
 

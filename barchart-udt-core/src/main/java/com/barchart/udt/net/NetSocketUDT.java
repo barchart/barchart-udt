@@ -37,7 +37,7 @@ public class NetSocketUDT extends Socket implements IceSocket {
 	/** uses {@link TypeUDT#STREAM} socket in blocking mode */
 	public NetSocketUDT() throws ExceptionUDT {
 		this(new SocketUDT(TypeUDT.STREAM));
-		this.socketUDT.configureBlocking(true);
+		this.socketUDT.setBlocking(true);
 	}
 
 	/** uses provided socket keeping blocking mode */

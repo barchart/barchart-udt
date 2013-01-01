@@ -74,7 +74,7 @@ public class MainRunServer {
 			text.append("\t\n");
 			log.info("receiver options; {}", text);
 
-			final MonitorUDT monitor = receiver.getMonitor();
+			final MonitorUDT monitor = receiver.monitor();
 
 			while (true) {
 

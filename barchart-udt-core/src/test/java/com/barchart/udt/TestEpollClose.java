@@ -31,7 +31,7 @@ public class TestEpollClose extends TestAny {
 		final int epollID = SocketUDT.epollCreate0();
 
 		final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
-		accept.configureBlocking(true);
+		accept.setBlocking(true);
 		accept.bind0(localSocketAddress());
 		accept.listen0(1);
 
@@ -39,10 +39,10 @@ public class TestEpollClose extends TestAny {
 		log.info("accept {}", accept);
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-		client.configureBlocking(true);
+		client.setBlocking(true);
 		client.bind0(localSocketAddress());
 
-		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.BOTH.code);
+		SocketUDT.epollAdd0(epollID, client.id(), EpollUDT.Opt.BOTH.code);
 
 		socketAwait(client, StatusUDT.OPENED);
 		log.info("client {} {}", client,
@@ -70,7 +70,7 @@ public class TestEpollClose extends TestAny {
 		socketAwait(client, StatusUDT.CLOSED);
 		log.info("client {} {}", client, 0);
 
-		SocketUDT.epollRemove0(epollID, client.socketID);
+		SocketUDT.epollRemove0(epollID, client.id());
 
 		{
 			log.info("### 2 ###");

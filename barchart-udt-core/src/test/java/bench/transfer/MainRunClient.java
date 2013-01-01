@@ -82,7 +82,7 @@ public class MainRunClient {
 
 			long count = 0;
 
-			final MonitorUDT monitor = sender.getMonitor();
+			final MonitorUDT monitor = sender.monitor();
 
 			while (true) {
 

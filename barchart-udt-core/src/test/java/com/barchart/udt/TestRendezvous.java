@@ -40,8 +40,8 @@ public class TestRendezvous extends TestAny {
 		final SocketUDT peer1 = new SocketUDT(TypeUDT.DATAGRAM);
 		final SocketUDT peer2 = new SocketUDT(TypeUDT.DATAGRAM);
 
-		peer1.configureBlocking(false);
-		peer2.configureBlocking(false);
+		peer1.setBlocking(false);
+		peer2.setBlocking(false);
 
 		peer1.setRendezvous(true);
 		peer2.setRendezvous(true);
@@ -100,8 +100,8 @@ public class TestRendezvous extends TestAny {
 		final SocketUDT peer1 = new SocketUDT(TypeUDT.DATAGRAM);
 		final SocketUDT peer2 = new SocketUDT(TypeUDT.DATAGRAM);
 
-		peer1.configureBlocking(false);
-		peer2.configureBlocking(false);
+		peer1.setBlocking(false);
+		peer2.setBlocking(false);
 
 		peer1.setRendezvous(true);
 		peer2.setRendezvous(true);
