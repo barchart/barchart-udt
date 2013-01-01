@@ -22,6 +22,8 @@
 
 		<exec executable="${executable}">
 			
+			<env key="JAVA_TYPE" value="JAVA_7" />
+			
 			<arg value="clean" />
 			<arg value="install" />
 			
