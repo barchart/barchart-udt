@@ -118,9 +118,6 @@ static jfieldID udts_RemoteSocketAddressID;
 static jfieldID udts_LocalSocketAddressID;
 static jfieldID udts_MonitorID;
 static jfieldID udts_SocketID;
-static jfieldID udts_IsSelectedReadID;
-static jfieldID udts_IsSelectedWriteID;
-static jfieldID udts_IsSelectedExceptionID;
 
 // UDT fields: com.barchart.udt.TypeUDT
 static jfieldID udtt_TypeCodeID;
@@ -390,9 +387,11 @@ void UDT_InitFieldRefAll(JNIEnv * const env) {
 	// JDK
 
 	ia_AddressID = env->GetFieldID(jdk_clsInet4Address, "address", "I");
-	isa_InetAddressID = env->GetFieldID(jdk_clsInetSocketAddress, "addr",
-			"Ljava/net/InetAddress;");
-	isa_PortID = env->GetFieldID(jdk_clsInetSocketAddress, "port", "I");
+
+	isa_InetAddressID = env->GetFieldID(jdk_clsInetSocketAddress, //
+			"addr", "Ljava/net/InetAddress;");
+	isa_PortID = env->GetFieldID(jdk_clsInetSocketAddress, //
+			"port", "I");
 
 	// UDT SocketUDT
 
@@ -407,13 +406,6 @@ void UDT_InitFieldRefAll(JNIEnv * const env) {
 	udts_MonitorID = env->GetFieldID(udt_clsSocketUDT, //
 			"monitor", "Lcom/barchart/udt/MonitorUDT;");
 
-	udts_IsSelectedReadID = env->GetFieldID(udt_clsSocketUDT, //
-			"isSelectedRead", "Z");
-	udts_IsSelectedWriteID = env->GetFieldID(udt_clsSocketUDT, //
-			"isSelectedWrite", "Z");
-	udts_IsSelectedExceptionID = env->GetFieldID(udt_clsSocketUDT, //
-			"isSelectedException", "Z");
-
 	// UDT TypeUDT
 
 	udtt_TypeCodeID = env->GetFieldID(udt_clsTypeUDT, "code", "I");
@@ -424,8 +416,8 @@ void UDT_InitFieldRefAll(JNIEnv * const env) {
 
 	// UDT CCC
 
-	udt_clsCCC_fld_nativeHandleID = env->GetFieldID(udt_clsCCC, "nativeHandle",
-			"J");
+	udt_clsCCC_fld_nativeHandleID = env->GetFieldID(udt_clsCCC, //
+			"nativeHandle", "J");
 
 }
 
