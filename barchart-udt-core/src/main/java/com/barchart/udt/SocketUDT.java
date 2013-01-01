@@ -70,7 +70,7 @@ public class SocketUDT {
 	 * indication of inconsistent build
 	 */
 	@Native
-	public static final int SIGNATURE_JNI = 20121230; // VersionUDT.BUILDTIME;
+	public static final int SIGNATURE_JNI = 20130101; // VersionUDT.BUILDTIME;
 
 	/**
 	 * infinite timeout:
