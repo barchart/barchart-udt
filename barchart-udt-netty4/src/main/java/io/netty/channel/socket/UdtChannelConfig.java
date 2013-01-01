@@ -20,7 +20,6 @@ import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelOption;
 
 import java.io.IOException;
-import java.net.StandardSocketOptions;
 
 import com.barchart.udt.OptionUDT;
 import com.barchart.udt.TypeUDT;
@@ -123,17 +122,17 @@ public interface UdtChannelConfig extends ChannelConfig {
     int getProtocolSendBufferSize();
 
     /**
-     * Gets the {@link StandardSocketOptions#SO_RCVBUF} option.
+     * Gets the {@link ChannelOption#SO_RCVBUF} option.
      */
     int getReceiveBufferSize();
 
     /**
-     * Gets the {@link StandardSocketOptions#SO_SNDBUF} option.
+     * Gets the {@link ChannelOption#SO_SNDBUF} option.
      */
     int getSendBufferSize();
 
     /**
-     * Gets the {@link StandardSocketOptions#SO_LINGER} option.
+     * Gets the {@link ChannelOption#SO_LINGER} option.
      */
     int getSoLinger();
 
@@ -148,7 +147,7 @@ public interface UdtChannelConfig extends ChannelConfig {
     int getSystemSendBufferSize();
 
     /**
-     * Gets the {@link StandardSocketOptions#SO_REUSEADDR} option.
+     * Gets the {@link ChannelOption#SO_REUSEADDR} option.
      */
     boolean isReuseAddress();
 
@@ -168,22 +167,22 @@ public interface UdtChannelConfig extends ChannelConfig {
     UdtChannelConfig setProtocolSendBufferSize(int size);
 
     /**
-     * Sets the {@link StandardSocketOptions#SO_RCVBUF} option.
+     * Sets the {@link ChannelOption#SO_RCVBUF} option.
      */
     UdtChannelConfig setReceiveBufferSize(int receiveBufferSize);
 
     /**
-     * Sets the {@link StandardSocketOptions#SO_REUSEADDR} option.
+     * Sets the {@link ChannelOption#SO_REUSEADDR} option.
      */
     UdtChannelConfig setReuseAddress(boolean reuseAddress);
 
     /**
-     * Sets the {@link StandardSocketOptions#SO_SNDBUF} option.
+     * Sets the {@link ChannelOption#SO_SNDBUF} option.
      */
     UdtChannelConfig setSendBufferSize(int sendBufferSize);
 
     /**
-     * Sets the {@link StandardSocketOptions#SO_LINGER} option.
+     * Sets the {@link ChannelOption#SO_LINGER} option.
      */
     UdtChannelConfig setSoLinger(int soLinger);
 
