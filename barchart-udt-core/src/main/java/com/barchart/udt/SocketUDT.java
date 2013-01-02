@@ -71,10 +71,10 @@ public class SocketUDT {
 	/**
 	 * JNI Signature that must match between java code and c++ code on all
 	 * platforms; failure to match will abort native library load, as an
-	 * indication of inconsistent build
+	 * indication of inconsistent build.
 	 */
 	@Native
-	public static final int SIGNATURE_JNI = 20130101; // VersionUDT.BUILDTIME;
+	public static final int SIGNATURE_JNI = 20130102; // VersionUDT.BUILDTIME;
 
 	/**
 	 * infinite timeout:
