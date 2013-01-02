@@ -92,8 +92,8 @@ public class ResourceManagerUDT {
 		final URLConnection targetConn = fileConnection(targetFile);
 
 		if (isSameResource(sourceConn, targetConn)) {
-			log.debug("already extracted;" + "\n\t sourcePath={}"
-					+ " targetPath={}", sourcePath, targetPath);
+			log.debug("already extracted; sourcePath={} targetPath={}",
+					sourcePath, targetPath);
 			return;
 		} else {
 			log.debug("make new extraction destination for targetPath={}",
@@ -170,9 +170,13 @@ public class ResourceManagerUDT {
 
 		extractResource(sourcePath, targetPath);
 
-		final String loadPath = (new File(targetPath)).getAbsolutePath();
+		final File loadFile = new File(targetPath);
+
+		final String loadPath = loadFile.getAbsolutePath();
 
 		System.load(loadPath);
+
+		log.debug("system load success : {}", loadFile.getName());
 
 	}
 

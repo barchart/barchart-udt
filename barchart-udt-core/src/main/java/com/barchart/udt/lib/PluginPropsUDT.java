@@ -76,12 +76,10 @@ public class PluginPropsUDT {
 	protected static final Properties props = new Properties();
 
 	static {
-		log.info("ARCH/OS = {}/{}", OS_ARCH, OS_NAME);
-	}
-
-	static {
 
 		try {
+
+			log.info("ARCH/OS/LINK = {}/{}/{}", narARCH(), narOS(), narLINK());
 
 			log.debug("Loading aol.properties.");
 
@@ -90,7 +88,7 @@ public class PluginPropsUDT {
 
 			props.load(input);
 
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 
 			log.error("Failed to load aol.properties.", e);
 
@@ -310,7 +308,7 @@ public class PluginPropsUDT {
 	}
 
 	/**
-	 * map JVM arch/os name NAR tool chain name
+	 * map JVM arch/os name to NAR tool chain name
 	 */
 	protected static String narLINK() {
 		return "gpp";
