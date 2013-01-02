@@ -297,7 +297,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 	}
 
 	@Override
-	public synchronized SelectionKey interestOps(final int interestOps) {
+	public SelectionKey interestOps(final int interestOps) {
 
 		assertValidKey();
 		assertValidOps(interestOps);

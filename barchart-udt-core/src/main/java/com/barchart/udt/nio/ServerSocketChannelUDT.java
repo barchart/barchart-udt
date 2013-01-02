@@ -112,18 +112,16 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 	}
 
 	@Override
-	public NioServerSocketUDT socket() {
-		synchronized (this) {
-			if (socketAdapter == null) {
-				try {
-					socketAdapter = new NioServerSocketUDT(this);
-				} catch (final Exception e) {
-					log.error("failed to make socket", e);
-					return null;
-				}
+	public synchronized NioServerSocketUDT socket() {
+		if (socketAdapter == null) {
+			try {
+				socketAdapter = new NioServerSocketUDT(this);
+			} catch (final Exception e) {
+				log.error("failed to make socket", e);
+				return null;
 			}
-			return socketAdapter;
 		}
+		return socketAdapter;
 	}
 
 	@Override

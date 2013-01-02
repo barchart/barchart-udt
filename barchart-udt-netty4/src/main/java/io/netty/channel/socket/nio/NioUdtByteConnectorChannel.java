@@ -15,6 +15,7 @@
  */
 package io.netty.channel.socket.nio;
 
+import static java.nio.channels.SelectionKey.*;
 import io.netty.buffer.BufType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -100,16 +101,14 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
     @Override
     protected boolean doConnect(final SocketAddress remoteAddress,
             final SocketAddress localAddress) throws Exception {
-        if (localAddress != null) {
-            javaChannel().bind(localAddress);
-        }
+        doBind(localAddress);
         boolean success = false;
         try {
             final boolean connected = javaChannel().connect(remoteAddress);
             if (connected) {
-                selectionKey().interestOps(SelectionKey.OP_READ);
+                selectionKey().interestOps(OP_READ);
             } else {
-                selectionKey().interestOps(SelectionKey.OP_CONNECT);
+                selectionKey().interestOps(OP_CONNECT);
             }
             success = true;
             return connected;
@@ -131,7 +130,7 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
             throw new Error(
                     "Provider error: failed to finish connect. Provider library should be upgraded.");
         }
-        selectionKey().interestOps(SelectionKey.OP_READ);
+        selectionKey().interestOps(OP_READ);
     }
 
     @Override
@@ -148,14 +147,14 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         final int interestOps = key.interestOps();
         if (writtenBytes >= pendingBytes) {
             // wrote the buffer completely - clear OP_WRITE.
-            if ((interestOps & SelectionKey.OP_WRITE) != 0) {
-                key.interestOps(interestOps & ~SelectionKey.OP_WRITE);
+            if ((interestOps & OP_WRITE) != 0) {
+                key.interestOps(interestOps & ~OP_WRITE);
             }
         } else {
             // wrote partial or nothing - ensure OP_WRITE
             if (writtenBytes > 0 || lastSpin) {
-                if ((interestOps & SelectionKey.OP_WRITE) == 0) {
-                    key.interestOps(interestOps | SelectionKey.OP_WRITE);
+                if ((interestOps & OP_WRITE) == 0) {
+                    key.interestOps(interestOps | OP_WRITE);
                 }
             }
         }

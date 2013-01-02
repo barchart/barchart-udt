@@ -15,6 +15,7 @@
  */
 package io.netty.channel.socket.nio;
 
+import static java.nio.channels.SelectionKey.*;
 import io.netty.buffer.BufType;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.MessageBuf;
@@ -55,7 +56,7 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
 
     protected NioUdtMessageConnectorChannel(final Channel parent,
             final Integer id, final SocketChannelUDT channelUDT) {
-        super(parent, id, channelUDT, SelectionKey.OP_READ);
+        super(parent, id, channelUDT, OP_READ);
         try {
             channelUDT.configureBlocking(false);
             config = new DefaultUdtChannelConfig();
@@ -102,16 +103,14 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
     @Override
     protected boolean doConnect(final SocketAddress remoteAddress,
             final SocketAddress localAddress) throws Exception {
-        if (localAddress != null) {
-            javaChannel().bind(localAddress);
-        }
+        doBind(localAddress);
         boolean success = false;
         try {
             final boolean connected = javaChannel().connect(remoteAddress);
             if (connected) {
-                selectionKey().interestOps(SelectionKey.OP_READ);
+                selectionKey().interestOps(OP_READ);
             } else {
-                selectionKey().interestOps(SelectionKey.OP_CONNECT);
+                selectionKey().interestOps(OP_CONNECT);
             }
             success = true;
             return connected;
@@ -133,7 +132,7 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
             throw new Error(
                     "Provider error: failed to finish connect. Provider library should be upgraded.");
         }
-        selectionKey().interestOps(SelectionKey.OP_READ);
+        selectionKey().interestOps(OP_READ);
     }
 
     @Override
@@ -186,8 +185,8 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         // did not write the message
         if (writtenBytes <= 0 && messageSize > 0) {
             if (lastSpin) {
-                if ((interestOps & SelectionKey.OP_WRITE) == 0) {
-                    key.interestOps(interestOps | SelectionKey.OP_WRITE);
+                if ((interestOps & OP_WRITE) == 0) {
+                    key.interestOps(interestOps | OP_WRITE);
                 }
             }
             return 0;
@@ -201,8 +200,8 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
 
         // wrote the message queue completely - clear OP_WRITE.
         if (messageQueue.isEmpty()) {
-            if ((interestOps & SelectionKey.OP_WRITE) != 0) {
-                key.interestOps(interestOps & ~SelectionKey.OP_WRITE);
+            if ((interestOps & OP_WRITE) != 0) {
+                key.interestOps(interestOps & ~OP_WRITE);
             }
         }
 

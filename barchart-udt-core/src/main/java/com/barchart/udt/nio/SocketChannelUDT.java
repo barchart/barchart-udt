@@ -357,17 +357,15 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
-	public NioSocketUDT socket() {
-		synchronized (this) {
-			if (socketAdapter == null) {
-				try {
-					socketAdapter = new NioSocketUDT(this);
-				} catch (final ExceptionUDT e) {
-					log.error("failed to make socket", e);
-				}
+	public synchronized NioSocketUDT socket() {
+		if (socketAdapter == null) {
+			try {
+				socketAdapter = new NioSocketUDT(this);
+			} catch (final ExceptionUDT e) {
+				log.error("failed to make socket", e);
 			}
-			return socketAdapter;
 		}
+		return socketAdapter;
 	}
 
 	@Override

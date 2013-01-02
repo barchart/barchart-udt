@@ -108,6 +108,12 @@ public class SelectorUDT extends AbstractSelector {
 	private final Set<? extends SelectionKey> //
 	selectedKeySet = HelpUDT.ungrowableSet(selectedKeyMap.keySet());
 
+	/**
+	 * canceled keys
+	 */
+	private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
+	terminatedKeyMap = new ConcurrentHashMap<SelectionKeyUDT, SelectionKeyUDT>();
+
 	/** select is exclusive */
 	private final Lock selectLock = new ReentrantLock();
 
@@ -142,36 +148,36 @@ public class SelectorUDT extends AbstractSelector {
 
 		log.debug("cancel queue {}", keyUDT);
 
-		synchronized (cancelledKeys()) {
-			cancelledKeys().add(keyUDT);
-		}
+		// synchronized (cancelledKeys()) {
+		// cancelledKeys().add(keyUDT);
+		// }
+
+		terminatedKeyMap.putIfAbsent(keyUDT, keyUDT);
 
 	}
 
 	/** cancel apply */
 	protected void doCancel() {
 
-		synchronized (cancelledKeys()) {
+		// synchronized (cancelledKeys()) {
+		//
+		// if (cancelledKeys().isEmpty()) {
+		// return;
+		// }
 
-			if (cancelledKeys().isEmpty()) {
-				return;
+		for (final SelectionKeyUDT keyUDT : terminatedKeyMap.values()) {
+
+			if (keyUDT.isValid()) {
+				log.debug("cancel apply {}", keyUDT);
+				keyUDT.makeValid(false);
+				registeredKeyMap.remove(keyUDT.socketId());
 			}
-
-			for (final SelectionKey key : cancelledKeys()) {
-
-				final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
-
-				if (keyUDT.isValid()) {
-					log.debug("cancel apply {}", keyUDT);
-					keyUDT.makeValid(false);
-					registeredKeyMap.remove(keyUDT.socketId());
-				}
-
-			}
-
-			cancelledKeys().clear();
 
 		}
+
+		// cancelledKeys().clear();
+		//
+		// }
 
 	}
 
@@ -217,7 +223,7 @@ public class SelectorUDT extends AbstractSelector {
 		try {
 
 			/** java.nio.Selector contract for wakeup() */
-			begin();
+			// begin();
 
 			/** pre select */
 			doCancel();
@@ -230,7 +236,7 @@ public class SelectorUDT extends AbstractSelector {
 
 		} finally {
 			/** java.nio.Selector contract for wakeup() */
-			end();
+			// end();
 		}
 
 		return selectedKeyMap.size();

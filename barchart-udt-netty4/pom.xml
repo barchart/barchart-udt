@@ -36,12 +36,12 @@
 		<!-- MAIN -->
 
 		<!-- convenience dependency for IDE refactoring -->
-		<dependency>
-			<groupId>com.barchart.udt</groupId>
-			<artifactId>barchart-udt-core</artifactId>
-			<version>${barchartBundleVersion}</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.barchart.udt</groupId> -->
+		<!-- <artifactId>barchart-udt-core</artifactId> -->
+		<!-- <version>${barchartBundleVersion}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 		<!-- contains wrapper and native libraries for all arch/os -->
 		<dependency>
 			<groupId>com.barchart.udt</groupId>
@@ -83,6 +83,12 @@
 			<groupId>io.netty</groupId>
 			<artifactId>netty-metrics-yammer</artifactId>
 			<version>${barchartNettyVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.yammer.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
+			<version>2.2.0</version>
 			<scope>provided</scope>
 		</dependency>
 
