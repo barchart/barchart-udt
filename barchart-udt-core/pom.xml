@@ -116,8 +116,10 @@
 	<build>
 
 		<resources>
+
+			<!-- main resources with properties substitution -->
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>${basedir}/src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.xml</include>
@@ -125,22 +127,14 @@
 					<include>**/*.properties</include>
 				</includes>
 			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
-				<includes>
-					<include>**/*.so</include>
-					<include>**/*.jnilib</include>
-					<include>**/*.dll</include>
-					<include>**/*.map</include>
-					<include>**/*.sym</include>
-				</includes>
-			</resource>
+
 		</resources>
 
 		<testResources>
+
+			<!-- test resources with properties substitution -->
 			<testResource>
-				<directory>src/test/resources</directory>
+				<directory>${basedir}/src/test/resources</directory>
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.xml</include>
@@ -148,20 +142,56 @@
 					<include>**/*.properties</include>
 				</includes>
 			</testResource>
+
+			<!-- NAR resources with properties substitution; used for both IDE testing 
+				and NAR artifact packaging -->
 			<testResource>
-				<directory>src/nar/resources</directory>
+				<directory>${basedir}/src/nar/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+			</testResource>
+			<!-- NAR resources w/o properties substitution; used for both IDE testing 
+				and NAR artifact packaging -->
+			<testResource>
+				<directory>${basedir}/src/nar/resources</directory>
 				<filtering>false</filtering>
 				<includes>
 					<include>**/*.so</include>
-					<include>**/*.jnilib</include>
+					<include>**/*.dylib</include>
 					<include>**/*.dll</include>
 					<include>**/*.map</include>
 					<include>**/*.sym</include>
 				</includes>
 			</testResource>
+
 		</testResources>
 
 		<plugins>
+
+			<!-- aol.properties used by both NAR plug-in and LIB loader; must be in 
+				project root for NAR and on class path for LIB -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-aol</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<copy todir="${basedir}/target/classes">
+									<fileset dir="${basedir}" includes="aol.properties" />
+								</copy>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<!-- always attach javadoc -->
 			<plugin>
@@ -193,6 +223,36 @@
 
 		</plugins>
 
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-antrun-plugin</artifactId>
+										<versionRange>[0,)</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<profiles>
@@ -551,8 +611,8 @@
 							<libraries>
 								<library>
 									<type>jni</type>
-									<narSystemPackage>com.barchart.udt</narSystemPackage>
 									<linkCPP>false</linkCPP>
+									<narSystemPackage>com.barchart.udt</narSystemPackage>
 								</library>
 							</libraries>
 							<cpp>

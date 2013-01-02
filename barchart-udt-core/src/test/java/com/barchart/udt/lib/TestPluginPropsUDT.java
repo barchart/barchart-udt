@@ -7,15 +7,17 @@
  */
 package com.barchart.udt.lib;
 
-/**
- * default loader implementation
- */
-public class LibraryLoaderDefaultUDT implements LibraryLoaderUDT {
+import org.junit.Test;
 
-	@Override
-	public void load(final String location) throws Exception {
+import util.TestAny;
 
-		LibraryUDT.load(location);
+public class TestPluginPropsUDT extends TestAny {
+
+	/** verify file is present */
+	@Test
+	public void loadAolProps() throws Exception {
+
+		PluginPropsUDT.property("");
 
 	}
 

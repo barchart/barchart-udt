@@ -20,13 +20,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * resource extract
+ * class path resource extractor and system loader
  */
-class RES {
+public class ResourceManagerUDT {
 
-	private final static Logger log = LoggerFactory.getLogger(RES.class);
+	protected final static Logger log = LoggerFactory
+			.getLogger(ResourceManagerUDT.class);
 
-	public static boolean isSameResource(final URLConnection conONE,
+	protected static boolean isSameResource(final URLConnection conONE,
 			final URLConnection conTWO) throws Exception {
 
 		final long timeONE = conONE.getLastModified();
@@ -39,7 +40,7 @@ class RES {
 
 	}
 
-	public static URLConnection fileConnection(final File file)
+	protected static URLConnection fileConnection(final File file)
 			throws Exception {
 
 		final URL url = file.toURI().toURL();
@@ -50,29 +51,23 @@ class RES {
 
 	}
 
-	private final static int EOF = -1;
+	protected final static int EOF = -1;
 
-	private static long timeStamp(final URLConnection connIN) {
-		// will use time stamp of jar file
+	/** will use time stamp of jar file */
+	protected static long timeStamp(final URLConnection connIN) {
 		return connIN.getLastModified();
 	}
 
-	/** from class path into file system */
-	public static void extractResource(final String sourcePath,
+	/**
+	 * extract resource from class path into local file system
+	 */
+	protected static void extractResource(final String sourcePath,
 			final String targetPath) throws Exception {
 
-		// final ClassLoader classLoader = RES.class.getClassLoader();
-
-		// if (classLoader == null) {
-		// log.warn("\n\t resource classLoader not available: {}", sourcePath);
-		// throw new IllegalArgumentException("resource not found");
-		// }
-
-		// final URL sourceUrl = classLoader.getResource(sourcePath);
-		final URL sourceUrl = RES.class.getResource(sourcePath);
+		final URL sourceUrl = ResourceManagerUDT.class.getResource(sourcePath);
 
 		if (sourceUrl == null) {
-			log.warn("\n\t classpath resource not found: {}", sourcePath);
+			log.warn("classpath resource not found: {}", sourcePath);
 			throw new IllegalArgumentException("resource not found");
 		}
 
@@ -81,7 +76,7 @@ class RES {
 		final URLConnection sourceConn = sourceUrl.openConnection();
 
 		if (sourceConn == null) {
-			log.warn("\n\t classpath resource connection not available: {}",
+			log.warn("classpath resource connection not available: {}",
 					sourcePath);
 			throw new IllegalArgumentException("resource not found");
 		}
@@ -97,11 +92,11 @@ class RES {
 		final URLConnection targetConn = fileConnection(targetFile);
 
 		if (isSameResource(sourceConn, targetConn)) {
-			log.info("\n\t already extracted;" + "\n\t sourcePath={}"
-					+ "\n\t targetPath={}", sourcePath, targetPath);
+			log.debug("already extracted;" + "\n\t sourcePath={}"
+					+ " targetPath={}", sourcePath, targetPath);
 			return;
 		} else {
-			log.warn("\n\t make new extraction destination for targetPath={}",
+			log.debug("make new extraction destination for targetPath={}",
 					targetPath);
 			targetFile.delete();
 			targetFile.createNewFile();
@@ -128,18 +123,19 @@ class RES {
 		sourceStream.close();
 		targetStream.close();
 
-		// synchronize target time stamp with source to avoid repeated copy
+		/** synchronize target time stamp with source to avoid repeated copy */
 		targetFile.setLastModified(sourceTime);
 
-		log.info("\n\t extracted OK;" + "\n\t sourcePath={}"
-				+ "\n\t targetPath={}", sourcePath, targetPath);
+		log.info("extracted OK; sourcePath={} targetPath={}", sourcePath,
+				targetPath);
 
 	}
 
-	public static void ensureTargetFolder(final File folder) throws Exception {
+	protected static void ensureTargetFolder(final File folder)
+			throws Exception {
 		if (folder.exists()) {
 			if (folder.isDirectory()) {
-				log.info("found folder={}", folder);
+				log.debug("found folder={}", folder);
 			} else {
 				log.error("not a directory; folder={}", folder);
 				throw new IllegalArgumentException(
@@ -148,7 +144,7 @@ class RES {
 		} else {
 			final boolean isSuccess = folder.mkdirs();
 			if (isSuccess) {
-				log.info("mkdirs : folder={}", folder);
+				log.debug("mkdirs : folder={}", folder);
 			} else {
 				log.error("mkdirs failure; folder={}", folder);
 				throw new IllegalStateException(
@@ -157,7 +153,7 @@ class RES {
 		}
 	}
 
-	public static void ensureTargetFolder(final String targetFolder)
+	protected static void ensureTargetFolder(final String targetFolder)
 			throws Exception {
 
 		final File folder = new File(targetFolder).getAbsoluteFile();
@@ -166,7 +162,10 @@ class RES {
 
 	}
 
-	public static void systemLoad(final String sourcePath,
+	/**
+	 * load library using absolute file path
+	 */
+	protected static void systemLoad(final String sourcePath,
 			final String targetPath) throws Exception {
 
 		extractResource(sourcePath, targetPath);

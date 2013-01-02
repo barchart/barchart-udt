@@ -13,15 +13,19 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Publish library version information
+ */
 public class VersionUDT {
 
-	static final Logger log = LoggerFactory.getLogger(VersionUDT.class);
+	protected static final Logger log = LoggerFactory
+			.getLogger(VersionUDT.class);
 
 	//
 
-	static final String PROP_JAVA_VENDOR = "java.vendor";
-	static final String PROP_JAVA_VERSION = "java.version";
-	static final String PROP_JAVA_VM_NAME = "java.vm.name";
+	protected static final String PROP_JAVA_VENDOR = "java.vendor";
+	protected static final String PROP_JAVA_VERSION = "java.version";
+	protected static final String PROP_JAVA_VM_NAME = "java.vm.name";
 
 	public static final String JAVA_VENDOR = System
 			.getProperty(PROP_JAVA_VENDOR);
@@ -32,9 +36,9 @@ public class VersionUDT {
 
 	//
 
-	static final String PROP_OS_NAME = "os.name";
-	static final String PROP_OS_ARCH = "os.arch";
-	static final String PROP_OS_VERSION = "os.version";
+	protected static final String PROP_OS_NAME = "os.name";
+	protected static final String PROP_OS_ARCH = "os.arch";
+	protected static final String PROP_OS_VERSION = "os.version";
 
 	public static final String OS_NAME = System.getProperty(PROP_OS_NAME);
 	public static final String OS_ARCH = System.getProperty(PROP_OS_ARCH);
@@ -42,15 +46,15 @@ public class VersionUDT {
 
 	//
 
-	static final String PROP_FILE = "version.properties";
+	protected static final String PROP_FILE = "version.properties";
 
-	static final String PROP_UDT_VERSION = "udt.version";
+	protected static final String PROP_UDT_VERSION = "udt.version";
 
-	static final String PROP_BARCHART_NAME = "barchart.name";
-	static final String PROP_BARCHART_GROUP = "barchart.groupId";
-	static final String PROP_BARCHART_ARTIFACT = "barchart.artifactId";
-	static final String PROP_BARCHART_VERSION = "barchart.version";
-	static final String PROP_BARCHART_TIMESTAMP = "barchart.timestamp";
+	protected static final String PROP_BARCHART_NAME = "barchart.name";
+	protected static final String PROP_BARCHART_GROUP = "barchart.groupId";
+	protected static final String PROP_BARCHART_ARTIFACT = "barchart.artifactId";
+	protected static final String PROP_BARCHART_VERSION = "barchart.version";
+	protected static final String PROP_BARCHART_TIMESTAMP = "barchart.timestamp";
 
 	public static final String UDT_VERSION;
 
@@ -112,7 +116,7 @@ public class VersionUDT {
 	 * <p>
 	 * current contract is to depend on NAR snapshot
 	 */
-	static String barchartName(final String name) {
+	protected static String barchartName(final String name) {
 		if (name.contains(SNAPSHOT)) {
 			return name;
 		} else {
@@ -120,7 +124,7 @@ public class VersionUDT {
 		}
 	}
 
-	private static void append(final StringBuilder text, final String EOL) {
+	protected static void append(final StringBuilder text, final String EOL) {
 
 		text.append(PROP_BARCHART_NAME);
 		text.append(" = ");

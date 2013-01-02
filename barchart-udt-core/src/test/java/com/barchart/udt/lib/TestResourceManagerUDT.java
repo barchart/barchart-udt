@@ -13,22 +13,12 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import util.TestAny;
 import util.UnitHelp;
 
-public class TestRES extends TestAny {
-
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
+public class TestResourceManagerUDT extends TestAny {
 
 	@Test
 	public void testFileConnection() throws Exception {
@@ -43,7 +33,7 @@ public class TestRES extends TestAny {
 
 		log.info("getAbsolutePath : {}", file.getAbsolutePath());
 
-		final URLConnection conn = RES.fileConnection(file);
+		final URLConnection conn = ResourceManagerUDT.fileConnection(file);
 
 		assertTrue(conn.getLastModified() > 0);
 		log.info("getLastModified : {}", conn.getLastModified());
@@ -66,7 +56,7 @@ public class TestRES extends TestAny {
 		final String targetFolder = UnitHelp
 				.randomSuffix("./target/testExtractResource");
 
-		RES.ensureTargetFolder(targetFolder);
+		ResourceManagerUDT.ensureTargetFolder(targetFolder);
 
 		// path outside of jar, in file system, relative to user.dir
 		final String targetPath = targetFolder + "/test-extracted.txt";
@@ -75,11 +65,12 @@ public class TestRES extends TestAny {
 
 		targetFile.delete();
 
-		RES.extractResource(sourcePath, targetPath);
+		ResourceManagerUDT.extractResource(sourcePath, targetPath);
 
 		assertTrue(targetFile.exists());
 
-		final URL sourceURL = TestRES.class.getResource(sourcePath);
+		final URL sourceURL = TestResourceManagerUDT.class
+				.getResource(sourcePath);
 
 		final URL targetURL = targetFile.toURI().toURL();
 
@@ -100,4 +91,5 @@ public class TestRES extends TestAny {
 		// assertEquals(0, targetCONN.getLastModified());
 
 	}
+
 }

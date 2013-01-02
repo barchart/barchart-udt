@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.anno.Native;
-import com.barchart.udt.lib.LibraryLoaderUDT;
+import com.barchart.udt.lib.LibraryLoader;
 import com.barchart.udt.nio.KindUDT;
 import com.barchart.udt.util.HelpUDT;
 
@@ -133,30 +133,30 @@ public class SocketUDT {
 
 			final String loaderName = ResourceUDT.getLibraryLoaderClassName();
 
-			log.info("library loader : {}", loaderName);
+			log.info("library loader   : {}", loaderName);
 
 			@SuppressWarnings("unchecked")
-			final Class<LibraryLoaderUDT> loaderClass = //
-			(Class<LibraryLoaderUDT>) Class.forName(loaderName);
+			final Class<LibraryLoader> loaderClass = //
+			(Class<LibraryLoader>) Class.forName(loaderName);
 
-			final LibraryLoaderUDT loaderInstance = loaderClass.newInstance();
+			final LibraryLoader loaderInstance = loaderClass.newInstance();
 
 			loaderInstance.load(location);
 
 		} catch (final Throwable e) {
-			log.error("failed to LOAD native library; terminating", e);
+			log.error("Failed to LOAD native library; terminating", e);
 			System.exit(1);
 		}
 
 		try {
 			initClass0();
 		} catch (final Throwable e) {
-			log.error("failed to INIT native library; terminating", e);
+			log.error("Failed to INIT native library; terminating", e);
 			System.exit(2);
 		}
 
 		if (SIGNATURE_JNI != getSignatureJNI0()) {
-			log.error("java/native SIGNATURE inconsistent; terminating");
+			log.error("Java/Native SIGNATURE inconsistent; terminating");
 			System.exit(3);
 		}
 
@@ -353,10 +353,6 @@ public class SocketUDT {
 		);
 
 	}
-
-	// ###################################################
-	// ### UDT API
-	// ###
 
 	/**
 	 * send from a complete byte[] array;
@@ -869,12 +865,6 @@ public class SocketUDT {
 			return 0;
 		}
 	}
-
-	// ###
-	// ### UDT API
-	// ###################################################
-
-	// convenience methods
 
 	/**
 	 * @return null : not connected; <br>
