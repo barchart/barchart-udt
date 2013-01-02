@@ -1238,11 +1238,6 @@ JNIEXPORT jlong JNICALL Java_com_barchart_udt_SocketUDT_receiveFile0(
 	int64_t fileLength = static_cast<int64_t>(length);
 	int fileBlock = static_cast<int>(block);
 
-	printf("filePath   =%s\n", filePath);
-	printf("fileOffset =%d\n", fileOffset);
-	printf("fileLength =%d\n", fileLength);
-	printf("fileBlock  =%d\n", fileBlock);
-
 	const int64_t rv = UDT::recvfile2( //
 			socketID, filePath, &fileOffset, fileLength, fileBlock);
 
@@ -1459,11 +1454,6 @@ JNIEXPORT jlong JNICALL Java_com_barchart_udt_SocketUDT_sendFile0( //
 	int64_t fileOffset = static_cast<int64_t>(offset);
 	int64_t fileLength = static_cast<int64_t>(length);
 	int fileBlock = static_cast<int>(block);
-
-	printf("filePath   =%s\n", filePath);
-	printf("fileOffset =%d\n", fileOffset);
-	printf("fileLength =%d\n", fileLength);
-	printf("fileBlock  =%d\n", fileBlock);
 
 	const int64_t rv = UDT::sendfile2( //
 			socketID, filePath, &fileOffset, fileLength, fileBlock);
