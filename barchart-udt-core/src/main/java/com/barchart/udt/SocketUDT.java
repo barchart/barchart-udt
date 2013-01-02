@@ -98,8 +98,6 @@ public class SocketUDT {
 	@Native
 	public static final int UDT_EXCEPT_INDEX = 2;
 
-	// ###################################################
-
 	/**
 	 * UDT::select() sizeArray/sizeBuffer index offset for READ interest
 	 */
