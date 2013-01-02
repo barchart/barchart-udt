@@ -216,8 +216,7 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
     @Override
     public boolean isActive() {
         final SocketChannelUDT channelUDT = javaChannel();
-        return channelUDT.isOpen() && channelUDT.isConnected()
-                && channelUDT.isConnectFinished();
+        return channelUDT.isOpen() && channelUDT.isConnectFinished();
     }
 
     @Override

@@ -317,8 +317,6 @@ public class SelectorUDT extends AbstractSelector {
 
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 
-			keyUDT.socketUDT().isOpen();
-
 			if (keyUDT.doRead(resultIndex)) {
 				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
 			}
@@ -443,7 +441,6 @@ public class SelectorUDT extends AbstractSelector {
 
 	@Override
 	public Selector wakeup() {
-		/** publisher for volatile */
 		wakeupStepCount++;
 		return this;
 	}

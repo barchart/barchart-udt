@@ -18,6 +18,7 @@ package io.netty.bench.udt.xfer;
 import static io.netty.bench.udt.util.UnitHelp.*;
 import io.netty.example.udt.util.ConsoleReporterUDT;
 
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,14 +38,14 @@ import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.core.TimerContext;
 
 /**
- * perform one way raw send/recv in 2 threads
+ * perform two way raw send/recv
  */
-public final class BenchXferOneRaw {
+public final class BenchXferRaw {
 
-    private BenchXferOneRaw() {
+    private BenchXferRaw() {
     }
 
-    static final Logger log = LoggerFactory.getLogger(BenchXferOneRaw.class);
+    static final Logger log = LoggerFactory.getLogger(BenchXferRaw.class);
 
     /** benchmark duration */
     static final int time = 60 * 1000;
@@ -52,10 +53,10 @@ public final class BenchXferOneRaw {
     /** transfer chunk size */
     static final int size = 64 * 1024;
 
-    static final Counter benchTime = Metrics.newCounter(BenchXferOneRaw.class,
+    static final Counter benchTime = Metrics.newCounter(BenchXferRaw.class,
             "bench time");
 
-    static final Counter benchSize = Metrics.newCounter(BenchXferOneRaw.class,
+    static final Counter benchSize = Metrics.newCounter(BenchXferRaw.class,
             "bench size");
 
     static {
@@ -63,39 +64,46 @@ public final class BenchXferOneRaw {
         benchSize.inc(size);
     }
 
-    static final Meter sendRate = Metrics.newMeter(BenchXferOneRaw.class,
+    static final Meter sendRate = Metrics.newMeter(BenchXferRaw.class,
             "send rate", "bytes", TimeUnit.SECONDS);
 
-    static final Timer sendTime = Metrics.newTimer(BenchXferOneRaw.class,
+    static final Timer sendTime = Metrics.newTimer(BenchXferRaw.class,
             "send time", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
     public static void main(final String[] args) throws Exception {
 
         log.info("init");
 
-        final SocketUDT accept = new SocketUDT(TypeUDT.DATAGRAM);
-        accept.setBlocking(true);
-        accept.bind(localSocketAddress());
-        accept.listen(1);
-        socketAwait(accept, StatusUDT.LISTENING);
-        log.info("accept : {}", accept);
+        final InetSocketAddress addr1 = localSocketAddress();
+        final InetSocketAddress addr2 = localSocketAddress();
 
-        final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
-        client.setBlocking(true);
-        client.bind(localSocketAddress());
-        socketAwait(client, StatusUDT.OPENED);
-        client.connect(accept.getLocalSocketAddress());
-        socketAwait(client, StatusUDT.CONNECTED);
-        log.info("client : {}", client);
+        final SocketUDT peer1 = new SocketUDT(TypeUDT.DATAGRAM);
+        final SocketUDT peer2 = new SocketUDT(TypeUDT.DATAGRAM);
 
-        final SocketUDT server = accept.accept();
-        server.setBlocking(true);
-        socketAwait(server, StatusUDT.CONNECTED);
-        log.info("server : {}", server);
+        peer1.setBlocking(false);
+        peer2.setBlocking(false);
+
+        peer1.setRendezvous(true);
+        peer2.setRendezvous(true);
+
+        peer1.bind(addr1);
+        peer2.bind(addr2);
+
+        socketAwait(peer1, StatusUDT.OPENED);
+        socketAwait(peer2, StatusUDT.OPENED);
+
+        peer1.connect(addr2);
+        peer2.connect(addr1);
+
+        socketAwait(peer1, StatusUDT.CONNECTED);
+        socketAwait(peer2, StatusUDT.CONNECTED);
+
+        peer1.setBlocking(true);
+        peer2.setBlocking(true);
 
         final AtomicBoolean isOn = new AtomicBoolean(true);
 
-        final Runnable clientTask = new Runnable() {
+        final Runnable sendPeer1 = new Runnable() {
 
             @Override
             public void run() {
@@ -119,7 +127,7 @@ public final class BenchXferOneRaw {
 
                 final TimerContext timer = sendTime.time();
 
-                final int count = client.send(buffer);
+                final int count = peer1.send(buffer);
 
                 timer.stop();
 
@@ -131,7 +139,38 @@ public final class BenchXferOneRaw {
             }
         };
 
-        final Runnable serverTask = new Runnable() {
+        final Runnable sendPeer2 = new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    while (isOn.get()) {
+                        runCore();
+                    }
+                } catch (final Exception e) {
+                    log.error("", e);
+                }
+            }
+
+            final ByteBuffer buffer = ByteBuffer.allocateDirect(size);
+
+            long sequence;
+
+            void runCore() throws Exception {
+
+                buffer.rewind();
+                buffer.putLong(0, sequence++);
+
+                final int count = peer2.send(buffer);
+
+                if (count != size) {
+                    throw new Exception("count");
+                }
+
+            }
+        };
+
+        final Runnable recvPeer1 = new Runnable() {
 
             @Override
             public void run() {
@@ -152,7 +191,7 @@ public final class BenchXferOneRaw {
 
                 buffer.rewind();
 
-                final int count = server.receive(buffer);
+                final int count = peer1.receive(buffer);
 
                 if (count != size) {
                     throw new Exception("count");
@@ -164,11 +203,45 @@ public final class BenchXferOneRaw {
             }
         };
 
-        final ExecutorService executor = Executors.newFixedThreadPool(2);
+        final Runnable recvPeer2 = new Runnable() {
 
-        executor.submit(clientTask);
+            @Override
+            public void run() {
+                try {
+                    while (isOn.get()) {
+                        runCore();
+                    }
+                } catch (final Exception e) {
+                    log.error("", e);
+                }
+            }
 
-        executor.submit(serverTask);
+            final ByteBuffer buffer = ByteBuffer.allocateDirect(size);
+
+            long sequence;
+
+            void runCore() throws Exception {
+
+                buffer.rewind();
+
+                final int count = peer2.receive(buffer);
+
+                if (count != size) {
+                    throw new Exception("count");
+                }
+
+                if (this.sequence++ != buffer.getLong(0)) {
+                    throw new Exception("sequence");
+                }
+            }
+        };
+
+        final ExecutorService executor = Executors.newFixedThreadPool(4);
+
+        executor.submit(recvPeer1);
+        executor.submit(recvPeer2);
+        executor.submit(sendPeer1);
+        executor.submit(sendPeer2);
 
         ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
 
@@ -182,9 +255,8 @@ public final class BenchXferOneRaw {
 
         Metrics.defaultRegistry().shutdown();
 
-        accept.close();
-        client.close();
-        server.close();
+        peer1.close();
+        peer2.close();
 
         log.info("done");
     }
