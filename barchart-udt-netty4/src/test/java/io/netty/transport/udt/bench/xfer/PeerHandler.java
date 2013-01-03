@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package io.netty.example.udt.echo.rendevous;
+package io.netty.transport.udt.bench.xfer;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.MessageBuf;
@@ -23,12 +23,9 @@ import io.netty.channel.ChannelInboundMessageHandlerAdapter;
 import io.netty.transport.udt.UdtMessage;
 import io.netty.transport.udt.nio.NioUdtProvider;
 
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
 
 /**
@@ -36,24 +33,23 @@ import com.yammer.metrics.core.Meter;
  * between the echo peers by sending the first message to the other peer on
  * activation.
  */
-public class MsgEchoPeerHandler extends
+public class PeerHandler extends
         ChannelInboundMessageHandlerAdapter<UdtMessage> {
 
     private static final Logger log = LoggerFactory
-            .getLogger(MsgEchoPeerHandler.class.getName());
+            .getLogger(PeerHandler.class.getName());
 
+    private final Meter meter;
     private final UdtMessage message;
 
-    public MsgEchoPeerHandler(final int messageSize) {
+    public PeerHandler(final Meter meter, final int messageSize) {
         final ByteBuf byteBuf = Unpooled.buffer(messageSize);
         for (int i = 0; i < byteBuf.capacity(); i++) {
             byteBuf.writeByte((byte) i);
         }
-        message = new UdtMessage(byteBuf);
+        this.message = new UdtMessage(byteBuf);
+        this.meter = meter;
     }
-
-    final Meter meter = Metrics.newMeter(MsgEchoPeerHandler.class, "rate",
-            "bytes", TimeUnit.SECONDS);
 
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
@@ -75,7 +71,9 @@ public class MsgEchoPeerHandler extends
     protected void messageReceived(final ChannelHandlerContext ctx,
             final UdtMessage message) throws Exception {
         final ByteBuf byteBuf = message.data();
-        meter.mark(byteBuf.readableBytes());
+        if (meter != null) {
+            meter.mark(byteBuf.readableBytes());
+        }
         final MessageBuf<Object> out = ctx.nextOutboundMessageBuffer();
         out.add(message);
         ctx.flush();

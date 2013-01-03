@@ -20,8 +20,8 @@ import io.netty.buffer.MessageBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
-import io.netty.channel.socket.UdtMessage;
-import io.netty.channel.socket.nio.NioUdtProvider;
+import io.netty.transport.udt.UdtMessage;
+import io.netty.transport.udt.nio.NioUdtProvider;
 
 import java.util.concurrent.TimeUnit;
 

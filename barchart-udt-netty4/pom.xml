@@ -14,7 +14,7 @@
 
 	<groupId>com.barchart.udt</groupId>
 	<artifactId>barchart-udt-netty4</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<description>barchart udt for netty 4</description>
@@ -97,6 +97,8 @@
 	</dependencies>
 
 	<profiles>
+	
+		<!-- verify netty rules -->
 		<profile>
 			<id>checkstyle</id>
 			<build>
@@ -135,6 +137,7 @@
 
 			</build>
 		</profile>
+		
 	</profiles>
 
 </project>

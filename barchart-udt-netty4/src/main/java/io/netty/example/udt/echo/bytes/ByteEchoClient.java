@@ -18,15 +18,15 @@ package io.netty.example.udt.echo.bytes;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioUdtProvider;
 import io.netty.example.udt.util.ConsoleReporterUDT;
 import io.netty.example.udt.util.ThreadFactoryUDT;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.logging.InternalLoggerFactory;
 import io.netty.logging.Slf4JLoggerFactory;
+import io.netty.transport.udt.UdtChannel;
+import io.netty.transport.udt.nio.NioUdtProvider;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
