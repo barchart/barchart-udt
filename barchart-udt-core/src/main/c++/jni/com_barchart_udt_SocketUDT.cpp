@@ -1755,19 +1755,19 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 
 	UNUSED(clsSocketUDT);
 
-// readiness sets
+	// readiness sets
 	set<UDTSOCKET> readSet;
 	set<UDTSOCKET> writeSet;
 
-// readiness report
+	// readiness report
 	const int rv = UDT::epoll_wait( //
 			pollID, &readSet, &writeSet, millisTimeout, NULL, NULL);
 
-// readiness reports size array
+	// readiness reports size array
 	jint* const sizeArray = //
 			static_cast<jint*>(env->GetDirectBufferAddress(objSizeBuffer));
 
-// process timeout & errors
+	// process timeout & errors
 	if (rv <= 0) { // UDT::ERROR is '-1'
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
 		if (errorInfo.getErrorCode() == UDT::ERRORINFO::ETIMEOUT) {
@@ -1784,7 +1784,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		}
 	}
 
-// return read interest
+	// return read interest
 	const jsize readSize = readSet.size();
 	sizeArray[UDT_READ_INDEX] = readSize;
 	if (readSize > 0) {
@@ -1798,7 +1798,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		UDT_CopySetToArray(&readSet, readArray, readSize);
 	}
 
-// return write interest
+	// return write interest
 	const jsize writeSize = writeSet.size();
 	sizeArray[UDT_WRITE_INDEX] = writeSize;
 	if (writeSize > 0) {

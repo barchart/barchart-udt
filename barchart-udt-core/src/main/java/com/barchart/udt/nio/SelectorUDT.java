@@ -83,7 +83,7 @@ public class SelectorUDT extends AbstractSelector {
 	/**
 	 * tracks correlation read with write for the same key
 	 */
-	private int resultIndex;
+	private volatile int resultIndex;
 
 	/** list of epoll sockets with read interest */
 	private final IntBuffer readBuffer;
@@ -360,7 +360,13 @@ public class SelectorUDT extends AbstractSelector {
 
 		try {
 			selectLock.lock();
-			cancelledKeys().addAll(registeredKeySet);
+
+			// cancelledKeys().addAll(registeredKeySet);
+
+			for (final SelectionKeyUDT keyUDT : registeredKeyMap.values()) {
+				terminatedKeyMap.putIfAbsent(keyUDT, keyUDT);
+			}
+
 		} finally {
 			selectLock.unlock();
 		}
@@ -387,7 +393,7 @@ public class SelectorUDT extends AbstractSelector {
 			final Object attachment //
 	) {
 
-		if (registeredKeyMap.size() == maximimSelectorSize) {
+		if (registeredKeyMap.size() >= maximimSelectorSize) {
 			log.error("reached maximimSelectorSize");
 			throw new IllegalSelectorException();
 		}
