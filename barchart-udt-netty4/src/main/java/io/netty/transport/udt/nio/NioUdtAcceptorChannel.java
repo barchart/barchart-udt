@@ -15,10 +15,9 @@
  */
 package io.netty.transport.udt.nio;
 
-import io.netty.buffer.BufType;
+import static java.nio.channels.SelectionKey.*;
 import io.netty.buffer.MessageBuf;
 import io.netty.channel.ChannelException;
-import io.netty.channel.ChannelMetadata;
 import io.netty.channel.socket.nio.AbstractNioMessageChannel;
 import io.netty.logging.InternalLogger;
 import io.netty.logging.InternalLoggerFactory;
@@ -26,10 +25,8 @@ import io.netty.transport.udt.DefaultUdtChannelConfig;
 import io.netty.transport.udt.UdtChannel;
 import io.netty.transport.udt.UdtChannelConfig;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.nio.channels.SelectionKey;
 
 import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.ServerSocketChannelUDT;
@@ -37,28 +34,24 @@ import com.barchart.udt.nio.ServerSocketChannelUDT;
 /**
  * Common base for Netty Byte/Message UDT Stream/Datagram acceptors.
  */
-public abstract class NioUdtBaseAcceptorChannel extends
+public abstract class NioUdtAcceptorChannel extends
         AbstractNioMessageChannel implements UdtChannel {
 
     protected static final InternalLogger logger = InternalLoggerFactory
-            .getInstance(NioUdtBaseAcceptorChannel.class);
-
-    protected static final ChannelMetadata METADATA = new ChannelMetadata(
-            BufType.MESSAGE, false);
+            .getInstance(NioUdtAcceptorChannel.class);
 
     protected final UdtChannelConfig config;
 
-    protected NioUdtBaseAcceptorChannel(final ServerSocketChannelUDT channelUDT) {
-        super(null, channelUDT.socketUDT().id(), channelUDT,
-                SelectionKey.OP_ACCEPT);
+    protected NioUdtAcceptorChannel(final ServerSocketChannelUDT channelUDT) {
+        super(null, channelUDT.socketUDT().id(), channelUDT, OP_ACCEPT);
         try {
             channelUDT.configureBlocking(false);
             config = new DefaultUdtChannelConfig(this);
             config.apply(channelUDT);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             try {
                 channelUDT.close();
-            } catch (final IOException e2) {
+            } catch (final Exception e2) {
                 if (logger.isWarnEnabled()) {
                     logger.warn("Failed to close channel.", e2);
                 }
@@ -67,7 +60,7 @@ public abstract class NioUdtBaseAcceptorChannel extends
         }
     }
 
-    protected NioUdtBaseAcceptorChannel(final TypeUDT type) {
+    protected NioUdtAcceptorChannel(final TypeUDT type) {
         this(NioUdtProvider.newAcceptorChannelUDT(type));
     }
 
@@ -79,9 +72,6 @@ public abstract class NioUdtBaseAcceptorChannel extends
     @Override
     protected void doBind(final SocketAddress localAddress) throws Exception {
         javaChannel().socket().bind(localAddress, config.getBacklog());
-        final SelectionKey selectionKey = selectionKey();
-        selectionKey.interestOps(selectionKey.interestOps()
-                | SelectionKey.OP_ACCEPT);
     }
 
     @Override
@@ -124,11 +114,6 @@ public abstract class NioUdtBaseAcceptorChannel extends
     @Override
     protected SocketAddress localAddress0() {
         return javaChannel().socket().getLocalSocketAddress();
-    }
-
-    @Override
-    public ChannelMetadata metadata() {
-        return METADATA;
     }
 
     @Override

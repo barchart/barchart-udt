@@ -19,7 +19,9 @@ package io.netty.transport.udt.util;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/** */
+/**
+ * testing thread factory
+ */
 public class ThreadFactoryUDT implements ThreadFactory {
 
     private static final AtomicInteger counter = new AtomicInteger();

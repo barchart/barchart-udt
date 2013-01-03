@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 package io.netty.transport.udt.bench.xfer;
 
 import io.netty.bootstrap.Bootstrap;
@@ -22,7 +23,7 @@ import io.netty.logging.InternalLoggerFactory;
 import io.netty.logging.Slf4JLoggerFactory;
 import io.netty.transport.udt.util.BootHelp;
 import io.netty.transport.udt.util.ConsoleReporterUDT;
-import io.netty.transport.udt.util.EchoHandler;
+import io.netty.transport.udt.util.EchoMessageHandler;
 import io.netty.transport.udt.util.UnitHelp;
 
 import java.net.InetSocketAddress;
@@ -89,8 +90,8 @@ public final class BenchNetty {
         final InetSocketAddress addr1 = UnitHelp.localSocketAddress();
         final InetSocketAddress addr2 = UnitHelp.localSocketAddress();
 
-        final ChannelHandler handler1 = new EchoHandler(sendRate, size);
-        final ChannelHandler handler2 = new EchoHandler(null, size);
+        final ChannelHandler handler1 = new EchoMessageHandler(sendRate, size);
+        final ChannelHandler handler2 = new EchoMessageHandler(null, size);
 
         final Bootstrap peerBoot1 = BootHelp.messagePeerBoot(addr1, addr2,
                 handler1);

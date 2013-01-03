@@ -26,7 +26,7 @@ public class TestNioUdtProvider extends TestAny {
      * verify factory
      */
     @Test
-    public void provide() {
+    public void provideFactory() {
 
         // bytes
         assertNotNull(NioUdtProvider.BYTE_ACCEPTOR.newChannel());

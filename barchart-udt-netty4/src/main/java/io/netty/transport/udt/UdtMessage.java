@@ -16,47 +16,21 @@
 package io.netty.transport.udt;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.DefaultByteBufHolder;
+import io.netty.transport.udt.nio.NioUdtProvider;
 
 import com.barchart.udt.TypeUDT;
 
 /**
  * The message container that is used for {@link TypeUDT#DATAGRAM} messages.
+ * <p>
+ * @see {@link NioUdtProvider#MESSAGE_CONNECTOR}
+ * @see {@link NioUdtProvider#MESSAGE_RENDEZVOUS}
  */
-public final class UdtMessage {
+public final class UdtMessage extends DefaultByteBufHolder {
 
-    private final ByteBuf data;
-
-    /**
-     * Create a new instance
-     */
     public UdtMessage(final ByteBuf data) {
-        if (data == null) {
-            throw new NullPointerException("data");
-        }
-        this.data = data;
-    }
-
-    /**
-     * Return the container data.
-     */
-    public ByteBuf data() {
-        return data;
-    }
-
-    /**
-     * Free underlying data.
-     */
-    public void free() {
-        if (data.isFreed()) {
-            return;
-        } else {
-            data.free();
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "datagram(" + data.readableBytes() + "B, " + ')';
+        super(data);
     }
 
 }

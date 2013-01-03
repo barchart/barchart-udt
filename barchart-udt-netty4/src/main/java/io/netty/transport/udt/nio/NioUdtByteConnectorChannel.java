@@ -28,7 +28,6 @@ import io.netty.transport.udt.DefaultUdtChannelConfig;
 import io.netty.transport.udt.UdtChannel;
 import io.netty.transport.udt.UdtChannelConfig;
 
-import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 
@@ -64,10 +63,10 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
             case OPENED:
                 config.apply(channelUDT);
             }
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             try {
                 channelUDT.close();
-            } catch (final IOException e2) {
+            } catch (final Exception e2) {
                 if (logger.isWarnEnabled()) {
                     logger.warn("Failed to close channel.", e2);
                 }
@@ -106,10 +105,9 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         boolean success = false;
         try {
             final boolean connected = javaChannel().connect(remoteAddress);
-            if (connected) {
-                selectionKey().interestOps(OP_READ);
-            } else {
-                selectionKey().interestOps(OP_CONNECT);
+            if (!connected) {
+                selectionKey().interestOps(
+                        selectionKey().interestOps() | OP_CONNECT);
             }
             success = true;
             return connected;
@@ -127,11 +125,13 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
 
     @Override
     protected void doFinishConnect() throws Exception {
-        if (!javaChannel().finishConnect()) {
+        if (javaChannel().finishConnect()) {
+            selectionKey().interestOps(
+                    selectionKey().interestOps() & ~OP_CONNECT);
+        } else {
             throw new Error(
                     "Provider error: failed to finish connect. Provider library should be upgraded.");
         }
-        selectionKey().interestOps(OP_READ);
     }
 
     @Override

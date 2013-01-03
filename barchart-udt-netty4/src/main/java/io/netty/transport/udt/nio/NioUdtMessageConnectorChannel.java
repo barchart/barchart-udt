@@ -30,7 +30,6 @@ import io.netty.transport.udt.UdtChannel;
 import io.netty.transport.udt.UdtChannelConfig;
 import io.netty.transport.udt.UdtMessage;
 
-import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 
@@ -39,6 +38,8 @@ import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
  * Metty Message Connector for UDT Datagrams
+ * <p>
+ * Note: send/receive must use {@link UdtMessage} in the pipeline
  */
 public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         implements UdtChannel {
@@ -66,10 +67,10 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
             case OPENED:
                 config.apply(channelUDT);
             }
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             try {
                 channelUDT.close();
-            } catch (final IOException e2) {
+            } catch (final Exception e2) {
                 if (logger.isWarnEnabled()) {
                     logger.warn("Failed to close channel.", e2);
                 }
@@ -108,10 +109,9 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         boolean success = false;
         try {
             final boolean connected = javaChannel().connect(remoteAddress);
-            if (connected) {
-                selectionKey().interestOps(OP_READ);
-            } else {
-                selectionKey().interestOps(OP_CONNECT);
+            if (!connected) {
+                selectionKey().interestOps(
+                        selectionKey().interestOps() | OP_CONNECT);
             }
             success = true;
             return connected;
@@ -129,11 +129,13 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
 
     @Override
     protected void doFinishConnect() throws Exception {
-        if (!javaChannel().finishConnect()) {
+        if (javaChannel().finishConnect()) {
+            selectionKey().interestOps(
+                    selectionKey().interestOps() & ~OP_CONNECT);
+        } else {
             throw new Error(
                     "Provider error: failed to finish connect. Provider library should be upgraded.");
         }
-        selectionKey().interestOps(OP_READ);
     }
 
     @Override
@@ -158,6 +160,7 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
                     "Invalid config : increase receive buffer size to avoid message truncation");
         }
 
+        // delivers a message
         buf.add(new UdtMessage(byteBuf));
 
         return 1;
@@ -167,6 +170,7 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
     protected int doWriteMessages(final MessageBuf<Object> messageQueue,
             final boolean lastSpin) throws Exception {
 
+        // expects a message
         final UdtMessage message = (UdtMessage) messageQueue.peek();
 
         final ByteBuf byteBuf = message.data();

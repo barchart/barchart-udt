@@ -18,6 +18,8 @@ package io.netty.transport.udt.nio;
 import io.netty.bootstrap.AbstractBootstrap.ChannelFactory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
+import io.netty.logging.InternalLogger;
+import io.netty.logging.InternalLoggerFactory;
 import io.netty.transport.udt.UdtChannel;
 
 import java.io.IOException;
@@ -40,6 +42,9 @@ import com.barchart.udt.nio.SocketChannelUDT;
  * provides {@link SelectorProvider} for UDT channels
  */
 public class NioUdtProvider implements ChannelFactory {
+
+    protected static final InternalLogger logger = InternalLoggerFactory
+            .getInstance(NioUdtProvider.class);
 
     /**
      * {@link ChannelFactory} for UDT Byte Acceptor. See {@link TypeUDT#STREAM}

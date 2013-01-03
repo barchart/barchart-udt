@@ -16,27 +16,22 @@
 
 package io.netty.transport.udt.nio;
 
-import io.netty.logging.InternalLoggerFactory;
-import io.netty.logging.Slf4JLoggerFactory;
+import static org.junit.Assert.*;
+import io.netty.buffer.BufType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.Test;
 
-/**
- * shared test base
- */
-public abstract class TestAny {
-
-    protected static final Logger log = LoggerFactory.getLogger(TestAny.class);
+public class TestNioUdtMessageAcceptorChannel extends TestAny {
 
     /**
-     * use slf4j provider for io.netty.logging.InternalLogger
+     * verify channel meta data
      */
-    static {
-        final InternalLoggerFactory defaultFactory = new Slf4JLoggerFactory();
-        InternalLoggerFactory.setDefaultFactory(defaultFactory);
-        log.info("InternalLoggerFactory={}", InternalLoggerFactory
-                .getDefaultFactory().getClass().getName());
+    @Test
+    public void metadata() throws Exception {
+
+        assertEquals(BufType.MESSAGE, new NioUdtMessageAcceptorChannel()
+                .metadata().bufferType());
+
     }
 
 }

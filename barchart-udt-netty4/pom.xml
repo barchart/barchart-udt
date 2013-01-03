@@ -53,6 +53,12 @@
 		<!-- netty -->
 		<dependency>
 			<groupId>io.netty</groupId>
+			<artifactId>netty-buffer</artifactId>
+			<version>${barchartNettyVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
 			<artifactId>netty-transport</artifactId>
 			<version>${barchartNettyVersion}</version>
 			<scope>provided</scope>
@@ -96,8 +102,22 @@
 
 	</dependencies>
 
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkMode>always</forkMode>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
 	<profiles>
-	
+
 		<!-- verify netty rules -->
 		<profile>
 			<id>checkstyle</id>
@@ -137,7 +157,7 @@
 
 			</build>
 		</profile>
-		
+
 	</profiles>
 
 </project>

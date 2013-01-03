@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 package io.netty.transport.udt.util;
 
 import io.netty.bootstrap.Bootstrap;
@@ -27,6 +28,26 @@ import java.util.concurrent.ThreadFactory;
  * bootstrap utils
  */
 public class BootHelp {
+
+    /**
+     * bootstrap for byte rendezvous peer
+     */
+    public static Bootstrap bytePeerBoot(final InetSocketAddress self,
+            final InetSocketAddress peer, final ChannelHandler handler) {
+
+        final Bootstrap boot = new Bootstrap();
+
+        final ThreadFactory connectFactory = new ThreadFactoryUDT("peer");
+
+        final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
+                connectFactory, NioUdtProvider.BYTE_PROVIDER);
+
+        boot.group(connectGroup).channelFactory(NioUdtProvider.BYTE_RENDEZVOUS)
+                .localAddress(self).remoteAddress(peer).handler(handler);
+
+        return boot;
+
+    }
 
     /**
      * bootstrap for message rendezvous peer
@@ -46,6 +67,7 @@ public class BootHelp {
                 .localAddress(self).remoteAddress(peer).handler(handler);
 
         return boot;
+
     }
 
 }

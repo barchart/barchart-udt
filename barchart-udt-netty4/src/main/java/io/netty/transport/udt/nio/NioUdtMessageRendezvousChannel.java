@@ -15,15 +15,23 @@
  */
 package io.netty.transport.udt.nio;
 
+import io.netty.logging.InternalLogger;
+import io.netty.logging.InternalLoggerFactory;
 import io.netty.transport.udt.UdtChannel;
+import io.netty.transport.udt.UdtMessage;
 
 import com.barchart.udt.TypeUDT;
 
 /**
  * Netty Message Rendezvous for UDT Datagrams
+ * <p>
+ * Note: send/receive must use {@link UdtMessage} in the pipeline
  */
 public class NioUdtMessageRendezvousChannel extends
         NioUdtMessageConnectorChannel implements UdtChannel {
+
+    protected static final InternalLogger logger = InternalLoggerFactory
+            .getInstance(NioUdtMessageConnectorChannel.class);
 
     protected NioUdtMessageRendezvousChannel() {
         super(NioUdtProvider.newRendezvousChannelUDT(TypeUDT.DATAGRAM));

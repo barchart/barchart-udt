@@ -15,7 +15,11 @@
  */
 package io.netty.transport.udt.nio;
 
+import io.netty.buffer.BufType;
 import io.netty.buffer.MessageBuf;
+import io.netty.channel.ChannelMetadata;
+import io.netty.logging.InternalLogger;
+import io.netty.logging.InternalLoggerFactory;
 
 import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
@@ -23,7 +27,13 @@ import com.barchart.udt.nio.SocketChannelUDT;
 /**
  * Netty Byte Channel Acceptor for UDT Streams
  */
-public class NioUdtByteAcceptorChannel extends NioUdtBaseAcceptorChannel {
+public class NioUdtByteAcceptorChannel extends NioUdtAcceptorChannel {
+
+    protected static final InternalLogger logger = InternalLoggerFactory
+            .getInstance(NioUdtByteAcceptorChannel.class);
+
+    protected static final ChannelMetadata METADATA = new ChannelMetadata(
+            BufType.BYTE, false);
 
     protected NioUdtByteAcceptorChannel() {
         super(TypeUDT.STREAM);
@@ -39,6 +49,11 @@ public class NioUdtByteAcceptorChannel extends NioUdtBaseAcceptorChannel {
                     .id(), channelUDT));
             return 1;
         }
+    }
+
+    @Override
+    public ChannelMetadata metadata() {
+        return METADATA;
     }
 
 }
