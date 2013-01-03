@@ -87,7 +87,7 @@ public class Select01 extends SocketUDT {
 			result.readList.add(readBuffer.get(index));
 		}
 
-		final int writeSize = sizeBuffer.get(UDT_READ_INDEX);
+		final int writeSize = sizeBuffer.get(UDT_WRITE_INDEX);
 
 		for (int index = 0; index < writeSize; index++) {
 			result.writeList.add(writeBuffer.get(index));
