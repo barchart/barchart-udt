@@ -18,16 +18,14 @@ package io.netty.transport.udt.bench.xfer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.socket.nio.NioEventLoopGroup;
 import io.netty.logging.InternalLoggerFactory;
 import io.netty.logging.Slf4JLoggerFactory;
-import io.netty.transport.udt.nio.NioUdtProvider;
+import io.netty.transport.udt.util.BootHelp;
 import io.netty.transport.udt.util.ConsoleReporterUDT;
-import io.netty.transport.udt.util.ThreadFactoryUDT;
+import io.netty.transport.udt.util.EchoHandler;
 import io.netty.transport.udt.util.UnitHelp;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -91,11 +89,13 @@ public final class BenchNetty {
         final InetSocketAddress addr1 = UnitHelp.localSocketAddress();
         final InetSocketAddress addr2 = UnitHelp.localSocketAddress();
 
-        final ChannelHandler handler1 = new PeerHandler(sendRate, size);
-        final ChannelHandler handler2 = new PeerHandler(null, size);
+        final ChannelHandler handler1 = new EchoHandler(sendRate, size);
+        final ChannelHandler handler2 = new EchoHandler(null, size);
 
-        final Bootstrap peerBoot1 = peerBoot(addr1, addr2, handler1);
-        final Bootstrap peerBoot2 = peerBoot(addr2, addr1, handler2);
+        final Bootstrap peerBoot1 = BootHelp.messagePeerBoot(addr1, addr2,
+                handler1);
+        final Bootstrap peerBoot2 = BootHelp.messagePeerBoot(addr2, addr1,
+                handler2);
 
         final ChannelFuture peerFuture1 = peerBoot1.connect();
         final ChannelFuture peerFuture2 = peerBoot2.connect();
@@ -119,23 +119,6 @@ public final class BenchNetty {
         Metrics.defaultRegistry().shutdown();
 
         log.info("done");
-    }
-
-    static Bootstrap peerBoot(final InetSocketAddress self,
-            final InetSocketAddress peer, final ChannelHandler handler) {
-
-        final Bootstrap boot = new Bootstrap();
-
-        final ThreadFactory connectFactory = new ThreadFactoryUDT("peer");
-
-        final NioEventLoopGroup connectGroup = new NioEventLoopGroup(2,
-                connectFactory, NioUdtProvider.MESSAGE_PROVIDER);
-
-        boot.group(connectGroup)
-                .channelFactory(NioUdtProvider.MESSAGE_RENDEZVOUS)
-                .localAddress(self).remoteAddress(peer).handler(handler);
-
-        return boot;
     }
 
 }

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package io.netty.transport.udt.bench.xfer;
+package io.netty.transport.udt.util;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.MessageBuf;
@@ -33,16 +33,20 @@ import com.yammer.metrics.core.Meter;
  * between the echo peers by sending the first message to the other peer on
  * activation.
  */
-public class PeerHandler extends
+public class EchoHandler extends
         ChannelInboundMessageHandlerAdapter<UdtMessage> {
 
-    private static final Logger log = LoggerFactory
-            .getLogger(PeerHandler.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EchoHandler.class
+            .getName());
 
     private final Meter meter;
     private final UdtMessage message;
 
-    public PeerHandler(final Meter meter, final int messageSize) {
+    public Meter meter() {
+        return meter;
+    }
+
+    public EchoHandler(final Meter meter, final int messageSize) {
         final ByteBuf byteBuf = Unpooled.buffer(messageSize);
         for (int i = 0; i < byteBuf.capacity(); i++) {
             byteBuf.writeByte((byte) i);
@@ -62,8 +66,8 @@ public class PeerHandler extends
 
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx,
-            final Throwable cause) {
-        log.error("close the connection when an exception is raised", cause);
+            final Throwable e) {
+        log.error("exception : {}", e.getMessage());
         ctx.close();
     }
 

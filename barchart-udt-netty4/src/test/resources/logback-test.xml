@@ -11,6 +11,6 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 
-	<logger name="com.barchart.udt.EpollUDT" level="INFO" />
+	<logger name="com.barchart.udt.EpollUDT" level="info" />
 
 </configuration>
