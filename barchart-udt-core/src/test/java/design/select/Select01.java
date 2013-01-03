@@ -41,6 +41,7 @@ public class Select01 extends SocketUDT {
 		if (registrationMap.containsKey(socketId)) {
 			return;
 		} else {
+			registrationMap.put(socketId, socketId);
 			epollAdd0(epoll.id(), socketId.intValue(), Opt.BOTH.code);
 		}
 	}
