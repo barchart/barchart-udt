@@ -60,7 +60,7 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         super(parent, id, channelUDT, OP_READ);
         try {
             channelUDT.configureBlocking(false);
-            config = new DefaultUdtChannelConfig();
+            config = new DefaultUdtChannelConfig(this);
             switch (channelUDT.socketUDT().status()) {
             case INIT:
             case OPENED:

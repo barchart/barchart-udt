@@ -53,7 +53,7 @@ public abstract class NioUdtBaseAcceptorChannel extends
                 SelectionKey.OP_ACCEPT);
         try {
             channelUDT.configureBlocking(false);
-            config = new DefaultUdtChannelConfig();
+            config = new DefaultUdtChannelConfig(this);
             config.apply(channelUDT);
         } catch (final IOException e) {
             try {

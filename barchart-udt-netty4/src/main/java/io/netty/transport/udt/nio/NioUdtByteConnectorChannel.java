@@ -58,7 +58,7 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         super(parent, id, channelUDT);
         try {
             channelUDT.configureBlocking(false);
-            config = new DefaultUdtChannelConfig();
+            config = new DefaultUdtChannelConfig(this);
             switch (channelUDT.socketUDT().status()) {
             case INIT:
             case OPENED:

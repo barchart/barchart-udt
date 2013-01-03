@@ -16,6 +16,7 @@
 package io.netty.transport.udt;
 
 import static io.netty.channel.ChannelOption.*;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.DefaultChannelConfig;
 
@@ -33,6 +34,10 @@ import com.barchart.udt.nio.SocketChannelUDT;
  */
 public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
         UdtChannelConfig {
+
+    public DefaultUdtChannelConfig(final Channel channel) {
+        super(channel);
+    }
 
     public static final int K = 1024;
     public static final int M = K * K;
