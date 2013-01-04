@@ -406,6 +406,14 @@
 											<groupId>${attachGroupId}</groupId>
 											<artifactId>${attachArtifactId}</artifactId>
 											<version>${attachVersion}</version>
+											<classifier>${arm}</classifier>
+											<type>nar</type>
+											<destFileName>${attachPrefix}-${arm}.nar</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>${attachGroupId}</groupId>
+											<artifactId>${attachArtifactId}</artifactId>
+											<version>${attachVersion}</version>
 											<classifier>${lin32}</classifier>
 											<type>nar</type>
 											<destFileName>${attachPrefix}-${lin32}.nar</destFileName>
@@ -473,6 +481,11 @@
 								</goals>
 								<configuration>
 									<artifacts>
+										<artifact>
+											<file>${attachFolder}/${attachPrefix}-${arm}.nar</file>
+											<classifier>${arm}</classifier>
+											<type>nar</type>
+										</artifact>
 										<artifact>
 											<file>${attachFolder}/${attachPrefix}-${lin32}.nar</file>
 											<classifier>${lin32}</classifier>
