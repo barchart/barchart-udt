@@ -19,13 +19,9 @@ public class NioServerSocketUDT extends NetServerSocketUDT {
 
 	protected NioServerSocketUDT(final ServerSocketChannelUDT channelUDT)
 			throws IOException {
-
 		super(channelUDT.socketUDT());
 		this.channelUDT = channelUDT;
-
 	}
-
-	//
 
 	@Override
 	public Socket accept() throws IOException {
