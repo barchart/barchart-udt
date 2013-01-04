@@ -23,20 +23,18 @@ import com.barchart.udt.TypeUDT;
 
 /**
  * The message container that is used for {@link TypeUDT#DATAGRAM} messages.
- * <p>
- * 
  * @see {@link NioUdtProvider#MESSAGE_CONNECTOR}
  * @see {@link NioUdtProvider#MESSAGE_RENDEZVOUS}
  */
 public final class UdtMessage extends DefaultByteBufHolder {
 
-	public UdtMessage(final ByteBuf data) {
-		super(data);
-	}
+    public UdtMessage(final ByteBuf data) {
+        super(data);
+    }
 
-	@Override
-	public UdtMessage copy() {
-		return new UdtMessage(data().copy());
-	}
+    @Override
+    public UdtMessage copy() {
+        return new UdtMessage(data().copy());
+    }
 
 }
