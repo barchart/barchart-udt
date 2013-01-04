@@ -15,7 +15,7 @@
  */
 
 /**
- * Netty UDT Transfer Speed Benchmarks
+ * UDT Transfer Speed Benchmarks
  */
 package io.netty.transport.udt.bench.xfer;
 

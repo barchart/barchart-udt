@@ -18,12 +18,15 @@ package io.netty.example.udt.echo.rendevous;
 /**
  * Peer to Peer Config
  */
-public interface Config {
+public final class Config {
 
-    String hostOne = "localhost";
-    int portOne = 1231;
+    private Config() {
+    }
 
-    String hostTwo = "localhost";
-    int portTwo = 1232;
+    public static final String hostOne = "localhost";
+    public static final int portOne = 1231;
+
+    public static final String hostTwo = "localhost";
+    public static final int portTwo = 1232;
 
 }

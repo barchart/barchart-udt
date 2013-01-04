@@ -19,14 +19,14 @@ import io.netty.channel.Channel;
 import io.netty.transport.udt.nio.NioUdtProvider;
 
 /**
- * Netty UDT {@link Channel}.
+ * UDT {@link Channel}.
  * <p>
- * Supported UDT {@link UdtChannel} are available via {@link NioUdtProvider}
+ * Supported UDT {@link UdtChannel} are available via {@link NioUdtProvider}.
  */
 public interface UdtChannel extends Channel {
 
     /**
-     * Returns the {@link UdtChannelConfig} configuration of the channel.
+     * Returns the {@link UdtChannelConfig} of the channel.
      */
     @Override
     UdtChannelConfig config();

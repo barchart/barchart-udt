@@ -37,7 +37,7 @@ import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
- * Metty Message Connector for UDT Datagrams
+ * Message Connector for UDT Datagrams.
  * <p>
  * Note: send/receive must use {@link UdtMessage} in the pipeline
  */
@@ -61,11 +61,14 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         super(parent, id, channelUDT, OP_READ);
         try {
             channelUDT.configureBlocking(false);
-            config = new DefaultUdtChannelConfig(this);
             switch (channelUDT.socketUDT().status()) {
             case INIT:
             case OPENED:
-                config.apply(channelUDT);
+                config = new DefaultUdtChannelConfig(this, channelUDT, true);
+                break;
+            default:
+                config = new DefaultUdtChannelConfig(this, channelUDT, false);
+                break;
             }
         } catch (final Exception e) {
             try {

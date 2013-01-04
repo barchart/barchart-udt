@@ -15,7 +15,7 @@
  */
 
 /**
- * examples form netty project adapted for udt
+ * Examples show how to use UDT Message Rendezvous.
  */
 package io.netty.example.udt.echo.rendevous;
 

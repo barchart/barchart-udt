@@ -35,11 +35,11 @@ import com.barchart.udt.nio.ServerSocketChannelUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
- * Netty UDT NIO components provider:
+ * UDT NIO components provider:
  * <p>
- * provides {@link ChannelFactory} for UDT channels
+ * Provides {@link ChannelFactory} for UDT channels.
  * <p>
- * provides {@link SelectorProvider} for UDT channels
+ * Provides {@link SelectorProvider} for UDT channels.
  */
 public class NioUdtProvider implements ChannelFactory {
 

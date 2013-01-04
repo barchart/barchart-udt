@@ -34,8 +34,8 @@ import com.barchart.udt.nio.ServerSocketChannelUDT;
 /**
  * Common base for Netty Byte/Message UDT Stream/Datagram acceptors.
  */
-public abstract class NioUdtAcceptorChannel extends
-        AbstractNioMessageChannel implements UdtChannel {
+public abstract class NioUdtAcceptorChannel extends AbstractNioMessageChannel
+        implements UdtChannel {
 
     protected static final InternalLogger logger = InternalLoggerFactory
             .getInstance(NioUdtAcceptorChannel.class);
@@ -46,8 +46,7 @@ public abstract class NioUdtAcceptorChannel extends
         super(null, channelUDT.socketUDT().id(), channelUDT, OP_ACCEPT);
         try {
             channelUDT.configureBlocking(false);
-            config = new DefaultUdtChannelConfig(this);
-            config.apply(channelUDT);
+            config = new DefaultUdtChannelConfig(this, channelUDT, true);
         } catch (final Exception e) {
             try {
                 channelUDT.close();

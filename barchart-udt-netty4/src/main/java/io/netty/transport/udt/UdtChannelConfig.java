@@ -19,13 +19,9 @@ import io.netty.channel.ChannelConfig;
 import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelOption;
 
-import java.io.IOException;
-
 import com.barchart.udt.OptionUDT;
 import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.KindUDT;
-import com.barchart.udt.nio.ServerSocketChannelUDT;
-import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
  * A {@link ChannelConfig} for a {@link UdtChannel}.
@@ -95,16 +91,6 @@ public interface UdtChannelConfig extends ChannelConfig {
      */
     ChannelOption<Integer> SYSTEM_SEND_BUFFER_SIZE = //
     new ChannelOption<Integer>("SYSTEM_SEND_BUFFER_SIZE");
-
-    /**
-     * Apply configuration to the {@link KindUDT#ACCEPTOR} channel.
-     */
-    void apply(final ServerSocketChannelUDT channelUDT) throws IOException;
-
-    /**
-     * Apply configuration to the {@link KindUDT#CONNECTOR} channel.
-     */
-    void apply(final SocketChannelUDT channelUDT) throws IOException;
 
     /**
      * Gets {@link KindUDT#ACCEPTOR} channel backlog.

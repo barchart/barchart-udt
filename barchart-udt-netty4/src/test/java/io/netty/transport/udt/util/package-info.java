@@ -15,7 +15,7 @@
  */
 
 /**
- * Netty UDT Benchmarks and Tests Utilities
+ * UDT Benchmarks and Tests Utilities
  */
 package io.netty.transport.udt.util;
 

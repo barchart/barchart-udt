@@ -23,8 +23,6 @@ import io.netty.channel.socket.nio.NioEventLoopGroup;
 import io.netty.example.udt.util.ThreadFactoryUDT;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.logging.InternalLoggerFactory;
-import io.netty.logging.Slf4JLoggerFactory;
 import io.netty.transport.udt.UdtChannel;
 import io.netty.transport.udt.nio.NioUdtProvider;
 
@@ -42,16 +40,6 @@ public class MsgEchoServer {
 
     private static final Logger log = LoggerFactory
             .getLogger(MsgEchoServer.class);
-
-    /**
-     * use slf4j provider for io.netty.logging.InternalLogger
-     */
-    static {
-        final InternalLoggerFactory defaultFactory = new Slf4JLoggerFactory();
-        InternalLoggerFactory.setDefaultFactory(defaultFactory);
-        log.info("InternalLoggerFactory={}", InternalLoggerFactory
-                .getDefaultFactory().getClass().getName());
-    }
 
     private final int port;
 

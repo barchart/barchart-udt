@@ -25,7 +25,7 @@ import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
- * Netty Message Channel Acceptor for UDT Datagrams
+ * Message Channel Acceptor for UDT Datagrams.
  */
 public class NioUdtMessageAcceptorChannel extends NioUdtAcceptorChannel {
 

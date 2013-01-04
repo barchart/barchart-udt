@@ -22,20 +22,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * testing thread factory
  */
-public class ThreadFactoryUDT implements ThreadFactory {
+public class UdtThreadFactory implements ThreadFactory {
 
     private static final AtomicInteger counter = new AtomicInteger();
 
     private final String name;
 
-    public ThreadFactoryUDT(final String name) {
+    public UdtThreadFactory(final String name) {
         this.name = name;
     }
 
     @Override
     public Thread newThread(final Runnable runnable) {
-        return new Thread(//
-                runnable, "udt-" + name + "-" + counter.getAndIncrement());
+        return new Thread(runnable, "udt-" + name + "-"
+                + counter.getAndIncrement());
     };
 
 }

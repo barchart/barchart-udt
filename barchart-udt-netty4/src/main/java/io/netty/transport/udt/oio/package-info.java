@@ -14,7 +14,7 @@
  * under the License.
  */
 /**
- * Netty UDT Transport for OIO Channels
+ * UDT Transport for OIO Channels.
  * <p>
  * @see /netty/example/src/main/java/io/netty/example/udt
  */

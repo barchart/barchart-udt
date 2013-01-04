@@ -25,8 +25,6 @@ import java.util.Map;
 import com.barchart.udt.OptionUDT;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.nio.ChannelUDT;
-import com.barchart.udt.nio.ServerSocketChannelUDT;
-import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
  * The default {@link UdtChannelConfig} implementation.
@@ -34,12 +32,8 @@ import com.barchart.udt.nio.SocketChannelUDT;
 public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
         UdtChannelConfig {
 
-    public DefaultUdtChannelConfig(final UdtChannel channel) {
-        super(channel);
-    }
-
-    public static final int K = 1024;
-    public static final int M = K * K;
+    private static final int K = 1024;
+    private static final int M = K * K;
 
     private volatile int protocolReceiveBuferSize = 10 * M;
     private volatile int protocolSendBuferSize = 10 * M;
@@ -55,22 +49,16 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
 
     private volatile boolean reuseAddress = true;
 
-    @Override
-    public void apply(final ServerSocketChannelUDT channelUDT)
+    public DefaultUdtChannelConfig(final UdtChannel channel,
+            final ChannelUDT channelUDT, final boolean apply)
             throws IOException {
-        apply((ChannelUDT) channelUDT);
-        final SocketUDT socketUDT = channelUDT.socketUDT();
-        // TODO acceptor specific
+        super(channel);
+        if (apply) {
+            apply(channelUDT);
+        }
     }
 
-    @Override
-    public void apply(final SocketChannelUDT channelUDT) throws IOException {
-        apply((ChannelUDT) channelUDT);
-        final SocketUDT socketUDT = channelUDT.socketUDT();
-        // TODO connector specific
-    }
-
-    public void apply(final ChannelUDT channelUDT) throws IOException {
+    protected void apply(final ChannelUDT channelUDT) throws IOException {
         final SocketUDT socketUDT = channelUDT.socketUDT();
         socketUDT.setReuseAddress(isReuseAddress());
         socketUDT.setSendBufferSize(getSendBufferSize());
@@ -134,18 +122,10 @@ public class DefaultUdtChannelConfig extends DefaultChannelConfig implements
 
     @Override
     public Map<ChannelOption<?>, Object> getOptions() {
-        return getOptions(//
-                super.getOptions(), //
-                PROTOCOL_RECEIVE_BUFFER_SIZE, //
-                PROTOCOL_SEND_BUFFER_SIZE, //
-                SYSTEM_RECEIVE_BUFFER_SIZE, //
-                SYSTEM_SEND_BUFFER_SIZE, //
-                SO_RCVBUF, //
-                SO_SNDBUF, //
-                SO_REUSEADDR, //
-                SO_LINGER, //
-                SO_BACKLOG //
-        );
+        return getOptions(super.getOptions(), PROTOCOL_RECEIVE_BUFFER_SIZE,
+                PROTOCOL_SEND_BUFFER_SIZE, SYSTEM_RECEIVE_BUFFER_SIZE,
+                SYSTEM_SEND_BUFFER_SIZE, SO_RCVBUF, SO_SNDBUF, SO_REUSEADDR,
+                SO_LINGER, SO_BACKLOG);
     }
 
     @Override

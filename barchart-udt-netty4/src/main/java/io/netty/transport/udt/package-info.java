@@ -14,7 +14,7 @@
  * under the License.
  */
 /**
- * Netty UDT Transport
+ * UDT Transport.
  * <p>
  * @see /netty/example/src/main/java/io/netty/example/udt
  */

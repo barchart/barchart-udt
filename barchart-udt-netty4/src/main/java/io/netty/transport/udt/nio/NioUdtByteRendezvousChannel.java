@@ -22,7 +22,7 @@ import io.netty.transport.udt.UdtChannel;
 import com.barchart.udt.TypeUDT;
 
 /**
- * Netty Byte Channel Rendezvous for UDT Streams
+ * Byte Channel Rendezvous for UDT Streams.
  */
 public class NioUdtByteRendezvousChannel extends NioUdtByteConnectorChannel
         implements UdtChannel {

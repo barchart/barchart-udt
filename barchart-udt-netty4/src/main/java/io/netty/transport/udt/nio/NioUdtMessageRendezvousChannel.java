@@ -23,7 +23,7 @@ import io.netty.transport.udt.UdtMessage;
 import com.barchart.udt.TypeUDT;
 
 /**
- * Netty Message Rendezvous for UDT Datagrams
+ * Message Rendezvous for UDT Datagrams.
  * <p>
  * Note: send/receive must use {@link UdtMessage} in the pipeline
  */

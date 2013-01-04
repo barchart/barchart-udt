@@ -35,7 +35,7 @@ import com.barchart.udt.TypeUDT;
 import com.barchart.udt.nio.SocketChannelUDT;
 
 /**
- * Netty Byte Channel Connector for UDT Streams
+ * Byte Channel Connector for UDT Streams.
  */
 public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         implements UdtChannel {
@@ -57,11 +57,14 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         super(parent, id, channelUDT);
         try {
             channelUDT.configureBlocking(false);
-            config = new DefaultUdtChannelConfig(this);
             switch (channelUDT.socketUDT().status()) {
             case INIT:
             case OPENED:
-                config.apply(channelUDT);
+                config = new DefaultUdtChannelConfig(this, channelUDT, true);
+                break;
+            default:
+                config = new DefaultUdtChannelConfig(this, channelUDT, false);
+                break;
             }
         } catch (final Exception e) {
             try {

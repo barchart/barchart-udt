@@ -37,7 +37,7 @@ public class BootHelp {
 
         final Bootstrap boot = new Bootstrap();
 
-        final ThreadFactory connectFactory = new ThreadFactoryUDT("peer");
+        final ThreadFactory connectFactory = new UdtThreadFactory("peer");
 
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
                 connectFactory, NioUdtProvider.BYTE_PROVIDER);
@@ -57,7 +57,7 @@ public class BootHelp {
 
         final Bootstrap boot = new Bootstrap();
 
-        final ThreadFactory connectFactory = new ThreadFactoryUDT("peer");
+        final ThreadFactory connectFactory = new UdtThreadFactory("peer");
 
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
                 connectFactory, NioUdtProvider.MESSAGE_PROVIDER);
