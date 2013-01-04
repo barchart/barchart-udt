@@ -117,9 +117,9 @@ public class SocketUDT {
 	public static final int UDT_WRITE_INDEX = 1;
 
 	/**
-	 * FIXME replace system.exit with a little less drastic approach
-	 * <p>
-	 * native library extractor and loader
+	 * native library loader
+	 * 
+	 * @throws RuntimeException
 	 */
 	static {
 
@@ -131,7 +131,7 @@ public class SocketUDT {
 
 			final String loaderName = ResourceUDT.getLibraryLoaderClassName();
 
-			log.info("library loader   : {}", loaderName);
+			log.info("loader provider  : {}", loaderName);
 
 			@SuppressWarnings("unchecked")
 			final Class<LibraryLoader> loaderClass = //
@@ -142,20 +142,20 @@ public class SocketUDT {
 			loaderInstance.load(location);
 
 		} catch (final Throwable e) {
-			log.error("Failed to LOAD native library; terminating", e);
-			System.exit(1);
+			log.error("Failed to LOAD native library", e);
+			throw new RuntimeException("load", e);
 		}
 
 		try {
 			initClass0();
 		} catch (final Throwable e) {
-			log.error("Failed to INIT native library; terminating", e);
-			System.exit(2);
+			log.error("Failed to INIT native library", e);
+			throw new RuntimeException("init", e);
 		}
 
 		if (SIGNATURE_JNI != getSignatureJNI0()) {
-			log.error("Java/Native SIGNATURE inconsistent; terminating");
-			System.exit(3);
+			log.error("Java/Native SIGNATURE inconsistent");
+			throw new RuntimeException("signature");
 		}
 
 		INIT_OK = true;
