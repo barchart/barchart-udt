@@ -22,8 +22,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.logging.InternalLoggerFactory;
 import io.netty.logging.Slf4JLoggerFactory;
 import io.netty.transport.udt.util.BootHelp;
-import io.netty.transport.udt.util.ConsoleReporterUDT;
+import io.netty.transport.udt.util.CustomReporter;
 import io.netty.transport.udt.util.EchoMessageHandler;
+import io.netty.transport.udt.util.TrafficControl;
 import io.netty.transport.udt.util.UnitHelp;
 
 import java.net.InetSocketAddress;
@@ -36,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.Timer;
 
 /**
  * perform two way netty send/recv
@@ -75,22 +75,33 @@ public final class BenchNetty {
         benchSize.inc(size);
     }
 
-    static final Meter sendRate = Metrics.newMeter(BenchNetty.class,
-            "send rate", "bytes", TimeUnit.SECONDS);
+    static final Meter rate = Metrics.newMeter(BenchNetty.class, "rate",
+            "bytes", TimeUnit.SECONDS);
 
-    static final Timer sendTime = Metrics.newTimer(BenchNetty.class,
-            "send time", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    TrafficControl.delay(0);
+                } catch (final Exception e) {
+                    log.error("", e);
+                }
+            }
+        });
+    }
 
     public static void main(final String[] args) throws Exception {
 
         log.info("init");
+        TrafficControl.delay(0);
 
         final AtomicBoolean isOn = new AtomicBoolean(true);
 
         final InetSocketAddress addr1 = UnitHelp.localSocketAddress();
         final InetSocketAddress addr2 = UnitHelp.localSocketAddress();
 
-        final ChannelHandler handler1 = new EchoMessageHandler(sendRate, size);
+        final ChannelHandler handler1 = new EchoMessageHandler(rate, size);
         final ChannelHandler handler2 = new EchoMessageHandler(null, size);
 
         final Bootstrap peerBoot1 = BootHelp.messagePeerBoot(addr1, addr2,
@@ -101,7 +112,7 @@ public final class BenchNetty {
         final ChannelFuture peerFuture1 = peerBoot1.connect();
         final ChannelFuture peerFuture2 = peerBoot2.connect();
 
-        ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
+        CustomReporter.enable(3, TimeUnit.SECONDS);
 
         Thread.sleep(time);
 
@@ -119,6 +130,7 @@ public final class BenchNetty {
 
         Metrics.defaultRegistry().shutdown();
 
+        TrafficControl.delay(0);
         log.info("done");
     }
 

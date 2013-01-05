@@ -40,20 +40,20 @@ import com.barchart.udt.nio.SocketChannelUDT;
 public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         implements UdtChannel {
 
-    protected static final InternalLogger logger = InternalLoggerFactory
+    private static final InternalLogger logger = InternalLoggerFactory
             .getInstance(NioUdtByteConnectorChannel.class);
 
-    protected static final ChannelMetadata METADATA = new ChannelMetadata(
+    private static final ChannelMetadata METADATA = new ChannelMetadata(
             BufType.BYTE, false);
 
     private final UdtChannelConfig config;
 
-    protected NioUdtByteConnectorChannel() {
+    public NioUdtByteConnectorChannel() {
         this(TypeUDT.STREAM);
     }
 
-    protected NioUdtByteConnectorChannel(final Channel parent,
-            final Integer id, final SocketChannelUDT channelUDT) {
+    public NioUdtByteConnectorChannel(final Channel parent, final Integer id,
+            final SocketChannelUDT channelUDT) {
         super(parent, id, channelUDT);
         try {
             channelUDT.configureBlocking(false);

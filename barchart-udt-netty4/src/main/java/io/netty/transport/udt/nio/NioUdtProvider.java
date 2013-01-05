@@ -41,9 +41,9 @@ import com.barchart.udt.nio.SocketChannelUDT;
  * <p>
  * Provides {@link SelectorProvider} for UDT channels.
  */
-public class NioUdtProvider implements ChannelFactory {
+public final class NioUdtProvider implements ChannelFactory {
 
-    protected static final InternalLogger logger = InternalLoggerFactory
+    private static final InternalLogger logger = InternalLoggerFactory
             .getInstance(NioUdtProvider.class);
 
     /**
@@ -186,7 +186,7 @@ public class NioUdtProvider implements ChannelFactory {
     /**
      * {@link ChannelFactory} for given {@link TypeUDT} and {@link KindUDT}
      */
-    protected NioUdtProvider(final TypeUDT type, final KindUDT kind) {
+    private NioUdtProvider(final TypeUDT type, final KindUDT kind) {
         this.type = type;
         this.kind = kind;
     }

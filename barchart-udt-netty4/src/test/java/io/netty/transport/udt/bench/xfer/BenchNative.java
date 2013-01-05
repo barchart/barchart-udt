@@ -19,7 +19,8 @@ package io.netty.transport.udt.bench.xfer;
 import static io.netty.transport.udt.util.UnitHelp.*;
 import io.netty.logging.InternalLoggerFactory;
 import io.netty.logging.Slf4JLoggerFactory;
-import io.netty.transport.udt.util.ConsoleReporterUDT;
+import io.netty.transport.udt.util.CustomReporter;
+import io.netty.transport.udt.util.TrafficControl;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -34,16 +35,15 @@ import org.slf4j.LoggerFactory;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.StatusUDT;
 import com.barchart.udt.TypeUDT;
+import com.google.caliper.SimpleBenchmark;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.Timer;
-import com.yammer.metrics.core.TimerContext;
 
 /**
  * perform two way native udt socket send/recv
  */
-public final class BenchNative {
+public final class BenchNative extends SimpleBenchmark {
 
     private BenchNative() {
     }
@@ -77,15 +77,26 @@ public final class BenchNative {
         benchSize.inc(size);
     }
 
-    static final Meter sendRate = Metrics.newMeter(BenchNative.class,
-            "send rate", "bytes", TimeUnit.SECONDS);
+    static final Meter rate = Metrics.newMeter(BenchNative.class, "rate",
+            "bytes", TimeUnit.SECONDS);
 
-    static final Timer sendTime = Metrics.newTimer(BenchNative.class,
-            "send time", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    TrafficControl.delay(0);
+                } catch (final Exception e) {
+                    log.error("", e);
+                }
+            }
+        });
+    }
 
     public static void main(final String[] args) throws Exception {
 
         log.info("init");
+        TrafficControl.delay(0);
 
         final InetSocketAddress addr1 = localSocketAddress();
         final InetSocketAddress addr2 = localSocketAddress();
@@ -138,17 +149,13 @@ public final class BenchNative {
                 buffer.rewind();
                 buffer.putLong(0, sequence++);
 
-                final TimerContext timer = sendTime.time();
-
                 final int count = peer1.send(buffer);
-
-                timer.stop();
 
                 if (count != size) {
                     throw new Exception("count");
                 }
 
-                sendRate.mark(count);
+                rate.mark(count);
             }
         };
 
@@ -256,7 +263,7 @@ public final class BenchNative {
         executor.submit(sendPeer1);
         executor.submit(sendPeer2);
 
-        ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
+        CustomReporter.enable(3, TimeUnit.SECONDS);
 
         Thread.sleep(time);
 
@@ -271,6 +278,7 @@ public final class BenchNative {
         peer1.close();
         peer2.close();
 
+        TrafficControl.delay(0);
         log.info("done");
     }
 

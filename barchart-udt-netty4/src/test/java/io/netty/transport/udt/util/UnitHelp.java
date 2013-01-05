@@ -51,6 +51,40 @@ public final class UnitHelp {
     }
 
     /**
+     * measure ping time to host
+     */
+    public static long ping(final String host) throws Exception {
+        final String name = System.getProperty("os.name").toLowerCase();
+
+        final String command;
+        if (name.contains("linux")) {
+            command = "ping -c 1 " + host;
+        } else if (name.contains("mac os x")) {
+            command = "ping -c 1 " + host;
+        } else if (name.contains("windows")) {
+            command = "ping -n 1 " + host;
+        } else {
+            throw new Exception("unknown platform");
+        }
+
+        final long timeStart = System.currentTimeMillis();
+
+        process(command);
+
+        final long timeFinish = System.currentTimeMillis();
+
+        final long timeDiff = timeFinish - timeStart;
+
+        return timeDiff;
+    }
+
+    public static void process(final String command) throws Exception {
+        final ProcessBuilder builder = new ProcessBuilder(command.split("\\s"));
+        final Process process = builder.start();
+        process.waitFor();
+    }
+
+    /**
      * @return newly allocated address or null for failure
      */
     public static synchronized InetSocketAddress findLocalAddress(

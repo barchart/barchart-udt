@@ -30,10 +30,10 @@ import com.barchart.udt.TypeUDT;
 public class NioUdtMessageRendezvousChannel extends
         NioUdtMessageConnectorChannel implements UdtChannel {
 
-    protected static final InternalLogger logger = InternalLoggerFactory
+    private static final InternalLogger logger = InternalLoggerFactory
             .getInstance(NioUdtMessageConnectorChannel.class);
 
-    protected NioUdtMessageRendezvousChannel() {
+    public NioUdtMessageRendezvousChannel() {
         super(NioUdtProvider.newRendezvousChannelUDT(TypeUDT.DATAGRAM));
     }
 

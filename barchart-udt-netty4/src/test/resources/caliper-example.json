@@ -1,0 +1,373 @@
+{
+    "run": {
+        "benchmarkName": "io.netty.bench.transport.Temp",
+        "executedTimestamp": "2013-01-05T19:04:28UTC",
+        "measurements": [
+            {
+                "k": {
+                    "variables": {
+                        "vm": "java",
+                        "trial": "0",
+                        "benchmark": "Temp",
+                        "delayMillis": "0"
+                    }
+                },
+                "v": {
+                    "measurementSetMap": {
+                        "TIME": {
+                            "measurements": [
+                                {
+                                    "raw": 0.4606842238163199,
+                                    "processed": 0.4606842238163199,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.47590022248984165,
+                                    "processed": 0.47590022248984165,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4458810664253795,
+                                    "processed": 0.4458810664253795,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.45563620736858945,
+                                    "processed": 0.45563620736858945,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4571477067788441,
+                                    "processed": 0.4571477067788441,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4616077906869288,
+                                    "processed": 0.4616077906869288,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4516060035730466,
+                                    "processed": 0.4516060035730466,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.46007460318478355,
+                                    "processed": 0.46007460318478355,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.45531756222600245,
+                                    "processed": 0.45531756222600245,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.45217762240074166,
+                                    "processed": 0.45217762240074166,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                }
+                            ],
+                            "unitNames": {
+                                "ns": 1,
+                                "s": 1000000000,
+                                "ms": 1000000,
+                                "us": 1000
+                            },
+                            "systemOutCharCount": 0,
+                            "systemErrCharCount": 0
+                        }
+                    },
+                    "eventLogMap": {
+                        "TIME": "     46    1             java.lang.String::indexOf (166 bytes)\n     48    2             sun.nio.cs.UTF_8$Encoder::encode (361 bytes)\n     55    3             java.lang.String::hashCode (55 bytes)\n     57    4             java.lang.String::indexOf (70 bytes)\n     57    5             java.lang.String::charAt (29 bytes)\n     60    6             java.io.UnixFileSystem::normalize (75 bytes)\n     62    7             java.lang.String::startsWith (72 bytes)\n     63    8             java.lang.String::lastIndexOf (52 bytes)\n     64    9             sun.net.www.ParseUtil::encodePath (336 bytes)\n     77   10     n       java.lang.System::arraycopy (0 bytes)   (static)\n     82   11             java.lang.String::length (6 bytes)\n     88   12             java.lang.Object::<init> (1 bytes)\n     89   13             java.lang.Math::min (11 bytes)\n     96   14             java.lang.String::replace (127 bytes)\n    109   15             java.lang.String::equals (81 bytes)\n    120   16             com.google.common.base.CharMatcher$LookupTable::set (15 bytes)\n    120   17             com.google.common.base.CharMatcher$12::setBits (27 bytes)\n    122   18             java.lang.AbstractStringBuilder::ensureCapacityInternal (16 bytes)\n    130   19             java.lang.AbstractStringBuilder::append (48 bytes)\n    130   20             java.lang.String::getChars (62 bytes)\n    133   21             java.lang.StringBuilder::append (8 bytes)\n    156   22             java.util.Arrays::copyOfRange (63 bytes)\n    159   23             java.lang.String::startsWith (7 bytes)\n    168   24             java.lang.String::<init> (67 bytes)\n    170   25   !         java.net.URL::<init> (543 bytes)\nstarting Scenario{vm=java, trial=0, benchmark=Temp, delayMillis=0}\n[caliper] [starting warmup]\n    191   26             java.lang.Number::<init> (5 bytes)\n    192   27             java.lang.Integer::<init> (10 bytes)\n    198    1 %           java.lang.Integer$IntegerCache::<clinit> @ 55 (86 bytes)\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n    454    2 %           io.netty.bench.transport.Temp::timeTemp @ 5 (27 bytes)\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]    471   28             io.netty.bench.transport.Temp::timeTe\nmp (27 bytes)\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n    542   29             java.lang.CharacterData::of (120 bytes)\n    542   30             java.lang.CharacterDataLatin1::getProperties (11 bytes)\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [ending warmup]\n[caliper] [measuring nanos per rep with scale 1.00]\n[caliper] [running trial with 1069482065 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [measuring nanos per rep with scale 0.50]\n[caliper] [running trial with 542671068 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.48 nanoseconds per rep]\n[caliper] [measuring nanos per rep with scale 1.50]\n[caliper] [running trial with 1628013205 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1085342137 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1085342137 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1085342137 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1085342137 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1085342137 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1085342137 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1085342137 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n   8475   31             sun.nio.cs.UTF_8$Decoder::decode (640 bytes)\n   8513   32             java.lang.AbstractStringBuilder::<init> (12 bytes)\n   8517   33             java.lang.String::substring (79 bytes)\n   8526   34             java.lang.String::indexOf (25 bytes)\n"
+                    }
+                }
+            },
+            {
+                "k": {
+                    "variables": {
+                        "vm": "java",
+                        "trial": "0",
+                        "benchmark": "Temp",
+                        "delayMillis": "10"
+                    }
+                },
+                "v": {
+                    "measurementSetMap": {
+                        "TIME": {
+                            "measurements": [
+                                {
+                                    "raw": 0.4480676073730936,
+                                    "processed": 0.4480676073730936,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.45797557957697377,
+                                    "processed": 0.45797557957697377,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4493162261885478,
+                                    "processed": 0.4493162261885478,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4559927217976865,
+                                    "processed": 0.4559927217976865,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.44874840235669655,
+                                    "processed": 0.44874840235669655,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.44999912393821373,
+                                    "processed": 0.44999912393821373,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                }
+                            ],
+                            "unitNames": {
+                                "ns": 1,
+                                "s": 1000000000,
+                                "ms": 1000000,
+                                "us": 1000
+                            },
+                            "systemOutCharCount": 0,
+                            "systemErrCharCount": 0
+                        }
+                    },
+                    "eventLogMap": {
+                        "TIME": "     62    1             java.lang.String::indexOf (166 bytes)\n     64    2             sun.nio.cs.UTF_8$Encoder::encode (361 bytes)\n     71    3             java.lang.String::hashCode (55 bytes)\n     73    4             java.lang.String::indexOf (70 bytes)\n     73    5             java.lang.String::charAt (29 bytes)\n     75    6             java.io.UnixFileSystem::normalize (75 bytes)\n     77    7             java.lang.String::startsWith (72 bytes)\n     78    8             java.lang.String::lastIndexOf (52 bytes)\n     79    9             sun.net.www.ParseUtil::encodePath (336 bytes)\n     93   10     n       java.lang.System::arraycopy (0 bytes)   (static)\n     98   11             java.lang.String::length (6 bytes)\n    105   12             java.lang.Object::<init> (1 bytes)\n    105   13             java.lang.Math::min (11 bytes)\n    112   14             java.lang.String::replace (127 bytes)\n    125   15             java.lang.String::equals (81 bytes)\n    136   16             com.google.common.base.CharMatcher$LookupTable::set (15 bytes)\n    136   17             com.google.common.base.CharMatcher$12::setBits (27 bytes)\n    138   18             java.lang.AbstractStringBuilder::ensureCapacityInternal (16 bytes)\n    146   19             java.lang.AbstractStringBuilder::append (48 bytes)\n    146   20             java.lang.String::getChars (62 bytes)\n    149   21             java.lang.StringBuilder::append (8 bytes)\n    173   22             java.util.Arrays::copyOfRange (63 bytes)\n    176   23             java.lang.String::startsWith (7 bytes)\n    185   24             java.lang.String::<init> (67 bytes)\n    187   25   !         java.net.URL::<init> (543 bytes)\nstarting Scenario{vm=java, trial=0, benchmark=Temp, delayMillis=10}\n[caliper] [starting warmup]\n    208   26             java.lang.Number::<init> (5 bytes)\n    209   27             java.lang.Integer::<init> (10 bytes)\n    215    1 %           java.lang.Integer$IntegerCache::<clinit> @ 55 (86 bytes)\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n    509    2 %           io.netty.bench.transport.Temp::time[caliper] [done measured section]Temp @ 5 (27 bytes)\n\n[caliper] [starting measured section]\n    523   28             io.netty.bench.transport.Temp::timeTemp (27 bytes)\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n    578   29             java.lang.CharacterData::of (120 bytes)\n    578   30             java.lang.CharacterDataLatin1::getProperties (11 bytes)\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [ending warmup]\n[caliper] [measuring nanos per rep with scale 1.00]\n[caliper] [running trial with 1054132127 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [measuring nanos per rep with scale 0.50]\n[caliper] [running trial with 557951514 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [measuring nanos per rep with scale 1.50]\n[caliper] [running trial with 1673854542 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1115903028 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1115903028 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1115903028 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n   6591   31             sun.nio.cs.UTF_8$Decoder::decode (640 bytes)\n   6625   32             java.lang.AbstractStringBuilder::<init> (12 bytes)\n   6628   33             java.lang.String::substring (79 bytes)\n   6630   34             java.lang.StringBuilder::toString (17 bytes)\n   6635   35             java.lang.String::indexOf (25 bytes)\n"
+                    }
+                }
+            },
+            {
+                "k": {
+                    "variables": {
+                        "vm": "java",
+                        "trial": "0",
+                        "benchmark": "Temp",
+                        "delayMillis": "20"
+                    }
+                },
+                "v": {
+                    "measurementSetMap": {
+                        "TIME": {
+                            "measurements": [
+                                {
+                                    "raw": 0.45054725826123093,
+                                    "processed": 0.45054725826123093,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.46393814874254746,
+                                    "processed": 0.46393814874254746,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4476257542967584,
+                                    "processed": 0.4476257542967584,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4541636192663837,
+                                    "processed": 0.4541636192663837,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4599206580691094,
+                                    "processed": 0.4599206580691094,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.46492156863863515,
+                                    "processed": 0.46492156863863515,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.45168693034950375,
+                                    "processed": 0.45168693034950375,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4568606339024934,
+                                    "processed": 0.4568606339024934,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4515580287788629,
+                                    "processed": 0.4515580287788629,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                },
+                                {
+                                    "raw": 0.4529461198274029,
+                                    "processed": 0.4529461198274029,
+                                    "unitNames": {
+                                        "ns": 1,
+                                        "s": 1000000000,
+                                        "ms": 1000000,
+                                        "us": 1000
+                                    }
+                                }
+                            ],
+                            "unitNames": {
+                                "ns": 1,
+                                "s": 1000000000,
+                                "ms": 1000000,
+                                "us": 1000
+                            },
+                            "systemOutCharCount": 0,
+                            "systemErrCharCount": 0
+                        }
+                    },
+                    "eventLogMap": {
+                        "TIME": "     66    1             java.lang.String::indexOf (166 bytes)\n     68    2             sun.nio.cs.UTF_8$Encoder::encode (361 bytes)\n     75    3             java.lang.String::hashCode (55 bytes)\n     77    4             java.lang.String::indexOf (70 bytes)\n     77    5             java.lang.String::charAt (29 bytes)\n     79    6             java.io.UnixFileSystem::normalize (75 bytes)\n     81    7             java.lang.String::startsWith (72 bytes)\n     82    8             java.lang.String::lastIndexOf (52 bytes)\n     83    9             sun.net.www.ParseUtil::encodePath (336 bytes)\n     97   10     n       java.lang.System::arraycopy (0 bytes)   (static)\n    101   11             java.lang.String::length (6 bytes)\n    108   12             java.lang.Object::<init> (1 bytes)\n    109   13             java.lang.Math::min (11 bytes)\n    116   14             java.lang.String::replace (127 bytes)\n    128   15             java.lang.String::equals (81 bytes)\n    140   16             com.google.common.base.CharMatcher$LookupTable::set (15 bytes)\n    140   17             com.google.common.base.CharMatcher$12::setBits (27 bytes)\n    141   18             java.lang.AbstractStringBuilder::ensureCapacityInternal (16 bytes)\n    150   19             java.lang.AbstractStringBuilder::append (48 bytes)\n    150   20             java.lang.String::getChars (62 bytes)\n    152   21             java.lang.StringBuilder::append (8 bytes)\n    176   22             java.util.Arrays::copyOfRange (63 bytes)\n    179   23             java.lang.String::startsWith (7 bytes)\n    188   24             java.lang.String::<init> (67 bytes)\n    190   25   !         java.net.URL::<init> (543 bytes)\nstarting Scenario{vm=java, trial=0, benchmark=Temp, delayMillis=20}\n[caliper] [starting warmup]\n    211   26             java.lang.Number::<init> (5 bytes)\n    212   27             java.lang.Integer::<init> (10 bytes)\n    219    1 %           java.lang.Integer$IntegerCache::<clinit> @ 55 (86 bytes)\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n    461    2 %           io.netty.bench.transport.Temp::timeTemp @ 5 (27 bytes)\n[caliper] [done measured section]\n[caliper] [starting measured section]\n    478   28             io.netty.bench.transport.Temp::[caliper] [done measured section]timeTemp (27 bytes)\n\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n    526   29             java.lang.CharacterData::of (120 bytes)\n    526   30             java.lang.CharacterDataLatin1::getProperties (11 bytes)\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [ending warmup]\n[caliper] [measuring nanos per rep with scale 1.00]\n[caliper] [running trial with 1039603219 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [measuring nanos per rep with scale 0.50]\n[caliper] [running trial with 554880748 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [measuring nanos per rep with scale 1.50]\n[caliper] [running trial with 1664642246 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1109761497 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1109761497 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1109761497 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1109761497 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1109761497 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.46 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1109761497 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n[caliper] [performing additional measurement with scale 1.00]\n[caliper] [running trial with 1109761497 reps]\n[caliper] [starting measured section]\n[caliper] [done measured section]\n[caliper] [took 0.45 nanoseconds per rep]\n   8651   31             sun.nio.cs.UTF_8$Decoder::decode (640 bytes)\n   8684   32             java.lang.AbstractStringBuilder::<init> (12 bytes)\n   8688   33             java.lang.String::substring (79 bytes)\n   8689   34             java.lang.StringBuilder::toString (17 bytes)\n   8696   35             java.lang.String::indexOf (25 bytes)\n   8699   36             java.lang.StringBuilder::<init> (7 bytes)\n"
+                    }
+                }
+            }
+        ]
+    },
+    "environment": {
+        "propertyMap": {
+            "jre.vmname": "Java HotSpot(TM) Server VM",
+            "host.cpu.names": "[Intel(R) Core(TM) i7-2820QM CPU @ 2.30GHz x 8]",
+            "jre.version": "1.6.0_37-b06",
+            "host.cpu.cores": "[4 x 8]",
+            "jre.availableProcessors": "8",
+            "os.name": "Linux",
+            "jre.vmversion": "20.12-b01",
+            "host.memory.swap": "[0 kB]",
+            "os.version": "3.2.0-35-generic-pae",
+            "host.cpu.cachesize": "[8192 KB x 8]",
+            "host.cpus": "8",
+            "host.name": "wks002",
+            "os.arch": "i386",
+            "host.memory.physical": "[16395104 kB]"
+        }
+    }
+}

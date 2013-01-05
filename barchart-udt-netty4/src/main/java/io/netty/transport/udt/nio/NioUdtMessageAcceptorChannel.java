@@ -29,10 +29,10 @@ import com.barchart.udt.nio.SocketChannelUDT;
  */
 public class NioUdtMessageAcceptorChannel extends NioUdtAcceptorChannel {
 
-    protected static final InternalLogger logger = InternalLoggerFactory
+    private static final InternalLogger logger = InternalLoggerFactory
             .getInstance(NioUdtMessageAcceptorChannel.class);
 
-    protected static final ChannelMetadata METADATA = new ChannelMetadata(
+    private static final ChannelMetadata METADATA = new ChannelMetadata(
             BufType.MESSAGE, false);
 
     protected NioUdtMessageAcceptorChannel() {

@@ -29,13 +29,13 @@ import com.barchart.udt.nio.SocketChannelUDT;
  */
 public class NioUdtByteAcceptorChannel extends NioUdtAcceptorChannel {
 
-    protected static final InternalLogger logger = InternalLoggerFactory
+    private static final InternalLogger logger = InternalLoggerFactory
             .getInstance(NioUdtByteAcceptorChannel.class);
 
-    protected static final ChannelMetadata METADATA = new ChannelMetadata(
+    private static final ChannelMetadata METADATA = new ChannelMetadata(
             BufType.BYTE, false);
 
-    protected NioUdtByteAcceptorChannel() {
+    public NioUdtByteAcceptorChannel() {
         super(TypeUDT.STREAM);
     }
 

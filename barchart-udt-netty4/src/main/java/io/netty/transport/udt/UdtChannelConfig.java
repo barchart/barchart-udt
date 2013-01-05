@@ -71,26 +71,26 @@ public interface UdtChannelConfig extends ChannelConfig {
     /**
      * See {@link OptionUDT#Protocol_Receive_Buffer_Size}.
      */
-    ChannelOption<Integer> PROTOCOL_RECEIVE_BUFFER_SIZE = //
-    new ChannelOption<Integer>("PROTOCOL_RECEIVE_BUFFER_SIZE");
+    ChannelOption<Integer> PROTOCOL_RECEIVE_BUFFER_SIZE = new ChannelOption<Integer>(
+            "PROTOCOL_RECEIVE_BUFFER_SIZE");
 
     /**
      * See {@link OptionUDT#Protocol_Send_Buffer_Size}.
      */
-    ChannelOption<Integer> PROTOCOL_SEND_BUFFER_SIZE = //
-    new ChannelOption<Integer>("PROTOCOL_SEND_BUFFER_SIZE");
+    ChannelOption<Integer> PROTOCOL_SEND_BUFFER_SIZE = new ChannelOption<Integer>(
+            "PROTOCOL_SEND_BUFFER_SIZE");
 
     /**
      * See {@link OptionUDT#System_Receive_Buffer_Size}.
      */
-    ChannelOption<Integer> SYSTEM_RECEIVE_BUFFER_SIZE = //
-    new ChannelOption<Integer>("SYSTEM_RECEIVE_BUFFER_SIZE");
+    ChannelOption<Integer> SYSTEM_RECEIVE_BUFFER_SIZE = new ChannelOption<Integer>(
+            "SYSTEM_RECEIVE_BUFFER_SIZE");
 
     /**
      * See {@link OptionUDT#System_Send_Buffer_Size}.
      */
-    ChannelOption<Integer> SYSTEM_SEND_BUFFER_SIZE = //
-    new ChannelOption<Integer>("SYSTEM_SEND_BUFFER_SIZE");
+    ChannelOption<Integer> SYSTEM_SEND_BUFFER_SIZE = new ChannelOption<Integer>(
+            "SYSTEM_SEND_BUFFER_SIZE");
 
     /**
      * Gets {@link KindUDT#ACCEPTOR} channel backlog.

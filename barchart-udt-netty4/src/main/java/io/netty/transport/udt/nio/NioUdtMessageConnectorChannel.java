@@ -44,19 +44,19 @@ import com.barchart.udt.nio.SocketChannelUDT;
 public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         implements UdtChannel {
 
-    protected static final InternalLogger logger = InternalLoggerFactory
+    private static final InternalLogger logger = InternalLoggerFactory
             .getInstance(NioUdtMessageConnectorChannel.class);
 
-    protected static final ChannelMetadata METADATA = new ChannelMetadata(
+    private static final ChannelMetadata METADATA = new ChannelMetadata(
             BufType.MESSAGE, false);
 
     private final UdtChannelConfig config;
 
-    protected NioUdtMessageConnectorChannel() {
+    public NioUdtMessageConnectorChannel() {
         this(TypeUDT.DATAGRAM);
     }
 
-    protected NioUdtMessageConnectorChannel(final Channel parent,
+    public NioUdtMessageConnectorChannel(final Channel parent,
             final Integer id, final SocketChannelUDT channelUDT) {
         super(parent, id, channelUDT, OP_READ);
         try {
@@ -82,11 +82,11 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
         }
     }
 
-    protected NioUdtMessageConnectorChannel(final SocketChannelUDT channelUDT) {
+    public NioUdtMessageConnectorChannel(final SocketChannelUDT channelUDT) {
         this(null, channelUDT.socketUDT().id(), channelUDT);
     }
 
-    protected NioUdtMessageConnectorChannel(final TypeUDT type) {
+    public NioUdtMessageConnectorChannel(final TypeUDT type) {
         this(NioUdtProvider.newConnectorChannelUDT(type));
     }
 
