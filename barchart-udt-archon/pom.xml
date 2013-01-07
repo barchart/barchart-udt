@@ -20,14 +20,14 @@
 
 	<groupId>com.barchart.udt</groupId>
 	<artifactId>barchart-udt-archon</artifactId>
-	<version>2.2.0-SNAPSHOT</version>
+	<version>2.2.0</version>
 	<packaging>pom</packaging>
 
 	<scm>
 		<url>https://github.com/barchart/barchart-udt</url>
 		<connection>scm:git:git://github.com/barchart/barchart-udt.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-udt.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>barchart-udt-2.2.0</tag>
 	</scm>
 
 	<description>Java wrapper around native C++ UDT protocol</description>
@@ -274,7 +274,7 @@
 			</activation>
 			<properties>
 				<archosClassifier>${arm}</archosClassifier>
-				<javaBits></javaBits>
+				<javaBits />
 			</properties>
 		</profile>
 		<profile>
