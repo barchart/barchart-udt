@@ -213,9 +213,9 @@ public class NioUdtMessageConnectorChannel extends AbstractNioMessageChannel
             }
         }
 
-        message.free();
-
         messageQueue.remove();
+
+        message.free();
 
         return 1;
     }

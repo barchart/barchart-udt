@@ -35,7 +35,7 @@ public class NioUdtMessageAcceptorChannel extends NioUdtAcceptorChannel {
     private static final ChannelMetadata METADATA = new ChannelMetadata(
             BufType.MESSAGE, false);
 
-    protected NioUdtMessageAcceptorChannel() {
+    public NioUdtMessageAcceptorChannel() {
         super(TypeUDT.DATAGRAM);
     }
 

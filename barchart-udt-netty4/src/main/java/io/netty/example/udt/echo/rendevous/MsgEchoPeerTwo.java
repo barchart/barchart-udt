@@ -15,7 +15,7 @@
  */
 package io.netty.example.udt.echo.rendevous;
 
-import io.netty.example.udt.util.ConsoleReporterUDT;
+import io.netty.example.udt.util.UtilConsoleReporter;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +37,7 @@ public class MsgEchoPeerTwo extends MsgEchoPeerBase {
         log.info("init");
 
         // peer two is reporting metrics
-        ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
+        UtilConsoleReporter.enable(3, TimeUnit.SECONDS);
 
         final int messageSize = 64 * 1024;
 

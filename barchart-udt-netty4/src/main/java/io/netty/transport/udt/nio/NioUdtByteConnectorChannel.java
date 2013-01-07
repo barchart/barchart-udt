@@ -78,11 +78,11 @@ public class NioUdtByteConnectorChannel extends AbstractNioByteChannel
         }
     }
 
-    protected NioUdtByteConnectorChannel(final SocketChannelUDT channelUDT) {
+    public NioUdtByteConnectorChannel(final SocketChannelUDT channelUDT) {
         this(null, channelUDT.socketUDT().id(), channelUDT);
     }
 
-    protected NioUdtByteConnectorChannel(final TypeUDT type) {
+    public NioUdtByteConnectorChannel(final TypeUDT type) {
         this(NioUdtProvider.newConnectorChannelUDT(type));
     }
 

@@ -41,12 +41,12 @@ import com.yammer.metrics.core.Meter;
 /**
  * perform two way netty send/recv
  */
-public final class BenchNetty {
+public final class UdtNetty {
 
-    private BenchNetty() {
+    private UdtNetty() {
     }
 
-    static final Logger log = LoggerFactory.getLogger(BenchNetty.class);
+    static final Logger log = LoggerFactory.getLogger(UdtNetty.class);
 
     /**
      * use slf4j provider for io.netty.logging.InternalLogger
@@ -64,10 +64,10 @@ public final class BenchNetty {
     /** transfer chunk size */
     static final int size = 64 * 1024;
 
-    static final Counter benchTime = Metrics.newCounter(BenchNetty.class,
+    static final Counter benchTime = Metrics.newCounter(UdtNetty.class,
             "bench time");
 
-    static final Counter benchSize = Metrics.newCounter(BenchNetty.class,
+    static final Counter benchSize = Metrics.newCounter(UdtNetty.class,
             "bench size");
 
     static {
@@ -75,7 +75,7 @@ public final class BenchNetty {
         benchSize.inc(size);
     }
 
-    static final Meter rate = Metrics.newMeter(BenchNetty.class, "rate",
+    static final Meter rate = Metrics.newMeter(UdtNetty.class, "rate",
             "bytes", TimeUnit.SECONDS);
 
     static {

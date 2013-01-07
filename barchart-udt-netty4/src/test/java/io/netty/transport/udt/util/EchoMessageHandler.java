@@ -49,6 +49,8 @@ public class EchoMessageHandler extends
 
     public EchoMessageHandler(final Meter meter, final int messageSize) {
 
+        super(UdtMessage.class);
+
         this.meter = meter;
 
         final ByteBuf byteBuf = Unpooled.buffer(messageSize);

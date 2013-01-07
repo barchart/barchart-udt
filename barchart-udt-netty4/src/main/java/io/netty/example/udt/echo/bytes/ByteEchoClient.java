@@ -19,8 +19,8 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
-import io.netty.example.udt.util.ConsoleReporterUDT;
-import io.netty.example.udt.util.ThreadFactoryUDT;
+import io.netty.example.udt.util.UtilConsoleReporter;
+import io.netty.example.udt.util.UtilThreadFactory;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.transport.udt.UdtChannel;
@@ -60,7 +60,7 @@ public class ByteEchoClient {
     public void run() throws Exception {
         // Configure the client.
         final Bootstrap boot = new Bootstrap();
-        final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
+        final ThreadFactory connectFactory = new UtilThreadFactory("connect");
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
                 connectFactory, NioUdtProvider.BYTE_PROVIDER);
         try {
@@ -91,7 +91,7 @@ public class ByteEchoClient {
         log.info("init");
 
         // client is reporting metrics
-        ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
+        UtilConsoleReporter.enable(3, TimeUnit.SECONDS);
 
         final String host = "localhost";
         final int port = 1234;

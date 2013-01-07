@@ -16,14 +16,20 @@
 
 package io.netty.transport.udt.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Introduce traffic control, such as transfer delays.
+ * Introduce traffic control, such as transfer latency.
  * <p>
  * requires sudo setup for /sbin/tc under current account
  * <p>
  * see http://www.davidverhasselt.com/2008/01/27/passwordless-sudo/
  */
 public final class TrafficControl {
+
+    private static final Logger log = LoggerFactory
+            .getLogger(TrafficControl.class.getName());
 
     private TrafficControl() {
     }
@@ -47,24 +53,24 @@ public final class TrafficControl {
             return time2 >= time1 + millis - margin
                     && time2 >= time3 + millis - margin;
         } catch (final Throwable e) {
-            e.printStackTrace();
+            log.debug("", e);
             return false;
         }
     }
 
     /**
-     * introduce round-trip delay on local host
-     * @param time - delay in milliseconds
+     * Introduce round-trip delay on local host
+     * @param time - delay in milliseconds; use zero to remove delay.
      */
     public static void delay(final int time) throws Exception {
         if (time < 0) {
-            throw new IllegalArgumentException("negative delay");
+            throw new IllegalArgumentException("negative latency");
         }
         final int delay = time / 2;
         if (delay == 0) {
             UnitHelp.process(String.format(TC_RESET, "lo"));
         } else {
-            /** extend packet buffer queue to avoid packet loss due to delay */
+            /** extend packet buffer queue to avoid packet loss due to latency */
             final int limit = 1024 * 1024;
             UnitHelp.process(String.format(TC_RESET, "lo"));
             UnitHelp.process(String.format(TC_DELAY, "lo", delay, limit));

@@ -25,8 +25,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,15 +33,15 @@ import com.barchart.udt.SocketUDT;
 import com.barchart.udt.StatusUDT;
 
 /**
- * unit test helper
+ * Unit test helper.
  */
 public final class UnitHelp {
 
     private static final Logger log = LoggerFactory.getLogger(UnitHelp.class);
 
-    private static final ConcurrentMap<Integer, SocketUDT> //
-    socketMap = new ConcurrentHashMap<Integer, SocketUDT>();
-
+    /**
+     * Zero out buffer.
+     */
     public static void clear(final IntBuffer buffer) {
         for (int index = 0; index < buffer.capacity(); index++) {
             buffer.put(index, 0);
@@ -51,7 +49,7 @@ public final class UnitHelp {
     }
 
     /**
-     * measure ping time to host
+     * Measure ping time to a host.
      */
     public static long ping(final String host) throws Exception {
         final String name = System.getProperty("os.name").toLowerCase();
@@ -78,8 +76,11 @@ public final class UnitHelp {
         return timeDiff;
     }
 
+    /**
+     * Invoke external process and wait for completion.
+     */
     public static void process(final String command) throws Exception {
-        final ProcessBuilder builder = new ProcessBuilder(command.split("\\s"));
+        final ProcessBuilder builder = new ProcessBuilder(command.split("\\s+"));
         final Process process = builder.start();
         process.waitFor();
     }
@@ -95,19 +96,22 @@ public final class UnitHelp {
             socket = new ServerSocket(0, 3, address);
             return (InetSocketAddress) socket.getLocalSocketAddress();
         } catch (final Exception e) {
-            log.error("failed to find addess");
+            log.error("Failed to find addess.");
             return null;
         } finally {
             if (socket != null) {
                 try {
                     socket.close();
                 } catch (final Exception e) {
-                    log.error("failed to close socket");
+                    log.error("Failed to close socket.");
                 }
             }
         }
     }
 
+    /**
+     * Find named address on local host.
+     */
     public static InetSocketAddress hostedSocketAddress(final String host)
             throws Exception {
         for (int k = 0; k < 10; k++) {
@@ -118,16 +122,19 @@ public final class UnitHelp {
             }
             return address;
         }
-        throw new Exception("failed to allocate address");
+        throw new Exception("Failed to allocate address.");
     }
 
     /**
-     * allocate available local address / port or throw exception
+     * Allocate available local address / port or throw exception.
      */
     public static InetSocketAddress localSocketAddress() throws Exception {
         return hostedSocketAddress("localhost");
     }
 
+    /**
+     * Display contents of a buffer.
+     */
     public static void logBuffer(final String title, final IntBuffer buffer) {
         for (int index = 0; index < buffer.capacity(); index++) {
             final int value = buffer.get(index);
@@ -138,6 +145,9 @@ public final class UnitHelp {
         }
     }
 
+    /**
+     * Display java.class.path
+     */
     public static void logClassPath() {
         final String classPath = System.getProperty("java.class.path");
         final String[] entries = classPath.split(File.pathSeparator);
@@ -149,6 +159,9 @@ public final class UnitHelp {
         log.info("\n\t[java.class.path]{}", text);
     }
 
+    /**
+     * Display java.library.path
+     */
     public static void logLibraryPath() {
         final String classPath = System.getProperty("java.library.path");
         final String[] entries = classPath.split(File.pathSeparator);
@@ -160,6 +173,9 @@ public final class UnitHelp {
         log.info("\n\t[java.library.path]{}", text);
     }
 
+    /**
+     * Display current OS/ARCH.
+     */
     public static void logOsArch() {
         final StringBuilder text = new StringBuilder(1024);
         text.append("\n\t");
@@ -169,6 +185,9 @@ public final class UnitHelp {
         log.info("\n\t[os/arch]{}", text);
     }
 
+    /**
+     * Display contents of a set.
+     */
     public static void logSet(final Set<?> set) {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         final TreeSet<?> treeSet = new TreeSet(set);
@@ -203,13 +222,18 @@ public final class UnitHelp {
         return name + "-" + System.currentTimeMillis();
     }
 
+    /**
+     * Block till socket reaches given state.
+     */
     public static void socketAwait(final SocketUDT socket,
-            final StatusUDT status) throws Exception {
+            final StatusUDT... statusArray) throws Exception {
         while (true) {
-            if (socket.status() == status) {
-                return;
-            } else {
-                Thread.sleep(50);
+            for (final StatusUDT status : statusArray) {
+                if (socket.status() == status) {
+                    return;
+                } else {
+                    Thread.sleep(50);
+                }
             }
         }
     }

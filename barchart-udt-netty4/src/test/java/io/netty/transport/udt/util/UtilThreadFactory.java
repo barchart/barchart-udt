@@ -14,28 +14,27 @@
  * under the License.
  */
 
-package io.netty.example.udt.util;
+package io.netty.transport.udt.util;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Custom thread factory to use with examples.
+ * Thread factory for tests.
  */
-public class ThreadFactoryUDT implements ThreadFactory {
+public class UtilThreadFactory implements ThreadFactory {
 
     private static final AtomicInteger counter = new AtomicInteger();
 
     private final String name;
 
-    public ThreadFactoryUDT(final String name) {
+    public UtilThreadFactory(final String name) {
         this.name = name;
     }
 
     @Override
     public Thread newThread(final Runnable runnable) {
-        return new Thread(runnable, "udt-" + name + "-"
-                + counter.getAndIncrement());
-    };
+        return new Thread(runnable, name + "-" + counter.getAndIncrement());
+    }
 
 }

@@ -34,13 +34,18 @@ import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.core.Timer;
 
 /**
- * marry metrics with caliper
+ * Caliper measure with Metrics provider.
+ * <p>
+ * measure up to 3 values: {@link #rate()}, {@link #time()}, {@link #size()}
  */
 public class CaliperMeasure {
 
     private final static Logger log = LoggerFactory
             .getLogger(CaliperMeasure.class);
 
+    /**
+     * Gauge any double value
+     */
     public static class SizeGuage extends Gauge<Double> {
 
         private volatile Double size = 0.0;
@@ -55,15 +60,21 @@ public class CaliperMeasure {
         }
     }
 
-    static final Map<String, Integer> RATE_UNIT = new HashMap<String, Integer>();
+    /**
+     * Default rate measurement units.
+     */
+    private static final Map<String, Integer> RATE_UNIT = new HashMap<String, Integer>();
     static {
-        RATE_UNIT.put("Rate B/s", 1);
-        RATE_UNIT.put("Rate K/s", 1000);
-        RATE_UNIT.put("Rate M/s", 1000 * 1000);
-        RATE_UNIT.put("Rate G/s", 1000 * 1000 * 1000);
+        RATE_UNIT.put("Rate  B/s", 1);
+        RATE_UNIT.put("Rate KB/s", 1024);
+        RATE_UNIT.put("Rate MB/s", 1024 * 1024);
+        RATE_UNIT.put("Rate GB/s", 1024 * 1024 * 1024);
     }
 
-    static final Map<String, Integer> TIME_UNIT = new HashMap<String, Integer>();
+    /**
+     * Default time measurement units.
+     */
+    private static final Map<String, Integer> TIME_UNIT = new HashMap<String, Integer>();
     static {
         TIME_UNIT.put("Time ns", 1);
         TIME_UNIT.put("Time us", 1000);
@@ -71,12 +82,15 @@ public class CaliperMeasure {
         TIME_UNIT.put("Time s ", 1000 * 1000 * 1000);
     }
 
-    static final Map<String, Integer> SIZE_UNIT = new HashMap<String, Integer>();
+    /**
+     * Default size measurement units.
+     */
+    private static final Map<String, Integer> SIZE_UNIT = new HashMap<String, Integer>();
     static {
-        SIZE_UNIT.put("Size B", 1);
-        SIZE_UNIT.put("Size K", 1000);
-        SIZE_UNIT.put("Size M", 1000 * 1000);
-        SIZE_UNIT.put("Size B", 1000 * 1000 * 1000);
+        SIZE_UNIT.put("Size  B", 1);
+        SIZE_UNIT.put("Size KB", 1024);
+        SIZE_UNIT.put("Size MB", 1024 * 1024);
+        SIZE_UNIT.put("Size GB", 1024 * 1024 * 1024);
     }
 
     private final Map<Long, Measurement> rateMap = new HashMap<Long, Measurement>();
@@ -96,21 +110,30 @@ public class CaliperMeasure {
         metrics.newGauge(getClass(), "", size);
     }
 
-    /** generic rate meter */
+    /**
+     * Rate meter.
+     */
     public Meter rate() {
         return rate;
     }
 
-    /** generic time timer */
+    /**
+     * Time meter.
+     */
     public Timer time() {
         return time;
     }
 
-    /** generic size guage */
+    /**
+     * Size meter.
+     */
     public SizeGuage size() {
         return size;
     }
 
+    /**
+     * Workaround: zero breaks gwt web app.
+     */
     private double filter(final double value) {
         if (value <= 0.0) {
             return 1.0;
@@ -119,7 +142,9 @@ public class CaliperMeasure {
         }
     }
 
-    /** from metrics into caliper */
+    /**
+     * Perform measurement; convert from metrics into caliper.
+     */
     public void mark() {
         final double rateValue = filter(rate.oneMinuteRate());
         final double timeValue = filter(time.mean());
@@ -147,6 +172,9 @@ public class CaliperMeasure {
 
     private final Map<String, String> variables = new HashMap<String, String>();
 
+    /**
+     * Caliper scenario variables.
+     */
     public Map<String, String> variables() {
         return variables;
     }
@@ -157,9 +185,12 @@ public class CaliperMeasure {
         return set;
     }
 
+    /**
+     * Attach this measure to parent caliper run.
+     */
     public void appendTo(final Run run) {
 
-        final Scenario scenario = new Scenario(variables);
+        final Scenario scenario = new Scenario(variables());
 
         /** display rate as caliper durations */
         final MeasurementSet timeSet = measurementSet(rateMap);
@@ -180,6 +211,14 @@ public class CaliperMeasure {
                 .getMeasurements();
 
         measurements.put(scenario, scenarioResult);
+    }
 
+    /**
+     * Terminate metrics resources.
+     */
+    public void shutdown() {
+        rate.stop();
+        time.stop();
+        metrics.shutdown();
     }
 }

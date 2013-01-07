@@ -44,7 +44,7 @@ import com.yammer.metrics.stats.Snapshot;
  * A simple reporters which prints out application metrics to a
  * {@link PrintStream} periodically.
  */
-public class ConsoleReporterUDT extends AbstractPollingReporter implements
+public class UtilConsoleReporter extends AbstractPollingReporter implements
         MetricProcessor<PrintStream> {
     private static final int CONSOLE_WIDTH = 80;
 
@@ -62,7 +62,7 @@ public class ConsoleReporterUDT extends AbstractPollingReporter implements
      */
     public static void enable(final MetricsRegistry metricsRegistry,
             final long period, final TimeUnit unit) {
-        final ConsoleReporterUDT reporter = new ConsoleReporterUDT(
+        final UtilConsoleReporter reporter = new UtilConsoleReporter(
                 metricsRegistry, System.out, MetricPredicate.ALL);
         reporter.start(period, unit);
     }
@@ -74,26 +74,26 @@ public class ConsoleReporterUDT extends AbstractPollingReporter implements
     private final Locale locale;
 
     /**
-     * Creates a new {@link ConsoleReporterUDT} for the default metrics
+     * Creates a new {@link UtilConsoleReporter} for the default metrics
      * registry, with unrestricted output.
      */
-    public ConsoleReporterUDT(final PrintStream out) {
+    public UtilConsoleReporter(final PrintStream out) {
         this(Metrics.defaultRegistry(), out, MetricPredicate.ALL);
     }
 
     /**
-     * Creates a new {@link ConsoleReporterUDT} for a given metrics registry.
+     * Creates a new {@link UtilConsoleReporter} for a given metrics registry.
      */
-    public ConsoleReporterUDT(final MetricsRegistry metricsRegistry,
+    public UtilConsoleReporter(final MetricsRegistry metricsRegistry,
             final PrintStream out, final MetricPredicate predicate) {
         this(metricsRegistry, out, predicate, Clock.defaultClock(), TimeZone
                 .getDefault());
     }
 
     /**
-     * Creates a new {@link ConsoleReporterUDT} for a given metrics registry.
+     * Creates a new {@link UtilConsoleReporter} for a given metrics registry.
      */
-    public ConsoleReporterUDT(final MetricsRegistry metricsRegistry,
+    public UtilConsoleReporter(final MetricsRegistry metricsRegistry,
             final PrintStream out, final MetricPredicate predicate,
             final Clock clock, final TimeZone timeZone) {
         this(metricsRegistry, out, predicate, clock, timeZone, Locale
@@ -101,9 +101,9 @@ public class ConsoleReporterUDT extends AbstractPollingReporter implements
     }
 
     /**
-     * Creates a new {@link ConsoleReporterUDT} for a given metrics registry.
+     * Creates a new {@link UtilConsoleReporter} for a given metrics registry.
      */
-    public ConsoleReporterUDT(final MetricsRegistry metricsRegistry,
+    public UtilConsoleReporter(final MetricsRegistry metricsRegistry,
             final PrintStream out, final MetricPredicate predicate,
             final Clock clock, final TimeZone timeZone, final Locale locale) {
         super(metricsRegistry, "console-reporter");

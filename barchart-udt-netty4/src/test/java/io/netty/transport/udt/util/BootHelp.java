@@ -25,7 +25,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * bootstrap utils
+ * Bootstrap utilities.
  */
 public class BootHelp {
 
@@ -37,7 +37,7 @@ public class BootHelp {
 
         final Bootstrap boot = new Bootstrap();
 
-        final ThreadFactory connectFactory = new UdtThreadFactory("peer");
+        final ThreadFactory connectFactory = new UtilThreadFactory("peer");
 
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
                 connectFactory, NioUdtProvider.BYTE_PROVIDER);
@@ -57,7 +57,7 @@ public class BootHelp {
 
         final Bootstrap boot = new Bootstrap();
 
-        final ThreadFactory connectFactory = new UdtThreadFactory("peer");
+        final ThreadFactory connectFactory = new UtilThreadFactory("peer");
 
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
                 connectFactory, NioUdtProvider.MESSAGE_PROVIDER);

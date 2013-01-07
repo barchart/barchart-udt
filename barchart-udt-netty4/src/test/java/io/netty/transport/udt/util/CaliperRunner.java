@@ -19,6 +19,7 @@ package io.netty.transport.udt.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -45,48 +46,82 @@ import com.google.caliper.ScenarioResult;
 import com.google.caliper.SimpleBenchmark;
 import com.yammer.metrics.core.TimerContext;
 
-public final class CaliperHelp {
+/**
+ * Custom caliper runner for {@link CaliperBench}.
+ */
+public final class CaliperRunner {
 
     private final static Logger log = LoggerFactory
-            .getLogger(CaliperHelp.class);
+            .getLogger(CaliperRunner.class);
 
-    private CaliperHelp() {
+    private CaliperRunner() {
     }
 
+    /**
+     * Parse bench parameters.
+     */
+    public static List<String> valueList(final String valueText) {
+        return Arrays.asList(valueText.split(","));
+    }
+
+    /**
+     * Execute full cycle: warm up, execute and publish benchmark.
+     */
     public static void execute(final Class<? extends CaliperBench> klaz)
             throws Exception {
+        Run run;
+        run = execute("WARMUP", klaz);
+        run = execute("REPORT", klaz);
+        publish(newResult(run));
+    }
+
+    /**
+     * Execute benchmark for all parameter combinations.
+     */
+    public static Run execute(final String name,
+            final Class<? extends CaliperBench> klaz) throws Exception {
 
         final CaliperBench booter = klaz.newInstance();
 
-        final List<Map<String, String>> paramSet = product(booter);
-
-        for (final Map<String, String> param : paramSet) {
-            log.info("warming : {}", param);
-            final ConfiguredBenchmark runner = booter.createBenchmark(param);
-            runner.run(0);
-        }
+        final List<Map<String, String>> varsSet = product(booter);
 
         final Run run = newRun(klaz.getName());
 
-        for (final Map<String, String> param : paramSet) {
-            log.info("working : {}", param);
-            final ConfiguredBenchmark runner = booter.createBenchmark(param);
-            runner.run(0);
+        int index = 0;
+        for (final Map<String, String> vars : varsSet) {
+            final int done = 100 * index++ / varsSet.size();
+
+            log.info("{} {}% {}", name, done, vars);
+
+            /** call setUp() */
+            final ConfiguredBenchmark runner = booter.createBenchmark(vars);
+
             final CaliperBench bench = (CaliperBench) runner.getBenchmark();
-            bench.measure().variables().putAll(param);
-            bench.measure().mark();
-            bench.measure().appendTo(run);
+            final CaliperMeasure measure = bench.measure();
+            measure.variables().putAll(vars);
+
+            /** call timeXXX() */
+            runner.run(0);
+
+            /** call tearDown() */
+            runner.close();
+
+            measure.appendTo(run);
         }
 
-        final Result result = newResult(run);
-        publish(result);
-        log.info("\n{}", json(result));
+        return run;
     }
 
+    /**
+     * Convert caliper result into JSON string.
+     */
     public static String json(final Result result) {
         return Json.getGsonInstance().toJson(result);
     }
 
+    /**
+     * Map signature based on map values.
+     */
     public static String signature(final Map<String, String> map) {
         final StringBuilder text = new StringBuilder();
         for (final String item : map.values()) {
@@ -95,6 +130,9 @@ public final class CaliperHelp {
         return text.toString();
     }
 
+    /**
+     * Generate all parameter combinations for {@link SimpleBenchmark}.
+     */
     public static List<Map<String, String>> product(final SimpleBenchmark bench) {
         final Set<Map<String, String>> collect = new HashSet<Map<String, String>>();
         final Map<String, Set<String>> pending = new TreeMap<String, Set<String>>();
@@ -114,6 +152,9 @@ public final class CaliperHelp {
         return list;
     }
 
+    /**
+     * Calculate ordered Cartesian product of sets.
+     */
     public static Set<Map<String, String>> product(
             final Set<Map<String, String>> collect,
             final Map<String, Set<String>> pending) {
@@ -147,6 +188,9 @@ public final class CaliperHelp {
         }
     }
 
+    /**
+     * Publish result on http://microbenchmarks.appspot.com
+     */
     public static void publish(final Result result) throws Exception {
         final Runner runner = new Runner();
         final Method method = runner.getClass().getDeclaredMethod(
@@ -155,6 +199,9 @@ public final class CaliperHelp {
         method.invoke(runner, result);
     }
 
+    /**
+     * Provide new named run instance.
+     */
     public static Run newRun(final String benchmarkName) {
         final Map<Scenario, ScenarioResult> measurements = new HashMap<Scenario, ScenarioResult>();
         final Date executedTimestamp = new Date();
@@ -162,6 +209,9 @@ public final class CaliperHelp {
         return run;
     }
 
+    /**
+     * Make new result from run.
+     */
     public static Result newResult(final Run run) {
         final Environment env = new EnvironmentGetter()
                 .getEnvironmentSnapshot();
@@ -169,40 +219,27 @@ public final class CaliperHelp {
         return result;
     }
 
-    /** basic measure tester */
+    /**
+     * Verify measure publication manually.
+     */
     public static void main(final String[] args) throws Exception {
-
-        final Run run = newRun("test-1111");
-
+        final Run run = newRun("test-main");
         for (int param = 0; param < 5; param++) {
-
             final CaliperMeasure measure = new CaliperMeasure();
-
             measure.variables().put("param", "" + param);
-
             for (int step = 0; step < 5; step++) {
-
                 measure.rate().mark(50 + step);
-
                 final TimerContext time = measure.time().time();
                 Thread.sleep(15);
                 time.stop();
-
                 measure.size().value(50 + step);
-
                 measure.mark();
             }
-
             measure.appendTo(run);
-
         }
-
         final Result result = newResult(run);
-
         publish(result);
-
         System.out.println(json(result));
-
     }
 
 }

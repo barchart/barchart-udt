@@ -40,7 +40,7 @@ public abstract class NioUdtAcceptorChannel extends AbstractNioMessageChannel
     protected static final InternalLogger logger = InternalLoggerFactory
             .getInstance(NioUdtAcceptorChannel.class);
 
-    protected final UdtChannelConfig config;
+    private final UdtChannelConfig config;
 
     protected NioUdtAcceptorChannel(final ServerSocketChannelUDT channelUDT) {
         super(null, channelUDT.socketUDT().id(), channelUDT, OP_ACCEPT);

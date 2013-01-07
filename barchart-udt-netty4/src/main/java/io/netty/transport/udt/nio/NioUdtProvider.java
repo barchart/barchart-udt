@@ -196,7 +196,7 @@ public final class NioUdtProvider implements ChannelFactory {
      */
     public KindUDT kind() {
         return kind;
-    };
+    }
 
     /**
      * Produce new {@link UdtChannel} based on factory {@link #kind()} and
