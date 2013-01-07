@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.1.0: src/main/c++/jni/JNIHelpers.h Source File</title>
+<title>barchart-udt-core-2.2.0: src/main/c++/jni/JNIHelpers.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -63,7 +63,7 @@ window.onload = initDynSections;
       <li><a href="files.html"><span>File&nbsp;List</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><a class="el" href="dir_7641b21951c6dda1e074b475e96655ee.html">src</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_706a8b449cae91609f6c9cc7e806baec.html">main</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_3a26ed81b8c3145cafe62a034fc135f6.html">c++</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_3e2904246d2760da705717a31c4be75e.html">jni</a>
+  <div class="navpath"><a class="el" href="dir_a11cac2024153b0c3326d7df16b288dd.html">src</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_329971dabe00823c4a0ce49df76e103c.html">main</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_a50af06e00f2b8a07040b58511999540.html">c++</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_e290dfcc251a64a545909f96d095126f.html">jni</a>
   </div>
 </div>
 <div class="contents">
@@ -134,94 +134,93 @@ window.onload = initDynSections;
 <a name="l00102"></a>00102 <span class="preprocessor"></span><span class="preprocessor">#define __func__ __FUNCTION__</span>
 <a name="l00103"></a>00103 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
 <a name="l00104"></a>00104 <span class="preprocessor"></span>
-<a name="l00105"></a>00105 <span class="comment">// null pointer safety</span>
-<a name="l00106"></a>00106 <span class="comment">//</span>
-<a name="l00107"></a>00107 <span class="preprocessor">#define CHK_LOG(title,comment) printf (&quot;%s function: %s comment: %s&quot;, title, __func__, comment);</span>
-<a name="l00108"></a>00108 <span class="preprocessor"></span><span class="comment">// do not use cout; else will introduce GLIBCXX_3.4.9 dependency with &apos;g++ -O2&apos;</span>
-<a name="l00109"></a>00109 <span class="comment">//#define CHK_LOG(title,comment) cout &lt;&lt; title &lt;&lt; &quot; function: &quot; &lt;&lt; __func__ &lt;&lt; &quot; comment: &quot; &lt;&lt; comment &lt;&lt; endl;</span>
-<a name="l00110"></a>00110 <span class="comment">//</span>
-<a name="l00111"></a>00111 <span class="preprocessor">#define CHK_NUL_RET_RET(reference,comment) if ((reference) == NULL) \</span>
-<a name="l00112"></a>00112 <span class="preprocessor">        { CHK_LOG(&quot;CHK_NUL_RET_RET;&quot;,comment); return; }</span>
-<a name="l00113"></a>00113 <span class="preprocessor"></span><span class="comment">//</span>
-<a name="l00114"></a>00114 <span class="preprocessor">#define CHK_NUL_RET_NUL(reference,comment) if ((reference) == NULL) \</span>
-<a name="l00115"></a>00115 <span class="preprocessor">        { CHK_LOG(&quot;CHK_NUL_RET_NUL;&quot;,comment); return NULL; }</span>
-<a name="l00116"></a>00116 <span class="preprocessor"></span><span class="comment">//</span>
-<a name="l00117"></a>00117 <span class="preprocessor">#define CHK_NUL_RET_FLS(reference,comment) if ((reference) == NULL) \</span>
-<a name="l00118"></a>00118 <span class="preprocessor">        { CHK_LOG(&quot;CHK_NUL_RET_FLS;&quot;,comment); return false; }</span>
-<a name="l00119"></a>00119 <span class="preprocessor"></span><span class="comment">//</span>
-<a name="l00120"></a>00120 <span class="preprocessor">#define CHK_NUL_RET_ERR(reference,comment) if ((reference) == NULL) \</span>
-<a name="l00121"></a>00121 <span class="preprocessor">        { CHK_LOG(&quot;CHK_NUL_RET_ERR;&quot;,comment); return JNI_ERR; }</span>
-<a name="l00122"></a>00122 <span class="preprocessor"></span><span class="comment">//</span>
-<a name="l00123"></a>00123 <span class="comment">// c++ &lt;-&gt; java, bool &lt;-&gt; boolean conversions</span>
-<a name="l00124"></a>00124 <span class="preprocessor">#define BOOL(x) (((x) == JNI_TRUE) ? true : false) // from java to c++</span>
-<a name="l00125"></a>00125 <span class="preprocessor"></span><span class="preprocessor">#define BOOLEAN(x) ((jboolean) ( ((x) == true) ? JNI_TRUE : JNI_FALSE )) // from c++ to java</span>
-<a name="l00126"></a>00126 <span class="preprocessor"></span><span class="comment">//</span>
-<a name="l00127"></a>00127 <span class="comment">// free/malloc convenience</span>
-<a name="l00128"></a>00128 <span class="preprocessor">#define FREE(x) if ((x) != NULL) { free(x); x = NULL; }</span>
-<a name="l00129"></a>00129 <span class="preprocessor"></span><span class="preprocessor">#define MALLOC(var,type,size) type* var = (type*) malloc(sizeof(type) * size);</span>
-<a name="l00130"></a>00130 <span class="preprocessor"></span>
-<a name="l00131"></a>00131 <span class="comment">// declare unused explicitly or else see compiler warnings</span>
-<a name="l00132"></a>00132 <span class="preprocessor">#define UNUSED(x) ((void)(x))</span>
-<a name="l00133"></a>00133 <span class="preprocessor"></span>
-<a name="l00134"></a>00134 <span class="keywordtype">void</span> X_InitClassReference(JNIEnv *env, jclass *classReference,
-<a name="l00135"></a>00135                 <span class="keyword">const</span> <span class="keywordtype">char</span> *className);
-<a name="l00136"></a>00136 
-<a name="l00137"></a>00137 <span class="keywordtype">void</span> X_FreeClassReference(JNIEnv *env, jclass* globalRef);
-<a name="l00138"></a>00138 
-<a name="l00139"></a>00139 jobject X_NewBoolean(JNIEnv *env, <span class="keywordtype">bool</span> value);
-<a name="l00140"></a>00140 
-<a name="l00141"></a>00141 jobject X_NewInteger(JNIEnv *env, <span class="keywordtype">int</span> value);
-<a name="l00142"></a>00142 
-<a name="l00143"></a>00143 jobject X_NewLong(JNIEnv* env, int64_t value);
-<a name="l00144"></a>00144 
-<a name="l00145"></a>00145 <span class="keywordtype">int</span> X_InitSockAddr(sockaddr* sockAddr);
-<a name="l00146"></a>00146 
-<a name="l00147"></a>00147 <span class="keyword">inline</span> <span class="keywordtype">bool</span> X_IsInRange(jlong min, jlong var, jlong max) {
-<a name="l00148"></a>00148         <span class="keywordflow">if</span> (min &lt;= var &amp;&amp; var &lt;= max) {
-<a name="l00149"></a>00149                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00150"></a>00150         } <span class="keywordflow">else</span> {
-<a name="l00151"></a>00151                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00152"></a>00152         }
-<a name="l00153"></a>00153 }
-<a name="l00154"></a>00154 
-<a name="l00155"></a>00155 <span class="keyword">inline</span> <span class="keywordtype">void</span> X_ConvertMillisIntoTimeValue(<span class="keyword">const</span> jlong millisTimeout,
-<a name="l00156"></a>00156                 timeval* timeValue) {
-<a name="l00157"></a>00157         <span class="keywordflow">if</span> (millisTimeout &lt; 0) { <span class="comment">// infinite wait</span>
-<a name="l00158"></a>00158                 timeValue-&gt;tv_sec = INT_MAX;
-<a name="l00159"></a>00159                 timeValue-&gt;tv_usec = 0;
-<a name="l00160"></a>00160         } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (millisTimeout &gt; 0) { <span class="comment">// finite wait</span>
-<a name="l00161"></a>00161                 timeValue-&gt;tv_sec = millisTimeout / 1000; <span class="comment">// msvc C4244</span>
-<a name="l00162"></a>00162                 timeValue-&gt;tv_usec = (millisTimeout % 1000) * 1000;
-<a name="l00163"></a>00163         } <span class="keywordflow">else</span> { <span class="comment">// immediate return (not less the UDT event slice of 10 ms)</span>
-<a name="l00164"></a>00164                 timeValue-&gt;tv_sec = 0;
-<a name="l00165"></a>00165                 timeValue-&gt;tv_usec = 0;
-<a name="l00166"></a>00166         }
-<a name="l00167"></a>00167 }
-<a name="l00168"></a>00168 
-<a name="l00169"></a>00169 <span class="comment">// NOTE: ipv4 only</span>
-<a name="l00170"></a>00170 <span class="keywordtype">int</span> X_ConvertInetSocketAddressToSockaddr(JNIEnv* env,
-<a name="l00171"></a>00171                 jobject objInetSocketAddress, sockaddr* sockAddr);
-<a name="l00172"></a>00172 
-<a name="l00173"></a>00173 <span class="comment">// NOTE: only ipv4</span>
-<a name="l00174"></a>00174 jobject X_NewInetAddress(JNIEnv* env, jint address);
-<a name="l00175"></a>00175 
-<a name="l00176"></a>00176 <span class="comment">// NOTE: ipv4 only</span>
-<a name="l00177"></a>00177 jobject X_NewInetSocketAddress(JNIEnv* env, sockaddr* sockAddr);
-<a name="l00178"></a>00178 <span class="keywordtype">bool</span> X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
-<a name="l00179"></a>00179                 jobject socketAddress);
+<a name="l00105"></a>00105 <span class="comment">//</span>
+<a name="l00106"></a>00106 <span class="comment">// null pointer safety</span>
+<a name="l00107"></a>00107 <span class="comment">//</span>
+<a name="l00108"></a>00108 <span class="preprocessor">#define CHK_LOG(title,comment) printf (&quot;%s function: %s comment: %s&quot;, title, __func__, comment);</span>
+<a name="l00109"></a>00109 <span class="preprocessor"></span><span class="comment">//</span>
+<a name="l00110"></a>00110 <span class="preprocessor">#define CHK_NUL_RET_RET(reference,comment) if ((reference) == NULL) \</span>
+<a name="l00111"></a>00111 <span class="preprocessor">        { CHK_LOG(&quot;CHK_NUL_RET_RET;&quot;,comment); return; }</span>
+<a name="l00112"></a>00112 <span class="preprocessor"></span><span class="comment">//</span>
+<a name="l00113"></a>00113 <span class="preprocessor">#define CHK_NUL_RET_NUL(reference,comment) if ((reference) == NULL) \</span>
+<a name="l00114"></a>00114 <span class="preprocessor">        { CHK_LOG(&quot;CHK_NUL_RET_NUL;&quot;,comment); return NULL; }</span>
+<a name="l00115"></a>00115 <span class="preprocessor"></span><span class="comment">//</span>
+<a name="l00116"></a>00116 <span class="preprocessor">#define CHK_NUL_RET_FLS(reference,comment) if ((reference) == NULL) \</span>
+<a name="l00117"></a>00117 <span class="preprocessor">        { CHK_LOG(&quot;CHK_NUL_RET_FLS;&quot;,comment); return false; }</span>
+<a name="l00118"></a>00118 <span class="preprocessor"></span><span class="comment">//</span>
+<a name="l00119"></a>00119 <span class="preprocessor">#define CHK_NUL_RET_ERR(reference,comment) if ((reference) == NULL) \</span>
+<a name="l00120"></a>00120 <span class="preprocessor">        { CHK_LOG(&quot;CHK_NUL_RET_ERR;&quot;,comment); return JNI_ERR; }</span>
+<a name="l00121"></a>00121 <span class="preprocessor"></span><span class="comment">//</span>
+<a name="l00122"></a>00122 <span class="comment">// c++ &lt;-&gt; java, bool &lt;-&gt; boolean conversions</span>
+<a name="l00123"></a>00123 <span class="preprocessor">#define BOOL(x) (((x) == JNI_TRUE) ? true : false) // from java to c++</span>
+<a name="l00124"></a>00124 <span class="preprocessor"></span><span class="preprocessor">#define BOOLEAN(x) ((jboolean) ( ((x) == true) ? JNI_TRUE : JNI_FALSE )) // from c++ to java</span>
+<a name="l00125"></a>00125 <span class="preprocessor"></span><span class="comment">//</span>
+<a name="l00126"></a>00126 <span class="comment">// free/malloc convenience</span>
+<a name="l00127"></a>00127 <span class="preprocessor">#define FREE(x) if ((x) != NULL) { free(x); x = NULL; }</span>
+<a name="l00128"></a>00128 <span class="preprocessor"></span><span class="preprocessor">#define MALLOC(var,type,size) type* var = (type*) malloc(sizeof(type) * size);</span>
+<a name="l00129"></a>00129 <span class="preprocessor"></span>
+<a name="l00130"></a>00130 <span class="comment">// declare unused explicitly or else see compiler warnings</span>
+<a name="l00131"></a>00131 <span class="preprocessor">#define UNUSED(x) ((void)(x))</span>
+<a name="l00132"></a>00132 <span class="preprocessor"></span>
+<a name="l00133"></a>00133 <span class="keywordtype">void</span> X_InitClassReference(JNIEnv *env, jclass *classReference,
+<a name="l00134"></a>00134                 <span class="keyword">const</span> <span class="keywordtype">char</span> *className);
+<a name="l00135"></a>00135 
+<a name="l00136"></a>00136 <span class="keywordtype">void</span> X_FreeClassReference(JNIEnv *env, jclass* globalRef);
+<a name="l00137"></a>00137 
+<a name="l00138"></a>00138 jobject X_NewBoolean(JNIEnv *env, <span class="keywordtype">bool</span> value);
+<a name="l00139"></a>00139 
+<a name="l00140"></a>00140 jobject X_NewInteger(JNIEnv *env, <span class="keywordtype">int</span> value);
+<a name="l00141"></a>00141 
+<a name="l00142"></a>00142 jobject X_NewLong(JNIEnv* env, int64_t value);
+<a name="l00143"></a>00143 
+<a name="l00144"></a>00144 <span class="keywordtype">int</span> X_InitSockAddr(sockaddr* sockAddr);
+<a name="l00145"></a>00145 
+<a name="l00146"></a>00146 <span class="keyword">inline</span> <span class="keywordtype">bool</span> X_IsInRange(jlong min, jlong var, jlong max) {
+<a name="l00147"></a>00147         <span class="keywordflow">if</span> (min &lt;= var &amp;&amp; var &lt;= max) {
+<a name="l00148"></a>00148                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00149"></a>00149         } <span class="keywordflow">else</span> {
+<a name="l00150"></a>00150                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00151"></a>00151         }
+<a name="l00152"></a>00152 }
+<a name="l00153"></a>00153 
+<a name="l00154"></a>00154 <span class="keyword">inline</span> <span class="keywordtype">void</span> X_ConvertMillisIntoTimeValue(<span class="keyword">const</span> jlong millisTimeout,
+<a name="l00155"></a>00155                 timeval* timeValue) {
+<a name="l00156"></a>00156         <span class="keywordflow">if</span> (millisTimeout &lt; 0) { <span class="comment">// infinite wait</span>
+<a name="l00157"></a>00157                 timeValue-&gt;tv_sec = INT_MAX;
+<a name="l00158"></a>00158                 timeValue-&gt;tv_usec = 0;
+<a name="l00159"></a>00159         } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (millisTimeout &gt; 0) { <span class="comment">// finite wait</span>
+<a name="l00160"></a>00160                 timeValue-&gt;tv_sec = millisTimeout / 1000; <span class="comment">// msvc C4244</span>
+<a name="l00161"></a>00161                 timeValue-&gt;tv_usec = (millisTimeout % 1000) * 1000;
+<a name="l00162"></a>00162         } <span class="keywordflow">else</span> { <span class="comment">// immediate return (not less the UDT event slice of 10 ms)</span>
+<a name="l00163"></a>00163                 timeValue-&gt;tv_sec = 0;
+<a name="l00164"></a>00164                 timeValue-&gt;tv_usec = 0;
+<a name="l00165"></a>00165         }
+<a name="l00166"></a>00166 }
+<a name="l00167"></a>00167 
+<a name="l00168"></a>00168 <span class="comment">// NOTE: ipv4 only</span>
+<a name="l00169"></a>00169 <span class="keywordtype">int</span> X_ConvertInetSocketAddressToSockaddr(JNIEnv* env,
+<a name="l00170"></a>00170                 jobject objInetSocketAddress, sockaddr* sockAddr);
+<a name="l00171"></a>00171 
+<a name="l00172"></a>00172 <span class="comment">// NOTE: only ipv4</span>
+<a name="l00173"></a>00173 jobject X_NewInetAddress(JNIEnv* env, jint address);
+<a name="l00174"></a>00174 
+<a name="l00175"></a>00175 <span class="comment">// NOTE: ipv4 only</span>
+<a name="l00176"></a>00176 jobject X_NewInetSocketAddress(JNIEnv* env, sockaddr* sockAddr);
+<a name="l00177"></a>00177 <span class="keywordtype">bool</span> X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
+<a name="l00178"></a>00178                 jobject socketAddress);
+<a name="l00179"></a>00179 
 <a name="l00180"></a>00180 
-<a name="l00181"></a>00181 
-<a name="l00182"></a>00182 <span class="keywordtype">void</span> UDT_ThrowExceptionUDT_Message(JNIEnv* env, <span class="keyword">const</span> jint socketID,
-<a name="l00183"></a>00183                 <span class="keyword">const</span> <span class="keywordtype">char</span> *comment);
-<a name="l00184"></a>00184 
-<a name="l00185"></a>00185 }<span class="comment">//extern &quot;C&quot;</span>
+<a name="l00181"></a>00181 <span class="keywordtype">void</span> UDT_ThrowExceptionUDT_Message(JNIEnv* env, <span class="keyword">const</span> jint socketID,
+<a name="l00182"></a>00182                 <span class="keyword">const</span> <span class="keywordtype">char</span> *comment);
+<a name="l00183"></a>00183 
+<a name="l00184"></a>00184 }<span class="comment">//extern &quot;C&quot;</span>
+<a name="l00185"></a>00185 
 <a name="l00186"></a>00186 
 <a name="l00187"></a>00187 
 <a name="l00188"></a>00188 
-<a name="l00189"></a>00189 
-<a name="l00190"></a>00190 <span class="preprocessor">#endif </span><span class="comment">/* JNIHELPERS_H_ */</span>
+<a name="l00189"></a>00189 <span class="preprocessor">#endif </span><span class="comment">/* JNIHELPERS_H_ */</span>
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 26 Dec 2012 for barchart-udt-core-2.1.0 by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Jan 2013 for barchart-udt-core-2.2.0 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="31" href="#31">31</a>  		<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> epollID = SocketUDT.epollCreate0();
 <a class="jxr_linenumber" name="32" href="#32">32</a>  
 <a class="jxr_linenumber" name="33" href="#33">33</a>  		<strong class="jxr_keyword">final</strong> SocketUDT accept = <strong class="jxr_keyword">new</strong> SocketUDT(TypeUDT.DATAGRAM);
-<a class="jxr_linenumber" name="34" href="#34">34</a>  		accept.configureBlocking(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="34" href="#34">34</a>  		accept.setBlocking(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="35" href="#35">35</a>  		accept.bind0(localSocketAddress());
 <a class="jxr_linenumber" name="36" href="#36">36</a>  		accept.listen0(1);
 <a class="jxr_linenumber" name="37" href="#37">37</a>  
@@ -49,10 +49,10 @@
 <a class="jxr_linenumber" name="39" href="#39">39</a>  		log.info(<span class="jxr_string">"accept {}"</span>, accept);
 <a class="jxr_linenumber" name="40" href="#40">40</a>  
 <a class="jxr_linenumber" name="41" href="#41">41</a>  		<strong class="jxr_keyword">final</strong> SocketUDT client = <strong class="jxr_keyword">new</strong> SocketUDT(TypeUDT.DATAGRAM);
-<a class="jxr_linenumber" name="42" href="#42">42</a>  		client.configureBlocking(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="42" href="#42">42</a>  		client.setBlocking(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="43" href="#43">43</a>  		client.bind0(localSocketAddress());
 <a class="jxr_linenumber" name="44" href="#44">44</a>  
-<a class="jxr_linenumber" name="45" href="#45">45</a>  		SocketUDT.epollAdd0(epollID, client.socketID, EpollUDT.Opt.BOTH.code);
+<a class="jxr_linenumber" name="45" href="#45">45</a>  		SocketUDT.epollAdd0(epollID, client.id(), EpollUDT.Opt.BOTH.code);
 <a class="jxr_linenumber" name="46" href="#46">46</a>  
 <a class="jxr_linenumber" name="47" href="#47">47</a>  		socketAwait(client, StatusUDT.OPENED);
 <a class="jxr_linenumber" name="48" href="#48">48</a>  		log.info(<span class="jxr_string">"client {} {}"</span>, client,
@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="70" href="#70">70</a>  		socketAwait(client, StatusUDT.CLOSED);
 <a class="jxr_linenumber" name="71" href="#71">71</a>  		log.info(<span class="jxr_string">"client {} {}"</span>, client, 0);
 <a class="jxr_linenumber" name="72" href="#72">72</a>  
-<a class="jxr_linenumber" name="73" href="#73">73</a>  		SocketUDT.epollRemove0(epollID, client.socketID);
+<a class="jxr_linenumber" name="73" href="#73">73</a>  		SocketUDT.epollRemove0(epollID, client.id());
 <a class="jxr_linenumber" name="74" href="#74">74</a>  
 <a class="jxr_linenumber" name="75" href="#75">75</a>  		{
 <a class="jxr_linenumber" name="76" href="#76">76</a>  			log.info(<span class="jxr_string">"### 2 ###"</span>);

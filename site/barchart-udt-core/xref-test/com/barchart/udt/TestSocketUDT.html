@@ -35,7 +35,7 @@
 <a class="jxr_linenumber" name="25" href="#25">25</a>  
 <a class="jxr_linenumber" name="26" href="#26">26</a>  		<strong class="jxr_keyword">final</strong> SocketUDT socket = <strong class="jxr_keyword">new</strong> SocketUDT(TypeUDT.DATAGRAM);
 <a class="jxr_linenumber" name="27" href="#27">27</a>  
-<a class="jxr_linenumber" name="28" href="#28">28</a>  		socket.configureBlocking(false);
+<a class="jxr_linenumber" name="28" href="#28">28</a>  		socket.setBlocking(false);
 <a class="jxr_linenumber" name="29" href="#29">29</a>  
 <a class="jxr_linenumber" name="30" href="#30">30</a>  		socket.bind(localSocketAddress());
 <a class="jxr_linenumber" name="31" href="#31">31</a>  
@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="41" href="#41">41</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> acceptListenOne() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="42" href="#42">42</a>  
 <a class="jxr_linenumber" name="43" href="#43">43</a>  		<strong class="jxr_keyword">final</strong> SocketUDT accept = <strong class="jxr_keyword">new</strong> SocketUDT(TypeUDT.DATAGRAM);
-<a class="jxr_linenumber" name="44" href="#44">44</a>  		accept.configureBlocking(false);
+<a class="jxr_linenumber" name="44" href="#44">44</a>  		accept.setBlocking(false);
 <a class="jxr_linenumber" name="45" href="#45">45</a>  		accept.bind(localSocketAddress());
 <a class="jxr_linenumber" name="46" href="#46">46</a>  
 <a class="jxr_linenumber" name="47" href="#47">47</a>  		socketAwait(accept, StatusUDT.OPENED);
@@ -60,12 +60,12 @@
 <a class="jxr_linenumber" name="50" href="#50">50</a>  
 <a class="jxr_linenumber" name="51" href="#51">51</a>  		socketAwait(accept, StatusUDT.LISTENING);
 <a class="jxr_linenumber" name="52" href="#52">52</a>  
-<a class="jxr_linenumber" name="53" href="#53">53</a>  		assertEquals(StatusUDT.LISTENING, accept.getStatus());
+<a class="jxr_linenumber" name="53" href="#53">53</a>  		assertEquals(StatusUDT.LISTENING, accept.status());
 <a class="jxr_linenumber" name="54" href="#54">54</a>  
 <a class="jxr_linenumber" name="55" href="#55">55</a>  		assertNull(accept.accept());
 <a class="jxr_linenumber" name="56" href="#56">56</a>  
 <a class="jxr_linenumber" name="57" href="#57">57</a>  		<strong class="jxr_keyword">final</strong> SocketUDT client = <strong class="jxr_keyword">new</strong> SocketUDT(TypeUDT.DATAGRAM);
-<a class="jxr_linenumber" name="58" href="#58">58</a>  		client.configureBlocking(false);
+<a class="jxr_linenumber" name="58" href="#58">58</a>  		client.setBlocking(false);
 <a class="jxr_linenumber" name="59" href="#59">59</a>  		client.bind(localSocketAddress());
 <a class="jxr_linenumber" name="60" href="#60">60</a>  
 <a class="jxr_linenumber" name="61" href="#61">61</a>  		socketAwait(client, StatusUDT.OPENED);
@@ -155,14 +155,14 @@
 <a class="jxr_linenumber" name="145" href="#145">145</a> 
 <a class="jxr_linenumber" name="146" href="#146">146</a> 		}
 <a class="jxr_linenumber" name="147" href="#147">147</a> 
-<a class="jxr_linenumber" name="148" href="#148">148</a> 		<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> realID = socket.socketID;
+<a class="jxr_linenumber" name="148" href="#148">148</a> 		<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> realID = socket.id();
 <a class="jxr_linenumber" name="149" href="#149">149</a> 
 <a class="jxr_linenumber" name="150" href="#150">150</a> 		<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> fakeID = realID + 123;
 <a class="jxr_linenumber" name="151" href="#151">151</a> 
 <a class="jxr_linenumber" name="152" href="#152">152</a> 		log.info(<span class="jxr_string">"real: {} ; fake : {} ; "</span>, realID, fakeID);
 <a class="jxr_linenumber" name="153" href="#153">153</a> 
 <a class="jxr_linenumber" name="154" href="#154">154</a> 		<em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> must throw */</em>
-<a class="jxr_linenumber" name="155" href="#155">155</a> 		socket.testInvalidClose0(fakeID);
+<a class="jxr_linenumber" name="155" href="#155">155</a> 		SocketUDT.testInvalidClose0(fakeID);
 <a class="jxr_linenumber" name="156" href="#156">156</a> 
 <a class="jxr_linenumber" name="157" href="#157">157</a> 	}
 <a class="jxr_linenumber" name="158" href="#158">158</a> 
@@ -175,7 +175,44 @@
 <a class="jxr_linenumber" name="165" href="#165">165</a> 
 <a class="jxr_linenumber" name="166" href="#166">166</a> 	}
 <a class="jxr_linenumber" name="167" href="#167">167</a> 
-<a class="jxr_linenumber" name="168" href="#168">168</a> }
+<a class="jxr_linenumber" name="168" href="#168">168</a> 	<em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> udt uses hard coded connect timeout of 3 seconds */</em>
+<a class="jxr_linenumber" name="169" href="#169">169</a> 	@Test(timeout = 10 * 1000)
+<a class="jxr_linenumber" name="170" href="#170">170</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> connectTimeout() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="171" href="#171">171</a> 
+<a class="jxr_linenumber" name="172" href="#172">172</a> 		<strong class="jxr_keyword">final</strong> SocketUDT socket = <strong class="jxr_keyword">new</strong> SocketUDT(TypeUDT.DATAGRAM);
+<a class="jxr_linenumber" name="173" href="#173">173</a> 
+<a class="jxr_linenumber" name="174" href="#174">174</a> 		<strong class="jxr_keyword">long</strong> timeStart = 0;
+<a class="jxr_linenumber" name="175" href="#175">175</a> 		<strong class="jxr_keyword">long</strong> timeFinish = 0;
+<a class="jxr_linenumber" name="176" href="#176">176</a> 
+<a class="jxr_linenumber" name="177" href="#177">177</a> 		<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="178" href="#178">178</a> 
+<a class="jxr_linenumber" name="179" href="#179">179</a> 			socket.bind(localSocketAddress());
+<a class="jxr_linenumber" name="180" href="#180">180</a> 
+<a class="jxr_linenumber" name="181" href="#181">181</a> 			timeStart = System.currentTimeMillis();
+<a class="jxr_linenumber" name="182" href="#182">182</a> 
+<a class="jxr_linenumber" name="183" href="#183">183</a> 			socket.connect(localSocketAddress());
+<a class="jxr_linenumber" name="184" href="#184">184</a> 
+<a class="jxr_linenumber" name="185" href="#185">185</a> 		} <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> ExceptionUDT e) {
+<a class="jxr_linenumber" name="186" href="#186">186</a> 
+<a class="jxr_linenumber" name="187" href="#187">187</a> 			<strong class="jxr_keyword">switch</strong> (e.getError()) {
+<a class="jxr_linenumber" name="188" href="#188">188</a> 			<strong class="jxr_keyword">case</strong> NOSERVER:
+<a class="jxr_linenumber" name="189" href="#189">189</a> 				timeFinish = System.currentTimeMillis();
+<a class="jxr_linenumber" name="190" href="#190">190</a> 				<strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="191" href="#191">191</a> 			}
+<a class="jxr_linenumber" name="192" href="#192">192</a> 
+<a class="jxr_linenumber" name="193" href="#193">193</a> 		} <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="194" href="#194">194</a> 
+<a class="jxr_linenumber" name="195" href="#195">195</a> 			socket.close();
+<a class="jxr_linenumber" name="196" href="#196">196</a> 
+<a class="jxr_linenumber" name="197" href="#197">197</a> 			<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeDiff = timeFinish - timeStart;
+<a class="jxr_linenumber" name="198" href="#198">198</a> 
+<a class="jxr_linenumber" name="199" href="#199">199</a> 			log.info(<span class="jxr_string">"timeout = {} seconds"</span>, timeDiff / 1000);
+<a class="jxr_linenumber" name="200" href="#200">200</a> 
+<a class="jxr_linenumber" name="201" href="#201">201</a> 		}
+<a class="jxr_linenumber" name="202" href="#202">202</a> 
+<a class="jxr_linenumber" name="203" href="#203">203</a> 	}
+<a class="jxr_linenumber" name="204" href="#204">204</a> 
+<a class="jxr_linenumber" name="205" href="#205">205</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

@@ -135,7 +135,7 @@
 <FONT color="green">132</FONT>            public static String descriptionFrom(final int socketID,<a name="line.132"></a>
 <FONT color="green">133</FONT>                            final int errorCode, final String errorComment) {<a name="line.133"></a>
 <FONT color="green">134</FONT>                    final ErrorUDT error = ErrorUDT.errorFrom(errorCode);<a name="line.134"></a>
-<FONT color="green">135</FONT>                    return String.format("UDT Error : %d : %s : %s (socketID=%d)", //<a name="line.135"></a>
+<FONT color="green">135</FONT>                    return String.format("UDT Error : %d : %s : %s [id: 0x%08x]", //<a name="line.135"></a>
 <FONT color="green">136</FONT>                                    errorCode, error.description, errorComment, socketID);<a name="line.136"></a>
 <FONT color="green">137</FONT>            }<a name="line.137"></a>
 <FONT color="green">138</FONT>    <a name="line.138"></a>

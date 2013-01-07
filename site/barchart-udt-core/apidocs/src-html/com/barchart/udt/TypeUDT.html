@@ -22,28 +22,36 @@
 <FONT color="green">019</FONT>     */<a name="line.19"></a>
 <FONT color="green">020</FONT>    public enum TypeUDT {<a name="line.20"></a>
 <FONT color="green">021</FONT>    <a name="line.21"></a>
-<FONT color="green">022</FONT>            /** The STREAM type. Defines stream - oriented UDT mode. */<a name="line.22"></a>
-<FONT color="green">023</FONT>            STREAM(1), //<a name="line.23"></a>
-<FONT color="green">024</FONT>    <a name="line.24"></a>
-<FONT color="green">025</FONT>            /** The DATAGRAM. Defines datagram/message - oriented UDT mode. */<a name="line.25"></a>
-<FONT color="green">026</FONT>            DATAGRAM(2), //<a name="line.26"></a>
-<FONT color="green">027</FONT>    <a name="line.27"></a>
-<FONT color="green">028</FONT>            ;<a name="line.28"></a>
-<FONT color="green">029</FONT>    <a name="line.29"></a>
-<FONT color="green">030</FONT>            /** The code */<a name="line.30"></a>
-<FONT color="green">031</FONT>            public final int code;<a name="line.31"></a>
-<FONT color="green">032</FONT>    <a name="line.32"></a>
-<FONT color="green">033</FONT>            /**<a name="line.33"></a>
-<FONT color="green">034</FONT>             * Instantiates a new type udt.<a name="line.34"></a>
-<FONT color="green">035</FONT>             * <a name="line.35"></a>
-<FONT color="green">036</FONT>             * @param code<a name="line.36"></a>
-<FONT color="green">037</FONT>             *            the code<a name="line.37"></a>
+<FONT color="green">022</FONT>            /**<a name="line.22"></a>
+<FONT color="green">023</FONT>             * The STREAM type. Defines "byte stream" UDT mode.<a name="line.23"></a>
+<FONT color="green">024</FONT>             */<a name="line.24"></a>
+<FONT color="green">025</FONT>            STREAM(1), //<a name="line.25"></a>
+<FONT color="green">026</FONT>    <a name="line.26"></a>
+<FONT color="green">027</FONT>            /**<a name="line.27"></a>
+<FONT color="green">028</FONT>             * The DATAGRAM. Defines "datagram or message" UDT mode.<a name="line.28"></a>
+<FONT color="green">029</FONT>             */<a name="line.29"></a>
+<FONT color="green">030</FONT>            DATAGRAM(2), //<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>            ;<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>            protected final int code;<a name="line.34"></a>
+<FONT color="green">035</FONT>    <a name="line.35"></a>
+<FONT color="green">036</FONT>            /**<a name="line.36"></a>
+<FONT color="green">037</FONT>             * native UDT constant<a name="line.37"></a>
 <FONT color="green">038</FONT>             */<a name="line.38"></a>
-<FONT color="green">039</FONT>            private TypeUDT(final int code) {<a name="line.39"></a>
-<FONT color="green">040</FONT>                    this.code = code;<a name="line.40"></a>
+<FONT color="green">039</FONT>            public int code() {<a name="line.39"></a>
+<FONT color="green">040</FONT>                    return code;<a name="line.40"></a>
 <FONT color="green">041</FONT>            }<a name="line.41"></a>
 <FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>    }<a name="line.43"></a>
+<FONT color="green">043</FONT>            /**<a name="line.43"></a>
+<FONT color="green">044</FONT>             * @param code<a name="line.44"></a>
+<FONT color="green">045</FONT>             *            native UDT constant<a name="line.45"></a>
+<FONT color="green">046</FONT>             */<a name="line.46"></a>
+<FONT color="green">047</FONT>            private TypeUDT(final int code) {<a name="line.47"></a>
+<FONT color="green">048</FONT>                    this.code = code;<a name="line.48"></a>
+<FONT color="green">049</FONT>            }<a name="line.49"></a>
+<FONT color="green">050</FONT>    <a name="line.50"></a>
+<FONT color="green">051</FONT>    }<a name="line.51"></a>
 
 
 

@@ -142,7 +142,7 @@
 <a class="jxr_linenumber" name="132" href="#132">132</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String descriptionFrom(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> socketID,
 <a class="jxr_linenumber" name="133" href="#133">133</a> 			<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> errorCode, <strong class="jxr_keyword">final</strong> String errorComment) {
 <a class="jxr_linenumber" name="134" href="#134">134</a> 		<strong class="jxr_keyword">final</strong> <a href="../../../com/barchart/udt/ErrorUDT.html">ErrorUDT</a> error = ErrorUDT.errorFrom(errorCode);
-<a class="jxr_linenumber" name="135" href="#135">135</a> 		<strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"UDT Error : %d : %s : %s (socketID=%d)"</span>, <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="135" href="#135">135</a> 		<strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"UDT Error : %d : %s : %s [id: 0x%08x]"</span>, <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="136" href="#136">136</a> 				errorCode, error.description, errorComment, socketID);
 <a class="jxr_linenumber" name="137" href="#137">137</a> 	}
 <a class="jxr_linenumber" name="138" href="#138">138</a> 

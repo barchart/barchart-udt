@@ -11,28 +11,44 @@
 <FONT color="green">008</FONT>    package com.barchart.udt.nio;<a name="line.8"></a>
 <FONT color="green">009</FONT>    <a name="line.9"></a>
 <FONT color="green">010</FONT>    import com.barchart.udt.SocketUDT;<a name="line.10"></a>
-<FONT color="green">011</FONT>    <a name="line.11"></a>
-<FONT color="green">012</FONT>    /**<a name="line.12"></a>
-<FONT color="green">013</FONT>     * UDT channel role type.<a name="line.13"></a>
-<FONT color="green">014</FONT>     * <a name="line.14"></a>
-<FONT color="green">015</FONT>     * NOTE: {@link com.barchart.udt#TypeUDT} means stream vs datagram;<a name="line.15"></a>
-<FONT color="green">016</FONT>     * {@link KindUDT} means server vs client.<a name="line.16"></a>
-<FONT color="green">017</FONT>     */<a name="line.17"></a>
-<FONT color="green">018</FONT>    public enum KindUDT {<a name="line.18"></a>
-<FONT color="green">019</FONT>    <a name="line.19"></a>
-<FONT color="green">020</FONT>            /**<a name="line.20"></a>
-<FONT color="green">021</FONT>             * Server mode: listens and accepts connections; generates {@link #COMMUTER}<a name="line.21"></a>
-<FONT color="green">022</FONT>             * as a result of {@link SocketUDT#accept()}<a name="line.22"></a>
-<FONT color="green">023</FONT>             */<a name="line.23"></a>
-<FONT color="green">024</FONT>            ACCEPTOR, //<a name="line.24"></a>
-<FONT color="green">025</FONT>    <a name="line.25"></a>
-<FONT color="green">026</FONT>            /**<a name="line.26"></a>
-<FONT color="green">027</FONT>             * Client mode: user-created channel which initiates connections to servers;<a name="line.27"></a>
-<FONT color="green">028</FONT>             * Server mode: channel which is a result of accept();<a name="line.28"></a>
-<FONT color="green">029</FONT>             */<a name="line.29"></a>
-<FONT color="green">030</FONT>            CONNECTOR, //<a name="line.30"></a>
-<FONT color="green">031</FONT>    <a name="line.31"></a>
-<FONT color="green">032</FONT>    }<a name="line.32"></a>
+<FONT color="green">011</FONT>    import com.barchart.udt.TypeUDT;<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>    /**<a name="line.13"></a>
+<FONT color="green">014</FONT>     * UDT channel role type, or kind.<a name="line.14"></a>
+<FONT color="green">015</FONT>     * &lt;p&gt;<a name="line.15"></a>
+<FONT color="green">016</FONT>     * {@link TypeUDT} means stream (byte oriented) vs datagram (message oriented).<a name="line.16"></a>
+<FONT color="green">017</FONT>     * &lt;p&gt;<a name="line.17"></a>
+<FONT color="green">018</FONT>     * {@link KindUDT} gives distinction between server vs client vs peer.<a name="line.18"></a>
+<FONT color="green">019</FONT>     */<a name="line.19"></a>
+<FONT color="green">020</FONT>    public enum KindUDT {<a name="line.20"></a>
+<FONT color="green">021</FONT>    <a name="line.21"></a>
+<FONT color="green">022</FONT>            /**<a name="line.22"></a>
+<FONT color="green">023</FONT>             * Server mode: listens and accepts connections; generates<a name="line.23"></a>
+<FONT color="green">024</FONT>             * {@link #CONNECTOR} as a result of {@link SocketUDT#accept()}<a name="line.24"></a>
+<FONT color="green">025</FONT>             * <a name="line.25"></a>
+<FONT color="green">026</FONT>             * @see {@link ServerSocketChannelUDT}<a name="line.26"></a>
+<FONT color="green">027</FONT>             */<a name="line.27"></a>
+<FONT color="green">028</FONT>            ACCEPTOR, //<a name="line.28"></a>
+<FONT color="green">029</FONT>    <a name="line.29"></a>
+<FONT color="green">030</FONT>            /**<a name="line.30"></a>
+<FONT color="green">031</FONT>             * Client mode: channel which initiates connections to servers; options are<a name="line.31"></a>
+<FONT color="green">032</FONT>             * user-provided.<a name="line.32"></a>
+<FONT color="green">033</FONT>             * &lt;p&gt;<a name="line.33"></a>
+<FONT color="green">034</FONT>             * Server mode: channel which is a result of accept(); inherits options from<a name="line.34"></a>
+<FONT color="green">035</FONT>             * parent {@link #ACCEPTOR}.<a name="line.35"></a>
+<FONT color="green">036</FONT>             * <a name="line.36"></a>
+<FONT color="green">037</FONT>             * @see {@link SocketChannelUDT}<a name="line.37"></a>
+<FONT color="green">038</FONT>             */<a name="line.38"></a>
+<FONT color="green">039</FONT>            CONNECTOR, //<a name="line.39"></a>
+<FONT color="green">040</FONT>    <a name="line.40"></a>
+<FONT color="green">041</FONT>            /**<a name="line.41"></a>
+<FONT color="green">042</FONT>             * Rendezvous mode: symmetric peer channel on each side of the connection.<a name="line.42"></a>
+<FONT color="green">043</FONT>             * <a name="line.43"></a>
+<FONT color="green">044</FONT>             * @see {@link RendezvousChannelUDT}<a name="line.44"></a>
+<FONT color="green">045</FONT>             */<a name="line.45"></a>
+<FONT color="green">046</FONT>            RENDEZVOUS, //<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>    }<a name="line.48"></a>
 
 
 

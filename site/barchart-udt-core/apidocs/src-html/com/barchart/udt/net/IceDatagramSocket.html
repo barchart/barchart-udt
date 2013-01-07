@@ -19,545 +19,548 @@
 <FONT color="green">016</FONT>    import java.net.SocketTimeoutException;<a name="line.16"></a>
 <FONT color="green">017</FONT>    import java.nio.channels.DatagramChannel;<a name="line.17"></a>
 <FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    public interface IceDatagramSocket {<a name="line.19"></a>
-<FONT color="green">020</FONT>    <a name="line.20"></a>
-<FONT color="green">021</FONT>            /**<a name="line.21"></a>
-<FONT color="green">022</FONT>             * Binds this DatagramSocket to a specific address &amp; port.<a name="line.22"></a>
-<FONT color="green">023</FONT>             * &lt;p&gt;<a name="line.23"></a>
-<FONT color="green">024</FONT>             * If the address is &lt;code&gt;null&lt;/code&gt;, then the system will pick up an<a name="line.24"></a>
-<FONT color="green">025</FONT>             * ephemeral port and a valid local address to bind the socket.<a name="line.25"></a>
-<FONT color="green">026</FONT>             *&lt;p&gt;<a name="line.26"></a>
-<FONT color="green">027</FONT>             * <a name="line.27"></a>
-<FONT color="green">028</FONT>             * @param addr<a name="line.28"></a>
-<FONT color="green">029</FONT>             *            The address &amp; port to bind to.<a name="line.29"></a>
-<FONT color="green">030</FONT>             * @throws SocketException<a name="line.30"></a>
-<FONT color="green">031</FONT>             *             if any error happens during the bind, or if the socket is<a name="line.31"></a>
-<FONT color="green">032</FONT>             *             already bound.<a name="line.32"></a>
-<FONT color="green">033</FONT>             * @throws SecurityException<a name="line.33"></a>
-<FONT color="green">034</FONT>             *             if a security manager exists and its &lt;code&gt;checkListen&lt;/code&gt;<a name="line.34"></a>
-<FONT color="green">035</FONT>             *             method doesn't allow the operation.<a name="line.35"></a>
-<FONT color="green">036</FONT>             * @throws IllegalArgumentException<a name="line.36"></a>
-<FONT color="green">037</FONT>             *             if addr is a SocketAddress subclass not supported by this<a name="line.37"></a>
-<FONT color="green">038</FONT>             *             socket.<a name="line.38"></a>
-<FONT color="green">039</FONT>             * @since 1.4<a name="line.39"></a>
-<FONT color="green">040</FONT>             */<a name="line.40"></a>
-<FONT color="green">041</FONT>            void bind(SocketAddress addr) throws SocketException;<a name="line.41"></a>
-<FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>            /**<a name="line.43"></a>
-<FONT color="green">044</FONT>             * Connects the socket to a remote address for this socket. When a socket is<a name="line.44"></a>
-<FONT color="green">045</FONT>             * connected to a remote address, packets may only be sent to or received<a name="line.45"></a>
-<FONT color="green">046</FONT>             * from that address. By default a datagram socket is not connected.<a name="line.46"></a>
-<FONT color="green">047</FONT>             * <a name="line.47"></a>
-<FONT color="green">048</FONT>             * &lt;p&gt;<a name="line.48"></a>
-<FONT color="green">049</FONT>             * If the remote destination to which the socket is connected does not<a name="line.49"></a>
-<FONT color="green">050</FONT>             * exist, or is otherwise unreachable, and if an ICMP destination<a name="line.50"></a>
-<FONT color="green">051</FONT>             * unreachable packet has been received for that address, then a subsequent<a name="line.51"></a>
-<FONT color="green">052</FONT>             * call to send or receive may throw a PortUnreachableException. Note, there<a name="line.52"></a>
-<FONT color="green">053</FONT>             * is no guarantee that the exception will be thrown.<a name="line.53"></a>
-<FONT color="green">054</FONT>             * <a name="line.54"></a>
-<FONT color="green">055</FONT>             * &lt;p&gt;<a name="line.55"></a>
-<FONT color="green">056</FONT>             * A caller's permission to send and receive datagrams to a given host and<a name="line.56"></a>
-<FONT color="green">057</FONT>             * port are checked at connect time. When a socket is connected, receive and<a name="line.57"></a>
-<FONT color="green">058</FONT>             * send &lt;b&gt;will not perform any security checks&lt;/b&gt; on incoming and outgoing<a name="line.58"></a>
-<FONT color="green">059</FONT>             * packets, other than matching the packet's and the socket's address and<a name="line.59"></a>
-<FONT color="green">060</FONT>             * port. On a send operation, if the packet's address is set and the<a name="line.60"></a>
-<FONT color="green">061</FONT>             * packet's address and the socket's address do not match, an<a name="line.61"></a>
-<FONT color="green">062</FONT>             * IllegalArgumentException will be thrown. A socket connected to a<a name="line.62"></a>
-<FONT color="green">063</FONT>             * multicast address may only be used to send packets.<a name="line.63"></a>
-<FONT color="green">064</FONT>             * <a name="line.64"></a>
-<FONT color="green">065</FONT>             * @param address<a name="line.65"></a>
-<FONT color="green">066</FONT>             *            the remote address for the socket<a name="line.66"></a>
+<FONT color="green">019</FONT>    /**<a name="line.19"></a>
+<FONT color="green">020</FONT>     * compatibility verification interface<a name="line.20"></a>
+<FONT color="green">021</FONT>     */<a name="line.21"></a>
+<FONT color="green">022</FONT>    public interface IceDatagramSocket {<a name="line.22"></a>
+<FONT color="green">023</FONT>    <a name="line.23"></a>
+<FONT color="green">024</FONT>            /**<a name="line.24"></a>
+<FONT color="green">025</FONT>             * Binds this DatagramSocket to a specific address &amp; port.<a name="line.25"></a>
+<FONT color="green">026</FONT>             * &lt;p&gt;<a name="line.26"></a>
+<FONT color="green">027</FONT>             * If the address is &lt;code&gt;null&lt;/code&gt;, then the system will pick up an<a name="line.27"></a>
+<FONT color="green">028</FONT>             * ephemeral port and a valid local address to bind the socket.<a name="line.28"></a>
+<FONT color="green">029</FONT>             * &lt;p&gt;<a name="line.29"></a>
+<FONT color="green">030</FONT>             * <a name="line.30"></a>
+<FONT color="green">031</FONT>             * @param addr<a name="line.31"></a>
+<FONT color="green">032</FONT>             *            The address &amp; port to bind to.<a name="line.32"></a>
+<FONT color="green">033</FONT>             * @throws SocketException<a name="line.33"></a>
+<FONT color="green">034</FONT>             *             if any error happens during the bind, or if the socket is<a name="line.34"></a>
+<FONT color="green">035</FONT>             *             already bound.<a name="line.35"></a>
+<FONT color="green">036</FONT>             * @throws SecurityException<a name="line.36"></a>
+<FONT color="green">037</FONT>             *             if a security manager exists and its &lt;code&gt;checkListen&lt;/code&gt;<a name="line.37"></a>
+<FONT color="green">038</FONT>             *             method doesn't allow the operation.<a name="line.38"></a>
+<FONT color="green">039</FONT>             * @throws IllegalArgumentException<a name="line.39"></a>
+<FONT color="green">040</FONT>             *             if addr is a SocketAddress subclass not supported by this<a name="line.40"></a>
+<FONT color="green">041</FONT>             *             socket.<a name="line.41"></a>
+<FONT color="green">042</FONT>             * @since 1.4<a name="line.42"></a>
+<FONT color="green">043</FONT>             */<a name="line.43"></a>
+<FONT color="green">044</FONT>            void bind(SocketAddress addr) throws SocketException;<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>            /**<a name="line.46"></a>
+<FONT color="green">047</FONT>             * Connects the socket to a remote address for this socket. When a socket is<a name="line.47"></a>
+<FONT color="green">048</FONT>             * connected to a remote address, packets may only be sent to or received<a name="line.48"></a>
+<FONT color="green">049</FONT>             * from that address. By default a datagram socket is not connected.<a name="line.49"></a>
+<FONT color="green">050</FONT>             * <a name="line.50"></a>
+<FONT color="green">051</FONT>             * &lt;p&gt;<a name="line.51"></a>
+<FONT color="green">052</FONT>             * If the remote destination to which the socket is connected does not<a name="line.52"></a>
+<FONT color="green">053</FONT>             * exist, or is otherwise unreachable, and if an ICMP destination<a name="line.53"></a>
+<FONT color="green">054</FONT>             * unreachable packet has been received for that address, then a subsequent<a name="line.54"></a>
+<FONT color="green">055</FONT>             * call to send or receive may throw a PortUnreachableException. Note, there<a name="line.55"></a>
+<FONT color="green">056</FONT>             * is no guarantee that the exception will be thrown.<a name="line.56"></a>
+<FONT color="green">057</FONT>             * <a name="line.57"></a>
+<FONT color="green">058</FONT>             * &lt;p&gt;<a name="line.58"></a>
+<FONT color="green">059</FONT>             * A caller's permission to send and receive datagrams to a given host and<a name="line.59"></a>
+<FONT color="green">060</FONT>             * port are checked at connect time. When a socket is connected, receive and<a name="line.60"></a>
+<FONT color="green">061</FONT>             * send &lt;b&gt;will not perform any security checks&lt;/b&gt; on incoming and outgoing<a name="line.61"></a>
+<FONT color="green">062</FONT>             * packets, other than matching the packet's and the socket's address and<a name="line.62"></a>
+<FONT color="green">063</FONT>             * port. On a send operation, if the packet's address is set and the<a name="line.63"></a>
+<FONT color="green">064</FONT>             * packet's address and the socket's address do not match, an<a name="line.64"></a>
+<FONT color="green">065</FONT>             * IllegalArgumentException will be thrown. A socket connected to a<a name="line.65"></a>
+<FONT color="green">066</FONT>             * multicast address may only be used to send packets.<a name="line.66"></a>
 <FONT color="green">067</FONT>             * <a name="line.67"></a>
-<FONT color="green">068</FONT>             * @param port<a name="line.68"></a>
-<FONT color="green">069</FONT>             *            the remote port for the socket.<a name="line.69"></a>
+<FONT color="green">068</FONT>             * @param address<a name="line.68"></a>
+<FONT color="green">069</FONT>             *            the remote address for the socket<a name="line.69"></a>
 <FONT color="green">070</FONT>             * <a name="line.70"></a>
-<FONT color="green">071</FONT>             * @exception IllegalArgumentException<a name="line.71"></a>
-<FONT color="green">072</FONT>             *                if the address is null, or the port is out of range.<a name="line.72"></a>
+<FONT color="green">071</FONT>             * @param port<a name="line.71"></a>
+<FONT color="green">072</FONT>             *            the remote port for the socket.<a name="line.72"></a>
 <FONT color="green">073</FONT>             * <a name="line.73"></a>
-<FONT color="green">074</FONT>             * @exception SecurityException<a name="line.74"></a>
-<FONT color="green">075</FONT>             *                if the caller is not allowed to send datagrams to and<a name="line.75"></a>
-<FONT color="green">076</FONT>             *                receive datagrams from the address and port.<a name="line.76"></a>
-<FONT color="green">077</FONT>             * <a name="line.77"></a>
-<FONT color="green">078</FONT>             * @see #disconnect<a name="line.78"></a>
-<FONT color="green">079</FONT>             * @see #send<a name="line.79"></a>
-<FONT color="green">080</FONT>             * @see #receive<a name="line.80"></a>
-<FONT color="green">081</FONT>             */<a name="line.81"></a>
-<FONT color="green">082</FONT>            void connect(InetAddress address, int port);<a name="line.82"></a>
-<FONT color="green">083</FONT>    <a name="line.83"></a>
-<FONT color="green">084</FONT>            /**<a name="line.84"></a>
-<FONT color="green">085</FONT>             * Connects this socket to a remote socket address (IP address + port<a name="line.85"></a>
-<FONT color="green">086</FONT>             * number).<a name="line.86"></a>
-<FONT color="green">087</FONT>             * &lt;p&gt;<a name="line.87"></a>
-<FONT color="green">088</FONT>             * <a name="line.88"></a>
-<FONT color="green">089</FONT>             * @param addr<a name="line.89"></a>
-<FONT color="green">090</FONT>             *            The remote address.<a name="line.90"></a>
-<FONT color="green">091</FONT>             * @throws SocketException<a name="line.91"></a>
-<FONT color="green">092</FONT>             *             if the connect fails<a name="line.92"></a>
-<FONT color="green">093</FONT>             * @throws IllegalArgumentException<a name="line.93"></a>
-<FONT color="green">094</FONT>             *             if addr is null or addr is a SocketAddress subclass not<a name="line.94"></a>
-<FONT color="green">095</FONT>             *             supported by this socket<a name="line.95"></a>
-<FONT color="green">096</FONT>             * @since 1.4<a name="line.96"></a>
-<FONT color="green">097</FONT>             * @see #connect<a name="line.97"></a>
-<FONT color="green">098</FONT>             */<a name="line.98"></a>
-<FONT color="green">099</FONT>            void connect(SocketAddress addr) throws SocketException;<a name="line.99"></a>
-<FONT color="green">100</FONT>    <a name="line.100"></a>
-<FONT color="green">101</FONT>            /**<a name="line.101"></a>
-<FONT color="green">102</FONT>             * Disconnects the socket. This does nothing if the socket is not connected.<a name="line.102"></a>
-<FONT color="green">103</FONT>             * <a name="line.103"></a>
-<FONT color="green">104</FONT>             * @see #connect<a name="line.104"></a>
-<FONT color="green">105</FONT>             */<a name="line.105"></a>
-<FONT color="green">106</FONT>            void disconnect();<a name="line.106"></a>
-<FONT color="green">107</FONT>    <a name="line.107"></a>
-<FONT color="green">108</FONT>            /**<a name="line.108"></a>
-<FONT color="green">109</FONT>             * Returns the binding state of the socket.<a name="line.109"></a>
-<FONT color="green">110</FONT>             * <a name="line.110"></a>
-<FONT color="green">111</FONT>             * @return true if the socket succesfuly bound to an address<a name="line.111"></a>
-<FONT color="green">112</FONT>             * @since 1.4<a name="line.112"></a>
-<FONT color="green">113</FONT>             */<a name="line.113"></a>
-<FONT color="green">114</FONT>            boolean isBound();<a name="line.114"></a>
-<FONT color="green">115</FONT>    <a name="line.115"></a>
-<FONT color="green">116</FONT>            /**<a name="line.116"></a>
-<FONT color="green">117</FONT>             * Returns the connection state of the socket.<a name="line.117"></a>
-<FONT color="green">118</FONT>             * <a name="line.118"></a>
-<FONT color="green">119</FONT>             * @return true if the socket succesfuly connected to a server<a name="line.119"></a>
-<FONT color="green">120</FONT>             * @since 1.4<a name="line.120"></a>
-<FONT color="green">121</FONT>             */<a name="line.121"></a>
-<FONT color="green">122</FONT>            boolean isConnected();<a name="line.122"></a>
-<FONT color="green">123</FONT>    <a name="line.123"></a>
-<FONT color="green">124</FONT>            /**<a name="line.124"></a>
-<FONT color="green">125</FONT>             * Returns the address to which this socket is connected. Returns null if<a name="line.125"></a>
-<FONT color="green">126</FONT>             * the socket is not connected.<a name="line.126"></a>
-<FONT color="green">127</FONT>             * <a name="line.127"></a>
-<FONT color="green">128</FONT>             * @return the address to which this socket is connected.<a name="line.128"></a>
-<FONT color="green">129</FONT>             */<a name="line.129"></a>
-<FONT color="green">130</FONT>            InetAddress getInetAddress();<a name="line.130"></a>
-<FONT color="green">131</FONT>    <a name="line.131"></a>
-<FONT color="green">132</FONT>            /**<a name="line.132"></a>
-<FONT color="green">133</FONT>             * Returns the port for this socket. Returns -1 if the socket is not<a name="line.133"></a>
-<FONT color="green">134</FONT>             * connected.<a name="line.134"></a>
-<FONT color="green">135</FONT>             * <a name="line.135"></a>
-<FONT color="green">136</FONT>             * @return the port to which this socket is connected.<a name="line.136"></a>
-<FONT color="green">137</FONT>             */<a name="line.137"></a>
-<FONT color="green">138</FONT>            int getPort();<a name="line.138"></a>
-<FONT color="green">139</FONT>    <a name="line.139"></a>
-<FONT color="green">140</FONT>            /**<a name="line.140"></a>
-<FONT color="green">141</FONT>             * Returns the address of the endpoint this socket is connected to, or<a name="line.141"></a>
-<FONT color="green">142</FONT>             * &lt;code&gt;null&lt;/code&gt; if it is unconnected.<a name="line.142"></a>
-<FONT color="green">143</FONT>             * <a name="line.143"></a>
-<FONT color="green">144</FONT>             * @return a &lt;code&gt;SocketAddress&lt;/code&gt; representing the remote endpoint of<a name="line.144"></a>
-<FONT color="green">145</FONT>             *         this socket, or &lt;code&gt;null&lt;/code&gt; if it is not connected yet.<a name="line.145"></a>
-<FONT color="green">146</FONT>             * @see #getInetAddress()<a name="line.146"></a>
-<FONT color="green">147</FONT>             * @see #getPort()<a name="line.147"></a>
-<FONT color="green">148</FONT>             * @see #connect(SocketAddress)<a name="line.148"></a>
-<FONT color="green">149</FONT>             * @since 1.4<a name="line.149"></a>
-<FONT color="green">150</FONT>             */<a name="line.150"></a>
-<FONT color="green">151</FONT>            SocketAddress getRemoteSocketAddress();<a name="line.151"></a>
-<FONT color="green">152</FONT>    <a name="line.152"></a>
-<FONT color="green">153</FONT>            /**<a name="line.153"></a>
-<FONT color="green">154</FONT>             * Returns the address of the endpoint this socket is bound to, or<a name="line.154"></a>
-<FONT color="green">155</FONT>             * &lt;code&gt;null&lt;/code&gt; if it is not bound yet.<a name="line.155"></a>
-<FONT color="green">156</FONT>             * <a name="line.156"></a>
-<FONT color="green">157</FONT>             * @return a &lt;code&gt;SocketAddress&lt;/code&gt; representing the local endpoint of<a name="line.157"></a>
-<FONT color="green">158</FONT>             *         this socket, or &lt;code&gt;null&lt;/code&gt; if it is not bound yet.<a name="line.158"></a>
-<FONT color="green">159</FONT>             * @see #getLocalAddress()<a name="line.159"></a>
-<FONT color="green">160</FONT>             * @see #getLocalPort()<a name="line.160"></a>
-<FONT color="green">161</FONT>             * @see #bind(SocketAddress)<a name="line.161"></a>
-<FONT color="green">162</FONT>             * @since 1.4<a name="line.162"></a>
-<FONT color="green">163</FONT>             */<a name="line.163"></a>
-<FONT color="green">164</FONT>    <a name="line.164"></a>
-<FONT color="green">165</FONT>            SocketAddress getLocalSocketAddress();<a name="line.165"></a>
-<FONT color="green">166</FONT>    <a name="line.166"></a>
-<FONT color="green">167</FONT>            /**<a name="line.167"></a>
-<FONT color="green">168</FONT>             * Sends a datagram packet from this socket. The &lt;code&gt;DatagramPacket&lt;/code&gt;<a name="line.168"></a>
-<FONT color="green">169</FONT>             * includes information indicating the data to be sent, its length, the IP<a name="line.169"></a>
-<FONT color="green">170</FONT>             * address of the remote host, and the port number on the remote host.<a name="line.170"></a>
-<FONT color="green">171</FONT>             * <a name="line.171"></a>
-<FONT color="green">172</FONT>             * &lt;p&gt;<a name="line.172"></a>
-<FONT color="green">173</FONT>             * If there is a security manager, and the socket is not currently connected<a name="line.173"></a>
-<FONT color="green">174</FONT>             * to a remote address, this method first performs some security checks.<a name="line.174"></a>
-<FONT color="green">175</FONT>             * First, if &lt;code&gt;p.getAddress().isMulticastAddress()&lt;/code&gt; is true, this<a name="line.175"></a>
-<FONT color="green">176</FONT>             * method calls the security manager's &lt;code&gt;checkMulticast&lt;/code&gt; method<a name="line.176"></a>
-<FONT color="green">177</FONT>             * with &lt;code&gt;p.getAddress()&lt;/code&gt; as its argument. If the evaluation of<a name="line.177"></a>
-<FONT color="green">178</FONT>             * that expression is false, this method instead calls the security<a name="line.178"></a>
-<FONT color="green">179</FONT>             * manager's &lt;code&gt;checkConnect&lt;/code&gt; method with arguments<a name="line.179"></a>
-<FONT color="green">180</FONT>             * &lt;code&gt;p.getAddress().getHostAddress()&lt;/code&gt; and &lt;code&gt;p.getPort()&lt;/code&gt;<a name="line.180"></a>
-<FONT color="green">181</FONT>             * . Each call to a security manager method could result in a<a name="line.181"></a>
-<FONT color="green">182</FONT>             * SecurityException if the operation is not allowed.<a name="line.182"></a>
-<FONT color="green">183</FONT>             * <a name="line.183"></a>
-<FONT color="green">184</FONT>             * @param p<a name="line.184"></a>
-<FONT color="green">185</FONT>             *            the &lt;code&gt;DatagramPacket&lt;/code&gt; to be sent.<a name="line.185"></a>
+<FONT color="green">074</FONT>             * @exception IllegalArgumentException<a name="line.74"></a>
+<FONT color="green">075</FONT>             *                if the address is null, or the port is out of range.<a name="line.75"></a>
+<FONT color="green">076</FONT>             * <a name="line.76"></a>
+<FONT color="green">077</FONT>             * @exception SecurityException<a name="line.77"></a>
+<FONT color="green">078</FONT>             *                if the caller is not allowed to send datagrams to and<a name="line.78"></a>
+<FONT color="green">079</FONT>             *                receive datagrams from the address and port.<a name="line.79"></a>
+<FONT color="green">080</FONT>             * <a name="line.80"></a>
+<FONT color="green">081</FONT>             * @see #disconnect<a name="line.81"></a>
+<FONT color="green">082</FONT>             * @see #send<a name="line.82"></a>
+<FONT color="green">083</FONT>             * @see #receive<a name="line.83"></a>
+<FONT color="green">084</FONT>             */<a name="line.84"></a>
+<FONT color="green">085</FONT>            void connect(InetAddress address, int port);<a name="line.85"></a>
+<FONT color="green">086</FONT>    <a name="line.86"></a>
+<FONT color="green">087</FONT>            /**<a name="line.87"></a>
+<FONT color="green">088</FONT>             * Connects this socket to a remote socket address (IP address + port<a name="line.88"></a>
+<FONT color="green">089</FONT>             * number).<a name="line.89"></a>
+<FONT color="green">090</FONT>             * &lt;p&gt;<a name="line.90"></a>
+<FONT color="green">091</FONT>             * <a name="line.91"></a>
+<FONT color="green">092</FONT>             * @param addr<a name="line.92"></a>
+<FONT color="green">093</FONT>             *            The remote address.<a name="line.93"></a>
+<FONT color="green">094</FONT>             * @throws SocketException<a name="line.94"></a>
+<FONT color="green">095</FONT>             *             if the connect fails<a name="line.95"></a>
+<FONT color="green">096</FONT>             * @throws IllegalArgumentException<a name="line.96"></a>
+<FONT color="green">097</FONT>             *             if addr is null or addr is a SocketAddress subclass not<a name="line.97"></a>
+<FONT color="green">098</FONT>             *             supported by this socket<a name="line.98"></a>
+<FONT color="green">099</FONT>             * @since 1.4<a name="line.99"></a>
+<FONT color="green">100</FONT>             * @see #connect<a name="line.100"></a>
+<FONT color="green">101</FONT>             */<a name="line.101"></a>
+<FONT color="green">102</FONT>            void connect(SocketAddress addr) throws SocketException;<a name="line.102"></a>
+<FONT color="green">103</FONT>    <a name="line.103"></a>
+<FONT color="green">104</FONT>            /**<a name="line.104"></a>
+<FONT color="green">105</FONT>             * Disconnects the socket. This does nothing if the socket is not connected.<a name="line.105"></a>
+<FONT color="green">106</FONT>             * <a name="line.106"></a>
+<FONT color="green">107</FONT>             * @see #connect<a name="line.107"></a>
+<FONT color="green">108</FONT>             */<a name="line.108"></a>
+<FONT color="green">109</FONT>            void disconnect();<a name="line.109"></a>
+<FONT color="green">110</FONT>    <a name="line.110"></a>
+<FONT color="green">111</FONT>            /**<a name="line.111"></a>
+<FONT color="green">112</FONT>             * Returns the binding state of the socket.<a name="line.112"></a>
+<FONT color="green">113</FONT>             * <a name="line.113"></a>
+<FONT color="green">114</FONT>             * @return true if the socket succesfuly bound to an address<a name="line.114"></a>
+<FONT color="green">115</FONT>             * @since 1.4<a name="line.115"></a>
+<FONT color="green">116</FONT>             */<a name="line.116"></a>
+<FONT color="green">117</FONT>            boolean isBound();<a name="line.117"></a>
+<FONT color="green">118</FONT>    <a name="line.118"></a>
+<FONT color="green">119</FONT>            /**<a name="line.119"></a>
+<FONT color="green">120</FONT>             * Returns the connection state of the socket.<a name="line.120"></a>
+<FONT color="green">121</FONT>             * <a name="line.121"></a>
+<FONT color="green">122</FONT>             * @return true if the socket succesfuly connected to a server<a name="line.122"></a>
+<FONT color="green">123</FONT>             * @since 1.4<a name="line.123"></a>
+<FONT color="green">124</FONT>             */<a name="line.124"></a>
+<FONT color="green">125</FONT>            boolean isConnected();<a name="line.125"></a>
+<FONT color="green">126</FONT>    <a name="line.126"></a>
+<FONT color="green">127</FONT>            /**<a name="line.127"></a>
+<FONT color="green">128</FONT>             * Returns the address to which this socket is connected. Returns null if<a name="line.128"></a>
+<FONT color="green">129</FONT>             * the socket is not connected.<a name="line.129"></a>
+<FONT color="green">130</FONT>             * <a name="line.130"></a>
+<FONT color="green">131</FONT>             * @return the address to which this socket is connected.<a name="line.131"></a>
+<FONT color="green">132</FONT>             */<a name="line.132"></a>
+<FONT color="green">133</FONT>            InetAddress getInetAddress();<a name="line.133"></a>
+<FONT color="green">134</FONT>    <a name="line.134"></a>
+<FONT color="green">135</FONT>            /**<a name="line.135"></a>
+<FONT color="green">136</FONT>             * Returns the port for this socket. Returns -1 if the socket is not<a name="line.136"></a>
+<FONT color="green">137</FONT>             * connected.<a name="line.137"></a>
+<FONT color="green">138</FONT>             * <a name="line.138"></a>
+<FONT color="green">139</FONT>             * @return the port to which this socket is connected.<a name="line.139"></a>
+<FONT color="green">140</FONT>             */<a name="line.140"></a>
+<FONT color="green">141</FONT>            int getPort();<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>            /**<a name="line.143"></a>
+<FONT color="green">144</FONT>             * Returns the address of the endpoint this socket is connected to, or<a name="line.144"></a>
+<FONT color="green">145</FONT>             * &lt;code&gt;null&lt;/code&gt; if it is unconnected.<a name="line.145"></a>
+<FONT color="green">146</FONT>             * <a name="line.146"></a>
+<FONT color="green">147</FONT>             * @return a &lt;code&gt;SocketAddress&lt;/code&gt; representing the remote endpoint of<a name="line.147"></a>
+<FONT color="green">148</FONT>             *         this socket, or &lt;code&gt;null&lt;/code&gt; if it is not connected yet.<a name="line.148"></a>
+<FONT color="green">149</FONT>             * @see #getInetAddress()<a name="line.149"></a>
+<FONT color="green">150</FONT>             * @see #getPort()<a name="line.150"></a>
+<FONT color="green">151</FONT>             * @see #connect(SocketAddress)<a name="line.151"></a>
+<FONT color="green">152</FONT>             * @since 1.4<a name="line.152"></a>
+<FONT color="green">153</FONT>             */<a name="line.153"></a>
+<FONT color="green">154</FONT>            SocketAddress getRemoteSocketAddress();<a name="line.154"></a>
+<FONT color="green">155</FONT>    <a name="line.155"></a>
+<FONT color="green">156</FONT>            /**<a name="line.156"></a>
+<FONT color="green">157</FONT>             * Returns the address of the endpoint this socket is bound to, or<a name="line.157"></a>
+<FONT color="green">158</FONT>             * &lt;code&gt;null&lt;/code&gt; if it is not bound yet.<a name="line.158"></a>
+<FONT color="green">159</FONT>             * <a name="line.159"></a>
+<FONT color="green">160</FONT>             * @return a &lt;code&gt;SocketAddress&lt;/code&gt; representing the local endpoint of<a name="line.160"></a>
+<FONT color="green">161</FONT>             *         this socket, or &lt;code&gt;null&lt;/code&gt; if it is not bound yet.<a name="line.161"></a>
+<FONT color="green">162</FONT>             * @see #getLocalAddress()<a name="line.162"></a>
+<FONT color="green">163</FONT>             * @see #getLocalPort()<a name="line.163"></a>
+<FONT color="green">164</FONT>             * @see #bind(SocketAddress)<a name="line.164"></a>
+<FONT color="green">165</FONT>             * @since 1.4<a name="line.165"></a>
+<FONT color="green">166</FONT>             */<a name="line.166"></a>
+<FONT color="green">167</FONT>    <a name="line.167"></a>
+<FONT color="green">168</FONT>            SocketAddress getLocalSocketAddress();<a name="line.168"></a>
+<FONT color="green">169</FONT>    <a name="line.169"></a>
+<FONT color="green">170</FONT>            /**<a name="line.170"></a>
+<FONT color="green">171</FONT>             * Sends a datagram packet from this socket. The &lt;code&gt;DatagramPacket&lt;/code&gt;<a name="line.171"></a>
+<FONT color="green">172</FONT>             * includes information indicating the data to be sent, its length, the IP<a name="line.172"></a>
+<FONT color="green">173</FONT>             * address of the remote host, and the port number on the remote host.<a name="line.173"></a>
+<FONT color="green">174</FONT>             * <a name="line.174"></a>
+<FONT color="green">175</FONT>             * &lt;p&gt;<a name="line.175"></a>
+<FONT color="green">176</FONT>             * If there is a security manager, and the socket is not currently connected<a name="line.176"></a>
+<FONT color="green">177</FONT>             * to a remote address, this method first performs some security checks.<a name="line.177"></a>
+<FONT color="green">178</FONT>             * First, if &lt;code&gt;p.getAddress().isMulticastAddress()&lt;/code&gt; is true, this<a name="line.178"></a>
+<FONT color="green">179</FONT>             * method calls the security manager's &lt;code&gt;checkMulticast&lt;/code&gt; method<a name="line.179"></a>
+<FONT color="green">180</FONT>             * with &lt;code&gt;p.getAddress()&lt;/code&gt; as its argument. If the evaluation of<a name="line.180"></a>
+<FONT color="green">181</FONT>             * that expression is false, this method instead calls the security<a name="line.181"></a>
+<FONT color="green">182</FONT>             * manager's &lt;code&gt;checkConnect&lt;/code&gt; method with arguments<a name="line.182"></a>
+<FONT color="green">183</FONT>             * &lt;code&gt;p.getAddress().getHostAddress()&lt;/code&gt; and &lt;code&gt;p.getPort()&lt;/code&gt;<a name="line.183"></a>
+<FONT color="green">184</FONT>             * . Each call to a security manager method could result in a<a name="line.184"></a>
+<FONT color="green">185</FONT>             * SecurityException if the operation is not allowed.<a name="line.185"></a>
 <FONT color="green">186</FONT>             * <a name="line.186"></a>
-<FONT color="green">187</FONT>             * @exception IOException<a name="line.187"></a>
-<FONT color="green">188</FONT>             *                if an I/O error occurs.<a name="line.188"></a>
-<FONT color="green">189</FONT>             * @exception SecurityException<a name="line.189"></a>
-<FONT color="green">190</FONT>             *                if a security manager exists and its<a name="line.190"></a>
-<FONT color="green">191</FONT>             *                &lt;code&gt;checkMulticast&lt;/code&gt; or &lt;code&gt;checkConnect&lt;/code&gt;<a name="line.191"></a>
-<FONT color="green">192</FONT>             *                method doesn't allow the send.<a name="line.192"></a>
-<FONT color="green">193</FONT>             * @exception PortUnreachableException<a name="line.193"></a>
-<FONT color="green">194</FONT>             *                may be thrown if the socket is connected to a currently<a name="line.194"></a>
-<FONT color="green">195</FONT>             *                unreachable destination. Note, there is no guarantee that<a name="line.195"></a>
-<FONT color="green">196</FONT>             *                the exception will be thrown.<a name="line.196"></a>
-<FONT color="green">197</FONT>             * @exception java.nio.channels.IllegalBlockingModeException<a name="line.197"></a>
-<FONT color="green">198</FONT>             *                if this socket has an associated channel, and the channel<a name="line.198"></a>
-<FONT color="green">199</FONT>             *                is in non-blocking mode.<a name="line.199"></a>
-<FONT color="green">200</FONT>             * <a name="line.200"></a>
-<FONT color="green">201</FONT>             * @see java.net.DatagramPacket<a name="line.201"></a>
-<FONT color="green">202</FONT>             * @see SecurityManager#checkMulticast(InetAddress)<a name="line.202"></a>
-<FONT color="green">203</FONT>             * @see SecurityManager#checkConnect revised 1.4 spec JSR-51<a name="line.203"></a>
-<FONT color="green">204</FONT>             */<a name="line.204"></a>
-<FONT color="green">205</FONT>            void send(DatagramPacket p) throws IOException;<a name="line.205"></a>
-<FONT color="green">206</FONT>    <a name="line.206"></a>
-<FONT color="green">207</FONT>            /**<a name="line.207"></a>
-<FONT color="green">208</FONT>             * Receives a datagram packet from this socket. When this method returns,<a name="line.208"></a>
-<FONT color="green">209</FONT>             * the &lt;code&gt;DatagramPacket&lt;/code&gt;'s buffer is filled with the data<a name="line.209"></a>
-<FONT color="green">210</FONT>             * received. The datagram packet also contains the sender's IP address, and<a name="line.210"></a>
-<FONT color="green">211</FONT>             * the port number on the sender's machine.<a name="line.211"></a>
-<FONT color="green">212</FONT>             * &lt;p&gt;<a name="line.212"></a>
-<FONT color="green">213</FONT>             * This method blocks until a datagram is received. The &lt;code&gt;length&lt;/code&gt;<a name="line.213"></a>
-<FONT color="green">214</FONT>             * field of the datagram packet object contains the length of the received<a name="line.214"></a>
-<FONT color="green">215</FONT>             * message. If the message is longer than the packet's length, the message<a name="line.215"></a>
-<FONT color="green">216</FONT>             * is truncated.<a name="line.216"></a>
-<FONT color="green">217</FONT>             * &lt;p&gt;<a name="line.217"></a>
-<FONT color="green">218</FONT>             * If there is a security manager, a packet cannot be received if the<a name="line.218"></a>
-<FONT color="green">219</FONT>             * security manager's &lt;code&gt;checkAccept&lt;/code&gt; method does not allow it.<a name="line.219"></a>
-<FONT color="green">220</FONT>             * <a name="line.220"></a>
-<FONT color="green">221</FONT>             * @param p<a name="line.221"></a>
-<FONT color="green">222</FONT>             *            the &lt;code&gt;DatagramPacket&lt;/code&gt; into which to place the<a name="line.222"></a>
-<FONT color="green">223</FONT>             *            incoming data.<a name="line.223"></a>
-<FONT color="green">224</FONT>             * @exception IOException<a name="line.224"></a>
-<FONT color="green">225</FONT>             *                if an I/O error occurs.<a name="line.225"></a>
-<FONT color="green">226</FONT>             * @exception SocketTimeoutException<a name="line.226"></a>
-<FONT color="green">227</FONT>             *                if setSoTimeout was previously called and the timeout has<a name="line.227"></a>
-<FONT color="green">228</FONT>             *                expired.<a name="line.228"></a>
-<FONT color="green">229</FONT>             * @exception PortUnreachableException<a name="line.229"></a>
-<FONT color="green">230</FONT>             *                may be thrown if the socket is connected to a currently<a name="line.230"></a>
-<FONT color="green">231</FONT>             *                unreachable destination. Note, there is no guarantee that<a name="line.231"></a>
-<FONT color="green">232</FONT>             *                the exception will be thrown.<a name="line.232"></a>
-<FONT color="green">233</FONT>             * @exception java.nio.channels.IllegalBlockingModeException<a name="line.233"></a>
-<FONT color="green">234</FONT>             *                if this socket has an associated channel, and the channel<a name="line.234"></a>
-<FONT color="green">235</FONT>             *                is in non-blocking mode.<a name="line.235"></a>
-<FONT color="green">236</FONT>             * @see java.net.DatagramPacket<a name="line.236"></a>
-<FONT color="green">237</FONT>             * @see java.net.DatagramSocket revised 1.4 spec JSR-51<a name="line.237"></a>
-<FONT color="green">238</FONT>             */<a name="line.238"></a>
-<FONT color="green">239</FONT>            void receive(DatagramPacket p) throws IOException;<a name="line.239"></a>
-<FONT color="green">240</FONT>    <a name="line.240"></a>
-<FONT color="green">241</FONT>            /**<a name="line.241"></a>
-<FONT color="green">242</FONT>             * Gets the local address to which the socket is bound.<a name="line.242"></a>
-<FONT color="green">243</FONT>             * <a name="line.243"></a>
-<FONT color="green">244</FONT>             * &lt;p&gt;<a name="line.244"></a>
-<FONT color="green">245</FONT>             * If there is a security manager, its &lt;code&gt;checkConnect&lt;/code&gt; method is<a name="line.245"></a>
-<FONT color="green">246</FONT>             * first called with the host address and &lt;code&gt;-1&lt;/code&gt; as its arguments<a name="line.246"></a>
-<FONT color="green">247</FONT>             * to see if the operation is allowed.<a name="line.247"></a>
-<FONT color="green">248</FONT>             * <a name="line.248"></a>
-<FONT color="green">249</FONT>             * @see SecurityManager#checkConnect<a name="line.249"></a>
-<FONT color="green">250</FONT>             * @return the local address to which the socket is bound, or an<a name="line.250"></a>
-<FONT color="green">251</FONT>             *         &lt;code&gt;InetAddress&lt;/code&gt; representing any local address if either<a name="line.251"></a>
-<FONT color="green">252</FONT>             *         the socket is not bound, or the security manager<a name="line.252"></a>
-<FONT color="green">253</FONT>             *         &lt;code&gt;checkConnect&lt;/code&gt; method does not allow the operation<a name="line.253"></a>
-<FONT color="green">254</FONT>             * @since 1.1<a name="line.254"></a>
-<FONT color="green">255</FONT>             */<a name="line.255"></a>
-<FONT color="green">256</FONT>            InetAddress getLocalAddress();<a name="line.256"></a>
-<FONT color="green">257</FONT>    <a name="line.257"></a>
-<FONT color="green">258</FONT>            /**<a name="line.258"></a>
-<FONT color="green">259</FONT>             * Returns the port number on the local host to which this socket is bound.<a name="line.259"></a>
-<FONT color="green">260</FONT>             * <a name="line.260"></a>
-<FONT color="green">261</FONT>             * @return the port number on the local host to which this socket is bound.<a name="line.261"></a>
-<FONT color="green">262</FONT>             */<a name="line.262"></a>
-<FONT color="green">263</FONT>            int getLocalPort();<a name="line.263"></a>
-<FONT color="green">264</FONT>    <a name="line.264"></a>
-<FONT color="green">265</FONT>            /**<a name="line.265"></a>
-<FONT color="green">266</FONT>             * Enable/disable SO_TIMEOUT with the specified timeout, in milliseconds.<a name="line.266"></a>
-<FONT color="green">267</FONT>             * With this option set to a non-zero timeout, a call to receive() for this<a name="line.267"></a>
-<FONT color="green">268</FONT>             * DatagramSocket will block for only this amount of time. If the timeout<a name="line.268"></a>
-<FONT color="green">269</FONT>             * expires, a &lt;B&gt;java.net.SocketTimeoutException&lt;/B&gt; is raised, though the<a name="line.269"></a>
-<FONT color="green">270</FONT>             * DatagramSocket is still valid. The option &lt;B&gt;must&lt;/B&gt; be enabled prior to<a name="line.270"></a>
-<FONT color="green">271</FONT>             * entering the blocking operation to have effect. The timeout must be &gt; 0.<a name="line.271"></a>
-<FONT color="green">272</FONT>             * A timeout of zero is interpreted as an infinite timeout.<a name="line.272"></a>
-<FONT color="green">273</FONT>             * <a name="line.273"></a>
-<FONT color="green">274</FONT>             * @param timeout<a name="line.274"></a>
-<FONT color="green">275</FONT>             *            the specified timeout in milliseconds.<a name="line.275"></a>
-<FONT color="green">276</FONT>             * @throws SocketException<a name="line.276"></a>
-<FONT color="green">277</FONT>             *             if there is an error in the underlying protocol, such as an<a name="line.277"></a>
-<FONT color="green">278</FONT>             *             UDP error.<a name="line.278"></a>
-<FONT color="green">279</FONT>             * @since JDK1.1<a name="line.279"></a>
-<FONT color="green">280</FONT>             * @see #getSoTimeout()<a name="line.280"></a>
-<FONT color="green">281</FONT>             */<a name="line.281"></a>
-<FONT color="green">282</FONT>            void setSoTimeout(int timeout) throws SocketException;<a name="line.282"></a>
-<FONT color="green">283</FONT>    <a name="line.283"></a>
-<FONT color="green">284</FONT>            /**<a name="line.284"></a>
-<FONT color="green">285</FONT>             * Retrieve setting for SO_TIMEOUT. 0 returns implies that the option is<a name="line.285"></a>
-<FONT color="green">286</FONT>             * disabled (i.e., timeout of infinity).<a name="line.286"></a>
-<FONT color="green">287</FONT>             * <a name="line.287"></a>
-<FONT color="green">288</FONT>             * @return the setting for SO_TIMEOUT<a name="line.288"></a>
-<FONT color="green">289</FONT>             * @throws SocketException<a name="line.289"></a>
-<FONT color="green">290</FONT>             *             if there is an error in the underlying protocol, such as an<a name="line.290"></a>
-<FONT color="green">291</FONT>             *             UDP error.<a name="line.291"></a>
-<FONT color="green">292</FONT>             * @since JDK1.1<a name="line.292"></a>
-<FONT color="green">293</FONT>             * @see #setSoTimeout(int)<a name="line.293"></a>
-<FONT color="green">294</FONT>             */<a name="line.294"></a>
-<FONT color="green">295</FONT>            int getSoTimeout() throws SocketException;<a name="line.295"></a>
-<FONT color="green">296</FONT>    <a name="line.296"></a>
-<FONT color="green">297</FONT>            /**<a name="line.297"></a>
-<FONT color="green">298</FONT>             * Sets the SO_SNDBUF option to the specified value for this<a name="line.298"></a>
-<FONT color="green">299</FONT>             * &lt;tt&gt;DatagramSocket&lt;/tt&gt;. The SO_SNDBUF option is used by the network<a name="line.299"></a>
-<FONT color="green">300</FONT>             * implementation as a hint to size the underlying network I/O buffers. The<a name="line.300"></a>
-<FONT color="green">301</FONT>             * SO_SNDBUF setting may also be used by the network implementation to<a name="line.301"></a>
-<FONT color="green">302</FONT>             * determine the maximum size of the packet that can be sent on this socket.<a name="line.302"></a>
-<FONT color="green">303</FONT>             * &lt;p&gt;<a name="line.303"></a>
-<FONT color="green">304</FONT>             * As SO_SNDBUF is a hint, applications that want to verify what size the<a name="line.304"></a>
-<FONT color="green">305</FONT>             * buffer is should call {@link #getSendBufferSize()}.<a name="line.305"></a>
+<FONT color="green">187</FONT>             * @param p<a name="line.187"></a>
+<FONT color="green">188</FONT>             *            the &lt;code&gt;DatagramPacket&lt;/code&gt; to be sent.<a name="line.188"></a>
+<FONT color="green">189</FONT>             * <a name="line.189"></a>
+<FONT color="green">190</FONT>             * @exception IOException<a name="line.190"></a>
+<FONT color="green">191</FONT>             *                if an I/O error occurs.<a name="line.191"></a>
+<FONT color="green">192</FONT>             * @exception SecurityException<a name="line.192"></a>
+<FONT color="green">193</FONT>             *                if a security manager exists and its<a name="line.193"></a>
+<FONT color="green">194</FONT>             *                &lt;code&gt;checkMulticast&lt;/code&gt; or &lt;code&gt;checkConnect&lt;/code&gt;<a name="line.194"></a>
+<FONT color="green">195</FONT>             *                method doesn't allow the send.<a name="line.195"></a>
+<FONT color="green">196</FONT>             * @exception PortUnreachableException<a name="line.196"></a>
+<FONT color="green">197</FONT>             *                may be thrown if the socket is connected to a currently<a name="line.197"></a>
+<FONT color="green">198</FONT>             *                unreachable destination. Note, there is no guarantee that<a name="line.198"></a>
+<FONT color="green">199</FONT>             *                the exception will be thrown.<a name="line.199"></a>
+<FONT color="green">200</FONT>             * @exception java.nio.channels.IllegalBlockingModeException<a name="line.200"></a>
+<FONT color="green">201</FONT>             *                if this socket has an associated channel, and the channel<a name="line.201"></a>
+<FONT color="green">202</FONT>             *                is in non-blocking mode.<a name="line.202"></a>
+<FONT color="green">203</FONT>             * <a name="line.203"></a>
+<FONT color="green">204</FONT>             * @see java.net.DatagramPacket<a name="line.204"></a>
+<FONT color="green">205</FONT>             * @see SecurityManager#checkMulticast(InetAddress)<a name="line.205"></a>
+<FONT color="green">206</FONT>             * @see SecurityManager#checkConnect revised 1.4 spec JSR-51<a name="line.206"></a>
+<FONT color="green">207</FONT>             */<a name="line.207"></a>
+<FONT color="green">208</FONT>            void send(DatagramPacket p) throws IOException;<a name="line.208"></a>
+<FONT color="green">209</FONT>    <a name="line.209"></a>
+<FONT color="green">210</FONT>            /**<a name="line.210"></a>
+<FONT color="green">211</FONT>             * Receives a datagram packet from this socket. When this method returns,<a name="line.211"></a>
+<FONT color="green">212</FONT>             * the &lt;code&gt;DatagramPacket&lt;/code&gt;'s buffer is filled with the data<a name="line.212"></a>
+<FONT color="green">213</FONT>             * received. The datagram packet also contains the sender's IP address, and<a name="line.213"></a>
+<FONT color="green">214</FONT>             * the port number on the sender's machine.<a name="line.214"></a>
+<FONT color="green">215</FONT>             * &lt;p&gt;<a name="line.215"></a>
+<FONT color="green">216</FONT>             * This method blocks until a datagram is received. The &lt;code&gt;length&lt;/code&gt;<a name="line.216"></a>
+<FONT color="green">217</FONT>             * field of the datagram packet object contains the length of the received<a name="line.217"></a>
+<FONT color="green">218</FONT>             * message. If the message is longer than the packet's length, the message<a name="line.218"></a>
+<FONT color="green">219</FONT>             * is truncated.<a name="line.219"></a>
+<FONT color="green">220</FONT>             * &lt;p&gt;<a name="line.220"></a>
+<FONT color="green">221</FONT>             * If there is a security manager, a packet cannot be received if the<a name="line.221"></a>
+<FONT color="green">222</FONT>             * security manager's &lt;code&gt;checkAccept&lt;/code&gt; method does not allow it.<a name="line.222"></a>
+<FONT color="green">223</FONT>             * <a name="line.223"></a>
+<FONT color="green">224</FONT>             * @param p<a name="line.224"></a>
+<FONT color="green">225</FONT>             *            the &lt;code&gt;DatagramPacket&lt;/code&gt; into which to place the<a name="line.225"></a>
+<FONT color="green">226</FONT>             *            incoming data.<a name="line.226"></a>
+<FONT color="green">227</FONT>             * @exception IOException<a name="line.227"></a>
+<FONT color="green">228</FONT>             *                if an I/O error occurs.<a name="line.228"></a>
+<FONT color="green">229</FONT>             * @exception SocketTimeoutException<a name="line.229"></a>
+<FONT color="green">230</FONT>             *                if setSoTimeout was previously called and the timeout has<a name="line.230"></a>
+<FONT color="green">231</FONT>             *                expired.<a name="line.231"></a>
+<FONT color="green">232</FONT>             * @exception PortUnreachableException<a name="line.232"></a>
+<FONT color="green">233</FONT>             *                may be thrown if the socket is connected to a currently<a name="line.233"></a>
+<FONT color="green">234</FONT>             *                unreachable destination. Note, there is no guarantee that<a name="line.234"></a>
+<FONT color="green">235</FONT>             *                the exception will be thrown.<a name="line.235"></a>
+<FONT color="green">236</FONT>             * @exception java.nio.channels.IllegalBlockingModeException<a name="line.236"></a>
+<FONT color="green">237</FONT>             *                if this socket has an associated channel, and the channel<a name="line.237"></a>
+<FONT color="green">238</FONT>             *                is in non-blocking mode.<a name="line.238"></a>
+<FONT color="green">239</FONT>             * @see java.net.DatagramPacket<a name="line.239"></a>
+<FONT color="green">240</FONT>             * @see java.net.DatagramSocket revised 1.4 spec JSR-51<a name="line.240"></a>
+<FONT color="green">241</FONT>             */<a name="line.241"></a>
+<FONT color="green">242</FONT>            void receive(DatagramPacket p) throws IOException;<a name="line.242"></a>
+<FONT color="green">243</FONT>    <a name="line.243"></a>
+<FONT color="green">244</FONT>            /**<a name="line.244"></a>
+<FONT color="green">245</FONT>             * Gets the local address to which the socket is bound.<a name="line.245"></a>
+<FONT color="green">246</FONT>             * <a name="line.246"></a>
+<FONT color="green">247</FONT>             * &lt;p&gt;<a name="line.247"></a>
+<FONT color="green">248</FONT>             * If there is a security manager, its &lt;code&gt;checkConnect&lt;/code&gt; method is<a name="line.248"></a>
+<FONT color="green">249</FONT>             * first called with the host address and &lt;code&gt;-1&lt;/code&gt; as its arguments<a name="line.249"></a>
+<FONT color="green">250</FONT>             * to see if the operation is allowed.<a name="line.250"></a>
+<FONT color="green">251</FONT>             * <a name="line.251"></a>
+<FONT color="green">252</FONT>             * @see SecurityManager#checkConnect<a name="line.252"></a>
+<FONT color="green">253</FONT>             * @return the local address to which the socket is bound, or an<a name="line.253"></a>
+<FONT color="green">254</FONT>             *         &lt;code&gt;InetAddress&lt;/code&gt; representing any local address if either<a name="line.254"></a>
+<FONT color="green">255</FONT>             *         the socket is not bound, or the security manager<a name="line.255"></a>
+<FONT color="green">256</FONT>             *         &lt;code&gt;checkConnect&lt;/code&gt; method does not allow the operation<a name="line.256"></a>
+<FONT color="green">257</FONT>             * @since 1.1<a name="line.257"></a>
+<FONT color="green">258</FONT>             */<a name="line.258"></a>
+<FONT color="green">259</FONT>            InetAddress getLocalAddress();<a name="line.259"></a>
+<FONT color="green">260</FONT>    <a name="line.260"></a>
+<FONT color="green">261</FONT>            /**<a name="line.261"></a>
+<FONT color="green">262</FONT>             * Returns the port number on the local host to which this socket is bound.<a name="line.262"></a>
+<FONT color="green">263</FONT>             * <a name="line.263"></a>
+<FONT color="green">264</FONT>             * @return the port number on the local host to which this socket is bound.<a name="line.264"></a>
+<FONT color="green">265</FONT>             */<a name="line.265"></a>
+<FONT color="green">266</FONT>            int getLocalPort();<a name="line.266"></a>
+<FONT color="green">267</FONT>    <a name="line.267"></a>
+<FONT color="green">268</FONT>            /**<a name="line.268"></a>
+<FONT color="green">269</FONT>             * Enable/disable SO_TIMEOUT with the specified timeout, in milliseconds.<a name="line.269"></a>
+<FONT color="green">270</FONT>             * With this option set to a non-zero timeout, a call to receive() for this<a name="line.270"></a>
+<FONT color="green">271</FONT>             * DatagramSocket will block for only this amount of time. If the timeout<a name="line.271"></a>
+<FONT color="green">272</FONT>             * expires, a &lt;B&gt;java.net.SocketTimeoutException&lt;/B&gt; is raised, though the<a name="line.272"></a>
+<FONT color="green">273</FONT>             * DatagramSocket is still valid. The option &lt;B&gt;must&lt;/B&gt; be enabled prior to<a name="line.273"></a>
+<FONT color="green">274</FONT>             * entering the blocking operation to have effect. The timeout must be &gt; 0.<a name="line.274"></a>
+<FONT color="green">275</FONT>             * A timeout of zero is interpreted as an infinite timeout.<a name="line.275"></a>
+<FONT color="green">276</FONT>             * <a name="line.276"></a>
+<FONT color="green">277</FONT>             * @param timeout<a name="line.277"></a>
+<FONT color="green">278</FONT>             *            the specified timeout in milliseconds.<a name="line.278"></a>
+<FONT color="green">279</FONT>             * @throws SocketException<a name="line.279"></a>
+<FONT color="green">280</FONT>             *             if there is an error in the underlying protocol, such as an<a name="line.280"></a>
+<FONT color="green">281</FONT>             *             UDP error.<a name="line.281"></a>
+<FONT color="green">282</FONT>             * @since JDK1.1<a name="line.282"></a>
+<FONT color="green">283</FONT>             * @see #getSoTimeout()<a name="line.283"></a>
+<FONT color="green">284</FONT>             */<a name="line.284"></a>
+<FONT color="green">285</FONT>            void setSoTimeout(int timeout) throws SocketException;<a name="line.285"></a>
+<FONT color="green">286</FONT>    <a name="line.286"></a>
+<FONT color="green">287</FONT>            /**<a name="line.287"></a>
+<FONT color="green">288</FONT>             * Retrieve setting for SO_TIMEOUT. 0 returns implies that the option is<a name="line.288"></a>
+<FONT color="green">289</FONT>             * disabled (i.e., timeout of infinity).<a name="line.289"></a>
+<FONT color="green">290</FONT>             * <a name="line.290"></a>
+<FONT color="green">291</FONT>             * @return the setting for SO_TIMEOUT<a name="line.291"></a>
+<FONT color="green">292</FONT>             * @throws SocketException<a name="line.292"></a>
+<FONT color="green">293</FONT>             *             if there is an error in the underlying protocol, such as an<a name="line.293"></a>
+<FONT color="green">294</FONT>             *             UDP error.<a name="line.294"></a>
+<FONT color="green">295</FONT>             * @since JDK1.1<a name="line.295"></a>
+<FONT color="green">296</FONT>             * @see #setSoTimeout(int)<a name="line.296"></a>
+<FONT color="green">297</FONT>             */<a name="line.297"></a>
+<FONT color="green">298</FONT>            int getSoTimeout() throws SocketException;<a name="line.298"></a>
+<FONT color="green">299</FONT>    <a name="line.299"></a>
+<FONT color="green">300</FONT>            /**<a name="line.300"></a>
+<FONT color="green">301</FONT>             * Sets the SO_SNDBUF option to the specified value for this<a name="line.301"></a>
+<FONT color="green">302</FONT>             * &lt;tt&gt;DatagramSocket&lt;/tt&gt;. The SO_SNDBUF option is used by the network<a name="line.302"></a>
+<FONT color="green">303</FONT>             * implementation as a hint to size the underlying network I/O buffers. The<a name="line.303"></a>
+<FONT color="green">304</FONT>             * SO_SNDBUF setting may also be used by the network implementation to<a name="line.304"></a>
+<FONT color="green">305</FONT>             * determine the maximum size of the packet that can be sent on this socket.<a name="line.305"></a>
 <FONT color="green">306</FONT>             * &lt;p&gt;<a name="line.306"></a>
-<FONT color="green">307</FONT>             * Increasing the buffer size may allow multiple outgoing packets to be<a name="line.307"></a>
-<FONT color="green">308</FONT>             * queued by the network implementation when the send rate is high.<a name="line.308"></a>
+<FONT color="green">307</FONT>             * As SO_SNDBUF is a hint, applications that want to verify what size the<a name="line.307"></a>
+<FONT color="green">308</FONT>             * buffer is should call {@link #getSendBufferSize()}.<a name="line.308"></a>
 <FONT color="green">309</FONT>             * &lt;p&gt;<a name="line.309"></a>
-<FONT color="green">310</FONT>             * Note: If {@link #send(DatagramPacket)} is used to send a<a name="line.310"></a>
-<FONT color="green">311</FONT>             * &lt;code&gt;DatagramPacket&lt;/code&gt; that is larger than the setting of SO_SNDBUF<a name="line.311"></a>
-<FONT color="green">312</FONT>             * then it is implementation specific if the packet is sent or discarded.<a name="line.312"></a>
-<FONT color="green">313</FONT>             * <a name="line.313"></a>
-<FONT color="green">314</FONT>             * @param size<a name="line.314"></a>
-<FONT color="green">315</FONT>             *            the size to which to set the send buffer size. This value must<a name="line.315"></a>
-<FONT color="green">316</FONT>             *            be greater than 0.<a name="line.316"></a>
-<FONT color="green">317</FONT>             * <a name="line.317"></a>
-<FONT color="green">318</FONT>             * @exception SocketException<a name="line.318"></a>
-<FONT color="green">319</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.319"></a>
-<FONT color="green">320</FONT>             *                an UDP error.<a name="line.320"></a>
-<FONT color="green">321</FONT>             * @exception IllegalArgumentException<a name="line.321"></a>
-<FONT color="green">322</FONT>             *                if the value is 0 or is negative.<a name="line.322"></a>
-<FONT color="green">323</FONT>             * @see #getSendBufferSize()<a name="line.323"></a>
-<FONT color="green">324</FONT>             */<a name="line.324"></a>
-<FONT color="green">325</FONT>            void setSendBufferSize(int size) throws SocketException;<a name="line.325"></a>
-<FONT color="green">326</FONT>    <a name="line.326"></a>
-<FONT color="green">327</FONT>            /**<a name="line.327"></a>
-<FONT color="green">328</FONT>             * Get value of the SO_SNDBUF option for this &lt;tt&gt;DatagramSocket&lt;/tt&gt;, that<a name="line.328"></a>
-<FONT color="green">329</FONT>             * is the buffer size used by the platform for output on this<a name="line.329"></a>
-<FONT color="green">330</FONT>             * &lt;tt&gt;DatagramSocket&lt;/tt&gt;.<a name="line.330"></a>
-<FONT color="green">331</FONT>             * <a name="line.331"></a>
-<FONT color="green">332</FONT>             * @return the value of the SO_SNDBUF option for this<a name="line.332"></a>
-<FONT color="green">333</FONT>             *         &lt;tt&gt;DatagramSocket&lt;/tt&gt;<a name="line.333"></a>
-<FONT color="green">334</FONT>             * @exception SocketException<a name="line.334"></a>
-<FONT color="green">335</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.335"></a>
-<FONT color="green">336</FONT>             *                an UDP error.<a name="line.336"></a>
-<FONT color="green">337</FONT>             * @see #setSendBufferSize<a name="line.337"></a>
-<FONT color="green">338</FONT>             */<a name="line.338"></a>
-<FONT color="green">339</FONT>            int getSendBufferSize() throws SocketException;<a name="line.339"></a>
-<FONT color="green">340</FONT>    <a name="line.340"></a>
-<FONT color="green">341</FONT>            /**<a name="line.341"></a>
-<FONT color="green">342</FONT>             * Sets the SO_RCVBUF option to the specified value for this<a name="line.342"></a>
-<FONT color="green">343</FONT>             * &lt;tt&gt;DatagramSocket&lt;/tt&gt;. The SO_RCVBUF option is used by the the network<a name="line.343"></a>
-<FONT color="green">344</FONT>             * implementation as a hint to size the underlying network I/O buffers. The<a name="line.344"></a>
-<FONT color="green">345</FONT>             * SO_RCVBUF setting may also be used by the network implementation to<a name="line.345"></a>
-<FONT color="green">346</FONT>             * determine the maximum size of the packet that can be received on this<a name="line.346"></a>
-<FONT color="green">347</FONT>             * socket.<a name="line.347"></a>
-<FONT color="green">348</FONT>             * &lt;p&gt;<a name="line.348"></a>
-<FONT color="green">349</FONT>             * Because SO_RCVBUF is a hint, applications that want to verify what size<a name="line.349"></a>
-<FONT color="green">350</FONT>             * the buffers were set to should call {@link #getReceiveBufferSize()}.<a name="line.350"></a>
+<FONT color="green">310</FONT>             * Increasing the buffer size may allow multiple outgoing packets to be<a name="line.310"></a>
+<FONT color="green">311</FONT>             * queued by the network implementation when the send rate is high.<a name="line.311"></a>
+<FONT color="green">312</FONT>             * &lt;p&gt;<a name="line.312"></a>
+<FONT color="green">313</FONT>             * Note: If {@link #send(DatagramPacket)} is used to send a<a name="line.313"></a>
+<FONT color="green">314</FONT>             * &lt;code&gt;DatagramPacket&lt;/code&gt; that is larger than the setting of SO_SNDBUF<a name="line.314"></a>
+<FONT color="green">315</FONT>             * then it is implementation specific if the packet is sent or discarded.<a name="line.315"></a>
+<FONT color="green">316</FONT>             * <a name="line.316"></a>
+<FONT color="green">317</FONT>             * @param size<a name="line.317"></a>
+<FONT color="green">318</FONT>             *            the size to which to set the send buffer size. This value must<a name="line.318"></a>
+<FONT color="green">319</FONT>             *            be greater than 0.<a name="line.319"></a>
+<FONT color="green">320</FONT>             * <a name="line.320"></a>
+<FONT color="green">321</FONT>             * @exception SocketException<a name="line.321"></a>
+<FONT color="green">322</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.322"></a>
+<FONT color="green">323</FONT>             *                an UDP error.<a name="line.323"></a>
+<FONT color="green">324</FONT>             * @exception IllegalArgumentException<a name="line.324"></a>
+<FONT color="green">325</FONT>             *                if the value is 0 or is negative.<a name="line.325"></a>
+<FONT color="green">326</FONT>             * @see #getSendBufferSize()<a name="line.326"></a>
+<FONT color="green">327</FONT>             */<a name="line.327"></a>
+<FONT color="green">328</FONT>            void setSendBufferSize(int size) throws SocketException;<a name="line.328"></a>
+<FONT color="green">329</FONT>    <a name="line.329"></a>
+<FONT color="green">330</FONT>            /**<a name="line.330"></a>
+<FONT color="green">331</FONT>             * Get value of the SO_SNDBUF option for this &lt;tt&gt;DatagramSocket&lt;/tt&gt;, that<a name="line.331"></a>
+<FONT color="green">332</FONT>             * is the buffer size used by the platform for output on this<a name="line.332"></a>
+<FONT color="green">333</FONT>             * &lt;tt&gt;DatagramSocket&lt;/tt&gt;.<a name="line.333"></a>
+<FONT color="green">334</FONT>             * <a name="line.334"></a>
+<FONT color="green">335</FONT>             * @return the value of the SO_SNDBUF option for this<a name="line.335"></a>
+<FONT color="green">336</FONT>             *         &lt;tt&gt;DatagramSocket&lt;/tt&gt;<a name="line.336"></a>
+<FONT color="green">337</FONT>             * @exception SocketException<a name="line.337"></a>
+<FONT color="green">338</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.338"></a>
+<FONT color="green">339</FONT>             *                an UDP error.<a name="line.339"></a>
+<FONT color="green">340</FONT>             * @see #setSendBufferSize<a name="line.340"></a>
+<FONT color="green">341</FONT>             */<a name="line.341"></a>
+<FONT color="green">342</FONT>            int getSendBufferSize() throws SocketException;<a name="line.342"></a>
+<FONT color="green">343</FONT>    <a name="line.343"></a>
+<FONT color="green">344</FONT>            /**<a name="line.344"></a>
+<FONT color="green">345</FONT>             * Sets the SO_RCVBUF option to the specified value for this<a name="line.345"></a>
+<FONT color="green">346</FONT>             * &lt;tt&gt;DatagramSocket&lt;/tt&gt;. The SO_RCVBUF option is used by the the network<a name="line.346"></a>
+<FONT color="green">347</FONT>             * implementation as a hint to size the underlying network I/O buffers. The<a name="line.347"></a>
+<FONT color="green">348</FONT>             * SO_RCVBUF setting may also be used by the network implementation to<a name="line.348"></a>
+<FONT color="green">349</FONT>             * determine the maximum size of the packet that can be received on this<a name="line.349"></a>
+<FONT color="green">350</FONT>             * socket.<a name="line.350"></a>
 <FONT color="green">351</FONT>             * &lt;p&gt;<a name="line.351"></a>
-<FONT color="green">352</FONT>             * Increasing SO_RCVBUF may allow the network implementation to buffer<a name="line.352"></a>
-<FONT color="green">353</FONT>             * multiple packets when packets arrive faster than are being received using<a name="line.353"></a>
-<FONT color="green">354</FONT>             * {@link #receive(DatagramPacket)}.<a name="line.354"></a>
-<FONT color="green">355</FONT>             * &lt;p&gt;<a name="line.355"></a>
-<FONT color="green">356</FONT>             * Note: It is implementation specific if a packet larger than SO_RCVBUF can<a name="line.356"></a>
-<FONT color="green">357</FONT>             * be received.<a name="line.357"></a>
-<FONT color="green">358</FONT>             * <a name="line.358"></a>
-<FONT color="green">359</FONT>             * @param size<a name="line.359"></a>
-<FONT color="green">360</FONT>             *            the size to which to set the receive buffer size. This value<a name="line.360"></a>
-<FONT color="green">361</FONT>             *            must be greater than 0.<a name="line.361"></a>
-<FONT color="green">362</FONT>             * <a name="line.362"></a>
-<FONT color="green">363</FONT>             * @exception SocketException<a name="line.363"></a>
-<FONT color="green">364</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.364"></a>
-<FONT color="green">365</FONT>             *                an UDP error.<a name="line.365"></a>
-<FONT color="green">366</FONT>             * @exception IllegalArgumentException<a name="line.366"></a>
-<FONT color="green">367</FONT>             *                if the value is 0 or is negative.<a name="line.367"></a>
-<FONT color="green">368</FONT>             * @see #getReceiveBufferSize()<a name="line.368"></a>
-<FONT color="green">369</FONT>             */<a name="line.369"></a>
-<FONT color="green">370</FONT>            void setReceiveBufferSize(int size) throws SocketException;<a name="line.370"></a>
-<FONT color="green">371</FONT>    <a name="line.371"></a>
-<FONT color="green">372</FONT>            /**<a name="line.372"></a>
-<FONT color="green">373</FONT>             * Get value of the SO_RCVBUF option for this &lt;tt&gt;DatagramSocket&lt;/tt&gt;, that<a name="line.373"></a>
-<FONT color="green">374</FONT>             * is the buffer size used by the platform for input on this<a name="line.374"></a>
-<FONT color="green">375</FONT>             * &lt;tt&gt;DatagramSocket&lt;/tt&gt;.<a name="line.375"></a>
-<FONT color="green">376</FONT>             * <a name="line.376"></a>
-<FONT color="green">377</FONT>             * @return the value of the SO_RCVBUF option for this<a name="line.377"></a>
-<FONT color="green">378</FONT>             *         &lt;tt&gt;DatagramSocket&lt;/tt&gt;<a name="line.378"></a>
-<FONT color="green">379</FONT>             * @exception SocketException<a name="line.379"></a>
-<FONT color="green">380</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.380"></a>
-<FONT color="green">381</FONT>             *                an UDP error.<a name="line.381"></a>
-<FONT color="green">382</FONT>             * @see #setReceiveBufferSize(int)<a name="line.382"></a>
-<FONT color="green">383</FONT>             */<a name="line.383"></a>
-<FONT color="green">384</FONT>            int getReceiveBufferSize() throws SocketException;<a name="line.384"></a>
-<FONT color="green">385</FONT>    <a name="line.385"></a>
-<FONT color="green">386</FONT>            /**<a name="line.386"></a>
-<FONT color="green">387</FONT>             * Enable/disable the SO_REUSEADDR socket option.<a name="line.387"></a>
-<FONT color="green">388</FONT>             * &lt;p&gt;<a name="line.388"></a>
-<FONT color="green">389</FONT>             * For UDP sockets it may be necessary to bind more than one socket to the<a name="line.389"></a>
-<FONT color="green">390</FONT>             * same socket address. This is typically for the purpose of receiving<a name="line.390"></a>
-<FONT color="green">391</FONT>             * multicast packets (See {@link java.net.MulticastSocket}). The<a name="line.391"></a>
-<FONT color="green">392</FONT>             * &lt;tt&gt;SO_REUSEADDR&lt;/tt&gt; socket option allows multiple sockets to be bound<a name="line.392"></a>
-<FONT color="green">393</FONT>             * to the same socket address if the &lt;tt&gt;SO_REUSEADDR&lt;/tt&gt; socket option is<a name="line.393"></a>
-<FONT color="green">394</FONT>             * enabled prior to binding the socket using {@link #bind(SocketAddress)}.<a name="line.394"></a>
-<FONT color="green">395</FONT>             * &lt;p&gt;<a name="line.395"></a>
-<FONT color="green">396</FONT>             * Note: This functionality is not supported by all existing platforms, so<a name="line.396"></a>
-<FONT color="green">397</FONT>             * it is implementation specific whether this option will be ignored or not.<a name="line.397"></a>
-<FONT color="green">398</FONT>             * However, if it is not supported then {@link #getReuseAddress()} will<a name="line.398"></a>
-<FONT color="green">399</FONT>             * always return &lt;code&gt;false&lt;/code&gt;.<a name="line.399"></a>
-<FONT color="green">400</FONT>             * &lt;p&gt;<a name="line.400"></a>
-<FONT color="green">401</FONT>             * When a &lt;tt&gt;DatagramSocket&lt;/tt&gt; is created the initial setting of<a name="line.401"></a>
-<FONT color="green">402</FONT>             * &lt;tt&gt;SO_REUSEADDR&lt;/tt&gt; is disabled.<a name="line.402"></a>
+<FONT color="green">352</FONT>             * Because SO_RCVBUF is a hint, applications that want to verify what size<a name="line.352"></a>
+<FONT color="green">353</FONT>             * the buffers were set to should call {@link #getReceiveBufferSize()}.<a name="line.353"></a>
+<FONT color="green">354</FONT>             * &lt;p&gt;<a name="line.354"></a>
+<FONT color="green">355</FONT>             * Increasing SO_RCVBUF may allow the network implementation to buffer<a name="line.355"></a>
+<FONT color="green">356</FONT>             * multiple packets when packets arrive faster than are being received using<a name="line.356"></a>
+<FONT color="green">357</FONT>             * {@link #receive(DatagramPacket)}.<a name="line.357"></a>
+<FONT color="green">358</FONT>             * &lt;p&gt;<a name="line.358"></a>
+<FONT color="green">359</FONT>             * Note: It is implementation specific if a packet larger than SO_RCVBUF can<a name="line.359"></a>
+<FONT color="green">360</FONT>             * be received.<a name="line.360"></a>
+<FONT color="green">361</FONT>             * <a name="line.361"></a>
+<FONT color="green">362</FONT>             * @param size<a name="line.362"></a>
+<FONT color="green">363</FONT>             *            the size to which to set the receive buffer size. This value<a name="line.363"></a>
+<FONT color="green">364</FONT>             *            must be greater than 0.<a name="line.364"></a>
+<FONT color="green">365</FONT>             * <a name="line.365"></a>
+<FONT color="green">366</FONT>             * @exception SocketException<a name="line.366"></a>
+<FONT color="green">367</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.367"></a>
+<FONT color="green">368</FONT>             *                an UDP error.<a name="line.368"></a>
+<FONT color="green">369</FONT>             * @exception IllegalArgumentException<a name="line.369"></a>
+<FONT color="green">370</FONT>             *                if the value is 0 or is negative.<a name="line.370"></a>
+<FONT color="green">371</FONT>             * @see #getReceiveBufferSize()<a name="line.371"></a>
+<FONT color="green">372</FONT>             */<a name="line.372"></a>
+<FONT color="green">373</FONT>            void setReceiveBufferSize(int size) throws SocketException;<a name="line.373"></a>
+<FONT color="green">374</FONT>    <a name="line.374"></a>
+<FONT color="green">375</FONT>            /**<a name="line.375"></a>
+<FONT color="green">376</FONT>             * Get value of the SO_RCVBUF option for this &lt;tt&gt;DatagramSocket&lt;/tt&gt;, that<a name="line.376"></a>
+<FONT color="green">377</FONT>             * is the buffer size used by the platform for input on this<a name="line.377"></a>
+<FONT color="green">378</FONT>             * &lt;tt&gt;DatagramSocket&lt;/tt&gt;.<a name="line.378"></a>
+<FONT color="green">379</FONT>             * <a name="line.379"></a>
+<FONT color="green">380</FONT>             * @return the value of the SO_RCVBUF option for this<a name="line.380"></a>
+<FONT color="green">381</FONT>             *         &lt;tt&gt;DatagramSocket&lt;/tt&gt;<a name="line.381"></a>
+<FONT color="green">382</FONT>             * @exception SocketException<a name="line.382"></a>
+<FONT color="green">383</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.383"></a>
+<FONT color="green">384</FONT>             *                an UDP error.<a name="line.384"></a>
+<FONT color="green">385</FONT>             * @see #setReceiveBufferSize(int)<a name="line.385"></a>
+<FONT color="green">386</FONT>             */<a name="line.386"></a>
+<FONT color="green">387</FONT>            int getReceiveBufferSize() throws SocketException;<a name="line.387"></a>
+<FONT color="green">388</FONT>    <a name="line.388"></a>
+<FONT color="green">389</FONT>            /**<a name="line.389"></a>
+<FONT color="green">390</FONT>             * Enable/disable the SO_REUSEADDR socket option.<a name="line.390"></a>
+<FONT color="green">391</FONT>             * &lt;p&gt;<a name="line.391"></a>
+<FONT color="green">392</FONT>             * For UDP sockets it may be necessary to bind more than one socket to the<a name="line.392"></a>
+<FONT color="green">393</FONT>             * same socket address. This is typically for the purpose of receiving<a name="line.393"></a>
+<FONT color="green">394</FONT>             * multicast packets (See {@link java.net.MulticastSocket}). The<a name="line.394"></a>
+<FONT color="green">395</FONT>             * &lt;tt&gt;SO_REUSEADDR&lt;/tt&gt; socket option allows multiple sockets to be bound<a name="line.395"></a>
+<FONT color="green">396</FONT>             * to the same socket address if the &lt;tt&gt;SO_REUSEADDR&lt;/tt&gt; socket option is<a name="line.396"></a>
+<FONT color="green">397</FONT>             * enabled prior to binding the socket using {@link #bind(SocketAddress)}.<a name="line.397"></a>
+<FONT color="green">398</FONT>             * &lt;p&gt;<a name="line.398"></a>
+<FONT color="green">399</FONT>             * Note: This functionality is not supported by all existing platforms, so<a name="line.399"></a>
+<FONT color="green">400</FONT>             * it is implementation specific whether this option will be ignored or not.<a name="line.400"></a>
+<FONT color="green">401</FONT>             * However, if it is not supported then {@link #getReuseAddress()} will<a name="line.401"></a>
+<FONT color="green">402</FONT>             * always return &lt;code&gt;false&lt;/code&gt;.<a name="line.402"></a>
 <FONT color="green">403</FONT>             * &lt;p&gt;<a name="line.403"></a>
-<FONT color="green">404</FONT>             * The behaviour when &lt;tt&gt;SO_REUSEADDR&lt;/tt&gt; is enabled or disabled after a<a name="line.404"></a>
-<FONT color="green">405</FONT>             * socket is bound (See {@link #isBound()}) is not defined.<a name="line.405"></a>
-<FONT color="green">406</FONT>             * <a name="line.406"></a>
-<FONT color="green">407</FONT>             * @param on<a name="line.407"></a>
-<FONT color="green">408</FONT>             *            whether to enable or disable the<a name="line.408"></a>
-<FONT color="green">409</FONT>             * @exception SocketException<a name="line.409"></a>
-<FONT color="green">410</FONT>             *                if an error occurs enabling or disabling the<a name="line.410"></a>
-<FONT color="green">411</FONT>             *                &lt;tt&gt;SO_RESUEADDR&lt;/tt&gt; socket option, or the socket is<a name="line.411"></a>
-<FONT color="green">412</FONT>             *                closed.<a name="line.412"></a>
-<FONT color="green">413</FONT>             * @since 1.4<a name="line.413"></a>
-<FONT color="green">414</FONT>             * @see #getReuseAddress()<a name="line.414"></a>
-<FONT color="green">415</FONT>             * @see #bind(SocketAddress)<a name="line.415"></a>
-<FONT color="green">416</FONT>             * @see #isBound()<a name="line.416"></a>
-<FONT color="green">417</FONT>             * @see #isClosed()<a name="line.417"></a>
-<FONT color="green">418</FONT>             */<a name="line.418"></a>
-<FONT color="green">419</FONT>            void setReuseAddress(boolean on) throws SocketException;<a name="line.419"></a>
-<FONT color="green">420</FONT>    <a name="line.420"></a>
-<FONT color="green">421</FONT>            /**<a name="line.421"></a>
-<FONT color="green">422</FONT>             * Tests if SO_REUSEADDR is enabled.<a name="line.422"></a>
-<FONT color="green">423</FONT>             * <a name="line.423"></a>
-<FONT color="green">424</FONT>             * @return a &lt;code&gt;boolean&lt;/code&gt; indicating whether or not SO_REUSEADDR is<a name="line.424"></a>
-<FONT color="green">425</FONT>             *         enabled.<a name="line.425"></a>
-<FONT color="green">426</FONT>             * @exception SocketException<a name="line.426"></a>
-<FONT color="green">427</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.427"></a>
-<FONT color="green">428</FONT>             *                an UDP error.<a name="line.428"></a>
-<FONT color="green">429</FONT>             * @since 1.4<a name="line.429"></a>
-<FONT color="green">430</FONT>             * @see #setReuseAddress(boolean)<a name="line.430"></a>
-<FONT color="green">431</FONT>             */<a name="line.431"></a>
-<FONT color="green">432</FONT>            boolean getReuseAddress() throws SocketException;<a name="line.432"></a>
-<FONT color="green">433</FONT>    <a name="line.433"></a>
-<FONT color="green">434</FONT>            /**<a name="line.434"></a>
-<FONT color="green">435</FONT>             * Enable/disable SO_BROADCAST.<a name="line.435"></a>
-<FONT color="green">436</FONT>             * <a name="line.436"></a>
-<FONT color="green">437</FONT>             * @param on<a name="line.437"></a>
-<FONT color="green">438</FONT>             *            whether or not to have broadcast turned on.<a name="line.438"></a>
-<FONT color="green">439</FONT>             * @exception SocketException<a name="line.439"></a>
-<FONT color="green">440</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.440"></a>
-<FONT color="green">441</FONT>             *                an UDP error.<a name="line.441"></a>
-<FONT color="green">442</FONT>             * @since 1.4<a name="line.442"></a>
-<FONT color="green">443</FONT>             * @see #getBroadcast()<a name="line.443"></a>
-<FONT color="green">444</FONT>             */<a name="line.444"></a>
-<FONT color="green">445</FONT>            void setBroadcast(boolean on) throws SocketException;<a name="line.445"></a>
-<FONT color="green">446</FONT>    <a name="line.446"></a>
-<FONT color="green">447</FONT>            /**<a name="line.447"></a>
-<FONT color="green">448</FONT>             * Tests if SO_BROADCAST is enabled.<a name="line.448"></a>
-<FONT color="green">449</FONT>             * <a name="line.449"></a>
-<FONT color="green">450</FONT>             * @return a &lt;code&gt;boolean&lt;/code&gt; indicating whether or not SO_BROADCAST is<a name="line.450"></a>
-<FONT color="green">451</FONT>             *         enabled.<a name="line.451"></a>
-<FONT color="green">452</FONT>             * @exception SocketException<a name="line.452"></a>
-<FONT color="green">453</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.453"></a>
-<FONT color="green">454</FONT>             *                an UDP error.<a name="line.454"></a>
-<FONT color="green">455</FONT>             * @since 1.4<a name="line.455"></a>
-<FONT color="green">456</FONT>             * @see #setBroadcast(boolean)<a name="line.456"></a>
-<FONT color="green">457</FONT>             */<a name="line.457"></a>
-<FONT color="green">458</FONT>            boolean getBroadcast() throws SocketException;<a name="line.458"></a>
-<FONT color="green">459</FONT>    <a name="line.459"></a>
-<FONT color="green">460</FONT>            /**<a name="line.460"></a>
-<FONT color="green">461</FONT>             * Sets traffic class or type-of-service octet in the IP datagram header for<a name="line.461"></a>
-<FONT color="green">462</FONT>             * datagrams sent from this DatagramSocket. As the underlying network<a name="line.462"></a>
-<FONT color="green">463</FONT>             * implementation may ignore this value applications should consider it a<a name="line.463"></a>
-<FONT color="green">464</FONT>             * hint.<a name="line.464"></a>
-<FONT color="green">465</FONT>             * <a name="line.465"></a>
-<FONT color="green">466</FONT>             * &lt;P&gt;<a name="line.466"></a>
-<FONT color="green">467</FONT>             * The tc &lt;B&gt;must&lt;/B&gt; be in the range &lt;code&gt; 0 &lt;= tc &lt;=<a name="line.467"></a>
-<FONT color="green">468</FONT>             * 255&lt;/code&gt; or an IllegalArgumentException will be thrown.<a name="line.468"></a>
-<FONT color="green">469</FONT>             * &lt;p&gt;<a name="line.469"></a>
-<FONT color="green">470</FONT>             * Notes:<a name="line.470"></a>
-<FONT color="green">471</FONT>             * &lt;p&gt;<a name="line.471"></a>
-<FONT color="green">472</FONT>             * for Internet Protocol v4 the value consists of an octet with precedence<a name="line.472"></a>
-<FONT color="green">473</FONT>             * and TOS fields as detailed in RFC 1349. The TOS field is bitset created<a name="line.473"></a>
-<FONT color="green">474</FONT>             * by bitwise-or'ing values such the following :-<a name="line.474"></a>
-<FONT color="green">475</FONT>             * &lt;p&gt;<a name="line.475"></a>
-<FONT color="green">476</FONT>             * &lt;UL&gt;<a name="line.476"></a>
-<FONT color="green">477</FONT>             * &lt;LI&gt;&lt;CODE&gt;IPTOS_LOWCOST (0x02)&lt;/CODE&gt;&lt;/LI&gt;<a name="line.477"></a>
-<FONT color="green">478</FONT>             * &lt;LI&gt;&lt;CODE&gt;IPTOS_RELIABILITY (0x04)&lt;/CODE&gt;&lt;/LI&gt;<a name="line.478"></a>
-<FONT color="green">479</FONT>             * &lt;LI&gt;&lt;CODE&gt;IPTOS_THROUGHPUT (0x08)&lt;/CODE&gt;&lt;/LI&gt;<a name="line.479"></a>
-<FONT color="green">480</FONT>             * &lt;LI&gt;&lt;CODE&gt;IPTOS_LOWDELAY (0x10)&lt;/CODE&gt;&lt;/LI&gt;<a name="line.480"></a>
-<FONT color="green">481</FONT>             * &lt;/UL&gt;<a name="line.481"></a>
-<FONT color="green">482</FONT>             * The last low order bit is always ignored as this corresponds to the MBZ<a name="line.482"></a>
-<FONT color="green">483</FONT>             * (must be zero) bit.<a name="line.483"></a>
-<FONT color="green">484</FONT>             * &lt;p&gt;<a name="line.484"></a>
-<FONT color="green">485</FONT>             * Setting bits in the precedence field may result in a SocketException<a name="line.485"></a>
-<FONT color="green">486</FONT>             * indicating that the operation is not permitted.<a name="line.486"></a>
+<FONT color="green">404</FONT>             * When a &lt;tt&gt;DatagramSocket&lt;/tt&gt; is created the initial setting of<a name="line.404"></a>
+<FONT color="green">405</FONT>             * &lt;tt&gt;SO_REUSEADDR&lt;/tt&gt; is disabled.<a name="line.405"></a>
+<FONT color="green">406</FONT>             * &lt;p&gt;<a name="line.406"></a>
+<FONT color="green">407</FONT>             * The behaviour when &lt;tt&gt;SO_REUSEADDR&lt;/tt&gt; is enabled or disabled after a<a name="line.407"></a>
+<FONT color="green">408</FONT>             * socket is bound (See {@link #isBound()}) is not defined.<a name="line.408"></a>
+<FONT color="green">409</FONT>             * <a name="line.409"></a>
+<FONT color="green">410</FONT>             * @param on<a name="line.410"></a>
+<FONT color="green">411</FONT>             *            whether to enable or disable the<a name="line.411"></a>
+<FONT color="green">412</FONT>             * @exception SocketException<a name="line.412"></a>
+<FONT color="green">413</FONT>             *                if an error occurs enabling or disabling the<a name="line.413"></a>
+<FONT color="green">414</FONT>             *                &lt;tt&gt;SO_RESUEADDR&lt;/tt&gt; socket option, or the socket is<a name="line.414"></a>
+<FONT color="green">415</FONT>             *                closed.<a name="line.415"></a>
+<FONT color="green">416</FONT>             * @since 1.4<a name="line.416"></a>
+<FONT color="green">417</FONT>             * @see #getReuseAddress()<a name="line.417"></a>
+<FONT color="green">418</FONT>             * @see #bind(SocketAddress)<a name="line.418"></a>
+<FONT color="green">419</FONT>             * @see #isBound()<a name="line.419"></a>
+<FONT color="green">420</FONT>             * @see #isClosed()<a name="line.420"></a>
+<FONT color="green">421</FONT>             */<a name="line.421"></a>
+<FONT color="green">422</FONT>            void setReuseAddress(boolean on) throws SocketException;<a name="line.422"></a>
+<FONT color="green">423</FONT>    <a name="line.423"></a>
+<FONT color="green">424</FONT>            /**<a name="line.424"></a>
+<FONT color="green">425</FONT>             * Tests if SO_REUSEADDR is enabled.<a name="line.425"></a>
+<FONT color="green">426</FONT>             * <a name="line.426"></a>
+<FONT color="green">427</FONT>             * @return a &lt;code&gt;boolean&lt;/code&gt; indicating whether or not SO_REUSEADDR is<a name="line.427"></a>
+<FONT color="green">428</FONT>             *         enabled.<a name="line.428"></a>
+<FONT color="green">429</FONT>             * @exception SocketException<a name="line.429"></a>
+<FONT color="green">430</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.430"></a>
+<FONT color="green">431</FONT>             *                an UDP error.<a name="line.431"></a>
+<FONT color="green">432</FONT>             * @since 1.4<a name="line.432"></a>
+<FONT color="green">433</FONT>             * @see #setReuseAddress(boolean)<a name="line.433"></a>
+<FONT color="green">434</FONT>             */<a name="line.434"></a>
+<FONT color="green">435</FONT>            boolean getReuseAddress() throws SocketException;<a name="line.435"></a>
+<FONT color="green">436</FONT>    <a name="line.436"></a>
+<FONT color="green">437</FONT>            /**<a name="line.437"></a>
+<FONT color="green">438</FONT>             * Enable/disable SO_BROADCAST.<a name="line.438"></a>
+<FONT color="green">439</FONT>             * <a name="line.439"></a>
+<FONT color="green">440</FONT>             * @param on<a name="line.440"></a>
+<FONT color="green">441</FONT>             *            whether or not to have broadcast turned on.<a name="line.441"></a>
+<FONT color="green">442</FONT>             * @exception SocketException<a name="line.442"></a>
+<FONT color="green">443</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.443"></a>
+<FONT color="green">444</FONT>             *                an UDP error.<a name="line.444"></a>
+<FONT color="green">445</FONT>             * @since 1.4<a name="line.445"></a>
+<FONT color="green">446</FONT>             * @see #getBroadcast()<a name="line.446"></a>
+<FONT color="green">447</FONT>             */<a name="line.447"></a>
+<FONT color="green">448</FONT>            void setBroadcast(boolean on) throws SocketException;<a name="line.448"></a>
+<FONT color="green">449</FONT>    <a name="line.449"></a>
+<FONT color="green">450</FONT>            /**<a name="line.450"></a>
+<FONT color="green">451</FONT>             * Tests if SO_BROADCAST is enabled.<a name="line.451"></a>
+<FONT color="green">452</FONT>             * <a name="line.452"></a>
+<FONT color="green">453</FONT>             * @return a &lt;code&gt;boolean&lt;/code&gt; indicating whether or not SO_BROADCAST is<a name="line.453"></a>
+<FONT color="green">454</FONT>             *         enabled.<a name="line.454"></a>
+<FONT color="green">455</FONT>             * @exception SocketException<a name="line.455"></a>
+<FONT color="green">456</FONT>             *                if there is an error in the underlying protocol, such as<a name="line.456"></a>
+<FONT color="green">457</FONT>             *                an UDP error.<a name="line.457"></a>
+<FONT color="green">458</FONT>             * @since 1.4<a name="line.458"></a>
+<FONT color="green">459</FONT>             * @see #setBroadcast(boolean)<a name="line.459"></a>
+<FONT color="green">460</FONT>             */<a name="line.460"></a>
+<FONT color="green">461</FONT>            boolean getBroadcast() throws SocketException;<a name="line.461"></a>
+<FONT color="green">462</FONT>    <a name="line.462"></a>
+<FONT color="green">463</FONT>            /**<a name="line.463"></a>
+<FONT color="green">464</FONT>             * Sets traffic class or type-of-service octet in the IP datagram header for<a name="line.464"></a>
+<FONT color="green">465</FONT>             * datagrams sent from this DatagramSocket. As the underlying network<a name="line.465"></a>
+<FONT color="green">466</FONT>             * implementation may ignore this value applications should consider it a<a name="line.466"></a>
+<FONT color="green">467</FONT>             * hint.<a name="line.467"></a>
+<FONT color="green">468</FONT>             * <a name="line.468"></a>
+<FONT color="green">469</FONT>             * &lt;P&gt;<a name="line.469"></a>
+<FONT color="green">470</FONT>             * The tc &lt;B&gt;must&lt;/B&gt; be in the range &lt;code&gt; 0 &lt;= tc &lt;=<a name="line.470"></a>
+<FONT color="green">471</FONT>             * 255&lt;/code&gt; or an IllegalArgumentException will be thrown.<a name="line.471"></a>
+<FONT color="green">472</FONT>             * &lt;p&gt;<a name="line.472"></a>
+<FONT color="green">473</FONT>             * Notes:<a name="line.473"></a>
+<FONT color="green">474</FONT>             * &lt;p&gt;<a name="line.474"></a>
+<FONT color="green">475</FONT>             * for Internet Protocol v4 the value consists of an octet with precedence<a name="line.475"></a>
+<FONT color="green">476</FONT>             * and TOS fields as detailed in RFC 1349. The TOS field is bitset created<a name="line.476"></a>
+<FONT color="green">477</FONT>             * by bitwise-or'ing values such the following :-<a name="line.477"></a>
+<FONT color="green">478</FONT>             * &lt;p&gt;<a name="line.478"></a>
+<FONT color="green">479</FONT>             * &lt;UL&gt;<a name="line.479"></a>
+<FONT color="green">480</FONT>             * &lt;LI&gt;&lt;CODE&gt;IPTOS_LOWCOST (0x02)&lt;/CODE&gt;&lt;/LI&gt;<a name="line.480"></a>
+<FONT color="green">481</FONT>             * &lt;LI&gt;&lt;CODE&gt;IPTOS_RELIABILITY (0x04)&lt;/CODE&gt;&lt;/LI&gt;<a name="line.481"></a>
+<FONT color="green">482</FONT>             * &lt;LI&gt;&lt;CODE&gt;IPTOS_THROUGHPUT (0x08)&lt;/CODE&gt;&lt;/LI&gt;<a name="line.482"></a>
+<FONT color="green">483</FONT>             * &lt;LI&gt;&lt;CODE&gt;IPTOS_LOWDELAY (0x10)&lt;/CODE&gt;&lt;/LI&gt;<a name="line.483"></a>
+<FONT color="green">484</FONT>             * &lt;/UL&gt;<a name="line.484"></a>
+<FONT color="green">485</FONT>             * The last low order bit is always ignored as this corresponds to the MBZ<a name="line.485"></a>
+<FONT color="green">486</FONT>             * (must be zero) bit.<a name="line.486"></a>
 <FONT color="green">487</FONT>             * &lt;p&gt;<a name="line.487"></a>
-<FONT color="green">488</FONT>             * for Internet Protocol v6 &lt;code&gt;tc&lt;/code&gt; is the value that would be<a name="line.488"></a>
-<FONT color="green">489</FONT>             * placed into the sin6_flowinfo field of the IP header.<a name="line.489"></a>
-<FONT color="green">490</FONT>             * <a name="line.490"></a>
-<FONT color="green">491</FONT>             * @param tc<a name="line.491"></a>
-<FONT color="green">492</FONT>             *            an &lt;code&gt;int&lt;/code&gt; value for the bitset.<a name="line.492"></a>
-<FONT color="green">493</FONT>             * @throws SocketException<a name="line.493"></a>
-<FONT color="green">494</FONT>             *             if there is an error setting the traffic class or<a name="line.494"></a>
-<FONT color="green">495</FONT>             *             type-of-service<a name="line.495"></a>
-<FONT color="green">496</FONT>             * @since 1.4<a name="line.496"></a>
-<FONT color="green">497</FONT>             * @see #getTrafficClass<a name="line.497"></a>
-<FONT color="green">498</FONT>             */<a name="line.498"></a>
-<FONT color="green">499</FONT>            void setTrafficClass(int tc) throws SocketException;<a name="line.499"></a>
-<FONT color="green">500</FONT>    <a name="line.500"></a>
-<FONT color="green">501</FONT>            /**<a name="line.501"></a>
-<FONT color="green">502</FONT>             * Gets traffic class or type-of-service in the IP datagram header for<a name="line.502"></a>
-<FONT color="green">503</FONT>             * packets sent from this DatagramSocket.<a name="line.503"></a>
-<FONT color="green">504</FONT>             * &lt;p&gt;<a name="line.504"></a>
-<FONT color="green">505</FONT>             * As the underlying network implementation may ignore the traffic class or<a name="line.505"></a>
-<FONT color="green">506</FONT>             * type-of-service set using {@link #setTrafficClass(int)} this method may<a name="line.506"></a>
-<FONT color="green">507</FONT>             * return a different value than was previously set using the<a name="line.507"></a>
-<FONT color="green">508</FONT>             * {@link #setTrafficClass(int)} method on this DatagramSocket.<a name="line.508"></a>
-<FONT color="green">509</FONT>             * <a name="line.509"></a>
-<FONT color="green">510</FONT>             * @return the traffic class or type-of-service already set<a name="line.510"></a>
-<FONT color="green">511</FONT>             * @throws SocketException<a name="line.511"></a>
-<FONT color="green">512</FONT>             *             if there is an error obtaining the traffic class or<a name="line.512"></a>
-<FONT color="green">513</FONT>             *             type-of-service value.<a name="line.513"></a>
-<FONT color="green">514</FONT>             * @since 1.4<a name="line.514"></a>
-<FONT color="green">515</FONT>             * @see #setTrafficClass(int)<a name="line.515"></a>
-<FONT color="green">516</FONT>             */<a name="line.516"></a>
-<FONT color="green">517</FONT>            int getTrafficClass() throws SocketException;<a name="line.517"></a>
-<FONT color="green">518</FONT>    <a name="line.518"></a>
-<FONT color="green">519</FONT>            /**<a name="line.519"></a>
-<FONT color="green">520</FONT>             * Closes this datagram socket.<a name="line.520"></a>
-<FONT color="green">521</FONT>             * &lt;p&gt;<a name="line.521"></a>
-<FONT color="green">522</FONT>             * Any thread currently blocked in {@link #receive} upon this socket will<a name="line.522"></a>
-<FONT color="green">523</FONT>             * throw a {@link SocketException}.<a name="line.523"></a>
-<FONT color="green">524</FONT>             * <a name="line.524"></a>
-<FONT color="green">525</FONT>             * &lt;p&gt;<a name="line.525"></a>
-<FONT color="green">526</FONT>             * If this socket has an associated channel then the channel is closed as<a name="line.526"></a>
-<FONT color="green">527</FONT>             * well.<a name="line.527"></a>
-<FONT color="green">528</FONT>             * <a name="line.528"></a>
-<FONT color="green">529</FONT>             * revised 1.4 spec JSR-51<a name="line.529"></a>
-<FONT color="green">530</FONT>             */<a name="line.530"></a>
-<FONT color="green">531</FONT>            void close();<a name="line.531"></a>
-<FONT color="green">532</FONT>    <a name="line.532"></a>
-<FONT color="green">533</FONT>            /**<a name="line.533"></a>
-<FONT color="green">534</FONT>             * Returns whether the socket is closed or not.<a name="line.534"></a>
-<FONT color="green">535</FONT>             * <a name="line.535"></a>
-<FONT color="green">536</FONT>             * @return true if the socket has been closed<a name="line.536"></a>
-<FONT color="green">537</FONT>             * @since 1.4<a name="line.537"></a>
-<FONT color="green">538</FONT>             */<a name="line.538"></a>
-<FONT color="green">539</FONT>            boolean isClosed();<a name="line.539"></a>
-<FONT color="green">540</FONT>    <a name="line.540"></a>
-<FONT color="green">541</FONT>            /**<a name="line.541"></a>
-<FONT color="green">542</FONT>             * Returns the unique {@link java.nio.channels.DatagramChannel} object<a name="line.542"></a>
-<FONT color="green">543</FONT>             * associated with this datagram socket, if any.<a name="line.543"></a>
-<FONT color="green">544</FONT>             * <a name="line.544"></a>
-<FONT color="green">545</FONT>             * &lt;p&gt;<a name="line.545"></a>
-<FONT color="green">546</FONT>             * A datagram socket will have a channel if, and only if, the channel itself<a name="line.546"></a>
-<FONT color="green">547</FONT>             * was created via the {@link java.nio.channels.DatagramChannel#open<a name="line.547"></a>
-<FONT color="green">548</FONT>             * DatagramChannel.open} method.<a name="line.548"></a>
-<FONT color="green">549</FONT>             * <a name="line.549"></a>
-<FONT color="green">550</FONT>             * @return the datagram channel associated with this datagram socket, or<a name="line.550"></a>
-<FONT color="green">551</FONT>             *         &lt;tt&gt;null&lt;/tt&gt; if this socket was not created for a channel<a name="line.551"></a>
+<FONT color="green">488</FONT>             * Setting bits in the precedence field may result in a SocketException<a name="line.488"></a>
+<FONT color="green">489</FONT>             * indicating that the operation is not permitted.<a name="line.489"></a>
+<FONT color="green">490</FONT>             * &lt;p&gt;<a name="line.490"></a>
+<FONT color="green">491</FONT>             * for Internet Protocol v6 &lt;code&gt;tc&lt;/code&gt; is the value that would be<a name="line.491"></a>
+<FONT color="green">492</FONT>             * placed into the sin6_flowinfo field of the IP header.<a name="line.492"></a>
+<FONT color="green">493</FONT>             * <a name="line.493"></a>
+<FONT color="green">494</FONT>             * @param tc<a name="line.494"></a>
+<FONT color="green">495</FONT>             *            an &lt;code&gt;int&lt;/code&gt; value for the bitset.<a name="line.495"></a>
+<FONT color="green">496</FONT>             * @throws SocketException<a name="line.496"></a>
+<FONT color="green">497</FONT>             *             if there is an error setting the traffic class or<a name="line.497"></a>
+<FONT color="green">498</FONT>             *             type-of-service<a name="line.498"></a>
+<FONT color="green">499</FONT>             * @since 1.4<a name="line.499"></a>
+<FONT color="green">500</FONT>             * @see #getTrafficClass<a name="line.500"></a>
+<FONT color="green">501</FONT>             */<a name="line.501"></a>
+<FONT color="green">502</FONT>            void setTrafficClass(int tc) throws SocketException;<a name="line.502"></a>
+<FONT color="green">503</FONT>    <a name="line.503"></a>
+<FONT color="green">504</FONT>            /**<a name="line.504"></a>
+<FONT color="green">505</FONT>             * Gets traffic class or type-of-service in the IP datagram header for<a name="line.505"></a>
+<FONT color="green">506</FONT>             * packets sent from this DatagramSocket.<a name="line.506"></a>
+<FONT color="green">507</FONT>             * &lt;p&gt;<a name="line.507"></a>
+<FONT color="green">508</FONT>             * As the underlying network implementation may ignore the traffic class or<a name="line.508"></a>
+<FONT color="green">509</FONT>             * type-of-service set using {@link #setTrafficClass(int)} this method may<a name="line.509"></a>
+<FONT color="green">510</FONT>             * return a different value than was previously set using the<a name="line.510"></a>
+<FONT color="green">511</FONT>             * {@link #setTrafficClass(int)} method on this DatagramSocket.<a name="line.511"></a>
+<FONT color="green">512</FONT>             * <a name="line.512"></a>
+<FONT color="green">513</FONT>             * @return the traffic class or type-of-service already set<a name="line.513"></a>
+<FONT color="green">514</FONT>             * @throws SocketException<a name="line.514"></a>
+<FONT color="green">515</FONT>             *             if there is an error obtaining the traffic class or<a name="line.515"></a>
+<FONT color="green">516</FONT>             *             type-of-service value.<a name="line.516"></a>
+<FONT color="green">517</FONT>             * @since 1.4<a name="line.517"></a>
+<FONT color="green">518</FONT>             * @see #setTrafficClass(int)<a name="line.518"></a>
+<FONT color="green">519</FONT>             */<a name="line.519"></a>
+<FONT color="green">520</FONT>            int getTrafficClass() throws SocketException;<a name="line.520"></a>
+<FONT color="green">521</FONT>    <a name="line.521"></a>
+<FONT color="green">522</FONT>            /**<a name="line.522"></a>
+<FONT color="green">523</FONT>             * Closes this datagram socket.<a name="line.523"></a>
+<FONT color="green">524</FONT>             * &lt;p&gt;<a name="line.524"></a>
+<FONT color="green">525</FONT>             * Any thread currently blocked in {@link #receive} upon this socket will<a name="line.525"></a>
+<FONT color="green">526</FONT>             * throw a {@link SocketException}.<a name="line.526"></a>
+<FONT color="green">527</FONT>             * <a name="line.527"></a>
+<FONT color="green">528</FONT>             * &lt;p&gt;<a name="line.528"></a>
+<FONT color="green">529</FONT>             * If this socket has an associated channel then the channel is closed as<a name="line.529"></a>
+<FONT color="green">530</FONT>             * well.<a name="line.530"></a>
+<FONT color="green">531</FONT>             * <a name="line.531"></a>
+<FONT color="green">532</FONT>             * revised 1.4 spec JSR-51<a name="line.532"></a>
+<FONT color="green">533</FONT>             */<a name="line.533"></a>
+<FONT color="green">534</FONT>            void close();<a name="line.534"></a>
+<FONT color="green">535</FONT>    <a name="line.535"></a>
+<FONT color="green">536</FONT>            /**<a name="line.536"></a>
+<FONT color="green">537</FONT>             * Returns whether the socket is closed or not.<a name="line.537"></a>
+<FONT color="green">538</FONT>             * <a name="line.538"></a>
+<FONT color="green">539</FONT>             * @return true if the socket has been closed<a name="line.539"></a>
+<FONT color="green">540</FONT>             * @since 1.4<a name="line.540"></a>
+<FONT color="green">541</FONT>             */<a name="line.541"></a>
+<FONT color="green">542</FONT>            boolean isClosed();<a name="line.542"></a>
+<FONT color="green">543</FONT>    <a name="line.543"></a>
+<FONT color="green">544</FONT>            /**<a name="line.544"></a>
+<FONT color="green">545</FONT>             * Returns the unique {@link java.nio.channels.DatagramChannel} object<a name="line.545"></a>
+<FONT color="green">546</FONT>             * associated with this datagram socket, if any.<a name="line.546"></a>
+<FONT color="green">547</FONT>             * <a name="line.547"></a>
+<FONT color="green">548</FONT>             * &lt;p&gt;<a name="line.548"></a>
+<FONT color="green">549</FONT>             * A datagram socket will have a channel if, and only if, the channel itself<a name="line.549"></a>
+<FONT color="green">550</FONT>             * was created via the {@link java.nio.channels.DatagramChannel#open<a name="line.550"></a>
+<FONT color="green">551</FONT>             * DatagramChannel.open} method.<a name="line.551"></a>
 <FONT color="green">552</FONT>             * <a name="line.552"></a>
-<FONT color="green">553</FONT>             * @since 1.4 spec JSR-51<a name="line.553"></a>
-<FONT color="green">554</FONT>             */<a name="line.554"></a>
-<FONT color="green">555</FONT>            DatagramChannel getChannel();<a name="line.555"></a>
-<FONT color="green">556</FONT>    <a name="line.556"></a>
-<FONT color="green">557</FONT>    }<a name="line.557"></a>
+<FONT color="green">553</FONT>             * @return the datagram channel associated with this datagram socket, or<a name="line.553"></a>
+<FONT color="green">554</FONT>             *         &lt;tt&gt;null&lt;/tt&gt; if this socket was not created for a channel<a name="line.554"></a>
+<FONT color="green">555</FONT>             * <a name="line.555"></a>
+<FONT color="green">556</FONT>             * @since 1.4 spec JSR-51<a name="line.556"></a>
+<FONT color="green">557</FONT>             */<a name="line.557"></a>
+<FONT color="green">558</FONT>            DatagramChannel getChannel();<a name="line.558"></a>
+<FONT color="green">559</FONT>    <a name="line.559"></a>
+<FONT color="green">560</FONT>    }<a name="line.560"></a>
 
 
 
