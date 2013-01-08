@@ -113,9 +113,10 @@ do_start(){
 
 	log "download success URL=$URL"
 
-	JAVA_CMD="java -jar slave.jar -jnlpUrl file:slave-agent.jnlp -noCertificateCheck -slaveLog slave.log" 
+	JAVA_USER="jenkins"
+	JAVA_EXEC="java -jar slave.jar -jnlpUrl file:slave-agent.jnlp -noCertificateCheck -slaveLog slave.log" 
 
-	$JAVA_CMD > jenkins.log 2>&1 &
+	su "$JAVA_USER" -c "$JAVA_EXEC" > "$JAVA_USER.log" 2>&1 &
 
 	JAVA_PID="$!"
 
