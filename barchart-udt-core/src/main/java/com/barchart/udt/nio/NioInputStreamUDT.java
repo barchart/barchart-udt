@@ -82,7 +82,23 @@ public class NioInputStreamUDT extends InputStream {
 
 	@Override
 	public long skip(final long n) throws IOException {
-		throw new UnsupportedOperationException("skip not supported");
+
+		final ByteBuffer buffer = ByteBuffer.allocateDirect(32768);
+		long remaining = n;
+
+		while (remaining > 0) {
+
+			buffer.limit((int) Math.min(remaining, buffer.capacity()));
+			final int ret = channel.read(buffer);
+
+			if (ret <= 0)
+				break;
+
+			remaining -= ret;
+			buffer.rewind();
+		}
+
+		return n - remaining;
 	}
 
 	@Override
