@@ -9,7 +9,6 @@ package com.barchart.udt.nio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -67,7 +66,7 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 	protected volatile boolean isConnectionPending;
 
 	@ThreadSafe("this")
-	protected Socket socketAdapter;
+	protected NioSocketUDT socketAdapter;
 
 	protected final SocketUDT socketUDT;
 
@@ -333,12 +332,12 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 		// see contract for receive()
 
 		if (sizeReceived < 0) {
-			log.trace("nothing was received; socket={}", socket);
+			// log.trace("nothing was received; socket={}", socket);
 			return 0;
 		}
 
 		if (sizeReceived == 0) {
-			log.trace("receive timeout; socket={}", socket);
+			// log.trace("receive timeout; socket={}", socket);
 			return 0;
 		}
 
@@ -358,17 +357,15 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
-	public Socket socket() {
-		synchronized (this) {
-			if (socketAdapter == null) {
-				try {
-					socketAdapter = new NioSocketUDT(this);
-				} catch (final ExceptionUDT e) {
-					log.error("failed to make socket", e);
-				}
+	public synchronized NioSocketUDT socket() {
+		if (socketAdapter == null) {
+			try {
+				socketAdapter = new NioSocketUDT(this);
+			} catch (final ExceptionUDT e) {
+				log.error("failed to make socket", e);
 			}
-			return socketAdapter;
 		}
+		return socketAdapter;
 	}
 
 	@Override
@@ -443,12 +440,12 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 		// see contract for send()
 
 		if (sizeSent < 0) {
-			log.trace("no buffer space; socket={}", socket);
+			// log.trace("no buffer space; socket={}", socket);
 			return 0;
 		}
 
 		if (sizeSent == 0) {
-			log.trace("send timeout; socket={}", socket);
+			// log.trace("send timeout; socket={}", socket);
 			return 0;
 		}
 

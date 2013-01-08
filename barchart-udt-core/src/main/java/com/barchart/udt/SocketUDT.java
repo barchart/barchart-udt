@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.anno.Native;
-import com.barchart.udt.lib.LibraryLoaderUDT;
+import com.barchart.udt.lib.LibraryLoader;
 import com.barchart.udt.nio.KindUDT;
 import com.barchart.udt.util.HelpUDT;
 
@@ -71,10 +71,10 @@ public class SocketUDT {
 	/**
 	 * JNI Signature that must match between java code and c++ code on all
 	 * platforms; failure to match will abort native library load, as an
-	 * indication of inconsistent build
+	 * indication of inconsistent build.
 	 */
 	@Native
-	public static final int SIGNATURE_JNI = 20130101; // VersionUDT.BUILDTIME;
+	public static final int SIGNATURE_JNI = 20130102; // VersionUDT.BUILDTIME;
 
 	/**
 	 * infinite timeout:
@@ -98,8 +98,6 @@ public class SocketUDT {
 	@Native
 	public static final int UDT_EXCEPT_INDEX = 2;
 
-	// ###################################################
-
 	/**
 	 * UDT::select() sizeArray/sizeBuffer index offset for READ interest
 	 */
@@ -119,9 +117,9 @@ public class SocketUDT {
 	public static final int UDT_WRITE_INDEX = 1;
 
 	/**
-	 * FIXME replace system.exit with a little less drastic approach
-	 * <p>
-	 * native library extractor and loader
+	 * native library loader
+	 * 
+	 * @throws RuntimeException
 	 */
 	static {
 
@@ -133,31 +131,31 @@ public class SocketUDT {
 
 			final String loaderName = ResourceUDT.getLibraryLoaderClassName();
 
-			log.info("library loader : {}", loaderName);
+			log.info("loader provider  : {}", loaderName);
 
 			@SuppressWarnings("unchecked")
-			final Class<LibraryLoaderUDT> loaderClass = //
-			(Class<LibraryLoaderUDT>) Class.forName(loaderName);
+			final Class<LibraryLoader> loaderClass = //
+			(Class<LibraryLoader>) Class.forName(loaderName);
 
-			final LibraryLoaderUDT loaderInstance = loaderClass.newInstance();
+			final LibraryLoader loaderInstance = loaderClass.newInstance();
 
 			loaderInstance.load(location);
 
 		} catch (final Throwable e) {
-			log.error("failed to LOAD native library; terminating", e);
-			System.exit(1);
+			log.error("Failed to LOAD native library", e);
+			throw new RuntimeException("load", e);
 		}
 
 		try {
 			initClass0();
 		} catch (final Throwable e) {
-			log.error("failed to INIT native library; terminating", e);
-			System.exit(2);
+			log.error("Failed to INIT native library", e);
+			throw new RuntimeException("init", e);
 		}
 
 		if (SIGNATURE_JNI != getSignatureJNI0()) {
-			log.error("java/native SIGNATURE inconsistent; terminating");
-			System.exit(3);
+			log.error("Java/Native SIGNATURE inconsistent");
+			throw new RuntimeException("signature");
 		}
 
 		INIT_OK = true;
@@ -353,10 +351,6 @@ public class SocketUDT {
 		);
 
 	}
-
-	// ###################################################
-	// ### UDT API
-	// ###
 
 	/**
 	 * send from a complete byte[] array;
@@ -869,12 +863,6 @@ public class SocketUDT {
 			return 0;
 		}
 	}
-
-	// ###
-	// ### UDT API
-	// ###################################################
-
-	// convenience methods
 
 	/**
 	 * @return null : not connected; <br>

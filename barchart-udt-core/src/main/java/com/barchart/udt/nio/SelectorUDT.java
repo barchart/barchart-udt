@@ -83,7 +83,7 @@ public class SelectorUDT extends AbstractSelector {
 	/**
 	 * tracks correlation read with write for the same key
 	 */
-	private int resultIndex;
+	private volatile int resultIndex;
 
 	/** list of epoll sockets with read interest */
 	private final IntBuffer readBuffer;
@@ -107,6 +107,12 @@ public class SelectorUDT extends AbstractSelector {
 	/** public view : removal allowed, but not addition */
 	private final Set<? extends SelectionKey> //
 	selectedKeySet = HelpUDT.ungrowableSet(selectedKeyMap.keySet());
+
+	/**
+	 * canceled keys
+	 */
+	private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
+	terminatedKeyMap = new ConcurrentHashMap<SelectionKeyUDT, SelectionKeyUDT>();
 
 	/** select is exclusive */
 	private final Lock selectLock = new ReentrantLock();
@@ -142,36 +148,36 @@ public class SelectorUDT extends AbstractSelector {
 
 		log.debug("cancel queue {}", keyUDT);
 
-		synchronized (cancelledKeys()) {
-			cancelledKeys().add(keyUDT);
-		}
+		// synchronized (cancelledKeys()) {
+		// cancelledKeys().add(keyUDT);
+		// }
+
+		terminatedKeyMap.putIfAbsent(keyUDT, keyUDT);
 
 	}
 
 	/** cancel apply */
 	protected void doCancel() {
 
-		synchronized (cancelledKeys()) {
+		// synchronized (cancelledKeys()) {
+		//
+		// if (cancelledKeys().isEmpty()) {
+		// return;
+		// }
 
-			if (cancelledKeys().isEmpty()) {
-				return;
+		for (final SelectionKeyUDT keyUDT : terminatedKeyMap.values()) {
+
+			if (keyUDT.isValid()) {
+				log.debug("cancel apply {}", keyUDT);
+				keyUDT.makeValid(false);
+				registeredKeyMap.remove(keyUDT.socketId());
 			}
-
-			for (final SelectionKey key : cancelledKeys()) {
-
-				final SelectionKeyUDT keyUDT = (SelectionKeyUDT) key;
-
-				if (keyUDT.isValid()) {
-					log.debug("cancel apply {}", keyUDT);
-					keyUDT.makeValid(false);
-					registeredKeyMap.remove(keyUDT.socketId());
-				}
-
-			}
-
-			cancelledKeys().clear();
 
 		}
+
+		// cancelledKeys().clear();
+		//
+		// }
 
 	}
 
@@ -217,7 +223,7 @@ public class SelectorUDT extends AbstractSelector {
 		try {
 
 			/** java.nio.Selector contract for wakeup() */
-			begin();
+			// begin();
 
 			/** pre select */
 			doCancel();
@@ -230,7 +236,7 @@ public class SelectorUDT extends AbstractSelector {
 
 		} finally {
 			/** java.nio.Selector contract for wakeup() */
-			end();
+			// end();
 		}
 
 		return selectedKeyMap.size();
@@ -317,8 +323,6 @@ public class SelectorUDT extends AbstractSelector {
 
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 
-			keyUDT.socketUDT().isOpen();
-
 			if (keyUDT.doRead(resultIndex)) {
 				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
 			}
@@ -356,7 +360,13 @@ public class SelectorUDT extends AbstractSelector {
 
 		try {
 			selectLock.lock();
-			cancelledKeys().addAll(registeredKeySet);
+
+			// cancelledKeys().addAll(registeredKeySet);
+
+			for (final SelectionKeyUDT keyUDT : registeredKeyMap.values()) {
+				terminatedKeyMap.putIfAbsent(keyUDT, keyUDT);
+			}
+
 		} finally {
 			selectLock.unlock();
 		}
@@ -383,7 +393,7 @@ public class SelectorUDT extends AbstractSelector {
 			final Object attachment //
 	) {
 
-		if (registeredKeyMap.size() == maximimSelectorSize) {
+		if (registeredKeyMap.size() >= maximimSelectorSize) {
 			log.error("reached maximimSelectorSize");
 			throw new IllegalSelectorException();
 		}
@@ -443,7 +453,6 @@ public class SelectorUDT extends AbstractSelector {
 
 	@Override
 	public Selector wakeup() {
-		/** publisher for volatile */
 		wakeupStepCount++;
 		return this;
 	}

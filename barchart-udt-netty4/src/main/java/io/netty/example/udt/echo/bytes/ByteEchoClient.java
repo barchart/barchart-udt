@@ -18,15 +18,13 @@ package io.netty.example.udt.echo.bytes;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioUdtProvider;
-import io.netty.example.udt.util.ConsoleReporterUDT;
-import io.netty.example.udt.util.ThreadFactoryUDT;
+import io.netty.example.udt.util.UtilConsoleReporter;
+import io.netty.example.udt.util.UtilThreadFactory;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.logging.InternalLoggerFactory;
-import io.netty.logging.Slf4JLoggerFactory;
+import io.netty.transport.udt.UdtChannel;
+import io.netty.transport.udt.nio.NioUdtProvider;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
@@ -48,16 +46,6 @@ public class ByteEchoClient {
     private static final Logger log = LoggerFactory
             .getLogger(ByteEchoClient.class);
 
-    /**
-     * use slf4j provider for io.netty.logging.InternalLogger
-     */
-    static {
-        final InternalLoggerFactory defaultFactory = new Slf4JLoggerFactory();
-        InternalLoggerFactory.setDefaultFactory(defaultFactory);
-        log.info("InternalLoggerFactory={}", InternalLoggerFactory
-                .getDefaultFactory().getClass().getName());
-    }
-
     private final String host;
     private final int port;
     private final int messageSize;
@@ -72,7 +60,7 @@ public class ByteEchoClient {
     public void run() throws Exception {
         // Configure the client.
         final Bootstrap boot = new Bootstrap();
-        final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
+        final ThreadFactory connectFactory = new UtilThreadFactory("connect");
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
                 connectFactory, NioUdtProvider.BYTE_PROVIDER);
         try {
@@ -103,7 +91,7 @@ public class ByteEchoClient {
         log.info("init");
 
         // client is reporting metrics
-        ConsoleReporterUDT.enable(3, TimeUnit.SECONDS);
+        UtilConsoleReporter.enable(3, TimeUnit.SECONDS);
 
         final String host = "localhost";
         final int port = 1234;

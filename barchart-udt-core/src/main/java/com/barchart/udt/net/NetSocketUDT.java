@@ -25,7 +25,7 @@ import com.barchart.udt.anno.ThreadSafe;
 /**
  * {@link Socket} - like wrapper for {@link SocketUDT}
  */
-public class NetSocketUDT extends Socket implements IceSocket {
+public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 
 	@ThreadSafe("this")
 	protected InputStream inputStream;
@@ -263,6 +263,11 @@ public class NetSocketUDT extends Socket implements IceSocket {
 	@Override
 	public void shutdownOutput() throws IOException {
 		socketUDT.close();
+	}
+
+	@Override
+	public SocketUDT socketUDT() {
+		return socketUDT;
 	}
 
 }

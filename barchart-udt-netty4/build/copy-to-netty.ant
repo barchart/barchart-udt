@@ -13,20 +13,19 @@
 
 	<property name="source" value="${basedir}/src" />
 	<property name="targetExample" value="${basedir}/../../netty-udt/example/src" />
-	<property name="targetTransport" value="${basedir}/../../netty-udt/transport/src" />
+	<property name="targetTransport" value="${basedir}/../../netty-udt/transport-udt/src" />
 
 	<target name="copy">
 
 		<copy todir="${targetExample}" verbose="true" overwrite="true">
 			<fileset dir="${source}">
-				<include name="**/io/netty/example/**" />
+				<include name="**/io/netty/example/udt/**" />
 			</fileset>
 		</copy>
 
 		<copy todir="${targetTransport}" verbose="true" overwrite="true">
 			<fileset dir="${source}">
-				<include name="**/io/netty/channel/**" />
-				<exclude name="**/package-info.java" />
+				<include name="**/io/netty/transport/udt/**" />
 			</fileset>
 		</copy>
 

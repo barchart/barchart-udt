@@ -7,7 +7,7 @@
  */
 package com.barchart.udt;
 
-import com.barchart.udt.lib.LibraryLoaderDefaultUDT;
+import com.barchart.udt.lib.LibraryLoaderUDT;
 
 public final class ResourceUDT {
 
@@ -39,7 +39,7 @@ public final class ResourceUDT {
 
 	/** */
 	public static final String DEFAULT_LIBRARY_LOADER_CLASS = //
-	LibraryLoaderDefaultUDT.class.getName();
+	LibraryLoaderUDT.class.getName();
 
 	/***/
 	public static String getLibraryExtractLocation() {

@@ -19,14 +19,12 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioUdtProvider;
-import io.netty.example.udt.util.ThreadFactoryUDT;
+import io.netty.example.udt.util.UtilThreadFactory;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.logging.InternalLoggerFactory;
-import io.netty.logging.Slf4JLoggerFactory;
+import io.netty.transport.udt.UdtChannel;
+import io.netty.transport.udt.nio.NioUdtProvider;
 
 import java.util.concurrent.ThreadFactory;
 
@@ -43,16 +41,6 @@ public class MsgEchoServer {
     private static final Logger log = LoggerFactory
             .getLogger(MsgEchoServer.class);
 
-    /**
-     * use slf4j provider for io.netty.logging.InternalLogger
-     */
-    static {
-        final InternalLoggerFactory defaultFactory = new Slf4JLoggerFactory();
-        InternalLoggerFactory.setDefaultFactory(defaultFactory);
-        log.info("InternalLoggerFactory={}", InternalLoggerFactory
-                .getDefaultFactory().getClass().getName());
-    }
-
     private final int port;
 
     public MsgEchoServer(final int port) {
@@ -60,8 +48,8 @@ public class MsgEchoServer {
     }
 
     public void run() throws Exception {
-        final ThreadFactory acceptFactory = new ThreadFactoryUDT("accept");
-        final ThreadFactory connectFactory = new ThreadFactoryUDT("connect");
+        final ThreadFactory acceptFactory = new UtilThreadFactory("accept");
+        final ThreadFactory connectFactory = new UtilThreadFactory("connect");
         final NioEventLoopGroup acceptGroup = new NioEventLoopGroup(1,
                 acceptFactory, NioUdtProvider.MESSAGE_PROVIDER);
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,

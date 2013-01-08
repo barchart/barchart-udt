@@ -18,14 +18,12 @@ package io.netty.example.udt.echo.rendevous;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.socket.UdtChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioUdtProvider;
-import io.netty.example.udt.util.ThreadFactoryUDT;
+import io.netty.example.udt.util.UtilThreadFactory;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.logging.InternalLoggerFactory;
-import io.netty.logging.Slf4JLoggerFactory;
+import io.netty.transport.udt.UdtChannel;
+import io.netty.transport.udt.nio.NioUdtProvider;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
@@ -44,16 +42,6 @@ public abstract class MsgEchoPeerBase {
     protected static final Logger log = LoggerFactory
             .getLogger(MsgEchoPeerBase.class);
 
-    /**
-     * use slf4j provider for io.netty.logging.InternalLogger
-     */
-    static {
-        final InternalLoggerFactory defaultFactory = new Slf4JLoggerFactory();
-        InternalLoggerFactory.setDefaultFactory(defaultFactory);
-        log.info("InternalLoggerFactory={}", InternalLoggerFactory
-                .getDefaultFactory().getClass().getName());
-    }
-
     protected final int messageSize;
     protected final InetSocketAddress self;
     protected final InetSocketAddress peer;
@@ -68,7 +56,7 @@ public abstract class MsgEchoPeerBase {
     public void run() throws Exception {
         // Configure the peer.
         final Bootstrap boot = new Bootstrap();
-        final ThreadFactory connectFactory = new ThreadFactoryUDT("rendezvous");
+        final ThreadFactory connectFactory = new UtilThreadFactory("rendezvous");
         final NioEventLoopGroup connectGroup = new NioEventLoopGroup(1,
                 connectFactory, NioUdtProvider.MESSAGE_PROVIDER);
         try {

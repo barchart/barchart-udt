@@ -1238,11 +1238,6 @@ JNIEXPORT jlong JNICALL Java_com_barchart_udt_SocketUDT_receiveFile0(
 	int64_t fileLength = static_cast<int64_t>(length);
 	int fileBlock = static_cast<int>(block);
 
-	printf("filePath   =%s\n", filePath);
-	printf("fileOffset =%d\n", fileOffset);
-	printf("fileLength =%d\n", fileLength);
-	printf("fileBlock  =%d\n", fileBlock);
-
 	const int64_t rv = UDT::recvfile2( //
 			socketID, filePath, &fileOffset, fileLength, fileBlock);
 
@@ -1459,11 +1454,6 @@ JNIEXPORT jlong JNICALL Java_com_barchart_udt_SocketUDT_sendFile0( //
 	int64_t fileOffset = static_cast<int64_t>(offset);
 	int64_t fileLength = static_cast<int64_t>(length);
 	int fileBlock = static_cast<int>(block);
-
-	printf("filePath   =%s\n", filePath);
-	printf("fileOffset =%d\n", fileOffset);
-	printf("fileLength =%d\n", fileLength);
-	printf("fileBlock  =%d\n", fileBlock);
 
 	const int64_t rv = UDT::sendfile2( //
 			socketID, filePath, &fileOffset, fileLength, fileBlock);
@@ -1765,19 +1755,19 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 
 	UNUSED(clsSocketUDT);
 
-// readiness sets
+	// readiness sets
 	set<UDTSOCKET> readSet;
 	set<UDTSOCKET> writeSet;
 
-// readiness report
+	// readiness report
 	const int rv = UDT::epoll_wait( //
 			pollID, &readSet, &writeSet, millisTimeout, NULL, NULL);
 
-// readiness reports size array
+	// readiness reports size array
 	jint* const sizeArray = //
 			static_cast<jint*>(env->GetDirectBufferAddress(objSizeBuffer));
 
-// process timeout & errors
+	// process timeout & errors
 	if (rv <= 0) { // UDT::ERROR is '-1'
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
 		if (errorInfo.getErrorCode() == UDT::ERRORINFO::ETIMEOUT) {
@@ -1794,7 +1784,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		}
 	}
 
-// return read interest
+	// return read interest
 	const jsize readSize = readSet.size();
 	sizeArray[UDT_READ_INDEX] = readSize;
 	if (readSize > 0) {
@@ -1808,7 +1798,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 		UDT_CopySetToArray(&readSet, readArray, readSize);
 	}
 
-// return write interest
+	// return write interest
 	const jsize writeSize = writeSet.size();
 	sizeArray[UDT_WRITE_INDEX] = writeSize;
 	if (writeSize > 0) {

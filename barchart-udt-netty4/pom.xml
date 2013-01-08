@@ -14,7 +14,7 @@
 
 	<groupId>com.barchart.udt</groupId>
 	<artifactId>barchart-udt-netty4</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<description>barchart udt for netty 4</description>
@@ -36,12 +36,12 @@
 		<!-- MAIN -->
 
 		<!-- convenience dependency for IDE refactoring -->
-		<dependency>
-			<groupId>com.barchart.udt</groupId>
-			<artifactId>barchart-udt-core</artifactId>
-			<version>${barchartBundleVersion}</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.barchart.udt</groupId> -->
+		<!-- <artifactId>barchart-udt-core</artifactId> -->
+		<!-- <version>${barchartBundleVersion}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 		<!-- contains wrapper and native libraries for all arch/os -->
 		<dependency>
 			<groupId>com.barchart.udt</groupId>
@@ -51,6 +51,12 @@
 		</dependency>
 
 		<!-- netty -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-buffer</artifactId>
+			<version>${barchartNettyVersion}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-transport</artifactId>
@@ -85,12 +91,41 @@
 			<version>${barchartNettyVersion}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.yammer.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
+			<version>2.2.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.caliper</groupId>
+			<artifactId>caliper</artifactId>
+			<version>0.5-rc1</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- TEST -->
 
 	</dependencies>
 
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkMode>always</forkMode>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
 	<profiles>
+
+		<!-- verify netty rules -->
 		<profile>
 			<id>checkstyle</id>
 			<build>
@@ -129,6 +164,7 @@
 
 			</build>
 		</profile>
+
 	</profiles>
 
 </project>

@@ -23,7 +23,8 @@ import com.barchart.udt.TypeUDT;
 /**
  * {@link ServerSocket} - like wrapper for {@link SocketUDT}
  */
-public class NetServerSocketUDT extends ServerSocket implements IceServerSocket {
+public class NetServerSocketUDT extends ServerSocket implements
+		IceServerSocket, IceCommon {
 
 	protected final SocketUDT socketUDT;
 
@@ -140,6 +141,11 @@ public class NetServerSocketUDT extends ServerSocket implements IceServerSocket 
 	@Override
 	public void setSoTimeout(final int timeout) throws SocketException {
 		socketUDT.setSoTimeout(timeout);
+	}
+
+	@Override
+	public SocketUDT socketUDT() {
+		return socketUDT;
 	}
 
 }

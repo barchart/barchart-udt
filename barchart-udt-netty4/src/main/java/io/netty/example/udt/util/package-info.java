@@ -15,7 +15,7 @@
  */
 
 /**
- * examples form netty project adapted for udt
+ * Utilities for UDT examples.
  */
 package io.netty.example.udt.util;
 

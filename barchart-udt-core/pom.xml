@@ -1,14 +1,13 @@
 <!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com /> All 
 	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.barchart.udt</groupId>
 		<artifactId>barchart-udt-archon</artifactId>
-		<version>2.2.0-SNAPSHOT</version>
+		<version>2.2.1-SNAPSHOT</version>
 		<relativePath>../barchart-udt-archon</relativePath>
 	</parent>
 
@@ -116,8 +115,10 @@
 	<build>
 
 		<resources>
+
+			<!-- main resources with properties substitution -->
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>${basedir}/src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.xml</include>
@@ -125,22 +126,14 @@
 					<include>**/*.properties</include>
 				</includes>
 			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
-				<includes>
-					<include>**/*.so</include>
-					<include>**/*.jnilib</include>
-					<include>**/*.dll</include>
-					<include>**/*.map</include>
-					<include>**/*.sym</include>
-				</includes>
-			</resource>
+
 		</resources>
 
 		<testResources>
+
+			<!-- test resources with properties substitution -->
 			<testResource>
-				<directory>src/test/resources</directory>
+				<directory>${basedir}/src/test/resources</directory>
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.xml</include>
@@ -148,20 +141,57 @@
 					<include>**/*.properties</include>
 				</includes>
 			</testResource>
+
+			<!-- NAR resources with properties substitution; used for both IDE testing 
+				and NAR artifact packaging -->
 			<testResource>
-				<directory>src/nar/resources</directory>
+				<directory>${basedir}/src/nar/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+			</testResource>
+			<!-- NAR resources w/o properties substitution; used for both IDE testing 
+				and NAR artifact packaging -->
+			<testResource>
+				<directory>${basedir}/src/nar/resources</directory>
 				<filtering>false</filtering>
 				<includes>
 					<include>**/*.so</include>
+					<include>**/*.dylib</include>
 					<include>**/*.jnilib</include>
 					<include>**/*.dll</include>
 					<include>**/*.map</include>
 					<include>**/*.sym</include>
 				</includes>
 			</testResource>
+
 		</testResources>
 
 		<plugins>
+
+			<!-- aol.properties used by both NAR plug-in and LIB loader; must be in 
+				project root for NAR and on class path for LIB -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-aol</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<copy todir="${basedir}/target/classes">
+									<fileset dir="${basedir}" includes="aol.properties" />
+								</copy>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<!-- always attach javadoc -->
 			<plugin>
@@ -193,6 +223,36 @@
 
 		</plugins>
 
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-antrun-plugin</artifactId>
+										<versionRange>[0,)</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<profiles>
@@ -345,6 +405,14 @@
 											<groupId>${attachGroupId}</groupId>
 											<artifactId>${attachArtifactId}</artifactId>
 											<version>${attachVersion}</version>
+											<classifier>${arm}</classifier>
+											<type>nar</type>
+											<destFileName>${attachPrefix}-${arm}.nar</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>${attachGroupId}</groupId>
+											<artifactId>${attachArtifactId}</artifactId>
+											<version>${attachVersion}</version>
 											<classifier>${lin32}</classifier>
 											<type>nar</type>
 											<destFileName>${attachPrefix}-${lin32}.nar</destFileName>
@@ -412,6 +480,11 @@
 								</goals>
 								<configuration>
 									<artifacts>
+										<artifact>
+											<file>${attachFolder}/${attachPrefix}-${arm}.nar</file>
+											<classifier>${arm}</classifier>
+											<type>nar</type>
+										</artifact>
 										<artifact>
 											<file>${attachFolder}/${attachPrefix}-${lin32}.nar</file>
 											<classifier>${lin32}</classifier>
@@ -551,8 +624,8 @@
 							<libraries>
 								<library>
 									<type>jni</type>
-									<narSystemPackage>com.barchart.udt</narSystemPackage>
 									<linkCPP>false</linkCPP>
+									<narSystemPackage>com.barchart.udt</narSystemPackage>
 								</library>
 							</libraries>
 							<cpp>
@@ -713,8 +786,7 @@
 								<phase>generate-sources</phase>
 								<configuration>
 									<target>
-										<exec executable="git"
-											output="src/main/patches/${moduleUDT}/result.patch" error="target/result.patch.error">
+										<exec executable="git" output="src/main/patches/${moduleUDT}/result.patch" error="target/result.patch.error">
 											<arg value="diff" />
 											<arg value="--no-index" />
 											<arg value="--no-prefix" />

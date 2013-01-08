@@ -8,7 +8,6 @@
 package com.barchart.udt.nio;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.nio.channels.ServerSocketChannel;
 
 import org.slf4j.Logger;
@@ -46,7 +45,7 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 			.getLogger(ServerSocketChannelUDT.class);
 
 	@ThreadSafe("this")
-	protected ServerSocket socketAdapter;
+	protected NioServerSocketUDT socketAdapter;
 
 	protected final SocketUDT socketUDT;
 
@@ -113,18 +112,16 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 	}
 
 	@Override
-	public ServerSocket socket() {
-		synchronized (this) {
-			if (socketAdapter == null) {
-				try {
-					socketAdapter = new NioServerSocketUDT(this);
-				} catch (final Exception e) {
-					log.error("failed to make socket", e);
-					return null;
-				}
+	public synchronized NioServerSocketUDT socket() {
+		if (socketAdapter == null) {
+			try {
+				socketAdapter = new NioServerSocketUDT(this);
+			} catch (final Exception e) {
+				log.error("failed to make socket", e);
+				return null;
 			}
-			return socketAdapter;
 		}
+		return socketAdapter;
 	}
 
 	@Override

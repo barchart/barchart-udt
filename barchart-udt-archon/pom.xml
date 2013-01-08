@@ -20,7 +20,7 @@
 
 	<groupId>com.barchart.udt</groupId>
 	<artifactId>barchart-udt-archon</artifactId>
-	<version>2.2.0-SNAPSHOT</version>
+	<version>2.2.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<scm>
@@ -50,6 +50,7 @@
 
 		<!-- arch/os jni library classifier keys -->
 
+		<arm>arm-Linux-gpp-jni</arm>
 		<lin32>i386-Linux-gpp-jni</lin32>
 		<lin64>amd64-Linux-gpp-jni</lin64>
 		<mac32>i386-MacOSX-gpp-jni</mac32>
@@ -263,6 +264,19 @@
 		</profile>
 
 		<!-- ${archosClassifier} arch/os selector profiles -->
+		<profile>
+			<id>nar_arm-Linux-gpp</id>
+			<activation>
+				<os>
+					<arch>arm</arch>
+					<name>Linux</name>
+				</os>
+			</activation>
+			<properties>
+				<archosClassifier>${arm}</archosClassifier>
+				<javaBits />
+			</properties>
+		</profile>
 		<profile>
 			<id>nar_i386-Linux-gpp</id>
 			<activation>
