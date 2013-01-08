@@ -407,7 +407,8 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 		final SocketUDT socket = socketUDT;
 		final boolean isBlocking = isBlockingMode;
 
-		final int sizeSent;
+		int sizeSent = 0;
+		int ret = 0;
 
 		try {
 
@@ -417,19 +418,30 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 
 			if (buffer.isDirect()) {
 
-				sizeSent = socket.send(buffer);
+				do {
+					ret = socket.send(buffer);
+
+					if (ret > 0)
+						sizeSent += ret;
+
+				} while (buffer.hasRemaining() && isBlocking);
 
 			} else {
 
 				final byte[] array = buffer.array();
-				final int position = buffer.position();
+				int position = buffer.position();
 				final int limit = buffer.limit();
 
-				sizeSent = socket.send(array, position, limit);
+				do {
+					ret = socket.send(array, position, limit);
 
-				if (0 < sizeSent && sizeSent <= remaining) {
-					buffer.position(position + sizeSent);
-				}
+					if (0 < ret && ret <= remaining) {
+						sizeSent += ret;
+						position += ret;
+						buffer.position(position);
+					}
+
+				} while (buffer.hasRemaining() && isBlocking);
 			}
 		} finally {
 			if (isBlocking) {
@@ -439,12 +451,12 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 
 		// see contract for send()
 
-		if (sizeSent < 0) {
+		if (ret < 0) {
 			// log.trace("no buffer space; socket={}", socket);
 			return 0;
 		}
 
-		if (sizeSent == 0) {
+		if (ret == 0) {
 			// log.trace("send timeout; socket={}", socket);
 			return 0;
 		}
