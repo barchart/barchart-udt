@@ -1,6 +1,7 @@
 <!-- Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com /> All 
 	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -537,6 +538,7 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-resources-plugin</artifactId>
 						<executions>
 							<execution>
@@ -546,9 +548,10 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
+									<overwrite>true</overwrite>
 									<resources>
 										<resource>
-											<directory>c:/mingw32/bin</directory>
+											<directory>c:/tdm-gcc/bin</directory>
 											<filtering>false</filtering>
 											<includes>
 												<include>libgcc_s_sjlj-1.dll</include>
@@ -577,6 +580,7 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-resources-plugin</artifactId>
 						<executions>
 							<execution>
@@ -586,9 +590,10 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
+									<overwrite>true</overwrite>
 									<resources>
 										<resource>
-											<directory>c:/mingw64/bin</directory>
+											<directory>c:/tdm-gcc/bin</directory>
 											<filtering>false</filtering>
 											<includes>
 												<include>libgcc_s_sjlj_64-1.dll</include>
@@ -786,7 +791,8 @@
 								<phase>generate-sources</phase>
 								<configuration>
 									<target>
-										<exec executable="git" output="src/main/patches/${moduleUDT}/result.patch" error="target/result.patch.error">
+										<exec executable="git"
+											output="src/main/patches/${moduleUDT}/result.patch" error="target/result.patch.error">
 											<arg value="diff" />
 											<arg value="--no-index" />
 											<arg value="--no-prefix" />

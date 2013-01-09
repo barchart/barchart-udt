@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.config.gnu.cygwin.so.debug.274883714">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cygwin.so.debug.274883714" moduleId="org.eclipse.cdt.core.settings" name="cdt_x86-Windows-gpp">
@@ -54,7 +56,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/main/c++/jni}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/main/c++/udt/src}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.1306335827" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -mconsole -mthreads -fexceptions -O2 -fno-strict-aliasing -fno-omit-frame-pointer" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.1306335827" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-m32 -c -mconsole -mthreads -fexceptions -O2 -fno-strict-aliasing -fno-omit-frame-pointer" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.optimization.flags.85023210" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.warnings.toerrors.874149994" name="Warnings as errors (-Werror)" superClass="gnu.cpp.compiler.option.warnings.toerrors" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.warnings.allwarn.1595178330" name="All warnings (-Wall)" superClass="gnu.cpp.compiler.option.warnings.allwarn" value="false" valueType="boolean"/>
@@ -76,7 +78,7 @@
 									<listOptionValue builtIn="false" value="ws2_32"/>
 									<listOptionValue builtIn="false" value="stdc++"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.670619428" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-shared -shared-libgcc -mthreads -fexceptions -Wl,--enable-auto-import -Wl,--kill-at -Wl,--add-stdcall-alias -Wl,--image-base,0x10000000 -Wl,-Map,${ProjName}-x86-Windows-gpp.map" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.670619428" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-m32 -shared -shared-libgcc -mthreads -fexceptions -Wl,--enable-auto-import -Wl,--kill-at -Wl,--add-stdcall-alias -Wl,--image-base,0x10000000 -Wl,-Map,${ProjName}-x86-Windows-gpp.map" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.12493630" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -704,7 +706,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/main/c++/jni}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/main/c++/udt/src}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.669169413" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -mconsole -mthreads -fexceptions -O2 -fno-strict-aliasing -fno-omit-frame-pointer" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.669169413" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-m64 -c -mconsole -mthreads -fexceptions -O2 -fno-strict-aliasing -fno-omit-frame-pointer" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.optimization.flags.1421087918" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.warnings.toerrors.853763244" name="Warnings as errors (-Werror)" superClass="gnu.cpp.compiler.option.warnings.toerrors" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.warnings.allwarn.2041247437" name="All warnings (-Wall)" superClass="gnu.cpp.compiler.option.warnings.allwarn" value="false" valueType="boolean"/>
@@ -726,7 +728,7 @@
 									<listOptionValue builtIn="false" value="stdc++"/>
 									<listOptionValue builtIn="false" value="ws2_32"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.1193583959" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-shared -shared-libgcc -mthreads -fexceptions -Wl,--enable-auto-import -Wl,--kill-at -Wl,--add-stdcall-alias -Wl,--image-base,0x10000000 -Wl,-Map,${ProjName}-amd64-Windows-gpp.map" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.1193583959" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-m64 -shared -shared-libgcc -mthreads -fexceptions -Wl,--enable-auto-import -Wl,--kill-at -Wl,--add-stdcall-alias -Wl,--image-base,0x10000000 -Wl,-Map,${ProjName}-amd64-Windows-gpp.map" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1567365621" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
