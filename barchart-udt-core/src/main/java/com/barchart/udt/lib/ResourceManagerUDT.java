@@ -126,7 +126,7 @@ public class ResourceManagerUDT {
 		/** synchronize target time stamp with source to avoid repeated copy */
 		targetFile.setLastModified(sourceTime);
 
-		log.info("extracted OK; sourcePath={} targetPath={}", sourcePath,
+		log.debug("extracted OK; sourcePath={} targetPath={}", sourcePath,
 				targetPath);
 
 	}

@@ -74,13 +74,13 @@ public class LibraryLoaderUDT implements LibraryLoader {
 
 		/** extract all libraries or fail */
 		for (final String sourcePath : sourceList) {
-			final String targetPath = targetFolder + "/" + sourcePath;
+			final String targetPath = targetFolder + sourcePath;
 			ResourceManagerUDT.extractResource(sourcePath, targetPath);
 		}
 
 		/** try to load only if all are extracted */
 		for (final String sourcePath : sourceList) {
-			final String targetPath = targetFolder + "/" + sourcePath;
+			final String targetPath = targetFolder + sourcePath;
 			ResourceManagerUDT.systemLoad(targetPath);
 		}
 
@@ -94,7 +94,7 @@ public class LibraryLoaderUDT implements LibraryLoader {
 		final List<String> sourceList = PluginPropsUDT
 				.currentReleaseLibraries(coreName);
 
-		loadAll(sourceList, coreName);
+		loadAll(sourceList, targetFolder);
 
 	}
 
@@ -106,7 +106,7 @@ public class LibraryLoaderUDT implements LibraryLoader {
 		final List<String> sourceList = PluginPropsUDT
 				.currentStagingLibraries(coreName);
 
-		loadAll(sourceList, coreName);
+		loadAll(sourceList, targetFolder);
 
 	}
 
@@ -119,7 +119,7 @@ public class LibraryLoaderUDT implements LibraryLoader {
 		final List<String> sourceList = PluginPropsUDT
 				.currentTestingLibraries(coreName);
 
-		loadAll(sourceList, coreName);
+		loadAll(sourceList, targetFolder);
 
 	}
 
