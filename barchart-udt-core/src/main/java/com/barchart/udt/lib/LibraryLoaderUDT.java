@@ -1,5 +1,7 @@
 package com.barchart.udt.lib;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,7 @@ public class LibraryLoaderUDT implements LibraryLoader {
 		try {
 			log.info("Loading release libraries.");
 			loadRelease(targetFolder);
+			log.info("Release libraries loaded.");
 			return;
 		} catch (final Throwable e) {
 			log.warn("Release libraries missing: {}", e.getMessage());
@@ -47,6 +50,7 @@ public class LibraryLoaderUDT implements LibraryLoader {
 		try {
 			log.info("Loading staging libraries.");
 			loadStaging(targetFolder);
+			log.info("Staging libraries loaded.");
 			return;
 		} catch (final Throwable e) {
 			log.warn("Staging libraries missing: {}", e.getMessage());
@@ -55,6 +59,7 @@ public class LibraryLoaderUDT implements LibraryLoader {
 		try {
 			log.info("Loading testing libraries.");
 			loadTesting(targetFolder);
+			log.info("Testing libraries loaded.");
 			return;
 		} catch (final Throwable e) {
 			log.warn("Testing libraries missing: {}", e.getMessage());
@@ -64,19 +69,32 @@ public class LibraryLoaderUDT implements LibraryLoader {
 
 	}
 
+	protected void loadAll(final List<String> sourceList,
+			final String targetFolder) throws Exception {
+
+		/** extract all libraries or fail */
+		for (final String sourcePath : sourceList) {
+			final String targetPath = targetFolder + "/" + sourcePath;
+			ResourceManagerUDT.extractResource(sourcePath, targetPath);
+		}
+
+		/** try to load only if all are extracted */
+		for (final String sourcePath : sourceList) {
+			final String targetPath = targetFolder + "/" + sourcePath;
+			ResourceManagerUDT.systemLoad(targetPath);
+		}
+
+	}
+
 	/** try to load from JAR class path library */
 	protected void loadRelease(final String targetFolder) throws Exception {
 
 		final String coreName = VersionUDT.BARCHART_NAME;
 
-		for (final String sourcePath : PluginPropsUDT
-				.currentReleaseLibraries(coreName)) {
+		final List<String> sourceList = PluginPropsUDT
+				.currentReleaseLibraries(coreName);
 
-			final String targetPath = targetFolder + "/" + sourcePath;
-
-			ResourceManagerUDT.systemLoad(sourcePath, targetPath);
-
-		}
+		loadAll(sourceList, coreName);
 
 	}
 
@@ -85,14 +103,10 @@ public class LibraryLoaderUDT implements LibraryLoader {
 
 		final String coreName = VersionUDT.BARCHART_NAME;
 
-		for (final String sourcePath : PluginPropsUDT
-				.currentStagingLibraries(coreName)) {
+		final List<String> sourceList = PluginPropsUDT
+				.currentStagingLibraries(coreName);
 
-			final String targetPath = targetFolder + "/" + sourcePath;
-
-			ResourceManagerUDT.systemLoad(sourcePath, targetPath);
-
-		}
+		loadAll(sourceList, coreName);
 
 	}
 
@@ -102,14 +116,10 @@ public class LibraryLoaderUDT implements LibraryLoader {
 		final String coreName = VersionUDT.BARCHART_ARTIFACT + "-"
 				+ PluginPropsUDT.currentNarPath();
 
-		for (final String sourcePath : PluginPropsUDT
-				.currentTestingLibraries(coreName)) {
+		final List<String> sourceList = PluginPropsUDT
+				.currentTestingLibraries(coreName);
 
-			final String targetPath = targetFolder + "/" + sourcePath;
-
-			ResourceManagerUDT.systemLoad(sourcePath, targetPath);
-
-		}
+		loadAll(sourceList, coreName);
 
 	}
 
