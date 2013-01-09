@@ -33,7 +33,11 @@ IF [%jdk%]==[java64] call :do_mingw_64
 
 ECHO ### MINGW_HOME=%MINGW_HOME%
 
-SET PATH=%MINGW_HOME%;%PATH%
+REM tdm-gcc uses single path
+REM
+REM SET PATH=%MINGW_HOME%;%PATH%
+REM
+
 ECHO ### PATH=%PATH%
 
 "%MAVEN_HOME%\bin\mvn" clean deploy --update-snapshots --activate-profiles nar,int
