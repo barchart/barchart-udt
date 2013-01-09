@@ -47,11 +47,11 @@ written by
    #include <sys/socket.h>
    #include <netinet/in.h>
 #else
-   #include <windows.h>
    #ifdef __MINGW__
       #include <stdint.h>
       #include <ws2tcpip.h>
    #endif
+   #include <windows.h>
 #endif
 #include <fstream>
 #include <set>
