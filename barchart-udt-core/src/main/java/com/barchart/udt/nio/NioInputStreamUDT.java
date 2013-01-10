@@ -73,8 +73,13 @@ public class NioInputStreamUDT extends InputStream {
 	public int read(final byte[] bytes, final int off, final int len)
 			throws IOException {
 
+		if (len > bytes.length - off) {
+			throw new IndexOutOfBoundsException("len > bytes.length - off");
+		}
+
 		final ByteBuffer buffer = ByteBuffer.wrap(bytes);
 		buffer.position(off);
+		buffer.limit(off + len);
 
 		final int read = channel.read(buffer);
 		return read;
