@@ -233,7 +233,7 @@ public class PluginPropsUDT {
 
 		/** main */
 		{
-			final String path = formatMainLibraryName(coreName);
+			final String path = formatMainTestingPath(coreName);
 			list.add(path);
 		}
 
@@ -252,7 +252,7 @@ public class PluginPropsUDT {
 	}
 
 	/**
-	 * location of main library and dependency libraries in release jar
+	 * location of release main library and dependency libraries in release jar
 	 */
 	protected static String formatMainReleasePath(final String name) {
 		final String aol = currentNarPath();
@@ -260,13 +260,22 @@ public class PluginPropsUDT {
 	}
 
 	/**
-	 * location of main library on the test class path
+	 * location of staging main library on the test class path
 	 */
 	protected static String formatMainStagingPath(final String coreName) {
 		final String aol = currentNarPath();
 		final String mainName = formatMainLibraryName(coreName);
 		return String.format("/%s-%s-jni/lib/%s/jni/%s", //
 				coreName, aol, aol, mainName);
+	}
+
+	/**
+	 * location of testing main library on the test class path
+	 */
+	protected static String formatMainTestingPath(final String coreName) {
+		final String mainName = formatMainLibraryName(coreName);
+		return String.format("/%s", //
+				mainName);
 	}
 
 	/**

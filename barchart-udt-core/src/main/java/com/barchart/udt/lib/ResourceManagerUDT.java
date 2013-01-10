@@ -126,7 +126,7 @@ public class ResourceManagerUDT {
 		/** synchronize target time stamp with source to avoid repeated copy */
 		targetFile.setLastModified(sourceTime);
 
-		log.info("extracted OK; sourcePath={} targetPath={}", sourcePath,
+		log.debug("extracted OK; sourcePath={} targetPath={}", sourcePath,
 				targetPath);
 
 	}
@@ -165,10 +165,7 @@ public class ResourceManagerUDT {
 	/**
 	 * load library using absolute file path
 	 */
-	protected static void systemLoad(final String sourcePath,
-			final String targetPath) throws Exception {
-
-		extractResource(sourcePath, targetPath);
+	protected static void systemLoad(final String targetPath) throws Exception {
 
 		final File loadFile = new File(targetPath);
 
@@ -176,7 +173,17 @@ public class ResourceManagerUDT {
 
 		System.load(loadPath);
 
-		log.debug("system load success : {}", loadFile.getName());
+	}
+
+	/**
+	 * load library using absolute file path
+	 */
+	protected static void systemLoad(final String sourcePath,
+			final String targetPath) throws Exception {
+
+		extractResource(sourcePath, targetPath);
+
+		systemLoad(targetPath);
 
 	}
 
