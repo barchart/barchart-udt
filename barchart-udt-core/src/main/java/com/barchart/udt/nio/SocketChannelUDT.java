@@ -91,9 +91,7 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 			final boolean isConnected //
 	) throws ExceptionUDT {
 
-		super(provider);
-		this.socketUDT = socketUDT;
-		this.socketUDT.setBlocking(true);
+		this(provider, socketUDT);
 
 		if (isConnected) {
 			isConnectFinished = true;
