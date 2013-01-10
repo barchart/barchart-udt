@@ -29,6 +29,11 @@ import com.barchart.udt.anno.ThreadSafe;
  * {@link SocketChannel}-like wrapper for {@link SocketUDT}, can be either
  * stream or message oriented, depending on {@link TypeUDT}
  * <p>
+ * The UDT socket that this SocketChannel wraps will be switched to blocking
+ * mode since this is the default for all SocketChannels on construction. If you
+ * require non-blocking functionality, you will need to call configureBlocking
+ * on the constructed SocketChannel class.
+ * <p>
  * you must use {@link SelectorProviderUDT#openSocketChannel()} to obtain
  * instance of this class; do not use JDK
  * {@link java.nio.channels.SocketChannel#open()};
@@ -73,20 +78,22 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 	protected SocketChannelUDT( //
 			final SelectorProviderUDT provider, //
 			final SocketUDT socketUDT //
-	) {
+	) throws ExceptionUDT {
 
 		super(provider);
 		this.socketUDT = socketUDT;
+		this.socketUDT.setBlocking(true);
 	}
 
 	protected SocketChannelUDT( //
 			final SelectorProviderUDT provider, //
 			final SocketUDT socketUDT, //
 			final boolean isConnected //
-	) {
+	) throws ExceptionUDT {
 
 		super(provider);
 		this.socketUDT = socketUDT;
+		this.socketUDT.setBlocking(true);
 
 		if (isConnected) {
 			isConnectFinished = true;
