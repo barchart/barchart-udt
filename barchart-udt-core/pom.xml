@@ -693,6 +693,64 @@
 			</build>
 		</profile>
 
+		<!-- TODO native build invocation for applications -->
+		<profile>
+			<id>nar-app</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>${narPluginGroupId}</groupId>
+						<artifactId>${narPluginArtifactId}</artifactId>
+						<extensions>true</extensions>
+						<configuration>
+							<targetDirectory>${target}/nar-app</targetDirectory>
+							<libraries>
+								<library>
+									<type>executable</type>
+								</library>
+							</libraries>
+							<cpp>
+								<!-- use aol.properties -->
+								<sourceDirectory>${nativeSrc}</sourceDirectory>
+								<includePaths>
+									<path>${nativeSrcUDT}/src</path>
+									<path>${nativeSrcUDT}/app</path>
+								</includePaths>
+							</cpp>
+							<linker>
+								<!-- ignore aol.properties -->
+								<clearDefaultOptions>true</clearDefaultOptions>
+								<name>g++</name>
+								<optionSet>-shared-libgcc -fPIC -fexceptions</optionSet>
+								<sysLibSet>stdc++,pthread</sysLibSet>
+							</linker>
+						</configuration>
+						<executions>
+							<execution>
+								<id>appserver</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>nar-compile</goal>
+									<goal>nar-package</goal>
+								</goals>
+								<configuration>
+									<output>appserver</output>
+									<cpp>
+										<includes>
+											<pattern>${folderUDT}/src/*.cpp</pattern>
+											<pattern>${folderUDT}/app/appserver.cpp</pattern>
+										</includes>
+									</cpp>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
 		<!-- apply default source formatting -->
 		<profile>
 			<id>format-source</id>
