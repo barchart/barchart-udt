@@ -1,0 +1,44 @@
+#
+# Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+#
+# All rights reserved. Licensed under the OSI BSD License.
+#
+# http://www.opensource.org/licenses/bsd-license.php
+#
+
+#
+# keep eclipse cdt settings with source 
+#
+!/.cproject
+!/.project
+!/.classpath
+!/.settings
+
+/cdt*
+
+/bin
+/target
+
+/release.properties
+/pom.xml.*
+
+/lib
+
+/*.log
+
+#
+# android generated
+#
+
+/bin
+/gen
+/obj
+
+/libs/armeabi
+
+/project.properties
+
+#
+# transient extract
+#
+/jni/include

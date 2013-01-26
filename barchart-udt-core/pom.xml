@@ -222,6 +222,43 @@
 				</executions>
 			</plugin>
 
+			<!-- always attach tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- disable scr -->
+			<plugin>
+				<groupId>com.carrotgarden.maven</groupId>
+				<artifactId>carrot-maven-scr-plugin</artifactId>
+				<configuration>
+				</configuration>
+				<executions>
+					<execution>
+						<id>clean</id>
+						<phase>none</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate</id>
+						<phase>none</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 
 		<pluginManagement>
@@ -406,6 +443,14 @@
 											<groupId>${attachGroupId}</groupId>
 											<artifactId>${attachArtifactId}</artifactId>
 											<version>${attachVersion}</version>
+											<classifier>noarch</classifier>
+											<type>nar</type>
+											<destFileName>${attachPrefix}-noarch.nar</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>${attachGroupId}</groupId>
+											<artifactId>${attachArtifactId}</artifactId>
+											<version>${attachVersion}</version>
 											<classifier>${arm}</classifier>
 											<type>nar</type>
 											<destFileName>${attachPrefix}-${arm}.nar</destFileName>
@@ -481,6 +526,11 @@
 								</goals>
 								<configuration>
 									<artifacts>
+										<artifact>
+											<file>${attachFolder}/${attachPrefix}-noarch.nar</file>
+											<classifier>noarch</classifier>
+											<type>nar</type>
+										</artifact>
 										<artifact>
 											<file>${attachFolder}/${attachPrefix}-${arm}.nar</file>
 											<classifier>${arm}</classifier>
