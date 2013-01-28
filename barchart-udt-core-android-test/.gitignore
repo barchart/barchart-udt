@@ -9,10 +9,10 @@
 #
 # keep eclipse cdt settings with source 
 #
-!/.cproject
-!/.project
-!/.classpath
-!/.settings
+.cproject
+.project
+.classpath
+.settings
 
 /cdt*
 
@@ -36,9 +36,3 @@
 
 /libs
 
-/project.properties
-
-#
-# transient extract
-#
-/jni/include

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.barchart.udt.test" >
+
+    <uses-sdk android:minSdkVersion="9" />
+
+    <application>
+        <uses-library android:name="android.test.runner" />
+    </application>
+
+    <instrumentation
+        android:name="com.uphyca.testing.JUnit4InstrumentationTestRunner"
+        android:targetPackage="com.barchart.udt.test" />
+
+</manifest>

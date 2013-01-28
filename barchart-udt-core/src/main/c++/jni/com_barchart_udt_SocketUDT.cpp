@@ -52,7 +52,7 @@
 //
 // stack trace support
 //
-#ifdef LINUX
+#if defined(LINUX) && !defined(ANDROID)
 
 #include <signal.h>
 #include <stdlib.h>

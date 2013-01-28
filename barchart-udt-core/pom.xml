@@ -82,19 +82,19 @@
 		</dependency>
 
 		<!-- native arch/os stats -->
-		<dependency>
-			<groupId>org.fusesource</groupId>
-			<artifactId>sigar</artifactId>
-			<version>1.6.4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.fusesource</groupId>
-			<artifactId>sigar</artifactId>
-			<version>1.6.4</version>
-			<classifier>native</classifier>
-			<scope>test</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.fusesource</groupId> -->
+		<!-- <artifactId>sigar</artifactId> -->
+		<!-- <version>1.6.4</version> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.fusesource</groupId> -->
+		<!-- <artifactId>sigar</artifactId> -->
+		<!-- <version>1.6.4</version> -->
+		<!-- <classifier>native</classifier> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.fusesource</groupId> -->
 		<!-- <artifactId>libsigar-x86-linux</artifactId> -->
@@ -221,8 +221,22 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- always attach test sources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-test-sources</id>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-			<!-- always attach tests -->
+			<!-- always attach tests jar -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>

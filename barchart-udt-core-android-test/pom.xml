@@ -12,11 +12,11 @@
 		<relativePath>../barchart-udt-archon</relativePath>
 	</parent>
 
-	<artifactId>barchart-udt-core-android</artifactId>
+	<artifactId>barchart-udt-core-android-test</artifactId>
 	<packaging>apk</packaging>
 
 	<url>https://github.com/barchart/barchart-udt</url>
-	<description>Barchart UDT [ CORE ANDROID ]</description>
+	<description>Barchart UDT [ CORE ANDROID TEST ]</description>
 
 	<scm>
 		<url>https://github.com/barchart/barchart-udt</url>
@@ -48,15 +48,16 @@
 
 		<dependency>
 			<groupId>com.barchart.udt</groupId>
-			<artifactId>barchart-udt-core</artifactId>
+			<artifactId>barchart-udt-core-android</artifactId>
 			<version>${project.parent.version}</version>
 			<type>jar</type>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.barchart.udt</groupId>
+			<artifactId>barchart-udt-core-android</artifactId>
+			<version>${project.parent.version}</version>
+			<classifier>armeabi</classifier>
+			<type>so</type>
 		</dependency>
 
 		<dependency>
@@ -75,9 +76,32 @@
 		<!-- TEST -->
 
 		<dependency>
+			<groupId>com.uphyca</groupId>
+			<artifactId>android-junit4</artifactId>
+			<version>0.3</version>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.barchart.udt</groupId>
+			<artifactId>barchart-udt-core</artifactId>
+			<version>${project.parent.version}</version>
+			<classifier>tests</classifier>
+			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.fusesource</groupId>
+					<artifactId>sigar</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 	</dependencies>
@@ -110,6 +134,28 @@
 				</executions>
 			</plugin>
 
+			<!-- -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>generate-resources-XXX</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeScope>runtime</includeScope>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<outputDirectory>${basedir}/libs</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- produce apk -->
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
@@ -118,55 +164,9 @@
 				<configuration>
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
 					<test>
+						<createReport>true</createReport>
 					</test>
 				</configuration>
-				<executions>
-					<execution>
-						<id>default-apk</id>
-						<phase>package</phase>
-						<goals>
-							<goal>apk</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>ndk-build</id>
-						<phase>package</phase>
-						<goals>
-							<goal>ndk-build</goal>
-						</goals>
-						<configuration>
-							<clearNativeArtifacts>true</clearNativeArtifacts>
-							<attachNativeArtifacts>true</attachNativeArtifacts>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-jni</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>com.barchart.udt</groupId>
-									<artifactId>barchart-udt-core</artifactId>
-									<version>${project.parent.version}</version>
-									<classifier>noarch</classifier>
-									<type>nar</type>
-									<overWrite>true</overWrite>
-									<outputDirectory>${basedir}/jni</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 
 		</plugins>
@@ -186,9 +186,11 @@
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-dependency-plugin</artifactId>
-										<versionRange>[0,)</versionRange>
+										<versionRange>[0,)
+										</versionRange>
 										<goals>
-											<goal>unpack</goal>
+											<goal>copy</goal>
+											<goal>copy-dependencies</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
