@@ -66,12 +66,12 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 	@Override
 	public void connect(final SocketAddress endpoint, final int timeout)
 			throws IOException {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
 	public SocketChannel getChannel() {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
@@ -89,7 +89,9 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 
 	@Override
 	public boolean getKeepAlive() throws SocketException {
-		throw new RuntimeException("feature not available");
+		// UDT has keep alive automatically under the
+		// hood which I believe you cannot turn off
+		return true;
 	}
 
 	@Override
@@ -113,7 +115,7 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 
 	@Override
 	public boolean getOOBInline() throws SocketException {
-		throw new RuntimeException("feature not available");
+		return false;
 	}
 
 	@Override
@@ -165,12 +167,12 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 
 	@Override
 	public boolean getTcpNoDelay() throws SocketException {
-		throw new RuntimeException("feature not available");
+		return false;
 	}
 
 	@Override
 	public int getTrafficClass() throws SocketException {
-		throw new RuntimeException("feature not available");
+		return 0;
 	}
 
 	@Override
@@ -200,23 +202,23 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 
 	@Override
 	public void sendUrgentData(final int data) throws IOException {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
 	public void setKeepAlive(final boolean on) throws SocketException {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
 	public void setOOBInline(final boolean on) throws SocketException {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
 	public void setPerformancePreferences(final int connectionTime,
 			final int latency, final int bandwidth) {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
@@ -247,12 +249,12 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 
 	@Override
 	public void setTcpNoDelay(final boolean on) throws SocketException {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
 	public void setTrafficClass(final int tc) throws SocketException {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override

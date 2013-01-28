@@ -73,7 +73,7 @@ public class NetServerSocketUDT extends ServerSocket implements
 
 	@Override
 	public ServerSocketChannel getChannel() {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class NetServerSocketUDT extends ServerSocket implements
 	@Override
 	public void setPerformancePreferences(final int connectionTime,
 			final int latency, final int bandwidth) {
-		throw new RuntimeException("feature not available");
+		throw new UnsupportedOperationException("feature not available");
 	}
 
 	// NOTE: set both send and receive, since they are inherited on accept()
