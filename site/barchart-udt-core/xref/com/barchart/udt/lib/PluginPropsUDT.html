@@ -243,7 +243,7 @@
 <a class="jxr_linenumber" name="233" href="#233">233</a> 
 <a class="jxr_linenumber" name="234" href="#234">234</a> 		<em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> main */</em>
 <a class="jxr_linenumber" name="235" href="#235">235</a> 		{
-<a class="jxr_linenumber" name="236" href="#236">236</a> 			<strong class="jxr_keyword">final</strong> String path = formatMainLibraryName(coreName);
+<a class="jxr_linenumber" name="236" href="#236">236</a> 			<strong class="jxr_keyword">final</strong> String path = formatMainTestingPath(coreName);
 <a class="jxr_linenumber" name="237" href="#237">237</a> 			list.add(path);
 <a class="jxr_linenumber" name="238" href="#238">238</a> 		}
 <a class="jxr_linenumber" name="239" href="#239">239</a> 
@@ -262,7 +262,7 @@
 <a class="jxr_linenumber" name="252" href="#252">252</a> 	}
 <a class="jxr_linenumber" name="253" href="#253">253</a> 
 <a class="jxr_linenumber" name="254" href="#254">254</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="255" href="#255">255</a> <em class="jxr_javadoccomment">	 * location of main library and dependency libraries in release jar</em>
+<a class="jxr_linenumber" name="255" href="#255">255</a> <em class="jxr_javadoccomment">	 * location of release main library and dependency libraries in release jar</em>
 <a class="jxr_linenumber" name="256" href="#256">256</a> <em class="jxr_javadoccomment">	 */</em>
 <a class="jxr_linenumber" name="257" href="#257">257</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String formatMainReleasePath(<strong class="jxr_keyword">final</strong> String name) {
 <a class="jxr_linenumber" name="258" href="#258">258</a> 		<strong class="jxr_keyword">final</strong> String aol = currentNarPath();
@@ -270,7 +270,7 @@
 <a class="jxr_linenumber" name="260" href="#260">260</a> 	}
 <a class="jxr_linenumber" name="261" href="#261">261</a> 
 <a class="jxr_linenumber" name="262" href="#262">262</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">	 * location of main library on the test class path</em>
+<a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">	 * location of staging main library on the test class path</em>
 <a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">	 */</em>
 <a class="jxr_linenumber" name="265" href="#265">265</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String formatMainStagingPath(<strong class="jxr_keyword">final</strong> String coreName) {
 <a class="jxr_linenumber" name="266" href="#266">266</a> 		<strong class="jxr_keyword">final</strong> String aol = currentNarPath();
@@ -280,76 +280,85 @@
 <a class="jxr_linenumber" name="270" href="#270">270</a> 	}
 <a class="jxr_linenumber" name="271" href="#271">271</a> 
 <a class="jxr_linenumber" name="272" href="#272">272</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="273" href="#273">273</a> <em class="jxr_javadoccomment">	 * {@link #NAR_AOL_PROPERTIES} property key prefix</em>
+<a class="jxr_linenumber" name="273" href="#273">273</a> <em class="jxr_javadoccomment">	 * location of testing main library on the test class path</em>
 <a class="jxr_linenumber" name="274" href="#274">274</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="275" href="#275">275</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String formatNarKey(<strong class="jxr_keyword">final</strong> String arch, <strong class="jxr_keyword">final</strong> String os,
-<a class="jxr_linenumber" name="276" href="#276">276</a> 			<strong class="jxr_keyword">final</strong> String link) {
-<a class="jxr_linenumber" name="277" href="#277">277</a> 		<strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"%s.%s.%s"</span>, arch, os, link);
-<a class="jxr_linenumber" name="278" href="#278">278</a> 	}
-<a class="jxr_linenumber" name="279" href="#279">279</a> 
-<a class="jxr_linenumber" name="280" href="#280">280</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="281" href="#281">281</a> <em class="jxr_javadoccomment">	 * {@link #NAR_AOL_PROPERTIES} aol path element</em>
-<a class="jxr_linenumber" name="282" href="#282">282</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="283" href="#283">283</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String formatNarPath(<strong class="jxr_keyword">final</strong> String arch, <strong class="jxr_keyword">final</strong> String os,
-<a class="jxr_linenumber" name="284" href="#284">284</a> 			<strong class="jxr_keyword">final</strong> String link) {
-<a class="jxr_linenumber" name="285" href="#285">285</a> 		<strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"%s-%s-%s"</span>, arch, os, link);
-<a class="jxr_linenumber" name="286" href="#286">286</a> 	}
-<a class="jxr_linenumber" name="287" href="#287">287</a> 
-<a class="jxr_linenumber" name="288" href="#288">288</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="289" href="#289">289</a> <em class="jxr_javadoccomment">	 * location of dependency libraries on test class path</em>
-<a class="jxr_linenumber" name="290" href="#290">290</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="291" href="#291">291</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String formatTestingDependencyPath(<strong class="jxr_keyword">final</strong> String name) {
-<a class="jxr_linenumber" name="292" href="#292">292</a> 		<strong class="jxr_keyword">final</strong> String aol = currentNarPath();
-<a class="jxr_linenumber" name="293" href="#293">293</a> 		<strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"/aol/%s/lib/%s"</span>, aol, name);
-<a class="jxr_linenumber" name="294" href="#294">294</a> 	}
-<a class="jxr_linenumber" name="295" href="#295">295</a> 
-<a class="jxr_linenumber" name="296" href="#296">296</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="297" href="#297">297</a> <em class="jxr_javadoccomment">	 * is current platform defined in {@link #NAR_AOL_PROPERTIES} file?</em>
-<a class="jxr_linenumber" name="298" href="#298">298</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="299" href="#299">299</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> isSupportedPlatform() {
-<a class="jxr_linenumber" name="300" href="#300">300</a> 		<strong class="jxr_keyword">return</strong> !EMPTY_VALUE.equals(property(currentNarKeyCppCompiler()));
-<a class="jxr_linenumber" name="301" href="#301">301</a> 	}
-<a class="jxr_linenumber" name="302" href="#302">302</a> 
-<a class="jxr_linenumber" name="303" href="#303">303</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="304" href="#304">304</a> <em class="jxr_javadoccomment">	 * map JVM arch name to NAR arch name</em>
-<a class="jxr_linenumber" name="305" href="#305">305</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="306" href="#306">306</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String narARCH() {
-<a class="jxr_linenumber" name="307" href="#307">307</a> 		<strong class="jxr_keyword">return</strong> OS_ARCH;
-<a class="jxr_linenumber" name="308" href="#308">308</a> 	}
-<a class="jxr_linenumber" name="309" href="#309">309</a> 
-<a class="jxr_linenumber" name="310" href="#310">310</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="311" href="#311">311</a> <em class="jxr_javadoccomment">	 * map JVM arch/os name to NAR tool chain name</em>
-<a class="jxr_linenumber" name="312" href="#312">312</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="313" href="#313">313</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String narLINK() {
-<a class="jxr_linenumber" name="314" href="#314">314</a> 		<strong class="jxr_keyword">return</strong> <span class="jxr_string">"gpp"</span>;
-<a class="jxr_linenumber" name="315" href="#315">315</a> 	}
-<a class="jxr_linenumber" name="316" href="#316">316</a> 
-<a class="jxr_linenumber" name="317" href="#317">317</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="318" href="#318">318</a> <em class="jxr_javadoccomment">	 * map JVM os name to NAR os name</em>
-<a class="jxr_linenumber" name="319" href="#319">319</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="320" href="#320">320</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String narOS() {
-<a class="jxr_linenumber" name="321" href="#321">321</a> 		<strong class="jxr_keyword">if</strong> (OS_NAME.contains(<span class="jxr_string">"Mac OS X"</span>)) {
-<a class="jxr_linenumber" name="322" href="#322">322</a> 			<strong class="jxr_keyword">return</strong> <span class="jxr_string">"MacOSX"</span>;
-<a class="jxr_linenumber" name="323" href="#323">323</a> 		}
-<a class="jxr_linenumber" name="324" href="#324">324</a> 		<strong class="jxr_keyword">if</strong> (OS_NAME.contains(<span class="jxr_string">"Windows"</span>)) {
-<a class="jxr_linenumber" name="325" href="#325">325</a> 			<strong class="jxr_keyword">return</strong> <span class="jxr_string">"Windows"</span>;
-<a class="jxr_linenumber" name="326" href="#326">326</a> 		}
-<a class="jxr_linenumber" name="327" href="#327">327</a> 		<strong class="jxr_keyword">return</strong> OS_NAME;
-<a class="jxr_linenumber" name="328" href="#328">328</a> 	}
-<a class="jxr_linenumber" name="329" href="#329">329</a> 
-<a class="jxr_linenumber" name="330" href="#330">330</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="331" href="#331">331</a> <em class="jxr_javadoccomment">	 * find property entry in the {@link #NAR_AOL_PROPERTIES} file</em>
-<a class="jxr_linenumber" name="332" href="#332">332</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="333" href="#333">333</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String property(<strong class="jxr_keyword">final</strong> String key) {
-<a class="jxr_linenumber" name="334" href="#334">334</a> 		<strong class="jxr_keyword">final</strong> String value = props.getProperty(key);
-<a class="jxr_linenumber" name="335" href="#335">335</a> 		<strong class="jxr_keyword">if</strong> (value instanceof String) {
-<a class="jxr_linenumber" name="336" href="#336">336</a> 			<strong class="jxr_keyword">return</strong> value;
-<a class="jxr_linenumber" name="337" href="#337">337</a> 		} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="338" href="#338">338</a> 			<strong class="jxr_keyword">return</strong> EMPTY_VALUE;
-<a class="jxr_linenumber" name="339" href="#339">339</a> 		}
-<a class="jxr_linenumber" name="340" href="#340">340</a> 	}
-<a class="jxr_linenumber" name="341" href="#341">341</a> 
-<a class="jxr_linenumber" name="342" href="#342">342</a> }
+<a class="jxr_linenumber" name="275" href="#275">275</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String formatMainTestingPath(<strong class="jxr_keyword">final</strong> String coreName) {
+<a class="jxr_linenumber" name="276" href="#276">276</a> 		<strong class="jxr_keyword">final</strong> String mainName = formatMainLibraryName(coreName);
+<a class="jxr_linenumber" name="277" href="#277">277</a> 		<strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"/%s"</span>, <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="278" href="#278">278</a> 				mainName);
+<a class="jxr_linenumber" name="279" href="#279">279</a> 	}
+<a class="jxr_linenumber" name="280" href="#280">280</a> 
+<a class="jxr_linenumber" name="281" href="#281">281</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="282" href="#282">282</a> <em class="jxr_javadoccomment">	 * {@link #NAR_AOL_PROPERTIES} property key prefix</em>
+<a class="jxr_linenumber" name="283" href="#283">283</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="284" href="#284">284</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String formatNarKey(<strong class="jxr_keyword">final</strong> String arch, <strong class="jxr_keyword">final</strong> String os,
+<a class="jxr_linenumber" name="285" href="#285">285</a> 			<strong class="jxr_keyword">final</strong> String link) {
+<a class="jxr_linenumber" name="286" href="#286">286</a> 		<strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"%s.%s.%s"</span>, arch, os, link);
+<a class="jxr_linenumber" name="287" href="#287">287</a> 	}
+<a class="jxr_linenumber" name="288" href="#288">288</a> 
+<a class="jxr_linenumber" name="289" href="#289">289</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="290" href="#290">290</a> <em class="jxr_javadoccomment">	 * {@link #NAR_AOL_PROPERTIES} aol path element</em>
+<a class="jxr_linenumber" name="291" href="#291">291</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="292" href="#292">292</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String formatNarPath(<strong class="jxr_keyword">final</strong> String arch, <strong class="jxr_keyword">final</strong> String os,
+<a class="jxr_linenumber" name="293" href="#293">293</a> 			<strong class="jxr_keyword">final</strong> String link) {
+<a class="jxr_linenumber" name="294" href="#294">294</a> 		<strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"%s-%s-%s"</span>, arch, os, link);
+<a class="jxr_linenumber" name="295" href="#295">295</a> 	}
+<a class="jxr_linenumber" name="296" href="#296">296</a> 
+<a class="jxr_linenumber" name="297" href="#297">297</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="298" href="#298">298</a> <em class="jxr_javadoccomment">	 * location of dependency libraries on test class path</em>
+<a class="jxr_linenumber" name="299" href="#299">299</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="300" href="#300">300</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String formatTestingDependencyPath(<strong class="jxr_keyword">final</strong> String name) {
+<a class="jxr_linenumber" name="301" href="#301">301</a> 		<strong class="jxr_keyword">final</strong> String aol = currentNarPath();
+<a class="jxr_linenumber" name="302" href="#302">302</a> 		<strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"/aol/%s/lib/%s"</span>, aol, name);
+<a class="jxr_linenumber" name="303" href="#303">303</a> 	}
+<a class="jxr_linenumber" name="304" href="#304">304</a> 
+<a class="jxr_linenumber" name="305" href="#305">305</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="306" href="#306">306</a> <em class="jxr_javadoccomment">	 * is current platform defined in {@link #NAR_AOL_PROPERTIES} file?</em>
+<a class="jxr_linenumber" name="307" href="#307">307</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="308" href="#308">308</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> isSupportedPlatform() {
+<a class="jxr_linenumber" name="309" href="#309">309</a> 		<strong class="jxr_keyword">return</strong> !EMPTY_VALUE.equals(property(currentNarKeyCppCompiler()));
+<a class="jxr_linenumber" name="310" href="#310">310</a> 	}
+<a class="jxr_linenumber" name="311" href="#311">311</a> 
+<a class="jxr_linenumber" name="312" href="#312">312</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="313" href="#313">313</a> <em class="jxr_javadoccomment">	 * map JVM arch name to NAR arch name</em>
+<a class="jxr_linenumber" name="314" href="#314">314</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="315" href="#315">315</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String narARCH() {
+<a class="jxr_linenumber" name="316" href="#316">316</a> 		<strong class="jxr_keyword">return</strong> OS_ARCH;
+<a class="jxr_linenumber" name="317" href="#317">317</a> 	}
+<a class="jxr_linenumber" name="318" href="#318">318</a> 
+<a class="jxr_linenumber" name="319" href="#319">319</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="320" href="#320">320</a> <em class="jxr_javadoccomment">	 * map JVM arch/os name to NAR tool chain name</em>
+<a class="jxr_linenumber" name="321" href="#321">321</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="322" href="#322">322</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String narLINK() {
+<a class="jxr_linenumber" name="323" href="#323">323</a> 		<strong class="jxr_keyword">return</strong> <span class="jxr_string">"gpp"</span>;
+<a class="jxr_linenumber" name="324" href="#324">324</a> 	}
+<a class="jxr_linenumber" name="325" href="#325">325</a> 
+<a class="jxr_linenumber" name="326" href="#326">326</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="327" href="#327">327</a> <em class="jxr_javadoccomment">	 * map JVM os name to NAR os name</em>
+<a class="jxr_linenumber" name="328" href="#328">328</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="329" href="#329">329</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String narOS() {
+<a class="jxr_linenumber" name="330" href="#330">330</a> 		<strong class="jxr_keyword">if</strong> (OS_NAME.contains(<span class="jxr_string">"Mac OS X"</span>)) {
+<a class="jxr_linenumber" name="331" href="#331">331</a> 			<strong class="jxr_keyword">return</strong> <span class="jxr_string">"MacOSX"</span>;
+<a class="jxr_linenumber" name="332" href="#332">332</a> 		}
+<a class="jxr_linenumber" name="333" href="#333">333</a> 		<strong class="jxr_keyword">if</strong> (OS_NAME.contains(<span class="jxr_string">"Windows"</span>)) {
+<a class="jxr_linenumber" name="334" href="#334">334</a> 			<strong class="jxr_keyword">return</strong> <span class="jxr_string">"Windows"</span>;
+<a class="jxr_linenumber" name="335" href="#335">335</a> 		}
+<a class="jxr_linenumber" name="336" href="#336">336</a> 		<strong class="jxr_keyword">return</strong> OS_NAME;
+<a class="jxr_linenumber" name="337" href="#337">337</a> 	}
+<a class="jxr_linenumber" name="338" href="#338">338</a> 
+<a class="jxr_linenumber" name="339" href="#339">339</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="340" href="#340">340</a> <em class="jxr_javadoccomment">	 * find property entry in the {@link #NAR_AOL_PROPERTIES} file</em>
+<a class="jxr_linenumber" name="341" href="#341">341</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="342" href="#342">342</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String property(<strong class="jxr_keyword">final</strong> String key) {
+<a class="jxr_linenumber" name="343" href="#343">343</a> 		<strong class="jxr_keyword">final</strong> String value = props.getProperty(key);
+<a class="jxr_linenumber" name="344" href="#344">344</a> 		<strong class="jxr_keyword">if</strong> (value instanceof String) {
+<a class="jxr_linenumber" name="345" href="#345">345</a> 			<strong class="jxr_keyword">return</strong> value;
+<a class="jxr_linenumber" name="346" href="#346">346</a> 		} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="347" href="#347">347</a> 			<strong class="jxr_keyword">return</strong> EMPTY_VALUE;
+<a class="jxr_linenumber" name="348" href="#348">348</a> 		}
+<a class="jxr_linenumber" name="349" href="#349">349</a> 	}
+<a class="jxr_linenumber" name="350" href="#350">350</a> 
+<a class="jxr_linenumber" name="351" href="#351">351</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

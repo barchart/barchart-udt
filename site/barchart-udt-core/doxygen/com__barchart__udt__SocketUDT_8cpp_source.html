@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>barchart-udt-core-2.2.0: src/main/c++/jni/com_barchart_udt_SocketUDT.cpp Source File</title>
+<title>barchart-udt-core-2.2.1: src/main/c++/jni/com_barchart_udt_SocketUDT.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -85,7 +85,7 @@ window.onload = initDynSections;
 <a name="l00052"></a>00052 <span class="comment">//</span>
 <a name="l00053"></a>00053 <span class="comment">// stack trace support</span>
 <a name="l00054"></a>00054 <span class="comment">//</span>
-<a name="l00055"></a>00055 <span class="preprocessor">#ifdef LINUX</span>
+<a name="l00055"></a>00055 <span class="preprocessor">#if defined(LINUX) &amp;&amp; !defined(ANDROID)</span>
 <a name="l00056"></a>00056 <span class="preprocessor"></span>
 <a name="l00057"></a>00057 <span class="preprocessor">#include &lt;signal.h&gt;</span>
 <a name="l00058"></a>00058 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
@@ -2102,7 +2102,7 @@ window.onload = initDynSections;
 <a name="l02069"></a>02069 
 <a name="l02070"></a>02070 }<span class="comment">// [extern &quot;C&quot;]</span>
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on 6 Jan 2013 for barchart-udt-core-2.2.0 by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on 4 Feb 2013 for barchart-udt-core-2.2.1 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
