@@ -3,7 +3,7 @@
  *
  * BSD LICENCE (http://en.wikipedia.org/wiki/BSD_licenses)
  *
- * Copyright (C) 2009-2012, Barchart, Inc. (http://www.barchart.com/)
+ * Copyright (C) 2009-2013, Barchart, Inc. (http://www.barchart.com/)
  *
  * All rights reserved.
  *

@@ -3,7 +3,7 @@
  *
  * BSD LICENCE (http://en.wikipedia.org/wiki/BSD_licenses)
  *
- * Copyright (C) 2009-2012, Barchart, Inc. (http://www.barchart.com/)
+ * Copyright (C) 2009-2013, Barchart, Inc. (http://www.barchart.com/)
  *
  * All rights reserved.
  *
@@ -386,12 +386,8 @@ void UDT_InitFieldRefAll(JNIEnv * const env) {
 
 	// JDK
 
+	// FIXME private field access
 	ia_AddressID = env->GetFieldID(jdk_clsInet4Address, "address", "I");
-
-	isa_InetAddressID = env->GetFieldID(jdk_clsInetSocketAddress, //
-			"addr", "Ljava/net/InetAddress;");
-	isa_PortID = env->GetFieldID(jdk_clsInetSocketAddress, //
-			"port", "I");
 
 	// UDT SocketUDT
 
@@ -461,6 +457,17 @@ void UDT_InitMethodRefAll( //
 			"<init>", "(Ljava/net/InetAddress;I)V");
 	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_initID,
 			"jdk_clsInetSocketAddress_initID");
+
+	jdk_clsInetSocketAddress_getAddressID = env->GetMethodID(jdk_clsInetSocketAddress, //
+			"getAddress", "()Ljava/net/InetAddress;");
+	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_getAddressID,
+			"jdk_clsInetSocketAddress_getAddressID");
+
+	jdk_clsInetSocketAddress_getPortID = env->GetMethodID(jdk_clsInetSocketAddress, //
+			"getPort", "()I");
+	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_getPortID,
+			"jdk_clsInetSocketAddress_getPortID");
+
 
 	// java.util.Set
 	jdk_clsSet_iteratorID = env->GetMethodID(jdk_clsSet, //

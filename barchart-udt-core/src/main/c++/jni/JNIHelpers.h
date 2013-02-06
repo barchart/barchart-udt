@@ -3,7 +3,7 @@
  *
  * BSD LICENCE (http://en.wikipedia.org/wiki/BSD_licenses)
  *
- * Copyright (C) 2009-2012, Barchart, Inc. (http://www.barchart.com/)
+ * Copyright (C) 2009-2013, Barchart, Inc. (http://www.barchart.com/)
  *
  * All rights reserved.
  *
@@ -70,8 +70,7 @@ extern jclass jdk_clsSet; // java.util.Set
 extern jclass jdk_clsIterator; // java.util.Iterator
 
 // JDK fields
-extern jfieldID isa_InetAddressID; // java.net.InetSocketAddress#addr
-extern jfieldID isa_PortID; // java.net.InetSocketAddress#port
+// FIXME private field access
 extern jfieldID ia_AddressID; // java.net.InetAddress#address
 
 // JDK methods
@@ -80,6 +79,8 @@ extern jmethodID jdk_clsInteger_initID; // new Integer(int x)
 extern jmethodID jdk_clsLong_initID; // new Long(long x)
 extern jmethodID jdk_clsInet4Address_initID; // new InetAddress()
 extern jmethodID jdk_clsInetSocketAddress_initID; // new InetSocketAddress(InetAddress x)
+extern jmethodID jdk_clsInetSocketAddress_getAddressID; //
+extern jmethodID jdk_clsInetSocketAddress_getPortID; //
 extern jmethodID jdk_clsSet_iteratorID; // Iterator set.iterator()
 extern jmethodID jdk_clsSet_addID; // boolean set.add(Object)
 extern jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
@@ -174,6 +175,8 @@ jobject X_NewInetAddress(JNIEnv* env, jint address);
 
 // NOTE: ipv4 only
 jobject X_NewInetSocketAddress(JNIEnv* env, sockaddr* sockAddr);
+
+// NOTE: ipv4 only
 bool X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
 		jobject socketAddress);
 

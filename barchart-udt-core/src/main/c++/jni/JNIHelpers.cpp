@@ -3,7 +3,7 @@
  *
  * BSD LICENCE (http://en.wikipedia.org/wiki/BSD_licenses)
  *
- * Copyright (C) 2009-2012, Barchart, Inc. (http://www.barchart.com/)
+ * Copyright (C) 2009-2013, Barchart, Inc. (http://www.barchart.com/)
  *
  * All rights reserved.
  *
@@ -58,8 +58,7 @@ jclass jdk_clsSet; // java.util.Set
 jclass jdk_clsIterator; // java.util.Iterator
 
 // JDK fields
-jfieldID isa_InetAddressID; // java.net.InetSocketAddress#addr
-jfieldID isa_PortID; // java.net.InetSocketAddress#port
+// FIXME private field access
 jfieldID ia_AddressID; // java.net.InetAddress#address
 
 // JDK methods
@@ -68,6 +67,8 @@ jmethodID jdk_clsInteger_initID; // new Integer(int x)
 jmethodID jdk_clsLong_initID; // new Long(long x)
 jmethodID jdk_clsInet4Address_initID; // new InetAddress()
 jmethodID jdk_clsInetSocketAddress_initID; // new InetSocketAddress(InetAddress x)
+jmethodID jdk_clsInetSocketAddress_getAddressID; //
+jmethodID jdk_clsInetSocketAddress_getPortID; //
 jmethodID jdk_clsSet_iteratorID; // Iterator set.iterator()
 jmethodID jdk_clsSet_addID; // boolean set.add(Object)
 jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
@@ -80,7 +81,6 @@ jclass udt_clsFactoryInterfaceUDT; //com.barchart.udt.FactoryInterfaceUDT
 // UDT methods
 jfieldID udt_clsCCC_fld_nativeHandleID;
 
-
 void X_InitClassReference(JNIEnv *env, jclass *classReference,
 		const char *className) {
 	CHK_NUL_RET_RET(env, "env");
@@ -92,7 +92,7 @@ void X_InitClassReference(JNIEnv *env, jclass *classReference,
 	CHK_NUL_RET_RET(*classReference, "*classReference");
 }
 
-void X_FreeClassReference(JNIEnv *env, jclass* globalRef){
+void X_FreeClassReference(JNIEnv *env, jclass* globalRef) {
 	CHK_NUL_RET_RET(env, "env");
 	CHK_NUL_RET_RET(globalRef, "globalRef");
 	env->DeleteGlobalRef(*globalRef);
@@ -134,41 +134,19 @@ int X_ConvertInetSocketAddressToSockaddr(JNIEnv* env,
 	CHK_NUL_RET_ERR(sockAddr, "sockAddr");
 	CHK_NUL_RET_ERR(objInetSocketAddress, "objInetSocketAddress");
 
-	jobject objInetAddress = env->GetObjectField(objInetSocketAddress,
-			isa_InetAddressID);
+	jobject objInetAddress = env->CallObjectMethod(objInetSocketAddress,
+			jdk_clsInetSocketAddress_getAddressID);
 	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
 
+	// FIXME private field access
 	jint address = env->GetIntField(objInetAddress, ia_AddressID);
-	jint port = env->GetIntField(objInetSocketAddress, isa_PortID);
+	jint port = env->CallIntMethod(objInetSocketAddress,
+			jdk_clsInetSocketAddress_getPortID);
 
 	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
 
 	sockAddrIn->sin_addr.s_addr = htonl(address);
 	sockAddrIn->sin_port = htons(port); // msvc C4244
-
-	return JNI_OK;
-
-}
-
-// NOTE: ipv4 only
-int X_ConvertSockaddrToInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
-		jobject objInetSocketAddress) {
-
-	CHK_NUL_RET_ERR(env, "env");
-	CHK_NUL_RET_ERR(sockAddr, "sockAddr");
-	CHK_NUL_RET_ERR(objInetSocketAddress, "objInetSocketAddress");
-
-	jobject objInetAddress = env->GetObjectField(objInetSocketAddress,
-			isa_InetAddressID);
-	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
-
-	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
-
-	jint address = ntohl(sockAddrIn->sin_addr.s_addr);
-	jint port = ntohs(sockAddrIn->sin_port);
-
-	env->SetIntField(objInetAddress, ia_AddressID, address);
-	env->SetIntField(objInetSocketAddress, isa_PortID, port);
 
 	return JNI_OK;
 
@@ -185,6 +163,7 @@ jobject X_NewInetAddress(JNIEnv* env, jint address) {
 
 	CHK_NUL_RET_NUL(objInetAddress, "objInetAddress");
 
+	// FIXME private field access
 	env->SetIntField(objInetAddress, ia_AddressID, address);
 
 	return objInetAddress;
@@ -202,6 +181,7 @@ jobject X_NewInetSocketAddress(JNIEnv* env, sockaddr* sockAddr) {
 	jint port = ntohs(sockAddrIn->sin_port);
 
 	jobject objInetAddress = X_NewInetAddress(env, address);
+
 	CHK_NUL_RET_NUL(objInetAddress, "objInetAddress");
 
 	jobject objInetSocketAddress = env->NewObject(jdk_clsInetSocketAddress,
@@ -225,13 +205,15 @@ bool X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
 	jint address1 = ntohl(sockAddrIn->sin_addr.s_addr);
 	jint port1 = ntohs(sockAddrIn->sin_port);
 
-	jobject objInetAddress = env->GetObjectField(socketAddress,
-			isa_InetAddressID);
+	jobject objInetAddress = env->CallObjectMethod(socketAddress,
+			jdk_clsInetSocketAddress_getAddressID);
 
 	CHK_NUL_RET_FLS(objInetAddress, "objInetAddress");
 
+	// FIXME private field access
 	jint address2 = env->GetIntField(objInetAddress, ia_AddressID);
-	jint port2 = env->GetIntField(socketAddress, isa_PortID);
+	jint port2 = env->CallIntMethod(socketAddress,
+			jdk_clsInetSocketAddress_getAddressID);
 
 	if (address1 == address2 && port1 == port2) {
 		return true;
