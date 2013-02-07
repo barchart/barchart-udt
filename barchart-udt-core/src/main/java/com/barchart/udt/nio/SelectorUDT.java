@@ -18,6 +18,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.spi.AbstractSelectableChannel;
 import java.nio.channels.spi.AbstractSelector;
 import java.nio.channels.spi.SelectorProvider;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -85,10 +86,14 @@ public class SelectorUDT extends AbstractSelector {
 	 */
 	private volatile int resultIndex;
 
-	/** list of epoll sockets with read interest */
+	/**
+	 * list of epoll sockets with read interest
+	 */
 	private final IntBuffer readBuffer;
 
-	/** [ socket-id : selection-key ] */
+	/**
+	 * [ socket-id : selection-key ]
+	 */
 	private final ConcurrentMap<Integer, SelectionKeyUDT> //
 	registeredKeyMap = new ConcurrentHashMap<Integer, SelectionKeyUDT>();
 
@@ -104,12 +109,14 @@ public class SelectorUDT extends AbstractSelector {
 	private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
 	selectedKeyMap = new ConcurrentHashMap<SelectionKeyUDT, SelectionKeyUDT>();
 
-	/** public view : removal allowed, but not addition */
+	/**
+	 * public view : removal allowed, but not addition
+	 */
 	private final Set<? extends SelectionKey> //
 	selectedKeySet = HelpUDT.ungrowableSet(selectedKeyMap.keySet());
 
 	/**
-	 * canceled keys
+	 * Canceled keys.
 	 */
 	private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
 	terminatedKeyMap = new ConcurrentHashMap<SelectionKeyUDT, SelectionKeyUDT>();
@@ -143,41 +150,33 @@ public class SelectorUDT extends AbstractSelector {
 
 	}
 
-	/** cancel queue */
+	/**
+	 * Enqueue cancel request.
+	 */
 	protected void cancel(final SelectionKeyUDT keyUDT) {
-
-		log.debug("cancel queue {}", keyUDT);
-
-		// synchronized (cancelledKeys()) {
-		// cancelledKeys().add(keyUDT);
-		// }
-
 		terminatedKeyMap.putIfAbsent(keyUDT, keyUDT);
-
 	}
 
-	/** cancel apply */
+	/**
+	 * Process pending cancel requests.
+	 */
 	protected void doCancel() {
 
-		// synchronized (cancelledKeys()) {
-		//
-		// if (cancelledKeys().isEmpty()) {
-		// return;
-		// }
+		if (terminatedKeyMap.isEmpty()) {
+			return;
+		}
 
-		for (final SelectionKeyUDT keyUDT : terminatedKeyMap.values()) {
+		final Iterator<SelectionKeyUDT> iterator = terminatedKeyMap.values()
+				.iterator();
 
+		while (iterator.hasNext()) {
+			final SelectionKeyUDT keyUDT = iterator.next();
+			iterator.remove();
 			if (keyUDT.isValid()) {
-				log.debug("cancel apply {}", keyUDT);
 				keyUDT.makeValid(false);
 				registeredKeyMap.remove(keyUDT.socketId());
 			}
-
 		}
-
-		// cancelledKeys().clear();
-		//
-		// }
 
 	}
 
@@ -246,7 +245,7 @@ public class SelectorUDT extends AbstractSelector {
 	/**
 	 * @param millisTimeout
 	 * 
-	 *            -1 : infinite
+	 *            <0 : infinite
 	 * 
 	 *            =0 : immediate
 	 * 
@@ -305,7 +304,7 @@ public class SelectorUDT extends AbstractSelector {
 
 	protected void doResults() {
 
-		resultIndex++;
+		final int resultIndex = this.resultIndex++;
 
 		doResultsRead(resultIndex);
 
@@ -361,10 +360,8 @@ public class SelectorUDT extends AbstractSelector {
 		try {
 			selectLock.lock();
 
-			// cancelledKeys().addAll(registeredKeySet);
-
 			for (final SelectionKeyUDT keyUDT : registeredKeyMap.values()) {
-				terminatedKeyMap.putIfAbsent(keyUDT, keyUDT);
+				cancel(keyUDT);
 			}
 
 		} finally {

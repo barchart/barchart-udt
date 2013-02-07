@@ -527,7 +527,6 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_initClass0( //
 		const jclass clsSocketUDT //
 		) {
 
-	UNUSED(env);
 	UNUSED(clsSocketUDT);
 
 	UDT_InitClassRefAll(env);
@@ -1797,7 +1796,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 	if (readSize > 0) {
 		if (readSize > env->GetDirectBufferCapacity(objReadBuffer)) {
 			UDT_ThrowExceptionUDT_Message(env, 0,
-					"readSize > objReadBuffer capacity");
+					"epollWait0: readSize > objReadBuffer capacity");
 			return JNI_ERR;
 		}
 		jint* const readArray = //
@@ -1811,7 +1810,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 	if (writeSize > 0) {
 		if (writeSize > env->GetDirectBufferCapacity(objWriteBuffer)) {
 			UDT_ThrowExceptionUDT_Message(env, 0,
-					"writeSize > objWriteBuffer capacity");
+					"epollWait0: writeSize > objWriteBuffer capacity");
 			return JNI_ERR;
 		}
 		jint* const writeArray = //

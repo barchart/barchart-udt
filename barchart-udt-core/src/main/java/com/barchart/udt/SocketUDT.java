@@ -74,7 +74,7 @@ public class SocketUDT {
 	 * indication of inconsistent build.
 	 */
 	@Native
-	public static final int SIGNATURE_JNI = 20130102; // VersionUDT.BUILDTIME;
+	public static final int SIGNATURE_JNI = 20130205; // VersionUDT.BUILDTIME;
 
 	/**
 	 * infinite timeout:
@@ -117,7 +117,7 @@ public class SocketUDT {
 	public static final int UDT_WRITE_INDEX = 1;
 
 	/**
-	 * native library loader
+	 * Native library loader.
 	 * 
 	 * @throws RuntimeException
 	 */
