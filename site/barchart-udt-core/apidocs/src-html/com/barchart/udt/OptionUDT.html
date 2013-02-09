@@ -1,333 +1,340 @@
 <HTML>
 <BODY BGCOLOR="white">
 <PRE>
-<FONT color="green">001</FONT>    package com.barchart.udt;<a name="line.1"></a>
-<FONT color="green">002</FONT>    <a name="line.2"></a>
-<FONT color="green">003</FONT>    import static com.barchart.udt.OptionUDT.Format.*;<a name="line.3"></a>
-<FONT color="green">004</FONT>    <a name="line.4"></a>
-<FONT color="green">005</FONT>    import java.util.List;<a name="line.5"></a>
-<FONT color="green">006</FONT>    import java.util.concurrent.CopyOnWriteArrayList;<a name="line.6"></a>
-<FONT color="green">007</FONT>    <a name="line.7"></a>
-<FONT color="green">008</FONT>    import org.slf4j.Logger;<a name="line.8"></a>
-<FONT color="green">009</FONT>    import org.slf4j.LoggerFactory;<a name="line.9"></a>
-<FONT color="green">010</FONT>    <a name="line.10"></a>
-<FONT color="green">011</FONT>    import com.barchart.udt.util.HelpUDT;<a name="line.11"></a>
-<FONT color="green">012</FONT>    <a name="line.12"></a>
-<FONT color="green">013</FONT>    /**<a name="line.13"></a>
-<FONT color="green">014</FONT>     * The Enum OptionUDT.<a name="line.14"></a>
-<FONT color="green">015</FONT>     * &lt;p&gt;<a name="line.15"></a>
-<FONT color="green">016</FONT>     * provide 2 names: 1) UDT original and 2) human-readble<a name="line.16"></a>
-<FONT color="green">017</FONT>     * &lt;p&gt;<a name="line.17"></a>
-<FONT color="green">018</FONT>     * keep code values in sync with udt.h - UDT::UDTOpt; enum starts with index 0<a name="line.18"></a>
-<FONT color="green">019</FONT>     * <a name="line.19"></a>
-<FONT color="green">020</FONT>     * @see &lt;a href="http://udt.sourceforge.net/udt4/doc/opt.htm"&gt;udt options&lt;/a&gt;<a name="line.20"></a>
-<FONT color="green">021</FONT>     *      &lt;pre&gt;<a name="line.21"></a>
-<FONT color="green">022</FONT>     * UDT_MSS, // the Maximum Transfer Unit<a name="line.22"></a>
-<FONT color="green">023</FONT>     * UDT_SNDSYN, // if sending is blocking<a name="line.23"></a>
-<FONT color="green">024</FONT>     * UDT_RCVSYN, // if receiving is blocking<a name="line.24"></a>
-<FONT color="green">025</FONT>     * UDT_CC, // custom congestion control algorithm<a name="line.25"></a>
-<FONT color="green">026</FONT>     * UDT_FC, // Flight flag size (window size)<a name="line.26"></a>
-<FONT color="green">027</FONT>     * UDT_SNDBUF, // maximum buffer in sending queue<a name="line.27"></a>
-<FONT color="green">028</FONT>     * UDT_RCVBUF, // UDT receiving buffer size<a name="line.28"></a>
-<FONT color="green">029</FONT>     * UDT_LINGER, // waiting for unsent data when closing<a name="line.29"></a>
-<FONT color="green">030</FONT>     * UDP_SNDBUF, // UDP sending buffer size<a name="line.30"></a>
-<FONT color="green">031</FONT>     * UDP_RCVBUF, // UDP receiving buffer size<a name="line.31"></a>
-<FONT color="green">032</FONT>     * UDT_MAXMSG, // maximum datagram message size<a name="line.32"></a>
-<FONT color="green">033</FONT>     * UDT_MSGTTL, // time-to-live of a datagram message<a name="line.33"></a>
-<FONT color="green">034</FONT>     * UDT_RENDEZVOUS, // rendezvous connection mode<a name="line.34"></a>
-<FONT color="green">035</FONT>     * UDT_SNDTIMEO, // send() timeout<a name="line.35"></a>
-<FONT color="green">036</FONT>     * UDT_RCVTIMEO, // recv() timeout<a name="line.36"></a>
-<FONT color="green">037</FONT>     * UDT_REUSEADDR, // reuse an existing port or create a new one<a name="line.37"></a>
-<FONT color="green">038</FONT>     * UDT_MAXBW, // maximum bandwidth (bytes per second) that the connection can  use<a name="line.38"></a>
-<FONT color="green">039</FONT>     * UDT_STATE, // current socket state, see UDTSTATUS, read only<a name="line.39"></a>
-<FONT color="green">040</FONT>     * UDT_EVENT, // current avalable events associated with the socket<a name="line.40"></a>
-<FONT color="green">041</FONT>     * UDT_SNDDATA, // size of data in the sending buffer<a name="line.41"></a>
-<FONT color="green">042</FONT>     * UDT_RCVDATA // size of data available for recv<a name="line.42"></a>
-<FONT color="green">043</FONT>     * &lt;/pre&gt;<a name="line.43"></a>
-<FONT color="green">044</FONT>     */<a name="line.44"></a>
-<FONT color="green">045</FONT>    public class OptionUDT&lt;T&gt; {<a name="line.45"></a>
-<FONT color="green">046</FONT>    <a name="line.46"></a>
-<FONT color="green">047</FONT>            static {<a name="line.47"></a>
-<FONT color="green">048</FONT>                    log = LoggerFactory.getLogger(OptionUDT.class);<a name="line.48"></a>
-<FONT color="green">049</FONT>                    values = new CopyOnWriteArrayList&lt;OptionUDT&lt;?&gt;&gt;();<a name="line.49"></a>
-<FONT color="green">050</FONT>            }<a name="line.50"></a>
-<FONT color="green">051</FONT>    <a name="line.51"></a>
-<FONT color="green">052</FONT>            /** the Maximum Transfer Unit. */<a name="line.52"></a>
-<FONT color="green">053</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_MSS = //<a name="line.53"></a>
-<FONT color="green">054</FONT>            NEW(0, Integer.class, DECIMAL);<a name="line.54"></a>
-<FONT color="green">055</FONT>            /** the Maximum Transfer Unit., bytes */<a name="line.55"></a>
-<FONT color="green">056</FONT>            public static final OptionUDT&lt;Integer&gt; Maximum_Transfer_Unit = //<a name="line.56"></a>
-<FONT color="green">057</FONT>            NEW(0, Integer.class, DECIMAL);<a name="line.57"></a>
+<FONT color="green">001</FONT>    /**<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright (C) 2009-2013 Barchart, Inc. &lt;http://www.barchart.com/&gt;<a name="line.2"></a>
+<FONT color="green">003</FONT>     *<a name="line.3"></a>
+<FONT color="green">004</FONT>     * All rights reserved. Licensed under the OSI BSD License.<a name="line.4"></a>
+<FONT color="green">005</FONT>     *<a name="line.5"></a>
+<FONT color="green">006</FONT>     * http://www.opensource.org/licenses/bsd-license.php<a name="line.6"></a>
+<FONT color="green">007</FONT>     */<a name="line.7"></a>
+<FONT color="green">008</FONT>    package com.barchart.udt;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    import static com.barchart.udt.OptionUDT.Format.*;<a name="line.10"></a>
+<FONT color="green">011</FONT>    <a name="line.11"></a>
+<FONT color="green">012</FONT>    import java.util.List;<a name="line.12"></a>
+<FONT color="green">013</FONT>    import java.util.concurrent.CopyOnWriteArrayList;<a name="line.13"></a>
+<FONT color="green">014</FONT>    <a name="line.14"></a>
+<FONT color="green">015</FONT>    import org.slf4j.Logger;<a name="line.15"></a>
+<FONT color="green">016</FONT>    import org.slf4j.LoggerFactory;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import com.barchart.udt.util.HelpUDT;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    /**<a name="line.20"></a>
+<FONT color="green">021</FONT>     * The Enum OptionUDT.<a name="line.21"></a>
+<FONT color="green">022</FONT>     * &lt;p&gt;<a name="line.22"></a>
+<FONT color="green">023</FONT>     * provide 2 names: 1) UDT original and 2) human-readble<a name="line.23"></a>
+<FONT color="green">024</FONT>     * &lt;p&gt;<a name="line.24"></a>
+<FONT color="green">025</FONT>     * keep code values in sync with udt.h - UDT::UDTOpt; enum starts with index 0<a name="line.25"></a>
+<FONT color="green">026</FONT>     * <a name="line.26"></a>
+<FONT color="green">027</FONT>     * @see &lt;a href="http://udt.sourceforge.net/udt4/doc/opt.htm"&gt;udt options&lt;/a&gt;<a name="line.27"></a>
+<FONT color="green">028</FONT>     *      &lt;pre&gt;<a name="line.28"></a>
+<FONT color="green">029</FONT>     * UDT_MSS, // the Maximum Transfer Unit<a name="line.29"></a>
+<FONT color="green">030</FONT>     * UDT_SNDSYN, // if sending is blocking<a name="line.30"></a>
+<FONT color="green">031</FONT>     * UDT_RCVSYN, // if receiving is blocking<a name="line.31"></a>
+<FONT color="green">032</FONT>     * UDT_CC, // custom congestion control algorithm<a name="line.32"></a>
+<FONT color="green">033</FONT>     * UDT_FC, // Flight flag size (window size)<a name="line.33"></a>
+<FONT color="green">034</FONT>     * UDT_SNDBUF, // maximum buffer in sending queue<a name="line.34"></a>
+<FONT color="green">035</FONT>     * UDT_RCVBUF, // UDT receiving buffer size<a name="line.35"></a>
+<FONT color="green">036</FONT>     * UDT_LINGER, // waiting for unsent data when closing<a name="line.36"></a>
+<FONT color="green">037</FONT>     * UDP_SNDBUF, // UDP sending buffer size<a name="line.37"></a>
+<FONT color="green">038</FONT>     * UDP_RCVBUF, // UDP receiving buffer size<a name="line.38"></a>
+<FONT color="green">039</FONT>     * UDT_MAXMSG, // maximum datagram message size<a name="line.39"></a>
+<FONT color="green">040</FONT>     * UDT_MSGTTL, // time-to-live of a datagram message<a name="line.40"></a>
+<FONT color="green">041</FONT>     * UDT_RENDEZVOUS, // rendezvous connection mode<a name="line.41"></a>
+<FONT color="green">042</FONT>     * UDT_SNDTIMEO, // send() timeout<a name="line.42"></a>
+<FONT color="green">043</FONT>     * UDT_RCVTIMEO, // recv() timeout<a name="line.43"></a>
+<FONT color="green">044</FONT>     * UDT_REUSEADDR, // reuse an existing port or create a new one<a name="line.44"></a>
+<FONT color="green">045</FONT>     * UDT_MAXBW, // maximum bandwidth (bytes per second) that the connection can  use<a name="line.45"></a>
+<FONT color="green">046</FONT>     * UDT_STATE, // current socket state, see UDTSTATUS, read only<a name="line.46"></a>
+<FONT color="green">047</FONT>     * UDT_EVENT, // current avalable events associated with the socket<a name="line.47"></a>
+<FONT color="green">048</FONT>     * UDT_SNDDATA, // size of data in the sending buffer<a name="line.48"></a>
+<FONT color="green">049</FONT>     * UDT_RCVDATA // size of data available for recv<a name="line.49"></a>
+<FONT color="green">050</FONT>     * &lt;/pre&gt;<a name="line.50"></a>
+<FONT color="green">051</FONT>     */<a name="line.51"></a>
+<FONT color="green">052</FONT>    public class OptionUDT&lt;T&gt; {<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>            static {<a name="line.54"></a>
+<FONT color="green">055</FONT>                    log = LoggerFactory.getLogger(OptionUDT.class);<a name="line.55"></a>
+<FONT color="green">056</FONT>                    values = new CopyOnWriteArrayList&lt;OptionUDT&lt;?&gt;&gt;();<a name="line.56"></a>
+<FONT color="green">057</FONT>            }<a name="line.57"></a>
 <FONT color="green">058</FONT>    <a name="line.58"></a>
-<FONT color="green">059</FONT>            /** if sending is blocking. */<a name="line.59"></a>
-<FONT color="green">060</FONT>            public static final OptionUDT&lt;Boolean&gt; UDT_SNDSYN = //<a name="line.60"></a>
-<FONT color="green">061</FONT>            NEW(1, Boolean.class, BOOLEAN);<a name="line.61"></a>
-<FONT color="green">062</FONT>            /** if sending is blocking., true/false */<a name="line.62"></a>
-<FONT color="green">063</FONT>            public static final OptionUDT&lt;Boolean&gt; Is_Send_Synchronous = //<a name="line.63"></a>
-<FONT color="green">064</FONT>            NEW(1, Boolean.class, BOOLEAN);<a name="line.64"></a>
+<FONT color="green">059</FONT>            /** the Maximum Transfer Unit. */<a name="line.59"></a>
+<FONT color="green">060</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_MSS = //<a name="line.60"></a>
+<FONT color="green">061</FONT>            NEW(0, Integer.class, DECIMAL);<a name="line.61"></a>
+<FONT color="green">062</FONT>            /** the Maximum Transfer Unit., bytes */<a name="line.62"></a>
+<FONT color="green">063</FONT>            public static final OptionUDT&lt;Integer&gt; Maximum_Transfer_Unit = //<a name="line.63"></a>
+<FONT color="green">064</FONT>            NEW(0, Integer.class, DECIMAL);<a name="line.64"></a>
 <FONT color="green">065</FONT>    <a name="line.65"></a>
-<FONT color="green">066</FONT>            /** if receiving is blocking. */<a name="line.66"></a>
-<FONT color="green">067</FONT>            public static final OptionUDT&lt;Boolean&gt; UDT_RCVSYN = //<a name="line.67"></a>
-<FONT color="green">068</FONT>            NEW(2, Boolean.class, BOOLEAN);<a name="line.68"></a>
-<FONT color="green">069</FONT>            /** if receiving is blocking, true/false */<a name="line.69"></a>
-<FONT color="green">070</FONT>            public static final OptionUDT&lt;Boolean&gt; Is_Receive_Synchronous = //<a name="line.70"></a>
-<FONT color="green">071</FONT>            NEW(2, Boolean.class, BOOLEAN);<a name="line.71"></a>
+<FONT color="green">066</FONT>            /** if sending is blocking. */<a name="line.66"></a>
+<FONT color="green">067</FONT>            public static final OptionUDT&lt;Boolean&gt; UDT_SNDSYN = //<a name="line.67"></a>
+<FONT color="green">068</FONT>            NEW(1, Boolean.class, BOOLEAN);<a name="line.68"></a>
+<FONT color="green">069</FONT>            /** if sending is blocking., true/false */<a name="line.69"></a>
+<FONT color="green">070</FONT>            public static final OptionUDT&lt;Boolean&gt; Is_Send_Synchronous = //<a name="line.70"></a>
+<FONT color="green">071</FONT>            NEW(1, Boolean.class, BOOLEAN);<a name="line.71"></a>
 <FONT color="green">072</FONT>    <a name="line.72"></a>
-<FONT color="green">073</FONT>            /** custom congestion control algorithm */<a name="line.73"></a>
-<FONT color="green">074</FONT>            @SuppressWarnings("rawtypes")<a name="line.74"></a>
-<FONT color="green">075</FONT>            public static final OptionUDT&lt;FactoryUDT&gt; UDT_CC = //<a name="line.75"></a>
-<FONT color="green">076</FONT>            NEW(3, FactoryUDT.class, DEFAULT);<a name="line.76"></a>
-<FONT color="green">077</FONT>            /** custom congestion control algorithm, class factory */<a name="line.77"></a>
-<FONT color="green">078</FONT>            @SuppressWarnings("rawtypes")<a name="line.78"></a>
-<FONT color="green">079</FONT>            public static final OptionUDT&lt;FactoryUDT&gt; Custom_Congestion_Control = //<a name="line.79"></a>
-<FONT color="green">080</FONT>            NEW(3, FactoryUDT.class, DEFAULT);<a name="line.80"></a>
-<FONT color="green">081</FONT>    <a name="line.81"></a>
-<FONT color="green">082</FONT>            /** Flight flag size (window size). */<a name="line.82"></a>
-<FONT color="green">083</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_FC = //<a name="line.83"></a>
-<FONT color="green">084</FONT>            NEW(4, Integer.class, BINARY);<a name="line.84"></a>
-<FONT color="green">085</FONT>            /** Flight flag size (window size), bytes */<a name="line.85"></a>
-<FONT color="green">086</FONT>            public static final OptionUDT&lt;Integer&gt; Flight_Window_Size = //<a name="line.86"></a>
-<FONT color="green">087</FONT>            NEW(4, Integer.class, BINARY);<a name="line.87"></a>
+<FONT color="green">073</FONT>            /** if receiving is blocking. */<a name="line.73"></a>
+<FONT color="green">074</FONT>            public static final OptionUDT&lt;Boolean&gt; UDT_RCVSYN = //<a name="line.74"></a>
+<FONT color="green">075</FONT>            NEW(2, Boolean.class, BOOLEAN);<a name="line.75"></a>
+<FONT color="green">076</FONT>            /** if receiving is blocking, true/false */<a name="line.76"></a>
+<FONT color="green">077</FONT>            public static final OptionUDT&lt;Boolean&gt; Is_Receive_Synchronous = //<a name="line.77"></a>
+<FONT color="green">078</FONT>            NEW(2, Boolean.class, BOOLEAN);<a name="line.78"></a>
+<FONT color="green">079</FONT>    <a name="line.79"></a>
+<FONT color="green">080</FONT>            /** custom congestion control algorithm */<a name="line.80"></a>
+<FONT color="green">081</FONT>            @SuppressWarnings("rawtypes")<a name="line.81"></a>
+<FONT color="green">082</FONT>            public static final OptionUDT&lt;FactoryUDT&gt; UDT_CC = //<a name="line.82"></a>
+<FONT color="green">083</FONT>            NEW(3, FactoryUDT.class, DEFAULT);<a name="line.83"></a>
+<FONT color="green">084</FONT>            /** custom congestion control algorithm, class factory */<a name="line.84"></a>
+<FONT color="green">085</FONT>            @SuppressWarnings("rawtypes")<a name="line.85"></a>
+<FONT color="green">086</FONT>            public static final OptionUDT&lt;FactoryUDT&gt; Custom_Congestion_Control = //<a name="line.86"></a>
+<FONT color="green">087</FONT>            NEW(3, FactoryUDT.class, DEFAULT);<a name="line.87"></a>
 <FONT color="green">088</FONT>    <a name="line.88"></a>
-<FONT color="green">089</FONT>            /** maximum buffer in sending queue. */<a name="line.89"></a>
-<FONT color="green">090</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_SNDBUF = //<a name="line.90"></a>
-<FONT color="green">091</FONT>            NEW(5, Integer.class, DECIMAL);<a name="line.91"></a>
-<FONT color="green">092</FONT>            /** maximum buffer in sending queue. */<a name="line.92"></a>
-<FONT color="green">093</FONT>            public static final OptionUDT&lt;Integer&gt; Protocol_Send_Buffer_Size = //<a name="line.93"></a>
-<FONT color="green">094</FONT>            NEW(5, Integer.class, DECIMAL);<a name="line.94"></a>
+<FONT color="green">089</FONT>            /** Flight flag size (window size). */<a name="line.89"></a>
+<FONT color="green">090</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_FC = //<a name="line.90"></a>
+<FONT color="green">091</FONT>            NEW(4, Integer.class, BINARY);<a name="line.91"></a>
+<FONT color="green">092</FONT>            /** Flight flag size (window size), bytes */<a name="line.92"></a>
+<FONT color="green">093</FONT>            public static final OptionUDT&lt;Integer&gt; Flight_Window_Size = //<a name="line.93"></a>
+<FONT color="green">094</FONT>            NEW(4, Integer.class, BINARY);<a name="line.94"></a>
 <FONT color="green">095</FONT>    <a name="line.95"></a>
-<FONT color="green">096</FONT>            /** UDT receiving buffer size. */<a name="line.96"></a>
-<FONT color="green">097</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_RCVBUF = //<a name="line.97"></a>
-<FONT color="green">098</FONT>            NEW(6, Integer.class, DECIMAL);<a name="line.98"></a>
-<FONT color="green">099</FONT>            /** UDT receiving buffer size limit, bytes */<a name="line.99"></a>
-<FONT color="green">100</FONT>            public static final OptionUDT&lt;Integer&gt; Protocol_Receive_Buffer_Size = //<a name="line.100"></a>
-<FONT color="green">101</FONT>            NEW(6, Integer.class, DECIMAL);<a name="line.101"></a>
+<FONT color="green">096</FONT>            /** maximum buffer in sending queue. */<a name="line.96"></a>
+<FONT color="green">097</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_SNDBUF = //<a name="line.97"></a>
+<FONT color="green">098</FONT>            NEW(5, Integer.class, DECIMAL);<a name="line.98"></a>
+<FONT color="green">099</FONT>            /** maximum buffer in sending queue. */<a name="line.99"></a>
+<FONT color="green">100</FONT>            public static final OptionUDT&lt;Integer&gt; Protocol_Send_Buffer_Size = //<a name="line.100"></a>
+<FONT color="green">101</FONT>            NEW(5, Integer.class, DECIMAL);<a name="line.101"></a>
 <FONT color="green">102</FONT>    <a name="line.102"></a>
-<FONT color="green">103</FONT>            /** waiting for unsent data when closing. */<a name="line.103"></a>
-<FONT color="green">104</FONT>            public static final OptionUDT&lt;LingerUDT&gt; UDT_LINGER = //<a name="line.104"></a>
-<FONT color="green">105</FONT>            NEW(7, LingerUDT.class, DECIMAL);<a name="line.105"></a>
-<FONT color="green">106</FONT>            /** waiting for unsent data when closing. true/false and timeout, seconds */<a name="line.106"></a>
-<FONT color="green">107</FONT>            public static final OptionUDT&lt;LingerUDT&gt; Time_To_Linger_On_Close = //<a name="line.107"></a>
-<FONT color="green">108</FONT>            NEW(7, LingerUDT.class, DECIMAL);<a name="line.108"></a>
+<FONT color="green">103</FONT>            /** UDT receiving buffer size. */<a name="line.103"></a>
+<FONT color="green">104</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_RCVBUF = //<a name="line.104"></a>
+<FONT color="green">105</FONT>            NEW(6, Integer.class, DECIMAL);<a name="line.105"></a>
+<FONT color="green">106</FONT>            /** UDT receiving buffer size limit, bytes */<a name="line.106"></a>
+<FONT color="green">107</FONT>            public static final OptionUDT&lt;Integer&gt; Protocol_Receive_Buffer_Size = //<a name="line.107"></a>
+<FONT color="green">108</FONT>            NEW(6, Integer.class, DECIMAL);<a name="line.108"></a>
 <FONT color="green">109</FONT>    <a name="line.109"></a>
-<FONT color="green">110</FONT>            /** UDP sending buffer size. */<a name="line.110"></a>
-<FONT color="green">111</FONT>            public static final OptionUDT&lt;Integer&gt; UDP_SNDBUF = //<a name="line.111"></a>
-<FONT color="green">112</FONT>            NEW(8, Integer.class, DECIMAL);<a name="line.112"></a>
-<FONT color="green">113</FONT>            /** UDP sending buffer size limit, bytes */<a name="line.113"></a>
-<FONT color="green">114</FONT>            public static final OptionUDT&lt;Integer&gt; System_Send_Buffer_Size = //<a name="line.114"></a>
-<FONT color="green">115</FONT>            NEW(8, Integer.class, DECIMAL);<a name="line.115"></a>
+<FONT color="green">110</FONT>            /** waiting for unsent data when closing. */<a name="line.110"></a>
+<FONT color="green">111</FONT>            public static final OptionUDT&lt;LingerUDT&gt; UDT_LINGER = //<a name="line.111"></a>
+<FONT color="green">112</FONT>            NEW(7, LingerUDT.class, DECIMAL);<a name="line.112"></a>
+<FONT color="green">113</FONT>            /** waiting for unsent data when closing. true/false and timeout, seconds */<a name="line.113"></a>
+<FONT color="green">114</FONT>            public static final OptionUDT&lt;LingerUDT&gt; Time_To_Linger_On_Close = //<a name="line.114"></a>
+<FONT color="green">115</FONT>            NEW(7, LingerUDT.class, DECIMAL);<a name="line.115"></a>
 <FONT color="green">116</FONT>    <a name="line.116"></a>
-<FONT color="green">117</FONT>            /** UDP receiving buffer size. */<a name="line.117"></a>
-<FONT color="green">118</FONT>            public static final OptionUDT&lt;Integer&gt; UDP_RCVBUF = //<a name="line.118"></a>
-<FONT color="green">119</FONT>            NEW(9, Integer.class, DECIMAL);<a name="line.119"></a>
-<FONT color="green">120</FONT>            /** UDP receiving buffer size limit, bytes */<a name="line.120"></a>
-<FONT color="green">121</FONT>            public static final OptionUDT&lt;Integer&gt; System_Receive_Buffer_Size = //<a name="line.121"></a>
-<FONT color="green">122</FONT>            NEW(9, Integer.class, DECIMAL);<a name="line.122"></a>
+<FONT color="green">117</FONT>            /** UDP sending buffer size. */<a name="line.117"></a>
+<FONT color="green">118</FONT>            public static final OptionUDT&lt;Integer&gt; UDP_SNDBUF = //<a name="line.118"></a>
+<FONT color="green">119</FONT>            NEW(8, Integer.class, DECIMAL);<a name="line.119"></a>
+<FONT color="green">120</FONT>            /** UDP sending buffer size limit, bytes */<a name="line.120"></a>
+<FONT color="green">121</FONT>            public static final OptionUDT&lt;Integer&gt; System_Send_Buffer_Size = //<a name="line.121"></a>
+<FONT color="green">122</FONT>            NEW(8, Integer.class, DECIMAL);<a name="line.122"></a>
 <FONT color="green">123</FONT>    <a name="line.123"></a>
-<FONT color="green">124</FONT>            /* maximum datagram message size */<a name="line.124"></a>
-<FONT color="green">125</FONT>            // UDT_MAXMSG(10, Integer.class, DECIMAL); no support in udt core<a name="line.125"></a>
-<FONT color="green">126</FONT>    <a name="line.126"></a>
-<FONT color="green">127</FONT>            /* time-to-live of a datagram message */<a name="line.127"></a>
-<FONT color="green">128</FONT>            // UDT_MSGTTL(11, Integer.class, DECIMAL); no support in udt core<a name="line.128"></a>
-<FONT color="green">129</FONT>    <a name="line.129"></a>
-<FONT color="green">130</FONT>            /** rendezvous connection mode. */<a name="line.130"></a>
-<FONT color="green">131</FONT>            public static final OptionUDT&lt;Boolean&gt; UDT_RENDEZVOUS = //<a name="line.131"></a>
-<FONT color="green">132</FONT>            NEW(12, Boolean.class, BOOLEAN);<a name="line.132"></a>
-<FONT color="green">133</FONT>            /** rendezvous connection mode, enabled/disabled */<a name="line.133"></a>
-<FONT color="green">134</FONT>            public static final OptionUDT&lt;Boolean&gt; Is_Randezvous_Connect_Enabled = //<a name="line.134"></a>
-<FONT color="green">135</FONT>            NEW(12, Boolean.class, BOOLEAN);<a name="line.135"></a>
+<FONT color="green">124</FONT>            /** UDP receiving buffer size. */<a name="line.124"></a>
+<FONT color="green">125</FONT>            public static final OptionUDT&lt;Integer&gt; UDP_RCVBUF = //<a name="line.125"></a>
+<FONT color="green">126</FONT>            NEW(9, Integer.class, DECIMAL);<a name="line.126"></a>
+<FONT color="green">127</FONT>            /** UDP receiving buffer size limit, bytes */<a name="line.127"></a>
+<FONT color="green">128</FONT>            public static final OptionUDT&lt;Integer&gt; System_Receive_Buffer_Size = //<a name="line.128"></a>
+<FONT color="green">129</FONT>            NEW(9, Integer.class, DECIMAL);<a name="line.129"></a>
+<FONT color="green">130</FONT>    <a name="line.130"></a>
+<FONT color="green">131</FONT>            /* maximum datagram message size */<a name="line.131"></a>
+<FONT color="green">132</FONT>            // UDT_MAXMSG(10, Integer.class, DECIMAL); no support in udt core<a name="line.132"></a>
+<FONT color="green">133</FONT>    <a name="line.133"></a>
+<FONT color="green">134</FONT>            /* time-to-live of a datagram message */<a name="line.134"></a>
+<FONT color="green">135</FONT>            // UDT_MSGTTL(11, Integer.class, DECIMAL); no support in udt core<a name="line.135"></a>
 <FONT color="green">136</FONT>    <a name="line.136"></a>
-<FONT color="green">137</FONT>            /** send() timeout. */<a name="line.137"></a>
-<FONT color="green">138</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_SNDTIMEO = //<a name="line.138"></a>
-<FONT color="green">139</FONT>            NEW(13, Integer.class, DECIMAL);<a name="line.139"></a>
-<FONT color="green">140</FONT>            /** send() timeout. milliseconds */<a name="line.140"></a>
-<FONT color="green">141</FONT>            public static final OptionUDT&lt;Integer&gt; Send_Timeout = //<a name="line.141"></a>
-<FONT color="green">142</FONT>            NEW(13, Integer.class, DECIMAL);<a name="line.142"></a>
+<FONT color="green">137</FONT>            /** rendezvous connection mode. */<a name="line.137"></a>
+<FONT color="green">138</FONT>            public static final OptionUDT&lt;Boolean&gt; UDT_RENDEZVOUS = //<a name="line.138"></a>
+<FONT color="green">139</FONT>            NEW(12, Boolean.class, BOOLEAN);<a name="line.139"></a>
+<FONT color="green">140</FONT>            /** rendezvous connection mode, enabled/disabled */<a name="line.140"></a>
+<FONT color="green">141</FONT>            public static final OptionUDT&lt;Boolean&gt; Is_Randezvous_Connect_Enabled = //<a name="line.141"></a>
+<FONT color="green">142</FONT>            NEW(12, Boolean.class, BOOLEAN);<a name="line.142"></a>
 <FONT color="green">143</FONT>    <a name="line.143"></a>
-<FONT color="green">144</FONT>            /** recv() timeout. */<a name="line.144"></a>
-<FONT color="green">145</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_RCVTIMEO = //<a name="line.145"></a>
-<FONT color="green">146</FONT>            NEW(14, Integer.class, DECIMAL);<a name="line.146"></a>
-<FONT color="green">147</FONT>            /** recv() timeout. milliseconds */<a name="line.147"></a>
-<FONT color="green">148</FONT>            public static final OptionUDT&lt;Integer&gt; Receive_Timeout = //<a name="line.148"></a>
-<FONT color="green">149</FONT>            NEW(14, Integer.class, DECIMAL);<a name="line.149"></a>
+<FONT color="green">144</FONT>            /** send() timeout. */<a name="line.144"></a>
+<FONT color="green">145</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_SNDTIMEO = //<a name="line.145"></a>
+<FONT color="green">146</FONT>            NEW(13, Integer.class, DECIMAL);<a name="line.146"></a>
+<FONT color="green">147</FONT>            /** send() timeout. milliseconds */<a name="line.147"></a>
+<FONT color="green">148</FONT>            public static final OptionUDT&lt;Integer&gt; Send_Timeout = //<a name="line.148"></a>
+<FONT color="green">149</FONT>            NEW(13, Integer.class, DECIMAL);<a name="line.149"></a>
 <FONT color="green">150</FONT>    <a name="line.150"></a>
-<FONT color="green">151</FONT>            /** reuse an existing port or create a one. */<a name="line.151"></a>
-<FONT color="green">152</FONT>            public static final OptionUDT&lt;Boolean&gt; UDT_REUSEADDR = //<a name="line.152"></a>
-<FONT color="green">153</FONT>            NEW(15, Boolean.class, BOOLEAN);<a name="line.153"></a>
-<FONT color="green">154</FONT>            /** reuse an existing port or create a one. true/false */<a name="line.154"></a>
-<FONT color="green">155</FONT>            public static final OptionUDT&lt;Boolean&gt; Is_Address_Reuse_Enabled = //<a name="line.155"></a>
-<FONT color="green">156</FONT>            NEW(15, Boolean.class, BOOLEAN);<a name="line.156"></a>
+<FONT color="green">151</FONT>            /** recv() timeout. */<a name="line.151"></a>
+<FONT color="green">152</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_RCVTIMEO = //<a name="line.152"></a>
+<FONT color="green">153</FONT>            NEW(14, Integer.class, DECIMAL);<a name="line.153"></a>
+<FONT color="green">154</FONT>            /** recv() timeout. milliseconds */<a name="line.154"></a>
+<FONT color="green">155</FONT>            public static final OptionUDT&lt;Integer&gt; Receive_Timeout = //<a name="line.155"></a>
+<FONT color="green">156</FONT>            NEW(14, Integer.class, DECIMAL);<a name="line.156"></a>
 <FONT color="green">157</FONT>    <a name="line.157"></a>
-<FONT color="green">158</FONT>            /** maximum bandwidth (bytes per second) that the connection can use. */<a name="line.158"></a>
-<FONT color="green">159</FONT>            public static final OptionUDT&lt;Long&gt; UDT_MAXBW = //<a name="line.159"></a>
-<FONT color="green">160</FONT>            NEW(16, Long.class, DECIMAL);<a name="line.160"></a>
-<FONT color="green">161</FONT>            /** maximum bandwidth (bytes per second) that the connection can use. */<a name="line.161"></a>
-<FONT color="green">162</FONT>            public static final OptionUDT&lt;Long&gt; Maximum_Bandwidth = //<a name="line.162"></a>
-<FONT color="green">163</FONT>            NEW(16, Long.class, DECIMAL);<a name="line.163"></a>
+<FONT color="green">158</FONT>            /** reuse an existing port or create a one. */<a name="line.158"></a>
+<FONT color="green">159</FONT>            public static final OptionUDT&lt;Boolean&gt; UDT_REUSEADDR = //<a name="line.159"></a>
+<FONT color="green">160</FONT>            NEW(15, Boolean.class, BOOLEAN);<a name="line.160"></a>
+<FONT color="green">161</FONT>            /** reuse an existing port or create a one. true/false */<a name="line.161"></a>
+<FONT color="green">162</FONT>            public static final OptionUDT&lt;Boolean&gt; Is_Address_Reuse_Enabled = //<a name="line.162"></a>
+<FONT color="green">163</FONT>            NEW(15, Boolean.class, BOOLEAN);<a name="line.163"></a>
 <FONT color="green">164</FONT>    <a name="line.164"></a>
-<FONT color="green">165</FONT>            /** current socket state, see UDTSTATUS, read only */<a name="line.165"></a>
-<FONT color="green">166</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_STATE = //<a name="line.166"></a>
-<FONT color="green">167</FONT>            NEW(17, Integer.class, DECIMAL);<a name="line.167"></a>
-<FONT color="green">168</FONT>            /** current socket status code, see {@link StatusUDT#getCode()}, read only */<a name="line.168"></a>
-<FONT color="green">169</FONT>            public static final OptionUDT&lt;Integer&gt; Status_Code = //<a name="line.169"></a>
-<FONT color="green">170</FONT>            NEW(17, Integer.class, DECIMAL);<a name="line.170"></a>
+<FONT color="green">165</FONT>            /** maximum bandwidth (bytes per second) that the connection can use. */<a name="line.165"></a>
+<FONT color="green">166</FONT>            public static final OptionUDT&lt;Long&gt; UDT_MAXBW = //<a name="line.166"></a>
+<FONT color="green">167</FONT>            NEW(16, Long.class, DECIMAL);<a name="line.167"></a>
+<FONT color="green">168</FONT>            /** maximum bandwidth (bytes per second) that the connection can use. */<a name="line.168"></a>
+<FONT color="green">169</FONT>            public static final OptionUDT&lt;Long&gt; Maximum_Bandwidth = //<a name="line.169"></a>
+<FONT color="green">170</FONT>            NEW(16, Long.class, DECIMAL);<a name="line.170"></a>
 <FONT color="green">171</FONT>    <a name="line.171"></a>
-<FONT color="green">172</FONT>            /** current available events associated with the socket */<a name="line.172"></a>
-<FONT color="green">173</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_EVENT = //<a name="line.173"></a>
-<FONT color="green">174</FONT>            NEW(18, Integer.class, DECIMAL);<a name="line.174"></a>
-<FONT color="green">175</FONT>            /** current available epoll events, see {@link EpollUDT.Opt#code} */<a name="line.175"></a>
-<FONT color="green">176</FONT>            public static final OptionUDT&lt;Integer&gt; Epoll_Event_Mask = //<a name="line.176"></a>
-<FONT color="green">177</FONT>            NEW(18, Integer.class, DECIMAL);<a name="line.177"></a>
+<FONT color="green">172</FONT>            /** current socket state, see UDTSTATUS, read only */<a name="line.172"></a>
+<FONT color="green">173</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_STATE = //<a name="line.173"></a>
+<FONT color="green">174</FONT>            NEW(17, Integer.class, DECIMAL);<a name="line.174"></a>
+<FONT color="green">175</FONT>            /** current socket status code, see {@link StatusUDT#getCode()}, read only */<a name="line.175"></a>
+<FONT color="green">176</FONT>            public static final OptionUDT&lt;Integer&gt; Status_Code = //<a name="line.176"></a>
+<FONT color="green">177</FONT>            NEW(17, Integer.class, DECIMAL);<a name="line.177"></a>
 <FONT color="green">178</FONT>    <a name="line.178"></a>
-<FONT color="green">179</FONT>            /** size of data in the sending buffer */<a name="line.179"></a>
-<FONT color="green">180</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_SNDDATA = //<a name="line.180"></a>
-<FONT color="green">181</FONT>            NEW(19, Integer.class, DECIMAL);<a name="line.181"></a>
-<FONT color="green">182</FONT>            /** current consumed sending buffer utilization, read only, bytes */<a name="line.182"></a>
-<FONT color="green">183</FONT>            public static final OptionUDT&lt;Integer&gt; Send_Buffer_Consumed = //<a name="line.183"></a>
-<FONT color="green">184</FONT>            NEW(19, Integer.class, DECIMAL);<a name="line.184"></a>
+<FONT color="green">179</FONT>            /** current available events associated with the socket */<a name="line.179"></a>
+<FONT color="green">180</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_EVENT = //<a name="line.180"></a>
+<FONT color="green">181</FONT>            NEW(18, Integer.class, DECIMAL);<a name="line.181"></a>
+<FONT color="green">182</FONT>            /** current available epoll events, see {@link EpollUDT.Opt#code} */<a name="line.182"></a>
+<FONT color="green">183</FONT>            public static final OptionUDT&lt;Integer&gt; Epoll_Event_Mask = //<a name="line.183"></a>
+<FONT color="green">184</FONT>            NEW(18, Integer.class, DECIMAL);<a name="line.184"></a>
 <FONT color="green">185</FONT>    <a name="line.185"></a>
-<FONT color="green">186</FONT>            /** size of data available for recv */<a name="line.186"></a>
-<FONT color="green">187</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_RCVDATA = //<a name="line.187"></a>
-<FONT color="green">188</FONT>            NEW(20, Integer.class, DECIMAL);<a name="line.188"></a>
-<FONT color="green">189</FONT>            /** current available receiving buffer capacity, read only, bytes */<a name="line.189"></a>
-<FONT color="green">190</FONT>            public static final OptionUDT&lt;Integer&gt; Receive_Buffer_Available = //<a name="line.190"></a>
-<FONT color="green">191</FONT>            NEW(20, Integer.class, DECIMAL);<a name="line.191"></a>
+<FONT color="green">186</FONT>            /** size of data in the sending buffer */<a name="line.186"></a>
+<FONT color="green">187</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_SNDDATA = //<a name="line.187"></a>
+<FONT color="green">188</FONT>            NEW(19, Integer.class, DECIMAL);<a name="line.188"></a>
+<FONT color="green">189</FONT>            /** current consumed sending buffer utilization, read only, bytes */<a name="line.189"></a>
+<FONT color="green">190</FONT>            public static final OptionUDT&lt;Integer&gt; Send_Buffer_Consumed = //<a name="line.190"></a>
+<FONT color="green">191</FONT>            NEW(19, Integer.class, DECIMAL);<a name="line.191"></a>
 <FONT color="green">192</FONT>    <a name="line.192"></a>
-<FONT color="green">193</FONT>            //<a name="line.193"></a>
-<FONT color="green">194</FONT>    <a name="line.194"></a>
-<FONT color="green">195</FONT>            protected OptionUDT(final int code, final Class&lt;T&gt; klaz, final Format format) {<a name="line.195"></a>
-<FONT color="green">196</FONT>    <a name="line.196"></a>
-<FONT color="green">197</FONT>                    this.code = code;<a name="line.197"></a>
-<FONT color="green">198</FONT>                    this.type = klaz;<a name="line.198"></a>
-<FONT color="green">199</FONT>                    this.format = format;<a name="line.199"></a>
-<FONT color="green">200</FONT>    <a name="line.200"></a>
-<FONT color="green">201</FONT>                    values.add(this);<a name="line.201"></a>
-<FONT color="green">202</FONT>    <a name="line.202"></a>
-<FONT color="green">203</FONT>            }<a name="line.203"></a>
-<FONT color="green">204</FONT>    <a name="line.204"></a>
-<FONT color="green">205</FONT>            protected static &lt;T&gt; OptionUDT&lt;T&gt; NEW(final int code, final Class&lt;T&gt; klaz,<a name="line.205"></a>
-<FONT color="green">206</FONT>                            final Format format) {<a name="line.206"></a>
-<FONT color="green">207</FONT>                    return new OptionUDT&lt;T&gt;(code, klaz, format);<a name="line.207"></a>
-<FONT color="green">208</FONT>            }<a name="line.208"></a>
+<FONT color="green">193</FONT>            /** size of data available for recv */<a name="line.193"></a>
+<FONT color="green">194</FONT>            public static final OptionUDT&lt;Integer&gt; UDT_RCVDATA = //<a name="line.194"></a>
+<FONT color="green">195</FONT>            NEW(20, Integer.class, DECIMAL);<a name="line.195"></a>
+<FONT color="green">196</FONT>            /** current available receiving buffer capacity, read only, bytes */<a name="line.196"></a>
+<FONT color="green">197</FONT>            public static final OptionUDT&lt;Integer&gt; Receive_Buffer_Available = //<a name="line.197"></a>
+<FONT color="green">198</FONT>            NEW(20, Integer.class, DECIMAL);<a name="line.198"></a>
+<FONT color="green">199</FONT>    <a name="line.199"></a>
+<FONT color="green">200</FONT>            //<a name="line.200"></a>
+<FONT color="green">201</FONT>    <a name="line.201"></a>
+<FONT color="green">202</FONT>            protected OptionUDT(final int code, final Class&lt;T&gt; klaz, final Format format) {<a name="line.202"></a>
+<FONT color="green">203</FONT>    <a name="line.203"></a>
+<FONT color="green">204</FONT>                    this.code = code;<a name="line.204"></a>
+<FONT color="green">205</FONT>                    this.type = klaz;<a name="line.205"></a>
+<FONT color="green">206</FONT>                    this.format = format;<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>                    values.add(this);<a name="line.208"></a>
 <FONT color="green">209</FONT>    <a name="line.209"></a>
-<FONT color="green">210</FONT>            public static void appendSnapshot( //<a name="line.210"></a>
-<FONT color="green">211</FONT>                            final SocketUDT socketUDT, //<a name="line.211"></a>
-<FONT color="green">212</FONT>                            final StringBuilder text //<a name="line.212"></a>
-<FONT color="green">213</FONT>            ) {<a name="line.213"></a>
-<FONT color="green">214</FONT>    <a name="line.214"></a>
-<FONT color="green">215</FONT>                    text.append("\n\t");<a name="line.215"></a>
-<FONT color="green">216</FONT>                    text.append(String.format("[id: 0x%08x]", socketUDT.id()));<a name="line.216"></a>
-<FONT color="green">217</FONT>    <a name="line.217"></a>
-<FONT color="green">218</FONT>                    for (final OptionUDT&lt;?&gt; option : values) {<a name="line.218"></a>
-<FONT color="green">219</FONT>                            int optionCode = 0;<a name="line.219"></a>
-<FONT color="green">220</FONT>                            String optionName = null;<a name="line.220"></a>
-<FONT color="green">221</FONT>                            String optionValue = null;<a name="line.221"></a>
-<FONT color="green">222</FONT>                            try {<a name="line.222"></a>
-<FONT color="green">223</FONT>    <a name="line.223"></a>
-<FONT color="green">224</FONT>                                    optionCode = option.code;<a name="line.224"></a>
-<FONT color="green">225</FONT>                                    optionName = option.name();<a name="line.225"></a>
-<FONT color="green">226</FONT>    <a name="line.226"></a>
-<FONT color="green">227</FONT>                                    optionValue = option.format.convert(//<a name="line.227"></a>
-<FONT color="green">228</FONT>                                                    socketUDT.getOption(option));<a name="line.228"></a>
-<FONT color="green">229</FONT>    <a name="line.229"></a>
-<FONT color="green">230</FONT>                                    if (optionName.startsWith("UD")) {<a name="line.230"></a>
-<FONT color="green">231</FONT>                                            continue;<a name="line.231"></a>
-<FONT color="green">232</FONT>                                    }<a name="line.232"></a>
+<FONT color="green">210</FONT>            }<a name="line.210"></a>
+<FONT color="green">211</FONT>    <a name="line.211"></a>
+<FONT color="green">212</FONT>            protected static &lt;T&gt; OptionUDT&lt;T&gt; NEW(final int code, final Class&lt;T&gt; klaz,<a name="line.212"></a>
+<FONT color="green">213</FONT>                            final Format format) {<a name="line.213"></a>
+<FONT color="green">214</FONT>                    return new OptionUDT&lt;T&gt;(code, klaz, format);<a name="line.214"></a>
+<FONT color="green">215</FONT>            }<a name="line.215"></a>
+<FONT color="green">216</FONT>    <a name="line.216"></a>
+<FONT color="green">217</FONT>            public static void appendSnapshot( //<a name="line.217"></a>
+<FONT color="green">218</FONT>                            final SocketUDT socketUDT, //<a name="line.218"></a>
+<FONT color="green">219</FONT>                            final StringBuilder text //<a name="line.219"></a>
+<FONT color="green">220</FONT>            ) {<a name="line.220"></a>
+<FONT color="green">221</FONT>    <a name="line.221"></a>
+<FONT color="green">222</FONT>                    text.append("\n\t");<a name="line.222"></a>
+<FONT color="green">223</FONT>                    text.append(String.format("[id: 0x%08x]", socketUDT.id()));<a name="line.223"></a>
+<FONT color="green">224</FONT>    <a name="line.224"></a>
+<FONT color="green">225</FONT>                    for (final OptionUDT&lt;?&gt; option : values) {<a name="line.225"></a>
+<FONT color="green">226</FONT>                            int optionCode = 0;<a name="line.226"></a>
+<FONT color="green">227</FONT>                            String optionName = null;<a name="line.227"></a>
+<FONT color="green">228</FONT>                            String optionValue = null;<a name="line.228"></a>
+<FONT color="green">229</FONT>                            try {<a name="line.229"></a>
+<FONT color="green">230</FONT>    <a name="line.230"></a>
+<FONT color="green">231</FONT>                                    optionCode = option.code;<a name="line.231"></a>
+<FONT color="green">232</FONT>                                    optionName = option.name();<a name="line.232"></a>
 <FONT color="green">233</FONT>    <a name="line.233"></a>
-<FONT color="green">234</FONT>                                    text.append("\n\t");<a name="line.234"></a>
-<FONT color="green">235</FONT>                                    text.append(optionCode);<a name="line.235"></a>
-<FONT color="green">236</FONT>                                    text.append(") ");<a name="line.236"></a>
-<FONT color="green">237</FONT>                                    text.append(optionName);<a name="line.237"></a>
-<FONT color="green">238</FONT>                                    text.append(" = ");<a name="line.238"></a>
-<FONT color="green">239</FONT>                                    text.append(optionValue);<a name="line.239"></a>
+<FONT color="green">234</FONT>                                    optionValue = option.format.convert(//<a name="line.234"></a>
+<FONT color="green">235</FONT>                                                    socketUDT.getOption(option));<a name="line.235"></a>
+<FONT color="green">236</FONT>    <a name="line.236"></a>
+<FONT color="green">237</FONT>                                    if (optionName.startsWith("UD")) {<a name="line.237"></a>
+<FONT color="green">238</FONT>                                            continue;<a name="line.238"></a>
+<FONT color="green">239</FONT>                                    }<a name="line.239"></a>
 <FONT color="green">240</FONT>    <a name="line.240"></a>
-<FONT color="green">241</FONT>                            } catch (final Exception e) {<a name="line.241"></a>
-<FONT color="green">242</FONT>                                    log.error("unexpected; " + optionName, e);<a name="line.242"></a>
-<FONT color="green">243</FONT>                            }<a name="line.243"></a>
-<FONT color="green">244</FONT>    <a name="line.244"></a>
-<FONT color="green">245</FONT>                    }<a name="line.245"></a>
-<FONT color="green">246</FONT>    <a name="line.246"></a>
-<FONT color="green">247</FONT>            }<a name="line.247"></a>
-<FONT color="green">248</FONT>    <a name="line.248"></a>
-<FONT color="green">249</FONT>            protected static final Logger log;<a name="line.249"></a>
-<FONT color="green">250</FONT>            protected static final List&lt;OptionUDT&lt;?&gt;&gt; values;<a name="line.250"></a>
+<FONT color="green">241</FONT>                                    text.append("\n\t");<a name="line.241"></a>
+<FONT color="green">242</FONT>                                    text.append(optionCode);<a name="line.242"></a>
+<FONT color="green">243</FONT>                                    text.append(") ");<a name="line.243"></a>
+<FONT color="green">244</FONT>                                    text.append(optionName);<a name="line.244"></a>
+<FONT color="green">245</FONT>                                    text.append(" = ");<a name="line.245"></a>
+<FONT color="green">246</FONT>                                    text.append(optionValue);<a name="line.246"></a>
+<FONT color="green">247</FONT>    <a name="line.247"></a>
+<FONT color="green">248</FONT>                            } catch (final Exception e) {<a name="line.248"></a>
+<FONT color="green">249</FONT>                                    log.error("unexpected; " + optionName, e);<a name="line.249"></a>
+<FONT color="green">250</FONT>                            }<a name="line.250"></a>
 <FONT color="green">251</FONT>    <a name="line.251"></a>
-<FONT color="green">252</FONT>            private final int code;<a name="line.252"></a>
-<FONT color="green">253</FONT>            private final Class&lt;?&gt; type;<a name="line.253"></a>
-<FONT color="green">254</FONT>            private final Format format;<a name="line.254"></a>
-<FONT color="green">255</FONT>            private String name;<a name="line.255"></a>
-<FONT color="green">256</FONT>    <a name="line.256"></a>
-<FONT color="green">257</FONT>            public int code() {<a name="line.257"></a>
-<FONT color="green">258</FONT>                    return code;<a name="line.258"></a>
-<FONT color="green">259</FONT>            }<a name="line.259"></a>
-<FONT color="green">260</FONT>    <a name="line.260"></a>
-<FONT color="green">261</FONT>            public Class&lt;?&gt; type() {<a name="line.261"></a>
-<FONT color="green">262</FONT>                    return type;<a name="line.262"></a>
-<FONT color="green">263</FONT>            }<a name="line.263"></a>
-<FONT color="green">264</FONT>    <a name="line.264"></a>
-<FONT color="green">265</FONT>            public Format format() {<a name="line.265"></a>
-<FONT color="green">266</FONT>                    return format;<a name="line.266"></a>
-<FONT color="green">267</FONT>            }<a name="line.267"></a>
-<FONT color="green">268</FONT>    <a name="line.268"></a>
-<FONT color="green">269</FONT>            public String name() {<a name="line.269"></a>
-<FONT color="green">270</FONT>                    if (name == null) {<a name="line.270"></a>
-<FONT color="green">271</FONT>                            name = HelpUDT.constantFieldName(getClass(), this);<a name="line.271"></a>
-<FONT color="green">272</FONT>                    }<a name="line.272"></a>
-<FONT color="green">273</FONT>                    return name;<a name="line.273"></a>
+<FONT color="green">252</FONT>                    }<a name="line.252"></a>
+<FONT color="green">253</FONT>    <a name="line.253"></a>
+<FONT color="green">254</FONT>            }<a name="line.254"></a>
+<FONT color="green">255</FONT>    <a name="line.255"></a>
+<FONT color="green">256</FONT>            protected static final Logger log;<a name="line.256"></a>
+<FONT color="green">257</FONT>            protected static final List&lt;OptionUDT&lt;?&gt;&gt; values;<a name="line.257"></a>
+<FONT color="green">258</FONT>    <a name="line.258"></a>
+<FONT color="green">259</FONT>            private final int code;<a name="line.259"></a>
+<FONT color="green">260</FONT>            private final Class&lt;?&gt; type;<a name="line.260"></a>
+<FONT color="green">261</FONT>            private final Format format;<a name="line.261"></a>
+<FONT color="green">262</FONT>            private String name;<a name="line.262"></a>
+<FONT color="green">263</FONT>    <a name="line.263"></a>
+<FONT color="green">264</FONT>            public int code() {<a name="line.264"></a>
+<FONT color="green">265</FONT>                    return code;<a name="line.265"></a>
+<FONT color="green">266</FONT>            }<a name="line.266"></a>
+<FONT color="green">267</FONT>    <a name="line.267"></a>
+<FONT color="green">268</FONT>            public Class&lt;?&gt; type() {<a name="line.268"></a>
+<FONT color="green">269</FONT>                    return type;<a name="line.269"></a>
+<FONT color="green">270</FONT>            }<a name="line.270"></a>
+<FONT color="green">271</FONT>    <a name="line.271"></a>
+<FONT color="green">272</FONT>            public Format format() {<a name="line.272"></a>
+<FONT color="green">273</FONT>                    return format;<a name="line.273"></a>
 <FONT color="green">274</FONT>            }<a name="line.274"></a>
 <FONT color="green">275</FONT>    <a name="line.275"></a>
-<FONT color="green">276</FONT>            /**<a name="line.276"></a>
-<FONT color="green">277</FONT>             * render options in human format<a name="line.277"></a>
-<FONT color="green">278</FONT>             */<a name="line.278"></a>
-<FONT color="green">279</FONT>            public enum Format {<a name="line.279"></a>
-<FONT color="green">280</FONT>    <a name="line.280"></a>
-<FONT color="green">281</FONT>                    DECIMAL() {<a name="line.281"></a>
-<FONT color="green">282</FONT>                            @Override<a name="line.282"></a>
-<FONT color="green">283</FONT>                            public String convert(final Object value) {<a name="line.283"></a>
-<FONT color="green">284</FONT>                                    if (value instanceof Number) {<a name="line.284"></a>
-<FONT color="green">285</FONT>                                            final long number = ((Number) value).longValue();<a name="line.285"></a>
-<FONT color="green">286</FONT>                                            return String.format("%,d", number);<a name="line.286"></a>
-<FONT color="green">287</FONT>                                    }<a name="line.287"></a>
-<FONT color="green">288</FONT>                                    return "invalid format";<a name="line.288"></a>
-<FONT color="green">289</FONT>                            }<a name="line.289"></a>
-<FONT color="green">290</FONT>                    }, //<a name="line.290"></a>
-<FONT color="green">291</FONT>    <a name="line.291"></a>
-<FONT color="green">292</FONT>                    BINARY() {<a name="line.292"></a>
-<FONT color="green">293</FONT>                            @Override<a name="line.293"></a>
-<FONT color="green">294</FONT>                            public String convert(final Object value) {<a name="line.294"></a>
-<FONT color="green">295</FONT>                                    if (value instanceof Number) {<a name="line.295"></a>
-<FONT color="green">296</FONT>                                            final long number = ((Number) value).longValue();<a name="line.296"></a>
-<FONT color="green">297</FONT>                                            return String.format("%,d (%,d K)", number, number / 1024);<a name="line.297"></a>
-<FONT color="green">298</FONT>                                    }<a name="line.298"></a>
-<FONT color="green">299</FONT>                                    return "invalid format";<a name="line.299"></a>
-<FONT color="green">300</FONT>                            }<a name="line.300"></a>
-<FONT color="green">301</FONT>                    }, //<a name="line.301"></a>
-<FONT color="green">302</FONT>    <a name="line.302"></a>
-<FONT color="green">303</FONT>                    BOOLEAN() {<a name="line.303"></a>
-<FONT color="green">304</FONT>                            @Override<a name="line.304"></a>
-<FONT color="green">305</FONT>                            public String convert(final Object value) {<a name="line.305"></a>
-<FONT color="green">306</FONT>                                    if (value instanceof Boolean) {<a name="line.306"></a>
-<FONT color="green">307</FONT>                                            final boolean bool = ((Boolean) value).booleanValue();<a name="line.307"></a>
-<FONT color="green">308</FONT>                                            return String.format("%b", bool);<a name="line.308"></a>
-<FONT color="green">309</FONT>                                    }<a name="line.309"></a>
-<FONT color="green">310</FONT>                                    return "invalid format";<a name="line.310"></a>
-<FONT color="green">311</FONT>                            }<a name="line.311"></a>
-<FONT color="green">312</FONT>                    }, //<a name="line.312"></a>
-<FONT color="green">313</FONT>    <a name="line.313"></a>
-<FONT color="green">314</FONT>                    DEFAULT() {<a name="line.314"></a>
-<FONT color="green">315</FONT>                            @Override<a name="line.315"></a>
-<FONT color="green">316</FONT>                            public String convert(final Object value) {<a name="line.316"></a>
-<FONT color="green">317</FONT>                                    return "" + value;<a name="line.317"></a>
+<FONT color="green">276</FONT>            public String name() {<a name="line.276"></a>
+<FONT color="green">277</FONT>                    if (name == null) {<a name="line.277"></a>
+<FONT color="green">278</FONT>                            name = HelpUDT.constantFieldName(getClass(), this);<a name="line.278"></a>
+<FONT color="green">279</FONT>                    }<a name="line.279"></a>
+<FONT color="green">280</FONT>                    return name;<a name="line.280"></a>
+<FONT color="green">281</FONT>            }<a name="line.281"></a>
+<FONT color="green">282</FONT>    <a name="line.282"></a>
+<FONT color="green">283</FONT>            /**<a name="line.283"></a>
+<FONT color="green">284</FONT>             * render options in human format<a name="line.284"></a>
+<FONT color="green">285</FONT>             */<a name="line.285"></a>
+<FONT color="green">286</FONT>            public enum Format {<a name="line.286"></a>
+<FONT color="green">287</FONT>    <a name="line.287"></a>
+<FONT color="green">288</FONT>                    DECIMAL() {<a name="line.288"></a>
+<FONT color="green">289</FONT>                            @Override<a name="line.289"></a>
+<FONT color="green">290</FONT>                            public String convert(final Object value) {<a name="line.290"></a>
+<FONT color="green">291</FONT>                                    if (value instanceof Number) {<a name="line.291"></a>
+<FONT color="green">292</FONT>                                            final long number = ((Number) value).longValue();<a name="line.292"></a>
+<FONT color="green">293</FONT>                                            return String.format("%,d", number);<a name="line.293"></a>
+<FONT color="green">294</FONT>                                    }<a name="line.294"></a>
+<FONT color="green">295</FONT>                                    return "invalid format";<a name="line.295"></a>
+<FONT color="green">296</FONT>                            }<a name="line.296"></a>
+<FONT color="green">297</FONT>                    }, //<a name="line.297"></a>
+<FONT color="green">298</FONT>    <a name="line.298"></a>
+<FONT color="green">299</FONT>                    BINARY() {<a name="line.299"></a>
+<FONT color="green">300</FONT>                            @Override<a name="line.300"></a>
+<FONT color="green">301</FONT>                            public String convert(final Object value) {<a name="line.301"></a>
+<FONT color="green">302</FONT>                                    if (value instanceof Number) {<a name="line.302"></a>
+<FONT color="green">303</FONT>                                            final long number = ((Number) value).longValue();<a name="line.303"></a>
+<FONT color="green">304</FONT>                                            return String.format("%,d (%,d K)", number, number / 1024);<a name="line.304"></a>
+<FONT color="green">305</FONT>                                    }<a name="line.305"></a>
+<FONT color="green">306</FONT>                                    return "invalid format";<a name="line.306"></a>
+<FONT color="green">307</FONT>                            }<a name="line.307"></a>
+<FONT color="green">308</FONT>                    }, //<a name="line.308"></a>
+<FONT color="green">309</FONT>    <a name="line.309"></a>
+<FONT color="green">310</FONT>                    BOOLEAN() {<a name="line.310"></a>
+<FONT color="green">311</FONT>                            @Override<a name="line.311"></a>
+<FONT color="green">312</FONT>                            public String convert(final Object value) {<a name="line.312"></a>
+<FONT color="green">313</FONT>                                    if (value instanceof Boolean) {<a name="line.313"></a>
+<FONT color="green">314</FONT>                                            final boolean bool = ((Boolean) value).booleanValue();<a name="line.314"></a>
+<FONT color="green">315</FONT>                                            return String.format("%b", bool);<a name="line.315"></a>
+<FONT color="green">316</FONT>                                    }<a name="line.316"></a>
+<FONT color="green">317</FONT>                                    return "invalid format";<a name="line.317"></a>
 <FONT color="green">318</FONT>                            }<a name="line.318"></a>
 <FONT color="green">319</FONT>                    }, //<a name="line.319"></a>
 <FONT color="green">320</FONT>    <a name="line.320"></a>
-<FONT color="green">321</FONT>                    ;<a name="line.321"></a>
-<FONT color="green">322</FONT>    <a name="line.322"></a>
-<FONT color="green">323</FONT>                    public abstract String convert(Object value);<a name="line.323"></a>
-<FONT color="green">324</FONT>    <a name="line.324"></a>
-<FONT color="green">325</FONT>            }<a name="line.325"></a>
-<FONT color="green">326</FONT>    <a name="line.326"></a>
-<FONT color="green">327</FONT>    }<a name="line.327"></a>
+<FONT color="green">321</FONT>                    DEFAULT() {<a name="line.321"></a>
+<FONT color="green">322</FONT>                            @Override<a name="line.322"></a>
+<FONT color="green">323</FONT>                            public String convert(final Object value) {<a name="line.323"></a>
+<FONT color="green">324</FONT>                                    return "" + value;<a name="line.324"></a>
+<FONT color="green">325</FONT>                            }<a name="line.325"></a>
+<FONT color="green">326</FONT>                    }, //<a name="line.326"></a>
+<FONT color="green">327</FONT>    <a name="line.327"></a>
+<FONT color="green">328</FONT>                    ;<a name="line.328"></a>
+<FONT color="green">329</FONT>    <a name="line.329"></a>
+<FONT color="green">330</FONT>                    public abstract String convert(Object value);<a name="line.330"></a>
+<FONT color="green">331</FONT>    <a name="line.331"></a>
+<FONT color="green">332</FONT>            }<a name="line.332"></a>
+<FONT color="green">333</FONT>    <a name="line.333"></a>
+<FONT color="green">334</FONT>    }<a name="line.334"></a>
 
 
 
