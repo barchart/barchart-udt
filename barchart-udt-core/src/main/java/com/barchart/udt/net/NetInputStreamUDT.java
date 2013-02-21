@@ -112,7 +112,20 @@ public class NetInputStreamUDT extends InputStream {
 
 	@Override
 	public long skip(final long n) throws IOException {
-		throw new UnsupportedOperationException("skip not supported");
+        if (numbytes <= 0) {
+            return 0;
+        }
+        long n = numbytes;
+        final int buflen = (int) Math.min(1024, n);
+        final byte data[] = new byte[buflen];
+        while (n > 0) {
+            final int r = read(data, 0, (int) Math.min(buflen, n));
+            if (r < 0) {
+                break;
+            }
+            n -= r;
+        }
+        return numbytes - n;
 	}
 
 	@Override
