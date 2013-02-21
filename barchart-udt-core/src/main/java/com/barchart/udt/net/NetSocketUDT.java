@@ -202,23 +202,19 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 
 	@Override
 	public void sendUrgentData(final int data) throws IOException {
-		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
 	public void setKeepAlive(final boolean on) throws SocketException {
-		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
 	public void setOOBInline(final boolean on) throws SocketException {
-		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
 	public void setPerformancePreferences(final int connectionTime,
 			final int latency, final int bandwidth) {
-		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
@@ -249,12 +245,10 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 
 	@Override
 	public void setTcpNoDelay(final boolean on) throws SocketException {
-		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
 	public void setTrafficClass(final int tc) throws SocketException {
-		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
