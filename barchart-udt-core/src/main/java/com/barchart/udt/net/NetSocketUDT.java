@@ -17,6 +17,9 @@ import java.net.SocketAddress;
 import java.net.SocketException;
 import java.nio.channels.SocketChannel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.barchart.udt.ExceptionUDT;
 import com.barchart.udt.SocketUDT;
 import com.barchart.udt.TypeUDT;
@@ -26,6 +29,8 @@ import com.barchart.udt.anno.ThreadSafe;
  * {@link Socket} - like wrapper for {@link SocketUDT}
  */
 public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
+
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	@ThreadSafe("this")
 	protected InputStream inputStream;
@@ -41,7 +46,7 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 	}
 
 	/** uses provided socket keeping blocking mode */
-	protected NetSocketUDT(final SocketUDT socketUDT) throws ExceptionUDT {
+	protected NetSocketUDT(final SocketUDT socketUDT) {
 		this.socketUDT = socketUDT;
 	}
 
@@ -54,7 +59,7 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public synchronized void close() throws IOException {
 		socketUDT.close();
 	}
 
@@ -132,7 +137,7 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 	}
 
 	@Override
-	public int getReceiveBufferSize() throws SocketException {
+	public synchronized int getReceiveBufferSize() throws SocketException {
 		return socketUDT.getReceiveBufferSize();
 	}
 
@@ -151,7 +156,7 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 	}
 
 	@Override
-	public int getSendBufferSize() throws SocketException {
+	public synchronized int getSendBufferSize() throws SocketException {
 		return socketUDT.getSendBufferSize();
 	}
 
@@ -161,7 +166,7 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 	}
 
 	@Override
-	public int getSoTimeout() throws SocketException {
+	public synchronized int getSoTimeout() throws SocketException {
 		return socketUDT.getSoTimeout();
 	}
 
@@ -202,27 +207,27 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 
 	@Override
 	public void sendUrgentData(final int data) throws IOException {
-		throw new UnsupportedOperationException("feature not available");
+		log.debug("Sending urgent data not supported in Barchart UDT...");
 	}
 
 	@Override
 	public void setKeepAlive(final boolean on) throws SocketException {
-		throw new UnsupportedOperationException("feature not available");
+		log.debug("Keep alive not supported in Barchart UDT...");
 	}
 
 	@Override
 	public void setOOBInline(final boolean on) throws SocketException {
-		throw new UnsupportedOperationException("feature not available");
+		log.debug("OOB inline  not supported in Barchart UDT...");
 	}
 
 	@Override
 	public void setPerformancePreferences(final int connectionTime,
 			final int latency, final int bandwidth) {
-		throw new UnsupportedOperationException("feature not available");
 	}
 
 	@Override
-	public void setReceiveBufferSize(final int size) throws SocketException {
+	public synchronized void setReceiveBufferSize(final int size)
+			throws SocketException {
 		socketUDT.setReceiveBufferSize(size);
 	}
 
@@ -232,7 +237,8 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 	}
 
 	@Override
-	public void setSendBufferSize(final int size) throws SocketException {
+	public synchronized void setSendBufferSize(final int size)
+			throws SocketException {
 		socketUDT.setSendBufferSize(size);
 	}
 
@@ -243,18 +249,19 @@ public class NetSocketUDT extends Socket implements IceSocket, IceCommon {
 	}
 
 	@Override
-	public void setSoTimeout(final int timeout) throws SocketException {
+	public synchronized void setSoTimeout(final int timeout)
+			throws SocketException {
 		socketUDT.setSoTimeout(timeout);
 	}
 
 	@Override
 	public void setTcpNoDelay(final boolean on) throws SocketException {
-		throw new UnsupportedOperationException("feature not available");
+		log.debug("TCP no delay not supported in Barchart UDT...");
 	}
 
 	@Override
 	public void setTrafficClass(final int tc) throws SocketException {
-		throw new UnsupportedOperationException("feature not available");
+		log.debug("Traffic class not supported in Barchart UDT...");
 	}
 
 	@Override
