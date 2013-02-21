@@ -1349,8 +1349,7 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_send1( //
 
 	const jsize size = limit - position;
 
-	jbyte * const data = (jbyte *) malloc(sizeof(jbyte) * size);
-
+	jbyte* data = (jbyte*) malloc(sizeof(jbyte) * size);
 	if (data == NULL) {
 		UDT_ThrowExceptionUDT_Message(env, socketID,
 				"send/sendmsg : can not allocate data array");
@@ -1361,9 +1360,18 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_send1( //
 
 	int rv;
 
+	int ssize = 0;
 	switch (socketType) {
 	case SOCK_STREAM:
-		rv = UDT::send(socketID, (char*) data, (int) size, 0);
+		int ss;
+		while (ssize < size) {
+			if (UDT::ERROR == (ss = UDT::send(socketID, (char*)(data + ssize), size - ssize, 0))) {
+				printf("send: %s\n", UDT::getlasterror().getErrorMessage());
+				break;
+			}
+			ssize += ss;
+		}
+		rv = ssize;
 		break;
 	case SOCK_DGRAM:
 		rv = UDT::sendmsg(socketID, (char*) data, (int) size, (int) timeToLive,
@@ -1385,7 +1393,6 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_send1( //
 	} else { // ==0; UDT_TIMEOUT
 		return UDT_TIMEOUT;
 	}
-
 }
 
 // send direct byte buffer
