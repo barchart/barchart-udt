@@ -90,7 +90,7 @@ public class SelectorProviderUDT extends SelectorProvider {
 	/**
 	 * Open UDT {@link KindUDT#RENDEZVOUS} socket channel.
 	 * 
-	 * @see {@link RendezvousChannelUDT}
+	 * @see RendezvousChannelUDT
 	 */
 	public RendezvousChannelUDT openRendezvousChannel() throws IOException {
 		final SocketUDT socketUDT = new SocketUDT(type);
@@ -100,7 +100,7 @@ public class SelectorProviderUDT extends SelectorProvider {
 	/**
 	 * Open UDT specific selector.
 	 * 
-	 * @see {@link SelectorUDT}
+	 * @see SelectorUDT
 	 */
 	@Override
 	public SelectorUDT openSelector() throws IOException {
@@ -110,7 +110,7 @@ public class SelectorProviderUDT extends SelectorProvider {
 	/**
 	 * Open UDT {@link KindUDT#ACCEPTOR} socket channel.
 	 * 
-	 * @see {@link ServerSocketChannelUDT}
+	 * @see ServerSocketChannelUDT
 	 */
 	@Override
 	public ServerSocketChannelUDT openServerSocketChannel() throws IOException {
@@ -121,7 +121,7 @@ public class SelectorProviderUDT extends SelectorProvider {
 	/**
 	 * Open UDT {@link KindUDT#CONNECTOR} socket channel.
 	 * 
-	 * @see {@link SocketChannelUDT}
+	 * @see SocketChannelUDT
 	 */
 	@Override
 	public SocketChannelUDT openSocketChannel() throws IOException {

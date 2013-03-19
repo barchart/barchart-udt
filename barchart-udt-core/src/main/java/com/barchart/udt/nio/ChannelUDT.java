@@ -48,7 +48,7 @@ public interface ChannelUDT extends Channel {
 	/**
 	 * Mask of all interest options which are permitted for this channel.
 	 * 
-	 * @see {@link SelectionKey}
+	 * @see SelectionKey
 	 */
 	int validOps();
 

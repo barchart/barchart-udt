@@ -23,7 +23,7 @@ public enum KindUDT {
 	 * Server mode: listens and accepts connections; generates
 	 * {@link #CONNECTOR} as a result of {@link SocketUDT#accept()}
 	 * 
-	 * @see {@link ServerSocketChannelUDT}
+	 * @see ServerSocketChannelUDT
 	 */
 	ACCEPTOR, //
 
@@ -34,14 +34,14 @@ public enum KindUDT {
 	 * Server mode: channel which is a result of accept(); inherits options from
 	 * parent {@link #ACCEPTOR}.
 	 * 
-	 * @see {@link SocketChannelUDT}
+	 * @see SocketChannelUDT
 	 */
 	CONNECTOR, //
 
 	/**
 	 * Rendezvous mode: symmetric peer channel on each side of the connection.
 	 * 
-	 * @see {@link RendezvousChannelUDT}
+	 * @see RendezvousChannelUDT
 	 */
 	RENDEZVOUS, //
 
