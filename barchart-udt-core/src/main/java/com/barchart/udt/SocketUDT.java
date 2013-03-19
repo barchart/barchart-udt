@@ -327,7 +327,7 @@ public class SocketUDT {
 	 *         <code>=0</code> : timeout, no ready sockets<br>
 	 *         <code>>0</code> : total number or reads, writes, exceptions<br>
 	 * 
-	 * @see #epollWait0(int, IntBuffer, IntBuffer, IntBuffer, IntBuffer, long)
+	 * @see #epollWait0(int, IntBuffer, IntBuffer, IntBuffer, long)
 	 */
 	public static int selectEpoll( //
 			final int epollId, //
@@ -1078,7 +1078,7 @@ public class SocketUDT {
 	 * Check if socket is open. (JDK semantics). The status of underlying UDT
 	 * socket is mapped into JDK expected categories
 	 * 
-	 * @see StatusUDT#isOpenEmulateJDK()
+	 * @see StatusUDT
 	 */
 	public boolean isOpen() {
 		switch (status()) {
@@ -1205,7 +1205,7 @@ public class SocketUDT {
 	/**
 	 * Receive file from remote peer.
 	 * 
-	 * @see #receiveFile0()
+	 * @see #receiveFile0(int, String, long, long, int)
 	 */
 	public long receiveFile( //
 			final File file, //
@@ -1346,7 +1346,7 @@ public class SocketUDT {
 	/**
 	 * Send file to remote peer.
 	 * 
-	 * @see #sendFile0()
+	 * @see #sendFile0(int, String, long, long, int)
 	 */
 	public long sendFile( //
 			final File file, //
