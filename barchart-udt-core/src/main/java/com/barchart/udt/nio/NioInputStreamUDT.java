@@ -24,8 +24,6 @@ public class NioInputStreamUDT extends InputStream {
 	 * 
 	 * @param channel
 	 *            The UDT socket channel.
-	 * @param socketUDT
-	 *            The UDT socket.
 	 */
 	protected NioInputStreamUDT(final SocketChannelUDT channel) {
 		if (channel == null) {

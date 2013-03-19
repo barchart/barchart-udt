@@ -23,8 +23,6 @@ public class NioOutputStreamUDT extends OutputStream {
 	 * 
 	 * @param channel
 	 *            The UDT socket channel.
-	 * @param socketUDT
-	 *            The UDT socket.
 	 */
 	protected NioOutputStreamUDT(final SocketChannelUDT channel) {
 		this.channel = channel;
