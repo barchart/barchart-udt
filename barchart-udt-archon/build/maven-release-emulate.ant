@@ -33,6 +33,8 @@
 			<arg value="--activate-profiles" />
 			<arg value="modules,artifact-version,release-attach,package-bundle" />
 
+			<arg value="help:active-profiles" />
+
 			<arg value="release:clean" />
 			<arg value="release:prepare" />
 			<arg value="release:perform" />
