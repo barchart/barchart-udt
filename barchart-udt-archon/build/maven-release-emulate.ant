@@ -39,6 +39,9 @@
 			<arg value="release:prepare" />
 			<arg value="release:perform" />
 
+			<arg value="--define" />
+			<arg value="arguments=-Phelp:active-profiles" />
+
 		</exec>
 
 	</target>
