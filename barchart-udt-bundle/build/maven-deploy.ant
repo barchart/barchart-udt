@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+    Copyright (C) 2009-2013 Barchart, Inc. <http://www.barchart.com/>
 
     All rights reserved. Licensed under the OSI BSD License.
 
@@ -21,6 +21,9 @@
 		</condition>
 
 		<exec executable="${executable}">
+
+			<!-- Choose java 6/7/8 in .mavenrc -->
+			<env key="JAVA_TYPE" value="JAVA_6" />
 
 			<arg value="clean" />
 			<arg value="deploy" />

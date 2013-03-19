@@ -24,6 +24,9 @@
 
 		<exec executable="${mvn}">
 
+			<!-- Choose java 6/7/8 in .mavenrc -->
+			<env key="JAVA_TYPE" value="JAVA_6" />
+
 			<arg value="validate" />
 			<arg value="site:site" />
 

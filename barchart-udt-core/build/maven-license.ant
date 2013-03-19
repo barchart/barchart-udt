@@ -21,14 +21,17 @@
 		</condition>
 
 		<exec executable="${executable}">
-			
+
+			<!-- Choose java 6/7/8 in .mavenrc -->
+			<env key="JAVA_TYPE" value="JAVA_6" />
+
 			<arg value="clean" />
 			<arg value="compile" />
 			<arg value="test-compile" />
-			
+
 			<arg value="--activate-profiles" />
 			<arg value="license" />
-			
+
 		</exec>
 	</target>
 

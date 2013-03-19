@@ -11,23 +11,21 @@
 
 	<echo message="basedir : ${basedir}" />
 
-	<property name="tag" value="barchart-karaf-app-1.1.1-SNAPSHOT" />
-	<property name="note" value="fake release for testing" />
+	<input message="CREATE TAG:" addproperty="tag" />
 
 	<target name="git">
-
 		<exec executable="git">
 			<arg value="tag" />
 			<arg value="-a" />
 			<arg value="${tag}" />
 			<arg value="-m" />
-			<arg value="${note}" />
+			<arg value="mannual tagging" />
 		</exec>
-
 		<exec executable="git">
 			<arg value="push" />
 			<arg value="origin" />
-			<arg value="refs/tags/${tag}" />
+			<arg value="tag" />
+			<arg value="${tag}" />
 		</exec>
 	</target>
 

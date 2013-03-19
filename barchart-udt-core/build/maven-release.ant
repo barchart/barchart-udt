@@ -12,21 +12,28 @@
 	<echo message="basedir : ${basedir}" />
 
 	<target name="maven">
-		
+
 		<condition property="executable" value="mvn">
 			<os family="unix" />
 		</condition>
 		<condition property="executable" value="mvn.bat">
 			<os family="windows" />
 		</condition>
-		
+
 		<exec executable="${executable}">
-			
+
+			<!-- Choose java 6/7/8 in .mavenrc -->
+			<env key="JAVA_TYPE" value="JAVA_6" />
+
+			<arg value="release:clean" />
 			<arg value="release:prepare" />
 			<arg value="release:perform" />
-			
+
+			<arg value="--define" />
+			<arg value="localCheckout=true" />
+
 		</exec>
-		
+
 	</target>
 
 </project>

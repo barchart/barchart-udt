@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+    Copyright (C) 2009-2013 Barchart, Inc. <http://www.barchart.com/>
 
     All rights reserved. Licensed under the OSI BSD License.
 
@@ -22,16 +22,18 @@
 
 		<exec executable="${executable}">
 
-			<arg value="--errors" />
+			<!-- Choose java 6/7/8 in .mavenrc -->
+			<env key="JAVA_TYPE" value="JAVA_6" />
 
-			<arg value="--define" />
-			<arg value="resume=false" />
-
-			<arg value="--activate-profiles" />
-			<arg value="modules" />
-
+			<arg value="release:clean" />
 			<arg value="release:prepare" />
 			<arg value="release:perform" />
+
+			<arg value="--define" />
+			<arg value="localCheckout=true" />
+
+			<arg value="--activate-profiles" />
+			<arg value="modules,artifact-version,release-attach,package-bundle" />
 
 		</exec>
 

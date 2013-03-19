@@ -1,13 +1,14 @@
 <!--
 
-    Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com />
+    Copyright (C) 2009-2013 Barchart, Inc. <http://www.barchart.com />
 
     All rights reserved. Licensed under the OSI BSD License.
 
     http://www.opensource.org/licenses/bsd-license.php
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -53,7 +54,7 @@
 
 	<profiles>
 
-		<!-- collect jar and multi arch/os nar into single bundle -->
+		<!-- Collect jar and multi-arch/os nar into a single bundle. -->
 		<profile>
 
 			<id>package-bundle</id>
@@ -71,6 +72,8 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
+
+							<!-- Make local copy of all bundle resources. -->
 							<execution>
 								<id>bundle-unpack-items</id>
 								<phase>generate-sources</phase>
@@ -86,7 +89,7 @@
 									<overWriteSnapshots>true</overWriteSnapshots>
 									<artifactItems>
 
-										<!-- JAR -->
+										<!-- Collect java classes. -->
 										<artifactItem>
 											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
@@ -95,7 +98,7 @@
 											<outputDirectory>${basedir}/target/classes</outputDirectory>
 										</artifactItem>
 
-										<!-- NAR -->
+										<!-- Collect native libraries. -->
 										<artifactItem>
 											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
@@ -149,6 +152,8 @@
 									</artifactItems>
 								</configuration>
 							</execution>
+
+							<!-- Make local copy of javadoc and sources. -->
 							<execution>
 								<id>bundle-copy-docs</id>
 								<phase>generate-resources</phase>
@@ -180,9 +185,11 @@
 									<overWriteSnapshots>true</overWriteSnapshots>
 								</configuration>
 							</execution>
+
 						</executions>
 					</plugin>
 
+					<!-- Attache javadoc and sources to the bundle. -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
@@ -209,6 +216,7 @@
 						</executions>
 					</plugin>
 
+					<!-- Generate OSGI bundle manifest. -->
 					<plugin>
 						<groupId>org.apache.felix</groupId>
 						<artifactId>maven-bundle-plugin</artifactId>
