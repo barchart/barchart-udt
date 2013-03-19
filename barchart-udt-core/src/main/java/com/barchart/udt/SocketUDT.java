@@ -36,7 +36,7 @@ public class SocketUDT {
 	public static final int DEFAULT_ACCEPT_QUEUE_SIZE = 256;
 
 	/**
-	 * Block size used by {@link #sendFile(File, int, int)}
+	 * Block size used by {@link #sendFile(File, long, long)}
 	 */
 	public static final int DEFAULT_FILE_BLOCK_SIZE = 1 * 1024 * 1024;
 
