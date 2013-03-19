@@ -1,13 +1,7 @@
-<!--
-
-    Copyright (C) 2009-2013 Barchart, Inc. <http://www.barchart.com />
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<!-- Copyright (C) 2009-2013 Barchart, Inc. <http://www.barchart.com /> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -200,7 +194,7 @@
 				</executions>
 			</plugin>
 
-			<!-- always attach javadoc -->
+			<!-- Always attach javadoc. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -214,7 +208,7 @@
 				</executions>
 			</plugin>
 
-			<!-- always attach sources -->
+			<!-- Always attach main and test sources. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -225,14 +219,6 @@
 							<goal>jar</goal>
 						</goals>
 					</execution>
-				</executions>
-			</plugin>
-			
-			<!-- always attach test sources -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
 					<execution>
 						<id>attach-test-sources</id>
 						<goals>
@@ -242,7 +228,7 @@
 				</executions>
 			</plugin>
 
-			<!-- always attach tests jar -->
+			<!-- Always attach tests jar. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -255,7 +241,7 @@
 				</executions>
 			</plugin>
 
-			<!-- disable scr -->
+			<!-- Disable DS plugin. -->
 			<plugin>
 				<groupId>com.carrotgarden.maven</groupId>
 				<artifactId>carrot-maven-scr-plugin</artifactId>
@@ -315,7 +301,7 @@
 
 	<profiles>
 
-		<!-- get updated c++ sources and apply patches -->
+		<!-- Get updated c++ sources and apply patches. -->
 		<profile>
 			<id>checkout</id>
 			<build>
@@ -393,7 +379,7 @@
 			</build>
 		</profile>
 
-		<!-- run integration test sequence -->
+		<!-- Run integration test sequence. -->
 		<profile>
 			<id>int</id>
 			<build>
@@ -431,7 +417,7 @@
 			</build>
 		</profile>
 
-		<!-- attach multi arch/os nar artifacts to this jar project -->
+		<!-- Attach multi arch/os nar artifacts to this jar project. -->
 		<profile>
 			<id>release-attach</id>
 			<properties>
@@ -596,7 +582,7 @@
 			</build>
 		</profile>
 
-		<!-- collect windows 32 dependencies -->
+		<!-- Collect windows 32 dependencies. -->
 		<profile>
 			<id>nar_x86-Windows-gpp_dependencies</id>
 			<activation>
@@ -638,7 +624,7 @@
 			</build>
 		</profile>
 
-		<!-- collect windows 64 dependencies -->
+		<!-- Collect windows 64 dependencies. -->
 		<profile>
 			<id>nar_amd64-Windows-gpp_dependencies</id>
 			<activation>
@@ -680,7 +666,7 @@
 			</build>
 		</profile>
 
-		<!-- native build invocation -->
+		<!-- Native build invocation. -->
 		<profile>
 			<id>nar</id>
 			<build>
@@ -821,7 +807,7 @@
 			</build>
 		</profile>
 
-		<!-- apply default source formatting -->
+		<!-- Apply default source formatting. -->
 		<profile>
 			<id>format-source</id>
 			<build>
@@ -850,7 +836,7 @@
 			</build>
 		</profile>
 
-		<!-- publish maven site to github -->
+		<!-- Publish maven site to github. -->
 		<profile>
 			<id>website</id>
 			<build>
@@ -879,7 +865,7 @@
 			</build>
 		</profile>
 
-		<!-- produce diff between git repo and udt repo -->
+		<!-- Produce diff between git repo and udt repo. -->
 		<profile>
 			<id>difference</id>
 			<build>
@@ -919,7 +905,8 @@
 								<phase>generate-sources</phase>
 								<configuration>
 									<target>
-										<exec executable="git" output="src/main/patches/${moduleUDT}/result.patch" error="target/result.patch.error">
+										<exec executable="git"
+											output="src/main/patches/${moduleUDT}/result.patch" error="target/result.patch.error">
 											<arg value="diff" />
 											<arg value="--no-index" />
 											<arg value="--no-prefix" />
