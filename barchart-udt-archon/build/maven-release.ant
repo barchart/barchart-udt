@@ -25,6 +25,8 @@
 			<!-- Choose java 6/7/8 in .mavenrc -->
 			<env key="JAVA_TYPE" value="JAVA_6" />
 
+			<arg value="help:active-profiles" />
+
 			<arg value="release:clean" />
 			<arg value="release:prepare" />
 			<arg value="release:perform" />

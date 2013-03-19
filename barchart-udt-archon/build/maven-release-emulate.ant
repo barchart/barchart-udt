@@ -25,14 +25,6 @@
 			<!-- Choose java 6/7/8 in .mavenrc -->
 			<env key="JAVA_TYPE" value="JAVA_6" />
 
-			<arg value="--errors" />
-
-			<arg value="--define" />
-			<arg value="dryRun=true" />
-
-			<arg value="--activate-profiles" />
-			<arg value="modules,artifact-version,release-attach,package-bundle" />
-
 			<arg value="help:active-profiles" />
 
 			<arg value="release:clean" />
@@ -40,7 +32,15 @@
 			<arg value="release:perform" />
 
 			<arg value="--define" />
-			<arg value="arguments=-Phelp:active-profiles" />
+			<arg value="localCheckout=true" />
+
+			<arg value="--activate-profiles" />
+			<arg value="modules,artifact-version,release-attach,package-bundle" />
+
+			<arg value="--define" />
+			<arg value="dryRun=true" />
+
+			<arg value="--errors" />
 
 		</exec>
 
