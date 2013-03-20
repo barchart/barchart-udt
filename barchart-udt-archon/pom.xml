@@ -215,18 +215,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.3</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-scm-plugin</artifactId>
-						<version>1.6</version>
-					</dependency>
-				</dependencies>
 				<configuration>
+					<resume>false</resume>
 					<localCheckout>true</localCheckout>
 					<tagNameFormat>barchart-udt-@{project.version}</tagNameFormat>
-					<arguments><![CDATA[-DskipTests -U -Partifact-version,release-attach,package-bundle]]></arguments>
+					<arguments><![CDATA[-DskipTests -U -P modules,artifact-version,release-attach,package-bundle]]></arguments>
 				</configuration>
 			</plugin>
 
