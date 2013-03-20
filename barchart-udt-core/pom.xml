@@ -19,8 +19,8 @@
 
 	<scm>
 		<url>https://github.com/barchart/barchart-udt</url>
-	    <connection>scm:git:git@github.com:barchart/barchart-udt.git</connection>
-    	<developerConnection>scm:git:git@github.com:barchart/barchart-udt.git</developerConnection>
+		<connection>scm:git:git://github.com/barchart/barchart-udt.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-udt.git</developerConnection>
 		<tag>master</tag>
 	</scm>
 
