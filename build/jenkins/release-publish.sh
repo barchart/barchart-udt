@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2009-2012 Barchart, Inc. <http://www.barchart.com/>
+# Copyright (C) 2009-2013 Barchart, Inc. <http://www.barchart.com/>
 #
 # All rights reserved. Licensed under the OSI BSD License.
 #
@@ -8,7 +8,8 @@
 #
 
 #
-# Not used.
+# Work around for
+# http://mail-archives.apache.org/mod_mbox/maven-users/201111.mbox/%3C6511D504B746914E826A26F2FC2AE6B807689E0C@MADRID.LANGERDISPLAY.CORP%3E
 #
 
 echo "##################################"

@@ -212,11 +212,14 @@
 
 		<plugins>
 
+			<!-- Work around for http://jira.codehaus.org/browse/SCM-709 -->
+			<!-- Requires manual push or jenkins build step after release. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<resume>false</resume>
+					<pushChanges>false</pushChanges>
 					<localCheckout>true</localCheckout>
 					<tagNameFormat>barchart-udt-@{project.version}</tagNameFormat>
 					<arguments><![CDATA[-DskipTests -U -P modules,artifact-version,release-attach,package-bundle]]></arguments>
