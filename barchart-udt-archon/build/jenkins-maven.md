@@ -18,9 +18,29 @@ clean deploy site --define skipTests --update-snapshots --activate-profiles modu
 
 ### Release goals and options
 
--Dresume=false release:prepare release:perform --activate-profiles modules
+release:clean
+release:prepare
+release:perform
+
+--define
+localCheckout=true
+
+--activate-profiles
+modules,artifact-version,release-attach,package-bundle
 
 
 ### DryRun goals and options
 
--Dresume=false -DdryRun=true release:prepare   --activate-profiles modules
+release:clean
+release:prepare
+release:perform
+
+--define
+localCheckout=true
+
+--activate-profiles
+modules,artifact-version,release-attach,package-bundle
+
+-DdryRun=true
+
+--errors 
