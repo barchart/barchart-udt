@@ -36,6 +36,8 @@
 
 			<arg value="--activate-profiles" />
 			<arg value="modules,artifact-version,release-attach,package-bundle" />
+			
+			<arg value="--update-snapshots" />
 
 			<arg value="--define" />
 			<arg value="dryRun=true" />
