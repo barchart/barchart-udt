@@ -1,12 +1,5 @@
-<!--
-
-    Copyright (C) 2011-2012 Barchart, Inc. <http://www.barchart.com/>
-
-    All rights reserved. Licensed under the OSI BSD License.
-
-    http://www.opensource.org/licenses/bsd-license.php
-
--->
+<!-- Copyright (C) 2011-2012 Barchart, Inc. <http://www.barchart.com/> All 
+	rights reserved. Licensed under the OSI BSD License. http://www.opensource.org/licenses/bsd-license.php -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -30,26 +23,26 @@
 		<url>https://github.com/barchart/barchart-udt</url>
 		<connection>scm:git:git://github.com/barchart/barchart-udt.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-udt.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>master</tag>
 	</scm>
 
 	<modules>
-	
+
 		<!-- base -->
 		<module>barchart-udt-archon</module>
 		<module>barchart-udt-core</module>
 		<module>barchart-udt-bundle</module>
-		
+
 		<!-- integation tests -->
 		<module>barchart-udt-it</module>
-		
+
 		<!-- examples -->
 		<module>barchart-udt-demo</module>
 
-		<!-- netty support -->		
+		<!-- netty support -->
 		<module>barchart-udt-netty3</module>
 		<module>barchart-udt-netty4</module>
-		
+
 	</modules>
 
 </project>
