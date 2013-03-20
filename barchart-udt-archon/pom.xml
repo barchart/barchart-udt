@@ -217,7 +217,7 @@
 				<configuration>
 					<localCheckout>true</localCheckout>
 					<tagNameFormat>barchart-udt-@{project.version}</tagNameFormat>
-					<arguments><![CDATA[--define skipTests --update-snapshots --activate-profiles artifact-version,release-attach,package-bundle]]></arguments>
+					<arguments><![CDATA[-DskipTests -U -Partifact-version,release-attach,package-bundle]]></arguments>
 				</configuration>
 			</plugin>
 
