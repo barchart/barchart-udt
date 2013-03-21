@@ -873,11 +873,6 @@
 							<connectionType>connection</connectionType>
 							<connectionUrl>${connectionUDT}</connectionUrl>
 							<checkoutDirectory>${checkoutUDT}</checkoutDirectory>
-							<useExport>true</useExport>
-							<cvs-settings>
-								<traceCvsCommand>true</traceCvsCommand>
-								<compressionLevel>5</compressionLevel>
-							</cvs-settings>
 						</configuration>
 						<executions>
 							<execution>
