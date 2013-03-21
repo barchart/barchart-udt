@@ -30,9 +30,9 @@
 		<target>${project.build.directory}</target>
 
 		<!-- c++ source repository -->
-		<moduleUDT>UDT4</moduleUDT>
+		<moduleUDT>udt4</moduleUDT>
 		<checkoutUDT>${target}/udt</checkoutUDT>
-		<connectionUDT>scm:cvs:pserver:anonymous:@udt.cvs.sourceforge.net:/cvsroot/udt:${moduleUDT}</connectionUDT>
+		<connectionUDT>scm:git:git://git.code.sf.net/p/udt/git</connectionUDT>
 
 		<!-- c++ source layout convention -->
 		<folderJNI>jni</folderJNI>
@@ -313,15 +313,10 @@
 							<connectionType>connection</connectionType>
 							<connectionUrl>${connectionUDT}</connectionUrl>
 							<checkoutDirectory>${checkoutUDT}</checkoutDirectory>
-							<useExport>true</useExport>
-							<cvs-settings>
-								<traceCvsCommand>true</traceCvsCommand>
-								<compressionLevel>5</compressionLevel>
-							</cvs-settings>
 						</configuration>
 						<executions>
 							<execution>
-								<id>checkout-udt-sources-from-csv</id>
+								<id>checkout-udt-sources-from-git</id>
 								<phase>generate-sources</phase>
 								<goals>
 									<goal>checkout</goal>
@@ -336,7 +331,7 @@
 						<executions>
 							<execution>
 								<id>copy-udt-sources-after-checkout</id>
-								<phase>process-sources</phase>
+								<phase>process-sources-XXX</phase>
 								<goals>
 									<goal>copy-resources</goal>
 								</goals>
@@ -361,7 +356,7 @@
 						<executions>
 							<execution>
 								<id>apply-local-patches</id>
-								<phase>process-sources</phase>
+								<phase>process-sources-XXX</phase>
 								<goals>
 									<goal>apply</goal>
 								</goals>
