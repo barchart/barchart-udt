@@ -321,6 +321,7 @@ void UDT_InitClassRefAll(JNIEnv * const env) {
 	X_InitClassReference(env, &jdk_clsInteger, "java/lang/Integer");
 	X_InitClassReference(env, &jdk_clsLong, "java/lang/Long");
 
+	X_InitClassReference(env, &jdk_clsInetAddress, "java/net/InetAddress");
 	X_InitClassReference(env, &jdk_clsInet4Address, "java/net/Inet4Address");
 	X_InitClassReference(env, &jdk_clsInet6Address, "java/net/Inet6Address");
 	X_InitClassReference(env, &jdk_clsInetSocketAddress,
@@ -361,6 +362,7 @@ void UDT_FreeClassRefAll(JNIEnv * const env) {
 	X_FreeClassReference(env, &jdk_clsInteger);
 	X_FreeClassReference(env, &jdk_clsLong);
 
+	X_FreeClassReference(env, &jdk_clsInetAddress);
 	X_FreeClassReference(env, &jdk_clsInet4Address);
 	X_FreeClassReference(env, &jdk_clsInet6Address);
 	X_FreeClassReference(env, &jdk_clsInetSocketAddress);
@@ -387,7 +389,7 @@ void UDT_InitFieldRefAll(JNIEnv * const env) {
 	// JDK
 
 	// FIXME private field access
-	ia_AddressID = env->GetFieldID(jdk_clsInet4Address, "address", "I");
+	// ia_AddressID = env->GetFieldID(jdk_clsInet4Address, "address", "I");
 
 	// UDT SocketUDT
 
@@ -449,14 +451,17 @@ void UDT_InitMethodRefAll( //
 			"<init>", "(J)V");
 	CHK_NUL_RET_RET(jdk_clsLong_initID, "jdk_clsLong_initID");
 
-	jdk_clsInet4Address_initID = env->GetMethodID(jdk_clsInet4Address, "<init>",
-			"()V");
-	CHK_NUL_RET_RET(jdk_clsInet4Address_initID, "jdk_clsInet4Address_initID");
+	//jdk_clsInet4Address_initID = env->GetMethodID(jdk_clsInet4Address, "<init>",
+	//		"()V");
+	//CHK_NUL_RET_RET(jdk_clsInet4Address_initID, "jdk_clsInet4Address_initID");
 
 	jdk_clsInetSocketAddress_initID = env->GetMethodID(jdk_clsInetSocketAddress, //
 			"<init>", "(Ljava/net/InetAddress;I)V");
-	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_initID,
-			"jdk_clsInetSocketAddress_initID");
+	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_initID,"jdk_clsInetSocketAddress_initID");
+
+	jdk_clsInet4Address_getAddressByID = env->GetStaticMethodID(jdk_clsInetAddress,
+			"getByAddress", "([B)Ljava/net/InetAddress;");
+	CHK_NUL_RET_RET(jdk_clsInet4Address_getByAddressID,"jdk_clsInet4Address_getByAddressID");
 
 	jdk_clsInetSocketAddress_getAddressID = env->GetMethodID(jdk_clsInetSocketAddress, //
 			"getAddress", "()Ljava/net/InetAddress;");

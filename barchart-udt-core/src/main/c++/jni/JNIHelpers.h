@@ -62,6 +62,7 @@ extern "C"{
 extern jclass jdk_clsBoolean; // java.lang.Boolean
 extern jclass jdk_clsInteger; // java.lang.Integer
 extern jclass jdk_clsLong; // java.lang.Long
+extern jclass jdk_clsInetAddress; // java.net.InetAddress
 extern jclass jdk_clsInet4Address; // java.net.Inet4Address
 extern jclass jdk_clsInet6Address; // java.net.Inet6Address
 extern jclass jdk_clsInetSocketAddress; // java.net.InetSocketAddress
@@ -80,12 +81,15 @@ extern jmethodID jdk_clsLong_initID; // new Long(long x)
 extern jmethodID jdk_clsInet4Address_initID; // new InetAddress()
 extern jmethodID jdk_clsInetSocketAddress_initID; // new InetSocketAddress(InetAddress x)
 extern jmethodID jdk_clsInetSocketAddress_getAddressID; //
+
 extern jmethodID jdk_clsInetSocketAddress_getPortID; //
 extern jmethodID jdk_clsSet_iteratorID; // Iterator set.iterator()
 extern jmethodID jdk_clsSet_addID; // boolean set.add(Object)
 extern jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
 extern jmethodID jdk_clsIterator_hasNextID; // boolean iterator.hasNext()
 extern jmethodID jdk_clsIterator_nextID; // Object iterator.next()
+extern jmethodID jdk_clsInet4Address_getAddressID; // byte[] getAddress()
+extern jmethodID jdk_clsInet4Address_getAddressByID; // InetAddress getAddressBy(byte[])
 
 // UDT classes
 extern jclass udt_clsFactoryInterfaceUDT;
