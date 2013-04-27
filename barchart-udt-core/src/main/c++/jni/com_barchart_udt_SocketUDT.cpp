@@ -322,8 +322,6 @@ void UDT_InitClassRefAll(JNIEnv * const env) {
 	X_InitClassReference(env, &jdk_clsLong, "java/lang/Long");
 
 	X_InitClassReference(env, &jdk_clsInetAddress, "java/net/InetAddress");
-	X_InitClassReference(env, &jdk_clsInet4Address, "java/net/Inet4Address");
-	X_InitClassReference(env, &jdk_clsInet6Address, "java/net/Inet6Address");
 	X_InitClassReference(env, &jdk_clsInetSocketAddress,
 			"java/net/InetSocketAddress");
 
@@ -363,8 +361,6 @@ void UDT_FreeClassRefAll(JNIEnv * const env) {
 	X_FreeClassReference(env, &jdk_clsLong);
 
 	X_FreeClassReference(env, &jdk_clsInetAddress);
-	X_FreeClassReference(env, &jdk_clsInet4Address);
-	X_FreeClassReference(env, &jdk_clsInet6Address);
 	X_FreeClassReference(env, &jdk_clsInetSocketAddress);
 
 	X_FreeClassReference(env, &jdk_clsSocketException);

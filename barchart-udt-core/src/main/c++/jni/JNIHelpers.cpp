@@ -51,8 +51,6 @@ jclass jdk_clsBoolean; // java.lang.Boolean
 jclass jdk_clsInteger; // java.lang.Integer
 jclass jdk_clsLong; // java.lang.Long
 jclass jdk_clsInetAddress; // java.net.InetAddress
-jclass jdk_clsInet4Address; // java.net.Inet4Address
-jclass jdk_clsInet6Address; // java.net.Inet6Address
 jclass jdk_clsInetSocketAddress; // java.net.InetSocketAddress
 jclass jdk_clsSocketException; // java.net.SocketException
 jclass jdk_clsSet; // java.util.Set
@@ -75,6 +73,7 @@ jmethodID jdk_clsInetSocketAddress_getPortID; //
 jmethodID jdk_clsSet_iteratorID; // Iterator set.iterator()
 jmethodID jdk_clsSet_addID; // boolean set.add(Object)
 jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
+
 jmethodID jdk_clsIterator_hasNextID; // boolean iterator.hasNext()
 jmethodID jdk_clsIterator_nextID; // Object iterator.next()
 
@@ -131,149 +130,161 @@ int X_InitSockAddr(sockaddr* sockAddr) {
 }
 
 // NOTE: ipv4 only
-int X_ConvertInetSocketAddressToSockaddr(JNIEnv* env,
-		jobject objInetSocketAddress, sockaddr* sockAddr) {
+int X_ConvertInetAddressToInteger( //
+		JNIEnv* env, //
+		jobject objInetAddress, //
+		jint* address //
+		) {
+
+	CHK_NUL_RET_ERR(env, "env");
+	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
+	CHK_NUL_RET_ERR(address, "address");
+
+	const jbyteArray objArray = (jbyteArray) env->CallObjectMethod(
+			objInetAddress, jdk_clsInetAddress_getAddressID);
+	CHK_NUL_RET_ERR(objArray, "objArray");
+
+	const int sizeArray = env->GetArrayLength(objArray);
+
+	switch (sizeArray) {
+	case 4:
+		// IPV4
+		break;
+	case 16:
+		// IPV6
+	default:
+		CHK_LOG("unsupported address size", "sizeArray");
+		return JNI_ERR;
+	}
+
+	jbyte* refArray = env->GetByteArrayElements(objArray, NULL);
+
+	int value = 0;
+	value |= (0xFF000000 & (refArray[0] << 24));
+	value |= (0x00FF0000 & (refArray[1] << 16));
+	value |= (0x0000FF00 & (refArray[2] << 8));
+	value |= (0x000000FF & (refArray[3]));
+
+	env->ReleaseByteArrayElements(objArray, refArray, 0);
+
+	*address = value;
+
+	return JNI_OK;
+
+}
+
+// NOTE: ipv4 only
+int X_ConvertInetSocketAddressToSockaddr( //
+		JNIEnv* env, //
+		jobject objInetSocketAddress, //
+		sockaddr* sockAddr //
+		) {
 
 	CHK_NUL_RET_ERR(env, "env");
 	CHK_NUL_RET_ERR(sockAddr, "sockAddr");
 	CHK_NUL_RET_ERR(objInetSocketAddress, "objInetSocketAddress");
 
-//	jobject objInetAddress = env->GetObjectField(objInetSocketAddress,
-//			isa_InetAddressID);
-
-	jobject objInetAddress = env->CallObjectMethod(objInetSocketAddress,
+	const jobject objInetAddress = env->CallObjectMethod(objInetSocketAddress,
 			jdk_clsInetSocketAddress_getAddressID);
 	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
 
-//	jint address = env->GetIntField(objInetAddress, ia_AddressID);
-
-	jbyteArray address = (jbyteArray) env->CallObjectMethod(objInetAddress,
-			jdk_clsInetAddress_getAddressID);
-	CHK_NUL_RET_ERR(address, "address");
-
-	int iLen = env->GetArrayLength(address);
-	jboolean bCopy;
-	jbyte *byteAddress = env->GetByteArrayElements(address, &bCopy);
-	int iRawAddress;
-
-	if (iLen == 4) {
-		iRawAddress = byteAddress[3] & 0xFF;
-		iRawAddress |= ((byteAddress[2] << 8) & 0xFF00);
-		iRawAddress |= ((byteAddress[1] << 16) & 0xFF0000);
-		iRawAddress |= ((byteAddress[0] << 24) & 0xFF000000);
-	}
-
-	env->ReleaseByteArrayElements(address, byteAddress, 0);
-
-//	jint port = env->GetIntField(objInetSocketAddress, isa_PortID);
-
+	jint address = 0;
 	jint port = env->CallIntMethod(objInetSocketAddress,
 			jdk_clsInetSocketAddress_getPortID);
 
+	const int rv = X_ConvertInetAddressToInteger(env, objInetAddress, &address);
+	if (rv == JNI_ERR) {
+		return JNI_ERR;
+	}
+
 	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
 
-	sockAddrIn->sin_addr.s_addr = htonl(iRawAddress);
-	sockAddrIn->sin_port = htons(port); // msvc C4244
+	sockAddrIn->sin_addr.s_addr = htonl(address);
+	sockAddrIn->sin_port = htons(port);
 
 	return JNI_OK;
 
 }
 
 // NOTE: only ipv4
-jobject X_NewInetAddress(JNIEnv* env, jint address) {
+jobject X_NewInetAddress( //
+		JNIEnv* env, //
+		const jint address //
+		) {
 
 	CHK_NUL_RET_NUL(env, "env");
-	CHK_NUL_RET_NUL(jdk_clsInet4Address, "jdk_clsInet4Address");
 
-//	jobject objInetAddress = env->CallStaticObjectMethodA(jdk_clsInet4Address, jdk_clsInet4Address_getAddressByID, 
-	//env->NewObject(jdk_clsInet4Address,
-	//	jdk_clsInet4Address_initID);
-	char byteArray[4];
-	byteArray[0] = (address & 0xFF000000) >> 24;
-	byteArray[1] = (address & 0xFF0000) >> 16;
-	byteArray[2] = (address & 0xFF00) >> 8;
-	byteArray[3] = (address & 0xFF);
+	char valArray[4];
+	valArray[0] = (address & 0xFF000000) >> 24;
+	valArray[1] = (address & 0x00FF0000) >> 16;
+	valArray[2] = (address & 0x0000FF00) >> 8;
+	valArray[3] = (address & 0x000000FF);
 
-	jbyteArray arguments = env->NewByteArray(4);
-	env->SetByteArrayRegion(arguments, (jint) 0, (jint) 4, (jbyte*) byteArray);
+	const jbyteArray objArray = env->NewByteArray(4);
 
-	jobject objInetAddress = env->CallStaticObjectMethod(jdk_clsInet4Address,
-			jdk_clsInetAddress_getByAddressID, arguments);
+	env->SetByteArrayRegion(objArray, (jint) 0, (jint) 4, (jbyte*) valArray);
+
+	const jobject objInetAddress = env->CallStaticObjectMethod(
+			jdk_clsInetAddress, jdk_clsInetAddress_getByAddressID, objArray);
 	CHK_NUL_RET_NUL(objInetAddress, "objInetAddress");
-
-//	env->SetIntField(objInetAddress, ia_AddressID, address);
 
 	return objInetAddress;
 
 }
 
 // NOTE: ipv4 only
-jobject X_NewInetSocketAddress(JNIEnv* env, sockaddr* sockAddr) {
+jobject X_NewInetSocketAddress( //
+		JNIEnv* env, //
+		sockaddr* sockAddr //
+		) {
 
 	CHK_NUL_RET_NUL(env, "env");
 	CHK_NUL_RET_NUL(sockAddr, "sockAddr");
 
 	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
-	jint address = ntohl(sockAddrIn->sin_addr.s_addr);
-	jint port = ntohs(sockAddrIn->sin_port);
+	const jint address = ntohl(sockAddrIn->sin_addr.s_addr);
+	const jint port = ntohs(sockAddrIn->sin_port);
 
-	jobject objInetAddress = X_NewInetAddress(env, address);
-
+	const jobject objInetAddress = X_NewInetAddress(env, address);
 	CHK_NUL_RET_NUL(objInetAddress, "objInetAddress");
 
-	jobject objInetSocketAddress = env->NewObject(jdk_clsInetSocketAddress,
-			jdk_clsInetSocketAddress_initID, objInetAddress, port);
-
+	const jobject objInetSocketAddress = env->NewObject(
+			jdk_clsInetSocketAddress, jdk_clsInetSocketAddress_initID,
+			objInetAddress, port);
 	CHK_NUL_RET_NUL(objInetSocketAddress, "objInetSocketAddress");
 
 	return objInetSocketAddress;
 
 }
 
-bool X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
-		jobject socketAddress) {
+bool X_IsSockaddrEqualsInetSocketAddress( //
+		JNIEnv* env, //
+		sockaddr* sockAddr, //
+		jobject objSocketAddress //
+		) {
 
 	CHK_NUL_RET_FLS(env, "env");
 	CHK_NUL_RET_FLS(sockAddr, "sockAddr");
-	CHK_NUL_RET_FLS(socketAddress, "socketAddress");
+	CHK_NUL_RET_FLS(objSocketAddress, "objSocketAddress");
 
 	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
 
 	jint address1 = ntohl(sockAddrIn->sin_addr.s_addr);
 	jint port1 = ntohs(sockAddrIn->sin_port);
 
-//	jobject objInetAddress = env->CallObjectMethod(socketAddress,jdk_clsInetSocketAddress_getAddressID);/
-//	CHK_NUL_RET_ERR(objInetAddress,"objInetAddress");
+	jint address2 = 0;
+	jint port2 = env->CallIntMethod(objSocketAddress,
+			jdk_clsInetSocketAddress_getPortID);
 
-//	jint address2 = env->GetIntField(objInetAddress, ia_AddressID);
-
-	jobject objInetAddress = env->CallObjectMethod(socketAddress,
+	jobject objInetAddress = env->CallObjectMethod(objSocketAddress,
 			jdk_clsInetSocketAddress_getAddressID);
 	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
 
-//	jint address = env->GetIntField(objInetAddress, ia_AddressID);
-
-	jbyteArray address = (jbyteArray) env->CallObjectMethod(objInetAddress,
-			jdk_clsInetAddress_getAddressID);
-	CHK_NUL_RET_ERR(address, "address");
-
-	int iLen = env->GetArrayLength(address);
-	jboolean bCopy;
-	jbyte *byteAddress = env->GetByteArrayElements(address, &bCopy);
-	jint address2;
-
-	if (iLen == 4) {
-		address2 = byteAddress[3] & 0xFF;
-		address2 |= ((byteAddress[2] << 8) & 0xFF00);
-		address2 |= ((byteAddress[1] << 16) & 0xFF0000);
-		address2 |= ((byteAddress[0] << 24) & 0xFF000000);
+	const int rv = X_ConvertInetAddressToInteger(env, objInetAddress,
+			&address2);
+	if (rv == JNI_ERR) {
+		return false;
 	}
-
-	env->ReleaseByteArrayElements(address, byteAddress, 0);
-
-//	jint port = env->GetIntField(objInetSocketAddress, isa_PortID);
-	jint port2 = env->CallIntMethod(socketAddress,
-			jdk_clsInetSocketAddress_getPortID);
 
 	if (address1 == address2 && port1 == port2) {
 		return true;
