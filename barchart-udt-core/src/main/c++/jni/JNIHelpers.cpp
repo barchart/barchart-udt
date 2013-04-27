@@ -59,25 +59,24 @@ jclass jdk_clsSet; // java.util.Set
 jclass jdk_clsIterator; // java.util.Iterator
 
 // JDK fields
-// FIXME private field access
-jfieldID ia_AddressID; // java.net.InetAddress#address
 
 // JDK methods
 jmethodID jdk_clsBoolean_initID; // new Boolean(boolean x)
 jmethodID jdk_clsInteger_initID; // new Integer(int x)
 jmethodID jdk_clsLong_initID; // new Long(long x)
-jmethodID jdk_clsInet4Address_initID; // new InetAddress()
+
+jmethodID jdk_clsInetAddress_getAddressID; // byte[] getAddress()
+jmethodID jdk_clsInetAddress_getByAddressID; // static InetAddress getByAddress(byte[])
+
 jmethodID jdk_clsInetSocketAddress_initID; // new InetSocketAddress(InetAddress x)
 jmethodID jdk_clsInetSocketAddress_getAddressID; //
-
 jmethodID jdk_clsInetSocketAddress_getPortID; //
+
 jmethodID jdk_clsSet_iteratorID; // Iterator set.iterator()
 jmethodID jdk_clsSet_addID; // boolean set.add(Object)
 jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
 jmethodID jdk_clsIterator_hasNextID; // boolean iterator.hasNext()
 jmethodID jdk_clsIterator_nextID; // Object iterator.next()
-jmethodID jdk_clsInet4Address_getAddressID; // byte[] getAddress()
-jmethodID jdk_clsInet4Address_getAddressByID; // InetAddress getAddressBy(byte[])
 
 // UDT classes
 jclass udt_clsFactoryInterfaceUDT; //com.barchart.udt.FactoryInterfaceUDT
@@ -106,7 +105,8 @@ void X_FreeClassReference(JNIEnv *env, jclass* globalRef) {
 // use native bool parameter
 jobject X_NewBoolean(JNIEnv *env, bool value) {
 	CHK_NUL_RET_NUL(env, "env");
-	return env->NewObject(jdk_clsBoolean, jdk_clsBoolean_initID, BOOLEAN(value));
+	return env->NewObject(jdk_clsBoolean, jdk_clsBoolean_initID,
+			BOOLEAN(value) );
 }
 
 // use native 32 bit int parameter
@@ -134,18 +134,21 @@ int X_InitSockAddr(sockaddr* sockAddr) {
 int X_ConvertInetSocketAddressToSockaddr(JNIEnv* env,
 		jobject objInetSocketAddress, sockaddr* sockAddr) {
 
-	CHK_NUL_RET_ERR(env,"env");
-	CHK_NUL_RET_ERR(sockAddr,"sockAddr");
-	CHK_NUL_RET_ERR(objInetSocketAddress,"objInetSocketAddress");
+	CHK_NUL_RET_ERR(env, "env");
+	CHK_NUL_RET_ERR(sockAddr, "sockAddr");
+	CHK_NUL_RET_ERR(objInetSocketAddress, "objInetSocketAddress");
 
 //	jobject objInetAddress = env->GetObjectField(objInetSocketAddress,
 //			isa_InetAddressID);
-	jobject objInetAddress = env->CallObjectMethod(objInetSocketAddress,jdk_clsInetSocketAddress_getAddressID);
-	CHK_NUL_RET_ERR(objInetAddress,"objInetAddress");
+
+	jobject objInetAddress = env->CallObjectMethod(objInetSocketAddress,
+			jdk_clsInetSocketAddress_getAddressID);
+	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
 
 //	jint address = env->GetIntField(objInetAddress, ia_AddressID);
 
-	jbyteArray address = (jbyteArray)env->CallObjectMethod(objInetAddress, jdk_clsInet4Address_getAddressID);
+	jbyteArray address = (jbyteArray) env->CallObjectMethod(objInetAddress,
+			jdk_clsInetAddress_getAddressID);
 	CHK_NUL_RET_ERR(address, "address");
 
 	int iLen = env->GetArrayLength(address);
@@ -153,16 +156,19 @@ int X_ConvertInetSocketAddressToSockaddr(JNIEnv* env,
 	jbyte *byteAddress = env->GetByteArrayElements(address, &bCopy);
 	int iRawAddress;
 
-	if (iLen == 4){
-		iRawAddress  = byteAddress[3] & 0xFF;
+	if (iLen == 4) {
+		iRawAddress = byteAddress[3] & 0xFF;
 		iRawAddress |= ((byteAddress[2] << 8) & 0xFF00);
 		iRawAddress |= ((byteAddress[1] << 16) & 0xFF0000);
 		iRawAddress |= ((byteAddress[0] << 24) & 0xFF000000);
 	}
 
 	env->ReleaseByteArrayElements(address, byteAddress, 0);
+
 //	jint port = env->GetIntField(objInetSocketAddress, isa_PortID);
-	jint port = env->CallIntMethod(objInetSocketAddress,jdk_clsInetSocketAddress_getPortID);
+
+	jint port = env->CallIntMethod(objInetSocketAddress,
+			jdk_clsInetSocketAddress_getPortID);
 
 	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
 
@@ -177,23 +183,23 @@ int X_ConvertInetSocketAddressToSockaddr(JNIEnv* env,
 jobject X_NewInetAddress(JNIEnv* env, jint address) {
 
 	CHK_NUL_RET_NUL(env, "env");
-	CHK_NUL_RET_NUL(jdk_clsInet4Address,"jdk_clsInet4Address");
-
+	CHK_NUL_RET_NUL(jdk_clsInet4Address, "jdk_clsInet4Address");
 
 //	jobject objInetAddress = env->CallStaticObjectMethodA(jdk_clsInet4Address, jdk_clsInet4Address_getAddressByID, 
-		//env->NewObject(jdk_clsInet4Address,
-		//	jdk_clsInet4Address_initID);
+	//env->NewObject(jdk_clsInet4Address,
+	//	jdk_clsInet4Address_initID);
 	char byteArray[4];
-	byteArray[0] = (address & 0xFF000000) >> 24;	
+	byteArray[0] = (address & 0xFF000000) >> 24;
 	byteArray[1] = (address & 0xFF0000) >> 16;
-	byteArray[2] = (address & 0xFF00) >> 8;	
+	byteArray[2] = (address & 0xFF00) >> 8;
 	byteArray[3] = (address & 0xFF);
 
 	jbyteArray arguments = env->NewByteArray(4);
-	env->SetByteArrayRegion (arguments, (jint)0, (jint)4, (jbyte*)byteArray);
-	
-	jobject objInetAddress = env->CallStaticObjectMethod(jdk_clsInet4Address, jdk_clsInet4Address_getAddressByID, arguments);
-	CHK_NUL_RET_NUL(objInetAddress,"objInetAddress");
+	env->SetByteArrayRegion(arguments, (jint) 0, (jint) 4, (jbyte*) byteArray);
+
+	jobject objInetAddress = env->CallStaticObjectMethod(jdk_clsInet4Address,
+			jdk_clsInetAddress_getByAddressID, arguments);
+	CHK_NUL_RET_NUL(objInetAddress, "objInetAddress");
 
 //	env->SetIntField(objInetAddress, ia_AddressID, address);
 
@@ -227,27 +233,28 @@ jobject X_NewInetSocketAddress(JNIEnv* env, sockaddr* sockAddr) {
 bool X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
 		jobject socketAddress) {
 
-	CHK_NUL_RET_FLS(env,"env");
-	CHK_NUL_RET_FLS(sockAddr,"sockAddr");
-	CHK_NUL_RET_FLS(socketAddress,"socketAddress");
+	CHK_NUL_RET_FLS(env, "env");
+	CHK_NUL_RET_FLS(sockAddr, "sockAddr");
+	CHK_NUL_RET_FLS(socketAddress, "socketAddress");
 
 	sockaddr_in* sockAddrIn = (sockaddr_in*) sockAddr;
 
 	jint address1 = ntohl(sockAddrIn->sin_addr.s_addr);
 	jint port1 = ntohs(sockAddrIn->sin_port);
 
-
 //	jobject objInetAddress = env->CallObjectMethod(socketAddress,jdk_clsInetSocketAddress_getAddressID);/
 //	CHK_NUL_RET_ERR(objInetAddress,"objInetAddress");
 
 //	jint address2 = env->GetIntField(objInetAddress, ia_AddressID);
 
-	jobject objInetAddress = env->CallObjectMethod(socketAddress,jdk_clsInetSocketAddress_getAddressID);
-	CHK_NUL_RET_ERR(objInetAddress,"objInetAddress");
+	jobject objInetAddress = env->CallObjectMethod(socketAddress,
+			jdk_clsInetSocketAddress_getAddressID);
+	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
 
 //	jint address = env->GetIntField(objInetAddress, ia_AddressID);
 
-	jbyteArray address = (jbyteArray)env->CallObjectMethod(objInetAddress, jdk_clsInet4Address_getAddressID);
+	jbyteArray address = (jbyteArray) env->CallObjectMethod(objInetAddress,
+			jdk_clsInetAddress_getAddressID);
 	CHK_NUL_RET_ERR(address, "address");
 
 	int iLen = env->GetArrayLength(address);
@@ -255,8 +262,8 @@ bool X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
 	jbyte *byteAddress = env->GetByteArrayElements(address, &bCopy);
 	jint address2;
 
-	if (iLen == 4){
-		address2  = byteAddress[3] & 0xFF;
+	if (iLen == 4) {
+		address2 = byteAddress[3] & 0xFF;
 		address2 |= ((byteAddress[2] << 8) & 0xFF00);
 		address2 |= ((byteAddress[1] << 16) & 0xFF0000);
 		address2 |= ((byteAddress[0] << 24) & 0xFF000000);
@@ -265,7 +272,8 @@ bool X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
 	env->ReleaseByteArrayElements(address, byteAddress, 0);
 
 //	jint port = env->GetIntField(objInetSocketAddress, isa_PortID);
-	jint port2 = env->CallIntMethod(socketAddress,jdk_clsInetSocketAddress_getPortID);
+	jint port2 = env->CallIntMethod(socketAddress,
+			jdk_clsInetSocketAddress_getPortID);
 
 	if (address1 == address2 && port1 == port2) {
 		return true;

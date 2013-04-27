@@ -451,28 +451,36 @@ void UDT_InitMethodRefAll( //
 			"<init>", "(J)V");
 	CHK_NUL_RET_RET(jdk_clsLong_initID, "jdk_clsLong_initID");
 
-	//jdk_clsInet4Address_initID = env->GetMethodID(jdk_clsInet4Address, "<init>",
-	//		"()V");
-	//CHK_NUL_RET_RET(jdk_clsInet4Address_initID, "jdk_clsInet4Address_initID");
+	// InetSocketAddress
 
 	jdk_clsInetSocketAddress_initID = env->GetMethodID(jdk_clsInetSocketAddress, //
 			"<init>", "(Ljava/net/InetAddress;I)V");
-	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_initID,"jdk_clsInetSocketAddress_initID");
+	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_initID,
+			"jdk_clsInetSocketAddress_initID");
 
-	jdk_clsInet4Address_getAddressByID = env->GetStaticMethodID(jdk_clsInetAddress,
-			"getByAddress", "([B)Ljava/net/InetAddress;");
-	CHK_NUL_RET_RET(jdk_clsInet4Address_getAddressByID,"jdk_clsInet4Address_getAddressByID");
-
-	jdk_clsInetSocketAddress_getAddressID = env->GetMethodID(jdk_clsInetSocketAddress, //
+	jdk_clsInetSocketAddress_getAddressID = env->GetMethodID(
+			jdk_clsInetSocketAddress, //
 			"getAddress", "()Ljava/net/InetAddress;");
 	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_getAddressID,
 			"jdk_clsInetSocketAddress_getAddressID");
 
-	jdk_clsInetSocketAddress_getPortID = env->GetMethodID(jdk_clsInetSocketAddress, //
+	jdk_clsInetSocketAddress_getPortID = env->GetMethodID(
+			jdk_clsInetSocketAddress, //
 			"getPort", "()I");
 	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_getPortID,
 			"jdk_clsInetSocketAddress_getPortID");
 
+	// InetAddress
+
+	jdk_clsInetAddress_getAddressID = env->GetMethodID(jdk_clsInetAddress,
+			"getAddress", "()[B");
+	CHK_NUL_RET_RET(jdk_clsInetAddress_getAddressID,
+			"jdk_clsInetAddress_getAddressID");
+
+	jdk_clsInetAddress_getByAddressID = env->GetStaticMethodID(
+			jdk_clsInetAddress, "getByAddress", "([B)Ljava/net/InetAddress;");
+	CHK_NUL_RET_RET(jdk_clsInetAddress_getByAddressID,
+			"jdk_clsInetAddress_getByAddressID");
 
 	// java.util.Set
 	jdk_clsSet_iteratorID = env->GetMethodID(jdk_clsSet, //
@@ -1370,7 +1378,9 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_send1( //
 	case SOCK_STREAM:
 		int ss;
 		while (ssize < size) {
-			if (UDT::ERROR == (ss = UDT::send(socketID, (char*)(data + ssize), size - ssize, 0))) {
+			if (UDT::ERROR
+					== (ss = UDT::send(socketID, (char*) (data + ssize),
+							size - ssize, 0))) {
 				printf("send: %s\n", UDT::getlasterror().getErrorMessage());
 				break;
 			}

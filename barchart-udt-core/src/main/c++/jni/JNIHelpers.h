@@ -88,8 +88,8 @@ extern jmethodID jdk_clsSet_addID; // boolean set.add(Object)
 extern jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
 extern jmethodID jdk_clsIterator_hasNextID; // boolean iterator.hasNext()
 extern jmethodID jdk_clsIterator_nextID; // Object iterator.next()
-extern jmethodID jdk_clsInet4Address_getAddressID; // byte[] getAddress()
-extern jmethodID jdk_clsInet4Address_getAddressByID; // InetAddress getAddressBy(byte[])
+extern jmethodID jdk_clsInetAddress_getAddressID; // byte[] getAddress()
+extern jmethodID jdk_clsInetAddress_getByAddressID; // InetAddress getAddressBy(byte[])
 
 // UDT classes
 extern jclass udt_clsFactoryInterfaceUDT;
