@@ -104,67 +104,68 @@ extern "C" { /* specify the C calling convention */
 // ### UDT references
 
 // UDT classes
-static jclass udt_clsSocketUDT; // com.barchart.udt.SocketUDT
-static jclass udt_clsTypeUDT; // com.barchart.udt.TypeUDT
-static jclass udt_clsFactoryUDT; // com.barchart.udt.FactoryUDT
-static jclass udt_clsMonitorUDT; // com.barchart.udt.MonitorUDT
-static jclass udt_clsExceptionUDT; // com.barchart.udt.ExceptionUDT
-static jclass udt_clsLingerUDT; // com.barchart.udt.ExceptionUDT
-static jclass udt_clsCCC; // com.barchart.udt.CCC
 
-// UDT fields: com.barchart.udt.SocketUDT
-static jfieldID udts_TypeID;
-static jfieldID udts_RemoteSocketAddressID;
-static jfieldID udts_LocalSocketAddressID;
-static jfieldID udts_MonitorID;
-static jfieldID udts_SocketID;
-
-// UDT fields: com.barchart.udt.TypeUDT
-static jfieldID udtt_TypeCodeID;
+static jclass udt_SocketUDT; // com.barchart.udt.SocketUDT
+static jclass udt_TypeUDT; // com.barchart.udt.TypeUDT
+static jclass udt_FactoryUDT; // com.barchart.udt.FactoryUDT
+static jclass udt_MonitorUDT; // com.barchart.udt.MonitorUDT
+static jclass udt_ExceptionUDT; // com.barchart.udt.ExceptionUDT
+static jclass udt_LingerUDT; // com.barchart.udt.ExceptionUDT
+static jclass udt_CCC; // com.barchart.udt.CCC
 
 // UDT methods
-static jmethodID udt_clsSocketUDT_initID1; // new SocketUDT(int type, int id)
-static jmethodID udt_clsExceptionUDT_initID0; // new ExceptionUDT(int code, String message)
-static jmethodID udt_clsLingerUDT_initID; // new LingerUDT(int value)
+static jmethodID udt_SocketUDT_init1; // new SocketUDT(int type, int id)
+static jmethodID udt_ExceptionUDT_init0; // new ExceptionUDT(int code, String message)
+static jmethodID udt_LingerUDT_init; // new LingerUDT(int value)
+
+// UDT fields: com.barchart.udt.SocketUDT
+static jfieldID udt_S_type;
+static jfieldID udt_S_remoteSocketAddress;
+static jfieldID udt_S_localSocketAddress;
+static jfieldID udt_S_monitor;
+static jfieldID udt_S_socketID;
+
+// UDT fields: com.barchart.udt.TypeUDT
+static jfieldID udt_T_code;
 
 // UDT fields: com.barchart.udt.MonitorUDT
 //
 // global measurements
-static jfieldID udtm_msTimeStamp; // time since the UDT entity is started, in milliseconds
-static jfieldID udtm_pktSentTotal; // total number of sent data packets, including retransmissions
-static jfieldID udtm_pktRecvTotal; // total number of received packets
-static jfieldID udtm_pktSndLossTotal; // total number of lost packets (sender side)
-static jfieldID udtm_pktRcvLossTotal; // total number of lost packets (receiver side)
-static jfieldID udtm_pktRetransTotal; // total number of retransmitted packets
-static jfieldID udtm_pktSentACKTotal; // total number of sent ACK packets
-static jfieldID udtm_pktRecvACKTotal; // total number of received ACK packets
-static jfieldID udtm_pktSentNAKTotal; // total number of sent NAK packets
-static jfieldID udtm_pktRecvNAKTotal; // total number of received NAK packets
-static jfieldID udtm_usSndDurationTotal; // total time duration when UDT is sending data (idle time exclusive)
+static jfieldID udt_M_msTimeStamp; // time since the UDT entity is started, in milliseconds
+static jfieldID udt_M_pktSentTotal; // total number of sent data packets, including retransmissions
+static jfieldID udt_M_pktRecvTotal; // total number of received packets
+static jfieldID udt_M_pktSndLossTotal; // total number of lost packets (sender side)
+static jfieldID udt_M_pktRcvLossTotal; // total number of lost packets (receiver side)
+static jfieldID udt_M_pktRetransTotal; // total number of retransmitted packets
+static jfieldID udt_M_pktSentACKTotal; // total number of sent ACK packets
+static jfieldID udt_M_pktRecvACKTotal; // total number of received ACK packets
+static jfieldID udt_M_pktSentNAKTotal; // total number of sent NAK packets
+static jfieldID udt_M_pktRecvNAKTotal; // total number of received NAK packets
+static jfieldID udt_M_usSndDurationTotal; // total time duration when UDT is sending data (idle time exclusive)
 //
 // local measurements
-static jfieldID udtm_pktSent; // number of sent data packets, including retransmissions
-static jfieldID udtm_pktRecv; // number of received packets
-static jfieldID udtm_pktSndLoss; // number of lost packets (sender side)
-static jfieldID udtm_pktRcvLoss; // number of lost packets (receiverer side)
-static jfieldID udtm_pktRetrans; // number of retransmitted packets
-static jfieldID udtm_pktSentACK; // number of sent ACK packets
-static jfieldID udtm_pktRecvACK; // number of received ACK packets
-static jfieldID udtm_pktSentNAK; // number of sent NAK packets
-static jfieldID udtm_pktRecvNAK; // number of received NAK packets
-static jfieldID udtm_mbpsSendRate; // sending rate in Mb/s
-static jfieldID udtm_mbpsRecvRate; // receiving rate in Mb/s
-static jfieldID udtm_usSndDuration; // busy sending time (i.e., idle time exclusive)
+static jfieldID udt_M_pktSent; // number of sent data packets, including retransmissions
+static jfieldID udt_M_pktRecv; // number of received packets
+static jfieldID udt_M_pktSndLoss; // number of lost packets (sender side)
+static jfieldID udt_M_pktRcvLoss; // number of lost packets (receiverer side)
+static jfieldID udt_M_pktRetrans; // number of retransmitted packets
+static jfieldID udt_M_pktSentACK; // number of sent ACK packets
+static jfieldID udt_M_pktRecvACK; // number of received ACK packets
+static jfieldID udt_M_pktSentNAK; // number of sent NAK packets
+static jfieldID udt_M_pktRecvNAK; // number of received NAK packets
+static jfieldID udt_M_mbpsSendRate; // sending rate in Mb/s
+static jfieldID udt_M_mbpsRecvRate; // receiving rate in Mb/s
+static jfieldID udt_M_usSndDuration; // busy sending time (i.e., idle time exclusive)
 //
 // instant measurements
-static jfieldID udtm_usPktSndPeriod; // packet sending period, in microseconds
-static jfieldID udtm_pktFlowWindow; // flow window size, in number of packets
-static jfieldID udtm_pktCongestionWindow; // congestion window size, in number of packets
-static jfieldID udtm_pktFlightSize; // number of packets on flight
-static jfieldID udtm_msRTT; // RTT, in milliseconds
-static jfieldID udtm_mbpsBandwidth; // estimated bandwidth, in Mb/s
-static jfieldID udtm_byteAvailSndBuf; // available UDT sender buffer size
-static jfieldID udtm_byteAvailRcvBuf; // available UDT receiver buffer size
+static jfieldID udt_M_usPktSndPeriod; // packet sending period, in microseconds
+static jfieldID udt_M_pktFlowWindow; // flow window size, in number of packets
+static jfieldID udt_M_pktCongestionWindow; // congestion window size, in number of packets
+static jfieldID udt_M_pktFlightSize; // number of packets on flight
+static jfieldID udt_M_msRTT; // RTT, in milliseconds
+static jfieldID udt_M_mbpsBandwidth; // estimated bandwidth, in Mb/s
+static jfieldID udt_M_byteAvailSndBuf; // available UDT sender buffer size
+static jfieldID udt_M_byteAvailRcvBuf; // available UDT receiver buffer size
 
 // ########################################################
 
@@ -175,8 +176,8 @@ void XXX_ThrowSocketExceptionMessage( //
 		) {
 	CHK_NUL_RET_RET(env, "env");
 	CHK_NUL_RET_RET(message, "message");
-	CHK_NUL_RET_RET(jdk_clsSocketException, "jdk_clsSocketException");
-	env->ThrowNew(jdk_clsSocketException, message);
+	CHK_NUL_RET_RET(jdk_SocketException, "jdk_clsSocketException");
+	env->ThrowNew(jdk_SocketException, message);
 }
 
 // ########################################################
@@ -194,8 +195,8 @@ jobject UDT_NewLingerUDT( //
 	} else {
 		value = lingerValue->l_linger;
 	}
-	jobject objLinger = env->NewObject(udt_clsLingerUDT,
-			udt_clsLingerUDT_initID, (jint) value);
+	jobject objLinger = env->NewObject(udt_LingerUDT,
+			udt_LingerUDT_init, (jint) value);
 	CHK_NUL_RET_NUL(objLinger, "objLinger");
 	return objLinger;
 }
@@ -212,7 +213,7 @@ jint UDT_GetSocketID( //
 		JNIEnv * const env, //
 		const jobject self //
 		) {
-	return env->GetIntField(self, udts_SocketID);
+	return env->GetIntField(self, udt_S_socketID);
 }
 // NOTE: socket id stored in java object SocketUDT
 void UDT_SetSocketID( //
@@ -220,7 +221,7 @@ void UDT_SetSocketID( //
 		const jobject self, //
 		const jint socketID //
 		) {
-	env->SetIntField(self, udts_SocketID, socketID);
+	env->SetIntField(self, udt_S_socketID, socketID);
 }
 
 jthrowable UDT_NewExceptionUDT( //
@@ -232,8 +233,8 @@ jthrowable UDT_NewExceptionUDT( //
 	CHK_NUL_RET_NUL(env, "env");
 	const jstring messageString = env->NewStringUTF(message);
 	CHK_NUL_RET_NUL(messageString, "messageString");
-	const jobject exception = env->NewObject(udt_clsExceptionUDT,
-			udt_clsExceptionUDT_initID0, socketID, errorCode, messageString);
+	const jobject exception = env->NewObject(udt_ExceptionUDT,
+			udt_ExceptionUDT_init0, socketID, errorCode, messageString);
 	return static_cast<jthrowable>(exception);
 }
 
@@ -272,44 +273,44 @@ void UDT_InitFieldMonitor( //
 		JNIEnv * const env //
 		) {
 
-	const jclass cls = udt_clsMonitorUDT;
+	const jclass cls = udt_MonitorUDT;
 
 	// global measurements
-	udtm_msTimeStamp = env->GetFieldID(cls, "msTimeStamp", "J"); // time since the UDT entity is started, in milliseconds
-	udtm_pktSentTotal = env->GetFieldID(cls, "pktSentTotal", "J"); // total number of sent data packets, including retransmissions
-	udtm_pktRecvTotal = env->GetFieldID(cls, "pktRecvTotal", "J"); // total number of received packets
-	udtm_pktSndLossTotal = env->GetFieldID(cls, "pktSndLossTotal", "I"); // total number of lost packets (sender side)
-	udtm_pktRcvLossTotal = env->GetFieldID(cls, "pktRcvLossTotal", "I"); // total number of lost packets (receiver side)
-	udtm_pktRetransTotal = env->GetFieldID(cls, "pktRetransTotal", "I"); // total number of retransmitted packets
-	udtm_pktSentACKTotal = env->GetFieldID(cls, "pktSentACKTotal", "I"); // total number of sent ACK packets
-	udtm_pktRecvACKTotal = env->GetFieldID(cls, "pktRecvACKTotal", "I"); // total number of received ACK packets
-	udtm_pktSentNAKTotal = env->GetFieldID(cls, "pktSentNAKTotal", "I"); // total number of sent NAK packets
-	udtm_pktRecvNAKTotal = env->GetFieldID(cls, "pktRecvNAKTotal", "I"); // total number of received NAK packets
-	udtm_usSndDurationTotal = env->GetFieldID(cls, "usSndDurationTotal", "J"); // total time duration when UDT is sending data (idle time exclusive)
+	udt_M_msTimeStamp = env->GetFieldID(cls, "msTimeStamp", "J"); // time since the UDT entity is started, in milliseconds
+	udt_M_pktSentTotal = env->GetFieldID(cls, "pktSentTotal", "J"); // total number of sent data packets, including retransmissions
+	udt_M_pktRecvTotal = env->GetFieldID(cls, "pktRecvTotal", "J"); // total number of received packets
+	udt_M_pktSndLossTotal = env->GetFieldID(cls, "pktSndLossTotal", "I"); // total number of lost packets (sender side)
+	udt_M_pktRcvLossTotal = env->GetFieldID(cls, "pktRcvLossTotal", "I"); // total number of lost packets (receiver side)
+	udt_M_pktRetransTotal = env->GetFieldID(cls, "pktRetransTotal", "I"); // total number of retransmitted packets
+	udt_M_pktSentACKTotal = env->GetFieldID(cls, "pktSentACKTotal", "I"); // total number of sent ACK packets
+	udt_M_pktRecvACKTotal = env->GetFieldID(cls, "pktRecvACKTotal", "I"); // total number of received ACK packets
+	udt_M_pktSentNAKTotal = env->GetFieldID(cls, "pktSentNAKTotal", "I"); // total number of sent NAK packets
+	udt_M_pktRecvNAKTotal = env->GetFieldID(cls, "pktRecvNAKTotal", "I"); // total number of received NAK packets
+	udt_M_usSndDurationTotal = env->GetFieldID(cls, "usSndDurationTotal", "J"); // total time duration when UDT is sending data (idle time exclusive)
 
 	// local measurements
-	udtm_pktSent = env->GetFieldID(cls, "pktSent", "J"); // number of sent data packets, including retransmissions
-	udtm_pktRecv = env->GetFieldID(cls, "pktRecv", "J"); // number of received packets
-	udtm_pktSndLoss = env->GetFieldID(cls, "pktSndLoss", "I"); // number of lost packets (sender side)
-	udtm_pktRcvLoss = env->GetFieldID(cls, "pktRcvLoss", "I"); // number of lost packets (receiverer side)
-	udtm_pktRetrans = env->GetFieldID(cls, "pktRetrans", "I"); // number of retransmitted packets
-	udtm_pktSentACK = env->GetFieldID(cls, "pktSentACK", "I"); // number of sent ACK packets
-	udtm_pktRecvACK = env->GetFieldID(cls, "pktRecvACK", "I"); // number of received ACK packets
-	udtm_pktSentNAK = env->GetFieldID(cls, "pktSentNAK", "I"); // number of sent NAK packets
-	udtm_pktRecvNAK = env->GetFieldID(cls, "pktRecvNAK", "I"); // number of received NAK packets
-	udtm_mbpsSendRate = env->GetFieldID(cls, "mbpsSendRate", "D"); // sending rate in Mb/s
-	udtm_mbpsRecvRate = env->GetFieldID(cls, "mbpsRecvRate", "D"); // receiving rate in Mb/s
-	udtm_usSndDuration = env->GetFieldID(cls, "usSndDuration", "J"); // busy sending time (i.e., idle time exclusive)
+	udt_M_pktSent = env->GetFieldID(cls, "pktSent", "J"); // number of sent data packets, including retransmissions
+	udt_M_pktRecv = env->GetFieldID(cls, "pktRecv", "J"); // number of received packets
+	udt_M_pktSndLoss = env->GetFieldID(cls, "pktSndLoss", "I"); // number of lost packets (sender side)
+	udt_M_pktRcvLoss = env->GetFieldID(cls, "pktRcvLoss", "I"); // number of lost packets (receiverer side)
+	udt_M_pktRetrans = env->GetFieldID(cls, "pktRetrans", "I"); // number of retransmitted packets
+	udt_M_pktSentACK = env->GetFieldID(cls, "pktSentACK", "I"); // number of sent ACK packets
+	udt_M_pktRecvACK = env->GetFieldID(cls, "pktRecvACK", "I"); // number of received ACK packets
+	udt_M_pktSentNAK = env->GetFieldID(cls, "pktSentNAK", "I"); // number of sent NAK packets
+	udt_M_pktRecvNAK = env->GetFieldID(cls, "pktRecvNAK", "I"); // number of received NAK packets
+	udt_M_mbpsSendRate = env->GetFieldID(cls, "mbpsSendRate", "D"); // sending rate in Mb/s
+	udt_M_mbpsRecvRate = env->GetFieldID(cls, "mbpsRecvRate", "D"); // receiving rate in Mb/s
+	udt_M_usSndDuration = env->GetFieldID(cls, "usSndDuration", "J"); // busy sending time (i.e., idle time exclusive)
 
 	// instant measurements
-	udtm_usPktSndPeriod = env->GetFieldID(cls, "usPktSndPeriod", "D"); // packet sending period, in microseconds
-	udtm_pktFlowWindow = env->GetFieldID(cls, "pktFlowWindow", "I"); // flow window size, in number of packets
-	udtm_pktCongestionWindow = env->GetFieldID(cls, "pktCongestionWindow", "I"); // congestion window size, in number of packets
-	udtm_pktFlightSize = env->GetFieldID(cls, "pktFlightSize", "I"); // number of packets on flight
-	udtm_msRTT = env->GetFieldID(cls, "msRTT", "D"); // RTT, in milliseconds
-	udtm_mbpsBandwidth = env->GetFieldID(cls, "mbpsBandwidth", "D"); // estimated bandwidth, in Mb/s
-	udtm_byteAvailSndBuf = env->GetFieldID(cls, "byteAvailSndBuf", "I"); // available UDT sender buffer size
-	udtm_byteAvailRcvBuf = env->GetFieldID(cls, "byteAvailRcvBuf", "I"); // available UDT receiver buffer size
+	udt_M_usPktSndPeriod = env->GetFieldID(cls, "usPktSndPeriod", "D"); // packet sending period, in microseconds
+	udt_M_pktFlowWindow = env->GetFieldID(cls, "pktFlowWindow", "I"); // flow window size, in number of packets
+	udt_M_pktCongestionWindow = env->GetFieldID(cls, "pktCongestionWindow", "I"); // congestion window size, in number of packets
+	udt_M_pktFlightSize = env->GetFieldID(cls, "pktFlightSize", "I"); // number of packets on flight
+	udt_M_msRTT = env->GetFieldID(cls, "msRTT", "D"); // RTT, in milliseconds
+	udt_M_mbpsBandwidth = env->GetFieldID(cls, "mbpsBandwidth", "D"); // estimated bandwidth, in Mb/s
+	udt_M_byteAvailSndBuf = env->GetFieldID(cls, "byteAvailSndBuf", "I"); // available UDT sender buffer size
+	udt_M_byteAvailRcvBuf = env->GetFieldID(cls, "byteAvailRcvBuf", "I"); // available UDT receiver buffer size
 
 }
 
@@ -317,37 +318,37 @@ void UDT_InitClassRefAll(JNIEnv * const env) {
 
 	// JDK
 
-	X_InitClassReference(env, &jdk_clsBoolean, "java/lang/Boolean");
-	X_InitClassReference(env, &jdk_clsInteger, "java/lang/Integer");
-	X_InitClassReference(env, &jdk_clsLong, "java/lang/Long");
+	X_InitClassReference(env, &jdk_Boolean, "java/lang/Boolean");
+	X_InitClassReference(env, &jdk_Integer, "java/lang/Integer");
+	X_InitClassReference(env, &jdk_Long, "java/lang/Long");
 
-	X_InitClassReference(env, &jdk_clsInetAddress, "java/net/InetAddress");
-	X_InitClassReference(env, &jdk_clsInetSocketAddress,
+	X_InitClassReference(env, &jdk_InetAddress, "java/net/InetAddress");
+	X_InitClassReference(env, &jdk_InetSocketAddress,
 			"java/net/InetSocketAddress");
 
-	X_InitClassReference(env, &jdk_clsSocketException,
+	X_InitClassReference(env, &jdk_SocketException,
 			"java/net/SocketException");
 
-	X_InitClassReference(env, &jdk_clsSet, "java/util/Set");
-	X_InitClassReference(env, &jdk_clsIterator, "java/util/Iterator");
+	X_InitClassReference(env, &jdk_Set, "java/util/Set");
+	X_InitClassReference(env, &jdk_Iterator, "java/util/Iterator");
 
 	// UDT
 
-	X_InitClassReference(env, &udt_clsSocketUDT, //
+	X_InitClassReference(env, &udt_SocketUDT, //
 			"com/barchart/udt/SocketUDT");
-	X_InitClassReference(env, &udt_clsTypeUDT, //
+	X_InitClassReference(env, &udt_TypeUDT, //
 			"com/barchart/udt/TypeUDT");
-	X_InitClassReference(env, &udt_clsFactoryUDT, //
+	X_InitClassReference(env, &udt_FactoryUDT, //
 			"com/barchart/udt/FactoryUDT");
-	X_InitClassReference(env, &udt_clsMonitorUDT, //
+	X_InitClassReference(env, &udt_MonitorUDT, //
 			"com/barchart/udt/MonitorUDT");
-	X_InitClassReference(env, &udt_clsExceptionUDT, //
+	X_InitClassReference(env, &udt_ExceptionUDT, //
 			"com/barchart/udt/ExceptionUDT");
-	X_InitClassReference(env, &udt_clsLingerUDT, //
+	X_InitClassReference(env, &udt_LingerUDT, //
 			"com/barchart/udt/LingerUDT");
-	X_InitClassReference(env, &udt_clsCCC, //
+	X_InitClassReference(env, &udt_CCC, //
 			"com/barchart/udt/CCC");
-	X_InitClassReference(env, &udt_clsFactoryInterfaceUDT,
+	X_InitClassReference(env, &udt_FactoryInterfaceUDT,
 			"com/barchart/udt/FactoryInterfaceUDT");
 
 }
@@ -356,28 +357,28 @@ void UDT_FreeClassRefAll(JNIEnv * const env) {
 
 	// JDK
 
-	X_FreeClassReference(env, &jdk_clsBoolean);
-	X_FreeClassReference(env, &jdk_clsInteger);
-	X_FreeClassReference(env, &jdk_clsLong);
+	X_FreeClassReference(env, &jdk_Boolean);
+	X_FreeClassReference(env, &jdk_Integer);
+	X_FreeClassReference(env, &jdk_Long);
 
-	X_FreeClassReference(env, &jdk_clsInetAddress);
-	X_FreeClassReference(env, &jdk_clsInetSocketAddress);
+	X_FreeClassReference(env, &jdk_InetAddress);
+	X_FreeClassReference(env, &jdk_InetSocketAddress);
 
-	X_FreeClassReference(env, &jdk_clsSocketException);
+	X_FreeClassReference(env, &jdk_SocketException);
 
-	X_FreeClassReference(env, &jdk_clsSet);
-	X_FreeClassReference(env, &jdk_clsIterator);
+	X_FreeClassReference(env, &jdk_Set);
+	X_FreeClassReference(env, &jdk_Iterator);
 
 	// UDT
 
-	X_FreeClassReference(env, &udt_clsSocketUDT);
-	X_FreeClassReference(env, &udt_clsTypeUDT);
-	X_FreeClassReference(env, &udt_clsFactoryUDT);
-	X_FreeClassReference(env, &udt_clsMonitorUDT);
-	X_FreeClassReference(env, &udt_clsExceptionUDT);
-	X_FreeClassReference(env, &udt_clsLingerUDT);
-	X_FreeClassReference(env, &udt_clsCCC);
-	X_FreeClassReference(env, &udt_clsFactoryInterfaceUDT);
+	X_FreeClassReference(env, &udt_SocketUDT);
+	X_FreeClassReference(env, &udt_TypeUDT);
+	X_FreeClassReference(env, &udt_FactoryUDT);
+	X_FreeClassReference(env, &udt_MonitorUDT);
+	X_FreeClassReference(env, &udt_ExceptionUDT);
+	X_FreeClassReference(env, &udt_LingerUDT);
+	X_FreeClassReference(env, &udt_CCC);
+	X_FreeClassReference(env, &udt_FactoryInterfaceUDT);
 }
 
 void UDT_InitFieldRefAll(JNIEnv * const env) {
@@ -389,20 +390,20 @@ void UDT_InitFieldRefAll(JNIEnv * const env) {
 
 	// UDT SocketUDT
 
-	udts_SocketID = env->GetFieldID(udt_clsSocketUDT, //
+	udt_S_socketID = env->GetFieldID(udt_SocketUDT, //
 			"socketID", "I");
-	udts_RemoteSocketAddressID = env->GetFieldID(udt_clsSocketUDT, //
+	udt_S_remoteSocketAddress = env->GetFieldID(udt_SocketUDT, //
 			"remoteSocketAddress", "Ljava/net/InetSocketAddress;");
-	udts_LocalSocketAddressID = env->GetFieldID(udt_clsSocketUDT, //
+	udt_S_localSocketAddress = env->GetFieldID(udt_SocketUDT, //
 			"localSocketAddress", "Ljava/net/InetSocketAddress;");
-	udts_TypeID = env->GetFieldID(udt_clsSocketUDT, //
+	udt_S_type = env->GetFieldID(udt_SocketUDT, //
 			"type", "Lcom/barchart/udt/TypeUDT;");
-	udts_MonitorID = env->GetFieldID(udt_clsSocketUDT, //
+	udt_S_monitor = env->GetFieldID(udt_SocketUDT, //
 			"monitor", "Lcom/barchart/udt/MonitorUDT;");
 
 	// UDT TypeUDT
 
-	udtt_TypeCodeID = env->GetFieldID(udt_clsTypeUDT, "code", "I");
+	udt_T_code = env->GetFieldID(udt_TypeUDT, "code", "I");
 
 	// UDT MonitorUDT
 
@@ -410,7 +411,7 @@ void UDT_InitFieldRefAll(JNIEnv * const env) {
 
 	// UDT CCC
 
-	udt_clsCCC_fld_nativeHandleID = env->GetFieldID(udt_clsCCC, //
+	udt_CCC_fld_nativeHandleID = env->GetFieldID(udt_CCC, //
 			"nativeHandle", "J");
 
 }
@@ -435,81 +436,81 @@ void UDT_InitMethodRefAll( //
 
 	// JDK
 
-	jdk_clsBoolean_initID = env->GetMethodID(jdk_clsBoolean, //
+	jdk_Boolean_init = env->GetMethodID(jdk_Boolean, //
 			"<init>", "(Z)V");
-	CHK_NUL_RET_RET(jdk_clsBoolean_initID, "jdk_clsBoolean_initID");
+	CHK_NUL_RET_RET(jdk_Boolean_init, "jdk_clsBoolean_initID");
 
-	jdk_clsInteger_initID = env->GetMethodID(jdk_clsInteger, //
+	jdk_Integer_init = env->GetMethodID(jdk_Integer, //
 			"<init>", "(I)V");
-	CHK_NUL_RET_RET(jdk_clsInteger_initID, "jdk_clsInteger_initID");
+	CHK_NUL_RET_RET(jdk_Integer_init, "jdk_clsInteger_initID");
 
-	jdk_clsLong_initID = env->GetMethodID(jdk_clsLong, //
+	jdk_Long_init = env->GetMethodID(jdk_Long, //
 			"<init>", "(J)V");
-	CHK_NUL_RET_RET(jdk_clsLong_initID, "jdk_clsLong_initID");
-
-	// InetSocketAddress
-
-	jdk_clsInetSocketAddress_initID = env->GetMethodID(jdk_clsInetSocketAddress, //
-			"<init>", "(Ljava/net/InetAddress;I)V");
-	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_initID,
-			"jdk_clsInetSocketAddress_initID");
-
-	jdk_clsInetSocketAddress_getAddressID = env->GetMethodID(
-			jdk_clsInetSocketAddress, //
-			"getAddress", "()Ljava/net/InetAddress;");
-	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_getAddressID,
-			"jdk_clsInetSocketAddress_getAddressID");
-
-	jdk_clsInetSocketAddress_getPortID = env->GetMethodID(
-			jdk_clsInetSocketAddress, //
-			"getPort", "()I");
-	CHK_NUL_RET_RET(jdk_clsInetSocketAddress_getPortID,
-			"jdk_clsInetSocketAddress_getPortID");
+	CHK_NUL_RET_RET(jdk_Long_init, "jdk_clsLong_initID");
 
 	// InetAddress
 
-	jdk_clsInetAddress_getAddressID = env->GetMethodID(jdk_clsInetAddress,
+	jdk_InetAddress_getAddress = env->GetMethodID(jdk_InetAddress,
 			"getAddress", "()[B");
-	CHK_NUL_RET_RET(jdk_clsInetAddress_getAddressID,
+	CHK_NUL_RET_RET(jdk_InetAddress_getAddress,
 			"jdk_clsInetAddress_getAddressID");
 
-	jdk_clsInetAddress_getByAddressID = env->GetStaticMethodID(
-			jdk_clsInetAddress, "getByAddress", "([B)Ljava/net/InetAddress;");
-	CHK_NUL_RET_RET(jdk_clsInetAddress_getByAddressID,
+	jdk_InetAddress_getByAddress = env->GetStaticMethodID(
+			jdk_InetAddress, "getByAddress", "([B)Ljava/net/InetAddress;");
+	CHK_NUL_RET_RET(jdk_InetAddress_getByAddress,
 			"jdk_clsInetAddress_getByAddressID");
 
+	// InetSocketAddress
+
+	jdk_InetSocketAddress_init = env->GetMethodID(jdk_InetSocketAddress, //
+			"<init>", "(Ljava/net/InetAddress;I)V");
+	CHK_NUL_RET_RET(jdk_InetSocketAddress_init,
+			"jdk_clsInetSocketAddress_initID");
+
+	jdk_InetSocketAddress_getAddress = env->GetMethodID(
+			jdk_InetSocketAddress, //
+			"getAddress", "()Ljava/net/InetAddress;");
+	CHK_NUL_RET_RET(jdk_InetSocketAddress_getAddress,
+			"jdk_clsInetSocketAddress_getAddressID");
+
+	jdk_InetSocketAddress_getPort = env->GetMethodID(
+			jdk_InetSocketAddress, //
+			"getPort", "()I");
+	CHK_NUL_RET_RET(jdk_InetSocketAddress_getPort,
+			"jdk_clsInetSocketAddress_getPortID");
+
 	// java.util.Set
-	jdk_clsSet_iteratorID = env->GetMethodID(jdk_clsSet, //
+	jdk_Set_iterator = env->GetMethodID(jdk_Set, //
 			"iterator", "()Ljava/util/Iterator;");
-	CHK_NUL_RET_RET(jdk_clsSet_iteratorID, "jdk_clsSet_iteratorID");
-	jdk_clsSet_addID = env->GetMethodID(jdk_clsSet, //
+	CHK_NUL_RET_RET(jdk_Set_iterator, "jdk_clsSet_iteratorID");
+	jdk_Set_add = env->GetMethodID(jdk_Set, //
 			"add", "(Ljava/lang/Object;)Z");
-	CHK_NUL_RET_RET(jdk_clsSet_addID, "jdk_clsSet_addID");
-	jdk_clsSet_containsID = env->GetMethodID(jdk_clsSet, //
+	CHK_NUL_RET_RET(jdk_Set_add, "jdk_clsSet_addID");
+	jdk_Set_contains = env->GetMethodID(jdk_Set, //
 			"contains", "(Ljava/lang/Object;)Z");
-	CHK_NUL_RET_RET(jdk_clsSet_containsID, "jdk_clsSet_containsID");
+	CHK_NUL_RET_RET(jdk_Set_contains, "jdk_clsSet_containsID");
 
 	// java.util.Iterator
-	jdk_clsIterator_hasNextID = env->GetMethodID(jdk_clsIterator, //
+	jdk_Iterator_hasNext = env->GetMethodID(jdk_Iterator, //
 			"hasNext", "()Z");
-	CHK_NUL_RET_RET(jdk_clsIterator_hasNextID, "jdk_clsIterator_hasNextID");
-	jdk_clsIterator_nextID = env->GetMethodID(jdk_clsIterator, //
+	CHK_NUL_RET_RET(jdk_Iterator_hasNext, "jdk_clsIterator_hasNextID");
+	jdk_Iterator_next = env->GetMethodID(jdk_Iterator, //
 			"next", "()Ljava/lang/Object;");
-	CHK_NUL_RET_RET(jdk_clsIterator_nextID, "jdk_clsIterator_nextID");
+	CHK_NUL_RET_RET(jdk_Iterator_next, "jdk_clsIterator_nextID");
 
 	// UDT
 
-	udt_clsSocketUDT_initID1 = env->GetMethodID(udt_clsSocketUDT, //
+	udt_SocketUDT_init1 = env->GetMethodID(udt_SocketUDT, //
 			"<init>", "(Lcom/barchart/udt/TypeUDT;I)V");
-	CHK_NUL_RET_RET(udt_clsSocketUDT_initID1, "udt_clsSocketUDT_initID1");
+	CHK_NUL_RET_RET(udt_SocketUDT_init1, "udt_clsSocketUDT_initID1");
 
-	udt_clsExceptionUDT_initID0 = env->GetMethodID(udt_clsExceptionUDT, //
+	udt_ExceptionUDT_init0 = env->GetMethodID(udt_ExceptionUDT, //
 			"<init>", "(IILjava/lang/String;)V");
-	CHK_NUL_RET_RET(udt_clsExceptionUDT_initID0, "udt_clsExceptionUDT_initID0");
+	CHK_NUL_RET_RET(udt_ExceptionUDT_init0, "udt_clsExceptionUDT_initID0");
 
-	udt_clsLingerUDT_initID = env->GetMethodID(udt_clsLingerUDT, //
+	udt_LingerUDT_init = env->GetMethodID(udt_LingerUDT, //
 			"<init>", "(I)V");
-	CHK_NUL_RET_RET(udt_clsLingerUDT_initID, "udt_clsLingerUDT_initID");
+	CHK_NUL_RET_RET(udt_LingerUDT_init, "udt_clsLingerUDT_initID");
 
 }
 
@@ -654,12 +655,12 @@ JNIEXPORT jobject JNICALL Java_com_barchart_udt_SocketUDT_accept0( //
 
 	}
 
-	jobject objTypeUDT = env->GetObjectField(self, udts_TypeID);
+	jobject objTypeUDT = env->GetObjectField(self, udt_S_type);
 
 	CHK_NUL_RET_NUL(objTypeUDT, "objTypeUDT");
 
-	jobject objSocketUDT = env->NewObject(udt_clsSocketUDT,
-			udt_clsSocketUDT_initID1, objTypeUDT, socketACC);
+	jobject objSocketUDT = env->NewObject(udt_SocketUDT,
+			udt_SocketUDT_init1, objTypeUDT, socketACC);
 
 	CHK_NUL_RET_NUL(objSocketUDT, "objSocketUDT");
 
@@ -790,7 +791,7 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedRemoteSocket
 	}
 
 	jobject objRemoteSocketAddress = env->GetObjectField(self,
-			udts_RemoteSocketAddressID);
+			udt_S_remoteSocketAddress);
 
 	if (objRemoteSocketAddress == NULL
 			|| !X_IsSockaddrEqualsInetSocketAddress(env, &remoteSockAddr,
@@ -798,7 +799,7 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedRemoteSocket
 
 		objRemoteSocketAddress = X_NewInetSocketAddress(env, &remoteSockAddr);
 
-		env->SetObjectField(self, udts_RemoteSocketAddressID,
+		env->SetObjectField(self, udt_S_remoteSocketAddress,
 				objRemoteSocketAddress);
 
 	}
@@ -827,7 +828,7 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedLocalSocketA
 	}
 
 	jobject objLocalSocketAddress = env->GetObjectField(self,
-			udts_LocalSocketAddressID);
+			udt_S_localSocketAddress);
 
 	if (objLocalSocketAddress == NULL
 			|| !X_IsSockaddrEqualsInetSocketAddress(env, &localSockAddr,
@@ -835,7 +836,7 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedLocalSocketA
 
 		objLocalSocketAddress = X_NewInetSocketAddress(env, &localSockAddr);
 
-		env->SetObjectField(self, udts_LocalSocketAddressID,
+		env->SetObjectField(self, udt_S_localSocketAddress,
 				objLocalSocketAddress);
 
 	}
@@ -876,23 +877,23 @@ JNIEXPORT jobject JNICALL Java_com_barchart_udt_SocketUDT_getOption0( //
 		return NULL;
 	}
 
-	if (env->IsSameObject(klaz, jdk_clsBoolean)) {
+	if (env->IsSameObject(klaz, jdk_Boolean)) {
 
 		return X_NewBoolean(env, optionValue.boolValue);
 
-	} else if (env->IsSameObject(klaz, jdk_clsInteger)) {
+	} else if (env->IsSameObject(klaz, jdk_Integer)) {
 
 		return X_NewInteger(env, optionValue.intValue);
 
-	} else if (env->IsSameObject(klaz, udt_clsLingerUDT)) {
+	} else if (env->IsSameObject(klaz, udt_LingerUDT)) {
 
 		return UDT_NewLingerUDT(env, &(optionValue.lingerValue));
 
-	} else if (env->IsSameObject(klaz, jdk_clsLong)) {
+	} else if (env->IsSameObject(klaz, jdk_Long)) {
 
 		return X_NewLong(env, optionValue.longValue);
 
-	} else if (env->IsSameObject(klaz, udt_clsFactoryUDT)) {
+	} else if (env->IsSameObject(klaz, udt_FactoryUDT)) {
 
 		CCC* pCCC = reinterpret_cast<CCC*>(optionValue.factory);
 
@@ -932,28 +933,28 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_setOption0( //
 	UDT_OptVal optionValue;
 	int optionValueSize = sizeof(optionValue);
 
-	if (env->IsSameObject(klaz, jdk_clsBoolean)) {
+	if (env->IsSameObject(klaz, jdk_Boolean)) {
 
 		jmethodID methodID = //
-				env->GetMethodID(jdk_clsBoolean, "booleanValue", "()Z");
+				env->GetMethodID(jdk_Boolean, "booleanValue", "()Z");
 		jboolean value = env->CallBooleanMethod(objValue, methodID);
 
 		optionValue.boolValue = BOOL(value);
 		optionValueSize = sizeof(bool);
 
-	} else if (env->IsSameObject(klaz, jdk_clsInteger)) {
+	} else if (env->IsSameObject(klaz, jdk_Integer)) {
 
 		jmethodID methodID = //
-				env->GetMethodID(jdk_clsInteger, "intValue", "()I");
+				env->GetMethodID(jdk_Integer, "intValue", "()I");
 		jint value = env->CallIntMethod(objValue, methodID);
 
 		optionValue.intValue = value;
 		optionValueSize = sizeof(int);
 
-	} else if (env->IsSameObject(klaz, udt_clsLingerUDT)) {
+	} else if (env->IsSameObject(klaz, udt_LingerUDT)) {
 
 		jmethodID methodID = //
-				env->GetMethodID(udt_clsLingerUDT, "intValue", "()I");
+				env->GetMethodID(udt_LingerUDT, "intValue", "()I");
 		int value = env->CallIntMethod(objValue, methodID);
 
 		if (value <= 0) {
@@ -966,16 +967,16 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_setOption0( //
 
 		optionValueSize = sizeof(linger);
 
-	} else if (env->IsSameObject(klaz, jdk_clsLong)) {
+	} else if (env->IsSameObject(klaz, jdk_Long)) {
 
 		jmethodID methodID = //
-				env->GetMethodID(jdk_clsLong, "longValue", "()J");
+				env->GetMethodID(jdk_Long, "longValue", "()J");
 		jlong value = env->CallLongMethod(objValue, methodID);
 
 		optionValue.longValue = value;
 		optionValueSize = sizeof(int64_t);
 
-	} else if (env->IsSameObject(klaz, udt_clsFactoryUDT)) {
+	} else if (env->IsSameObject(klaz, udt_FactoryUDT)) {
 
 		optionValue.factory = new JNICCCFactory(env, objValue);
 		optionValueSize = sizeof(void*);
@@ -1551,49 +1552,49 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_updateMonitor0( //
 		return;
 	}
 
-	const jobject objMonitor = env->GetObjectField(self, udts_MonitorID);
+	const jobject objMonitor = env->GetObjectField(self, udt_S_monitor);
 
 	CHK_NUL_RET_RET(objMonitor, "objMonitor");
 
 	// global measurements
-	env->SetLongField(objMonitor, udtm_msTimeStamp, monitor.msTimeStamp); // time since the UDT entity is started, in milliseconds
-	env->SetLongField(objMonitor, udtm_pktSentTotal, monitor.pktSentTotal); // total number of sent data packets, including retransmissions
-	env->SetLongField(objMonitor, udtm_pktRecvTotal, monitor.pktRecvTotal); // total number of received packets
-	env->SetIntField(objMonitor, udtm_pktSndLossTotal, monitor.pktSndLossTotal); // total number of lost packets (sender side)
-	env->SetIntField(objMonitor, udtm_pktRcvLossTotal, monitor.pktRcvLossTotal); // total number of lost packets (receiver side)
-	env->SetIntField(objMonitor, udtm_pktRetransTotal, monitor.pktRetransTotal); // total number of retransmitted packets
-	env->SetIntField(objMonitor, udtm_pktSentACKTotal, monitor.pktSentACKTotal); // total number of sent ACK packets
-	env->SetIntField(objMonitor, udtm_pktRecvACKTotal, monitor.pktRecvACKTotal); // total number of received ACK packets
-	env->SetIntField(objMonitor, udtm_pktSentNAKTotal, monitor.pktSentNAKTotal); // total number of sent NAK packets
-	env->SetIntField(objMonitor, udtm_pktRecvNAKTotal, monitor.pktRecvNAKTotal); // total number of received NAK packets
-	env->SetLongField(objMonitor, udtm_usSndDurationTotal,
+	env->SetLongField(objMonitor, udt_M_msTimeStamp, monitor.msTimeStamp); // time since the UDT entity is started, in milliseconds
+	env->SetLongField(objMonitor, udt_M_pktSentTotal, monitor.pktSentTotal); // total number of sent data packets, including retransmissions
+	env->SetLongField(objMonitor, udt_M_pktRecvTotal, monitor.pktRecvTotal); // total number of received packets
+	env->SetIntField(objMonitor, udt_M_pktSndLossTotal, monitor.pktSndLossTotal); // total number of lost packets (sender side)
+	env->SetIntField(objMonitor, udt_M_pktRcvLossTotal, monitor.pktRcvLossTotal); // total number of lost packets (receiver side)
+	env->SetIntField(objMonitor, udt_M_pktRetransTotal, monitor.pktRetransTotal); // total number of retransmitted packets
+	env->SetIntField(objMonitor, udt_M_pktSentACKTotal, monitor.pktSentACKTotal); // total number of sent ACK packets
+	env->SetIntField(objMonitor, udt_M_pktRecvACKTotal, monitor.pktRecvACKTotal); // total number of received ACK packets
+	env->SetIntField(objMonitor, udt_M_pktSentNAKTotal, monitor.pktSentNAKTotal); // total number of sent NAK packets
+	env->SetIntField(objMonitor, udt_M_pktRecvNAKTotal, monitor.pktRecvNAKTotal); // total number of received NAK packets
+	env->SetLongField(objMonitor, udt_M_usSndDurationTotal,
 			monitor.usSndDurationTotal); // total time duration when UDT is sending data (idle time exclusive)
 
 	// local measurements
-	env->SetLongField(objMonitor, udtm_pktSent, monitor.pktSent); // number of sent data packets, including retransmissions
-	env->SetLongField(objMonitor, udtm_pktRecv, monitor.pktRecv); // number of received packets
-	env->SetIntField(objMonitor, udtm_pktSndLoss, monitor.pktSndLoss); // number of lost packets (sender side)
-	env->SetIntField(objMonitor, udtm_pktRcvLoss, monitor.pktRcvLoss); // number of lost packets (receiverer side)
-	env->SetIntField(objMonitor, udtm_pktRetrans, monitor.pktRetrans); // number of retransmitted packets
-	env->SetIntField(objMonitor, udtm_pktSentACK, monitor.pktSentACK); // number of sent ACK packets
-	env->SetIntField(objMonitor, udtm_pktRecvACK, monitor.pktRecvACK); // number of received ACK packets
-	env->SetIntField(objMonitor, udtm_pktSentNAK, monitor.pktSentNAK); // number of sent NAK packets
-	env->SetIntField(objMonitor, udtm_pktRecvNAK, monitor.pktRecvNAK); // number of received NAK packets
-	env->SetDoubleField(objMonitor, udtm_mbpsSendRate, monitor.mbpsSendRate); // sending rate in Mb/s
-	env->SetDoubleField(objMonitor, udtm_mbpsRecvRate, monitor.mbpsRecvRate); // receiving rate in Mb/s
-	env->SetLongField(objMonitor, udtm_usSndDuration, monitor.usSndDuration); // busy sending time (i.e., idle time exclusive)
+	env->SetLongField(objMonitor, udt_M_pktSent, monitor.pktSent); // number of sent data packets, including retransmissions
+	env->SetLongField(objMonitor, udt_M_pktRecv, monitor.pktRecv); // number of received packets
+	env->SetIntField(objMonitor, udt_M_pktSndLoss, monitor.pktSndLoss); // number of lost packets (sender side)
+	env->SetIntField(objMonitor, udt_M_pktRcvLoss, monitor.pktRcvLoss); // number of lost packets (receiverer side)
+	env->SetIntField(objMonitor, udt_M_pktRetrans, monitor.pktRetrans); // number of retransmitted packets
+	env->SetIntField(objMonitor, udt_M_pktSentACK, monitor.pktSentACK); // number of sent ACK packets
+	env->SetIntField(objMonitor, udt_M_pktRecvACK, monitor.pktRecvACK); // number of received ACK packets
+	env->SetIntField(objMonitor, udt_M_pktSentNAK, monitor.pktSentNAK); // number of sent NAK packets
+	env->SetIntField(objMonitor, udt_M_pktRecvNAK, monitor.pktRecvNAK); // number of received NAK packets
+	env->SetDoubleField(objMonitor, udt_M_mbpsSendRate, monitor.mbpsSendRate); // sending rate in Mb/s
+	env->SetDoubleField(objMonitor, udt_M_mbpsRecvRate, monitor.mbpsRecvRate); // receiving rate in Mb/s
+	env->SetLongField(objMonitor, udt_M_usSndDuration, monitor.usSndDuration); // busy sending time (i.e., idle time exclusive)
 
 	// instant measurements
-	env->SetDoubleField(objMonitor, udtm_usPktSndPeriod,
+	env->SetDoubleField(objMonitor, udt_M_usPktSndPeriod,
 			monitor.usPktSndPeriod); // packet sending period, in microseconds
-	env->SetIntField(objMonitor, udtm_pktFlowWindow, monitor.pktFlowWindow); // flow window size, in number of packets
-	env->SetIntField(objMonitor, udtm_pktCongestionWindow,
+	env->SetIntField(objMonitor, udt_M_pktFlowWindow, monitor.pktFlowWindow); // flow window size, in number of packets
+	env->SetIntField(objMonitor, udt_M_pktCongestionWindow,
 			monitor.pktCongestionWindow); // congestion window size, in number of packets
-	env->SetIntField(objMonitor, udtm_pktFlightSize, monitor.pktFlightSize); // number of packets on flight
-	env->SetDoubleField(objMonitor, udtm_msRTT, monitor.msRTT); // RTT, in milliseconds
-	env->SetDoubleField(objMonitor, udtm_mbpsBandwidth, monitor.mbpsBandwidth); // estimated bandwidth, in Mb/s
-	env->SetIntField(objMonitor, udtm_byteAvailSndBuf, monitor.byteAvailSndBuf); // available UDT sender buffer size
-	env->SetIntField(objMonitor, udtm_byteAvailRcvBuf, monitor.byteAvailRcvBuf); // available UDT receiver buffer size
+	env->SetIntField(objMonitor, udt_M_pktFlightSize, monitor.pktFlightSize); // number of packets on flight
+	env->SetDoubleField(objMonitor, udt_M_msRTT, monitor.msRTT); // RTT, in milliseconds
+	env->SetDoubleField(objMonitor, udt_M_mbpsBandwidth, monitor.mbpsBandwidth); // estimated bandwidth, in Mb/s
+	env->SetIntField(objMonitor, udt_M_byteAvailSndBuf, monitor.byteAvailSndBuf); // available UDT sender buffer size
+	env->SetIntField(objMonitor, udt_M_byteAvailRcvBuf, monitor.byteAvailRcvBuf); // available UDT receiver buffer size
 
 }
 
@@ -1883,14 +1884,14 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testIterateSet0( //
 
 	UNUSED(clsSocketUDT);
 
-	jobject iterator = env->CallObjectMethod(objSet, jdk_clsSet_iteratorID);
+	jobject iterator = env->CallObjectMethod(objSet, jdk_Set_iterator);
 
 	jint count = 0;
 
 	while (JNI_TRUE
-			== env->CallBooleanMethod(iterator, jdk_clsIterator_hasNextID)) {
+			== env->CallBooleanMethod(iterator, jdk_Iterator_hasNext)) {
 		jobject objAny = env->CallObjectMethod( //
-				iterator, jdk_clsIterator_nextID);
+				iterator, jdk_Iterator_next);
 		UNUSED(objAny);
 		objAny = NULL;
 		count++;

@@ -47,11 +47,11 @@ bool JNICCCFactory::initJNITypes(JNIEnv* env){
 	if(_udt_clsFactoryInterfaceUDT_create != NULL)
 		return true;
 
-	if(udt_clsFactoryInterfaceUDT==NULL)
+	if(udt_FactoryInterfaceUDT==NULL)
 		return false;
 
-	_udt_clsFactoryInterfaceUDT_cloneFactory = env->GetMethodID(udt_clsFactoryInterfaceUDT, "cloneFactory", "()Lcom/barchart/udt/FactoryInterfaceUDT;");
-	_udt_clsFactoryInterfaceUDT_create = env->GetMethodID(udt_clsFactoryInterfaceUDT, "create", "()Lcom/barchart/udt/CCC;");
+	_udt_clsFactoryInterfaceUDT_cloneFactory = env->GetMethodID(udt_FactoryInterfaceUDT, "cloneFactory", "()Lcom/barchart/udt/FactoryInterfaceUDT;");
+	_udt_clsFactoryInterfaceUDT_create = env->GetMethodID(udt_FactoryInterfaceUDT, "create", "()Lcom/barchart/udt/CCC;");
 
 	return true;
 }
@@ -106,7 +106,7 @@ CCC* JNICCCFactory::create(){
 		UDT_ThrowExceptionUDT_Message(env, 0, "failed to allocate CCC class via com.barchart.udt.FactoryInterfaceUDT");
 	}
 
-	return reinterpret_cast<CCC*> ((intptr_t) env->GetLongField(objCCC,udt_clsCCC_fld_nativeHandleID));
+	return reinterpret_cast<CCC*> ((intptr_t) env->GetLongField(objCCC,udt_CCC_fld_nativeHandleID));
 }
 
 CCCVirtualFactory* JNICCCFactory::clone(){

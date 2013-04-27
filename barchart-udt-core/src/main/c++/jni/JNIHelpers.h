@@ -59,41 +59,45 @@ extern "C"{
 // ### JDK references
 
 // JDK classes
-extern jclass jdk_clsBoolean; // java.lang.Boolean
-extern jclass jdk_clsInteger; // java.lang.Integer
-extern jclass jdk_clsLong; // java.lang.Long
-extern jclass jdk_clsInetAddress; // java.net.InetAddress
-extern jclass jdk_clsInetSocketAddress; // java.net.InetSocketAddress
-extern jclass jdk_clsSocketException; // java.net.SocketException
-extern jclass jdk_clsSet; // java.util.Set
-extern jclass jdk_clsIterator; // java.util.Iterator
 
-// JDK fields
+extern jclass jdk_Boolean; // java.lang.Boolean
+extern jclass jdk_Integer; // java.lang.Integer
+extern jclass jdk_Long; // java.lang.Long
+
+extern jclass jdk_InetAddress; // java.net.InetAddress
+extern jclass jdk_InetSocketAddress; // java.net.InetSocketAddress
+
+extern jclass jdk_SocketException; // java.net.SocketException
+extern jclass jdk_Set; // java.util.Set
+extern jclass jdk_Iterator; // java.util.Iterator
 
 // JDK methods
-extern jmethodID jdk_clsBoolean_initID; // new Boolean(boolean x)
-extern jmethodID jdk_clsInteger_initID; // new Integer(int x)
-extern jmethodID jdk_clsLong_initID; // new Long(long x)
 
-extern jmethodID jdk_clsInetAddress_getAddressID; // byte[] getAddress()
-extern jmethodID jdk_clsInetAddress_getByAddressID; // static InetAddress getByAddress(byte[])
+extern jmethodID jdk_Boolean_init; // new Boolean(boolean x)
+extern jmethodID jdk_Integer_init; // new Integer(int x)
+extern jmethodID jdk_Long_init; // new Long(long x)
 
-extern jmethodID jdk_clsInetSocketAddress_initID; // new InetSocketAddress(InetAddress x)
-extern jmethodID jdk_clsInetSocketAddress_getAddressID; //
-extern jmethodID jdk_clsInetSocketAddress_getPortID; //
+extern jmethodID jdk_InetAddress_getAddress; // byte[] getAddress()
+extern jmethodID jdk_InetAddress_getByAddress; // static InetAddress getByAddress(byte[])
 
-extern jmethodID jdk_clsSet_iteratorID; // Iterator set.iterator()
-extern jmethodID jdk_clsSet_addID; // boolean set.add(Object)
-extern jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
+extern jmethodID jdk_InetSocketAddress_init; // new InetSocketAddress(InetAddress x)
+extern jmethodID jdk_InetSocketAddress_getAddress; // InetAddress InetSocketAddress.getAddress()
+extern jmethodID jdk_InetSocketAddress_getPort; // int InetSocketAddress.getPort()
 
-extern jmethodID jdk_clsIterator_hasNextID; // boolean iterator.hasNext()
-extern jmethodID jdk_clsIterator_nextID; // Object iterator.next()
+extern jmethodID jdk_Set_iterator; // Iterator Set.iterator()
+extern jmethodID jdk_Set_add; // boolean Set.add(Object)
+extern jmethodID jdk_Set_contains; // boolean Set.contains(Object)
+
+extern jmethodID jdk_Iterator_hasNext; // boolean Iterator.hasNext()
+extern jmethodID jdk_Iterator_next; // Object Iterator.next()
 
 // UDT classes
-extern jclass udt_clsFactoryInterfaceUDT;
+
+extern jclass udt_FactoryInterfaceUDT;
 
 // UDT methods
-extern jfieldID udt_clsCCC_fld_nativeHandleID;
+
+extern jfieldID udt_CCC_fld_nativeHandleID;
 
 //#define EOL "\n"
 

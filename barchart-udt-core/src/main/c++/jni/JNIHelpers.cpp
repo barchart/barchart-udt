@@ -47,41 +47,46 @@
 // ### JDK references
 
 // JDK classes
-jclass jdk_clsBoolean; // java.lang.Boolean
-jclass jdk_clsInteger; // java.lang.Integer
-jclass jdk_clsLong; // java.lang.Long
-jclass jdk_clsInetAddress; // java.net.InetAddress
-jclass jdk_clsInetSocketAddress; // java.net.InetSocketAddress
-jclass jdk_clsSocketException; // java.net.SocketException
-jclass jdk_clsSet; // java.util.Set
-jclass jdk_clsIterator; // java.util.Iterator
 
-// JDK fields
+jclass jdk_Boolean; // java.lang.Boolean
+jclass jdk_Integer; // java.lang.Integer
+jclass jdk_Long; // java.lang.Long
+
+jclass jdk_InetAddress; // java.net.InetAddress
+jclass jdk_InetSocketAddress; // java.net.InetSocketAddress
+
+jclass jdk_SocketException; // java.net.SocketException
+
+jclass jdk_Set; // java.util.Set
+jclass jdk_Iterator; // java.util.Iterator
 
 // JDK methods
-jmethodID jdk_clsBoolean_initID; // new Boolean(boolean x)
-jmethodID jdk_clsInteger_initID; // new Integer(int x)
-jmethodID jdk_clsLong_initID; // new Long(long x)
 
-jmethodID jdk_clsInetAddress_getAddressID; // byte[] getAddress()
-jmethodID jdk_clsInetAddress_getByAddressID; // static InetAddress getByAddress(byte[])
+jmethodID jdk_Boolean_init; // new Boolean(boolean x)
+jmethodID jdk_Integer_init; // new Integer(int x)
+jmethodID jdk_Long_init; // new Long(long x)
 
-jmethodID jdk_clsInetSocketAddress_initID; // new InetSocketAddress(InetAddress x)
-jmethodID jdk_clsInetSocketAddress_getAddressID; //
-jmethodID jdk_clsInetSocketAddress_getPortID; //
+jmethodID jdk_InetAddress_getAddress; // byte[] getAddress()
+jmethodID jdk_InetAddress_getByAddress; // static InetAddress getByAddress(byte[])
 
-jmethodID jdk_clsSet_iteratorID; // Iterator set.iterator()
-jmethodID jdk_clsSet_addID; // boolean set.add(Object)
-jmethodID jdk_clsSet_containsID; // boolean set.contains(Object)
+jmethodID jdk_InetSocketAddress_init; // new InetSocketAddress(InetAddress x)
+jmethodID jdk_InetSocketAddress_getAddress; //
+jmethodID jdk_InetSocketAddress_getPort; //
 
-jmethodID jdk_clsIterator_hasNextID; // boolean iterator.hasNext()
-jmethodID jdk_clsIterator_nextID; // Object iterator.next()
+jmethodID jdk_Set_iterator; // Iterator set.iterator()
+jmethodID jdk_Set_add; // boolean set.add(Object)
+jmethodID jdk_Set_contains; // boolean set.contains(Object)
+
+jmethodID jdk_Iterator_hasNext; // boolean iterator.hasNext()
+jmethodID jdk_Iterator_next; // Object iterator.next()
 
 // UDT classes
-jclass udt_clsFactoryInterfaceUDT; //com.barchart.udt.FactoryInterfaceUDT
+
+jclass udt_FactoryInterfaceUDT; //com.barchart.udt.FactoryInterfaceUDT
 
 // UDT methods
-jfieldID udt_clsCCC_fld_nativeHandleID;
+
+jfieldID udt_CCC_fld_nativeHandleID;
 
 void X_InitClassReference(JNIEnv *env, jclass *classReference,
 		const char *className) {
@@ -104,20 +109,20 @@ void X_FreeClassReference(JNIEnv *env, jclass* globalRef) {
 // use native bool parameter
 jobject X_NewBoolean(JNIEnv *env, bool value) {
 	CHK_NUL_RET_NUL(env, "env");
-	return env->NewObject(jdk_clsBoolean, jdk_clsBoolean_initID,
+	return env->NewObject(jdk_Boolean, jdk_Boolean_init,
 			BOOLEAN(value) );
 }
 
 // use native 32 bit int parameter
 jobject X_NewInteger(JNIEnv *env, int value) {
 	CHK_NUL_RET_NUL(env, "env");
-	return env->NewObject(jdk_clsInteger, jdk_clsInteger_initID, (jint) value);
+	return env->NewObject(jdk_Integer, jdk_Integer_init, (jint) value);
 }
 
 // use native 64 bit long parameter
 jobject X_NewLong(JNIEnv* env, int64_t value) {
 	CHK_NUL_RET_NUL(env, "env");
-	return env->NewObject(jdk_clsLong, jdk_clsLong_initID, (jlong) value);
+	return env->NewObject(jdk_Long, jdk_Long_init, (jlong) value);
 }
 
 // NOTE: ipv4 only
@@ -141,7 +146,7 @@ int X_ConvertInetAddressToInteger( //
 	CHK_NUL_RET_ERR(address, "address");
 
 	const jbyteArray objArray = (jbyteArray) env->CallObjectMethod(
-			objInetAddress, jdk_clsInetAddress_getAddressID);
+			objInetAddress, jdk_InetAddress_getAddress);
 	CHK_NUL_RET_ERR(objArray, "objArray");
 
 	const int sizeArray = env->GetArrayLength(objArray);
@@ -185,12 +190,12 @@ int X_ConvertInetSocketAddressToSockaddr( //
 	CHK_NUL_RET_ERR(objInetSocketAddress, "objInetSocketAddress");
 
 	const jobject objInetAddress = env->CallObjectMethod(objInetSocketAddress,
-			jdk_clsInetSocketAddress_getAddressID);
+			jdk_InetSocketAddress_getAddress);
 	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
 
 	jint address = 0;
 	jint port = env->CallIntMethod(objInetSocketAddress,
-			jdk_clsInetSocketAddress_getPortID);
+			jdk_InetSocketAddress_getPort);
 
 	const int rv = X_ConvertInetAddressToInteger(env, objInetAddress, &address);
 	if (rv == JNI_ERR) {
@@ -225,7 +230,7 @@ jobject X_NewInetAddress( //
 	env->SetByteArrayRegion(objArray, (jint) 0, (jint) 4, (jbyte*) valArray);
 
 	const jobject objInetAddress = env->CallStaticObjectMethod(
-			jdk_clsInetAddress, jdk_clsInetAddress_getByAddressID, objArray);
+			jdk_InetAddress, jdk_InetAddress_getByAddress, objArray);
 	CHK_NUL_RET_NUL(objInetAddress, "objInetAddress");
 
 	return objInetAddress;
@@ -249,7 +254,7 @@ jobject X_NewInetSocketAddress( //
 	CHK_NUL_RET_NUL(objInetAddress, "objInetAddress");
 
 	const jobject objInetSocketAddress = env->NewObject(
-			jdk_clsInetSocketAddress, jdk_clsInetSocketAddress_initID,
+			jdk_InetSocketAddress, jdk_InetSocketAddress_init,
 			objInetAddress, port);
 	CHK_NUL_RET_NUL(objInetSocketAddress, "objInetSocketAddress");
 
@@ -274,10 +279,10 @@ bool X_IsSockaddrEqualsInetSocketAddress( //
 
 	jint address2 = 0;
 	jint port2 = env->CallIntMethod(objSocketAddress,
-			jdk_clsInetSocketAddress_getPortID);
+			jdk_InetSocketAddress_getPort);
 
 	jobject objInetAddress = env->CallObjectMethod(objSocketAddress,
-			jdk_clsInetSocketAddress_getAddressID);
+			jdk_InetSocketAddress_getAddress);
 	CHK_NUL_RET_ERR(objInetAddress, "objInetAddress");
 
 	const int rv = X_ConvertInetAddressToInteger(env, objInetAddress,
