@@ -461,7 +461,7 @@ void UDT_InitMethodRefAll( //
 
 	jdk_clsInet4Address_getAddressByID = env->GetStaticMethodID(jdk_clsInetAddress,
 			"getByAddress", "([B)Ljava/net/InetAddress;");
-	CHK_NUL_RET_RET(jdk_clsInet4Address_getByAddressID,"jdk_clsInet4Address_getByAddressID");
+	CHK_NUL_RET_RET(jdk_clsInet4Address_getAddressByID,"jdk_clsInet4Address_getAddressByID");
 
 	jdk_clsInetSocketAddress_getAddressID = env->GetMethodID(jdk_clsInetSocketAddress, //
 			"getAddress", "()Ljava/net/InetAddress;");
