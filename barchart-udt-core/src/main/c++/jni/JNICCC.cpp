@@ -70,7 +70,7 @@ JNICCC::JNICCC(JNIEnv* env, jobject objCCC) :
 		_methodOnPktSent = NULL;
 		_methodProcessCustomMsg = NULL;
 
-		env->SetLongField(objCCC,udt_clsCCC_fld_nativeHandleID,(jlong)(intptr_t)this);
+		env->SetLongField(objCCC,udt_CCC_fld_nativeHandleID,(jlong)(intptr_t)this);
 	}
 }
 

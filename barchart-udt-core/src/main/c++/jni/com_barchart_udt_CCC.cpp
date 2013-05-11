@@ -46,7 +46,7 @@ JNICCC* getNativeJNICCC(JNIEnv* env, jobject javaCCC){
 	CHK_NUL_RET_NUL(env, "env");
 	CHK_NUL_RET_NUL(env, "javaCCC");
 
-	JNICCC* jniCCC = reinterpret_cast<JNICCC*>( (intptr_t) env->GetLongField(javaCCC,udt_clsCCC_fld_nativeHandleID)) ;
+	JNICCC* jniCCC = reinterpret_cast<JNICCC*>( (intptr_t) env->GetLongField(javaCCC,udt_CCC_fld_nativeHandleID)) ;
 
 	if(jniCCC==NULL){
 		UDT_ThrowExceptionUDT_Message(env,0,"illegal state, nativeHandle not set to instance of native JNICCC* class");

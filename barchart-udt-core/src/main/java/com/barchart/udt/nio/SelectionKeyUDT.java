@@ -32,7 +32,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 			.getLogger(SelectionKeyUDT.class);
 
 	/**
-	 * select options : from jdk into epoll
+	 * Convert select options : from jdk into epoll.
 	 */
 	protected static Opt from(final int interestOps) {
 
@@ -55,6 +55,9 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 	}
 
+	/**
+	 * Render select options.
+	 */
 	public static final String toStringOps(final int selectOps) {
 		final char A = (OP_ACCEPT & selectOps) != 0 ? 'A' : '-';
 		final char C = (OP_CONNECT & selectOps) != 0 ? 'C' : '-';
@@ -63,25 +66,39 @@ public class SelectionKeyUDT extends SelectionKey implements
 		return String.format("%c%c%c%c", A, C, R, W);
 	}
 
-	/** bound channel */
+	/**
+	 * Channel bound to the key.
+	 */
 	private final ChannelUDT channelUDT;
 
-	/** current interest options in epoll format */
+	/**
+	 * Requested interest in epoll format.
+	 */
 	private volatile Opt epollOpt;
 
-	/** requested interest */
+	/**
+	 * Requested interest in JDK format.
+	 */
 	private volatile int interestOps;
 
-	/** is key not canceled? */
+	/**
+	 * Key validity state. Key is valid when created, and invalid when canceled.
+	 */
 	private volatile boolean isValid;
 
-	/** read and write correlation index for the same key */
-	private volatile int resultIndex;
-
-	/** interest reported as ready */
+	/**
+	 * Reported ready interest.
+	 */
 	private volatile int readyOps;
 
-	/** bound selector */
+	/**
+	 * Correlation index for {@link #doRead(int)} vs {@link #doWrite(int)}
+	 */
+	private volatile int resultIndex;
+
+	/**
+	 * Selector bound to the key.
+	 */
 	private final SelectorUDT selectorUDT;
 
 	protected SelectionKeyUDT( //
@@ -100,7 +117,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 	}
 
 	/**
-	 * ensure key is not canceled
+	 * Ensure key is NOT canceled.
 	 */
 	protected void assertValidKey() throws CancelledKeyException {
 		if (isValid()) {
@@ -110,7 +127,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 	}
 
 	/**
-	 * ensure only permitted mask bits
+	 * Ensure only permitted interest mask bits are present.
 	 */
 	protected void assertValidOps(final int interestOps) {
 		if ((interestOps & ~(channel().validOps())) != 0) {
@@ -131,6 +148,9 @@ public class SelectionKeyUDT extends SelectionKey implements
 		return (SelectableChannel) channelUDT;
 	}
 
+	/**
+	 * Underlying UDT channel.
+	 */
 	protected ChannelUDT channelUDT() {
 		return channelUDT;
 	}
@@ -149,27 +169,32 @@ public class SelectionKeyUDT extends SelectionKey implements
 	}
 
 	/**
-	 * Apply read readiness according to {@link KindUDT} channel role.
+	 * Apply READ readiness according to {@link KindUDT} channel role.
 	 * <p>
-	 * note: read readiness is reported before {@link #doWrite(int)}
+	 * Note: {@link #doRead(int)} is invoked before {@link #doWrite(int)}
+	 * <p>
+	 * Sockets with exceptions are returned to both read and write sets.
 	 * 
-	 * @return should report state change?
+	 * @return Should report ready-state change?
 	 */
 	protected boolean doRead(final int resultIndex) {
 
 		int readyOps = 0;
 		final int interestOps = this.interestOps;
+
+		/** Store read/write verifier. */
 		this.resultIndex = resultIndex;
 
 		try {
 
+			/** Check error report. */
 			if (!epollOpt.hasRead()) {
-				if (interestOps == 0) {
-					logError("error report when missing interest");
-					return false;
-				} else {
-					readyOps = interestOps;
+				if (isSocketShutdown()) {
+					readyOps = channel().validOps();
 					return true;
+				} else {
+					logError("Unexpected error report.");
+					return false;
 				}
 			}
 
@@ -179,7 +204,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 					readyOps = OP_ACCEPT;
 					return true;
 				} else {
-					logError("ready to ACCEPT while not interested");
+					logError("Ready to ACCEPT while not interested.");
 					return false;
 				}
 			case CONNECTOR:
@@ -188,11 +213,11 @@ public class SelectionKeyUDT extends SelectionKey implements
 					readyOps = OP_READ;
 					return true;
 				} else {
-					logError("ready to READ while not interested");
+					logError("Ready to READ while not interested.");
 					return false;
 				}
 			default:
-				logError("wrong kind");
+				logError("Wrong kind.");
 				return false;
 			}
 
@@ -205,33 +230,38 @@ public class SelectionKeyUDT extends SelectionKey implements
 	}
 
 	/**
-	 * Apply write readiness according to {@link KindUDT} channel role.
+	 * Apply WRITE readiness according to {@link KindUDT} channel role.
 	 * <p>
-	 * note: write readiness is reported after {@link #doRead(int)}
+	 * Note: {@link #doRead(int)} is invoked before {@link #doWrite(int)}
+	 * <p>
+	 * Sockets with exceptions are returned to both read and write sets.
 	 * 
-	 * @return should report state change?
+	 * @return Should report ready-state change?
 	 */
 	protected boolean doWrite(final int resultIndex) {
 
 		int readyOps = 0;
 		final int interestOps = this.interestOps;
+
+		/** Verify read/write relationship. */
 		final boolean hadReadBeforeWrite = this.resultIndex == resultIndex;
 
 		try {
 
+			/** Check error report. */
 			if (!epollOpt.hasWrite()) {
-				if (interestOps == 0) {
-					logError("error report when missing interest");
-					return false;
-				} else {
-					readyOps = interestOps;
+				if (isSocketShutdown()) {
+					readyOps = channel().validOps();
 					return true;
+				} else {
+					logError("Unexpected error report.");
+					return false;
 				}
 			}
 
 			switch (kindUDT()) {
 			case ACCEPTOR:
-				logError("ready to WRITE for acceptor");
+				logError("Ready to WRITE for acceptor.");
 				return false;
 			case CONNECTOR:
 			case RENDEZVOUS:
@@ -240,7 +270,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 						readyOps = OP_WRITE;
 						return true;
 					} else {
-						logError("ready to WRITE when not insterested");
+						logError("Ready to WRITE when not insterested.");
 						return false;
 					}
 				} else {
@@ -248,12 +278,12 @@ public class SelectionKeyUDT extends SelectionKey implements
 						readyOps = OP_CONNECT;
 						return true;
 					} else {
-						logError("ready to CONNECT when not interested");
+						logError("Ready to CONNECT when not interested.");
 						return false;
 					}
 				}
 			default:
-				logError("wrong kind");
+				logError("Wrong kind.");
 				return false;
 			}
 
@@ -267,14 +297,23 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 	}
 
+	/**
+	 * Requested interest in epoll format.
+	 */
 	protected Opt epollOpt() {
 		return epollOpt;
 	}
 
+	/**
+	 * Epoll bound to this key.
+	 */
 	protected EpollUDT epollUDT() {
 		return selector().epollUDT();
 	}
 
+	/**
+	 * Key equality based on socket-id.
+	 */
 	@Override
 	public boolean equals(final Object otherKey) {
 		if (otherKey instanceof SelectionKeyUDT) {
@@ -284,6 +323,9 @@ public class SelectionKeyUDT extends SelectionKey implements
 		return false;
 	}
 
+	/**
+	 * Key hach code based on socket-id.
+	 */
 	@Override
 	public int hashCode() {
 		return socketId();
@@ -291,9 +333,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 	@Override
 	public int interestOps() {
-
 		return interestOps;
-
 	}
 
 	@Override
@@ -333,15 +373,42 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 	}
 
+	/**
+	 * Check socket termination status.
+	 */
+	protected boolean isSocketShutdown() {
+		switch (socketUDT().status()) {
+		case INIT:
+		case OPENED:
+		case LISTENING:
+		case CONNECTING:
+		case CONNECTED:
+			return false;
+		case BROKEN:
+		case CLOSED:
+		case NONEXIST:
+			return true;
+		default:
+			logError("Invalid socket status.");
+			return true;
+		}
+	}
+
 	@Override
 	public boolean isValid() {
 		return isValid;
 	}
 
+	/**
+	 * Channel role.
+	 */
 	protected KindUDT kindUDT() {
 		return channelUDT.kindUDT();
 	}
 
+	/**
+	 * Key processing logic error logger.
+	 */
 	protected void logError(final String comment) {
 
 		final String message = "logic error : \n\t" + this;
@@ -350,7 +417,9 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 	}
 
-	/** add/remove poll/socket registration */
+	/**
+	 * Change socket registration with epoll, and change key validity status.
+	 */
 	protected void makeValid(final boolean isValid) {
 		try {
 			if (isValid) {
@@ -359,7 +428,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 			} else {
 				epollUDT().remove(socketUDT());
 			}
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 			log.error("epoll failure", e);
 		} finally {
 			this.isValid = isValid;
@@ -368,15 +437,11 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 	@Override
 	public int readyOps() {
-
 		return readyOps;
-
 	}
 
 	protected void readyOps(final int ops) {
-
 		readyOps = ops;
-
 	}
 
 	@Override
@@ -384,10 +449,16 @@ public class SelectionKeyUDT extends SelectionKey implements
 		return selectorUDT;
 	}
 
+	/**
+	 * Id of a socket bound to this key.
+	 */
 	protected int socketId() {
 		return socketUDT().id();
 	}
 
+	/**
+	 * Socket bound to this key.
+	 */
 	protected SocketUDT socketUDT() {
 		return channelUDT.socketUDT();
 	}
