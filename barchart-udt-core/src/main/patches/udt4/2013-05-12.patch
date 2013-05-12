@@ -1,3 +1,18 @@
+diff --git work/git/barchart-udt/barchart-udt-core/target/udt/udt4/src/common.h work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/common.h
+index 3782d61..3ecf846 100644
+--- work/git/barchart-udt/barchart-udt-core/target/udt/udt4/src/common.h
++++ work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/common.h
+@@ -47,6 +47,10 @@ written by
+    #include <sys/uio.h>
+    #include <pthread.h>
+ #else
++   #ifdef __MINGW__
++      #include <stdint.h>
++      #include <ws2tcpip.h>
++   #endif
+    #include <windows.h>
+ #endif
+ #include <cstdlib>
 diff --git work/git/barchart-udt/barchart-udt-core/target/udt/udt4/src/core.cpp work/git/barchart-udt/barchart-udt-core/src/main/c++/udt/src/core.cpp
 index 1f3b206..17fc960 100644
 --- work/git/barchart-udt/barchart-udt-core/target/udt/udt4/src/core.cpp
