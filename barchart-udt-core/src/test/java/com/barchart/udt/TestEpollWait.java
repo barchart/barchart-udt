@@ -227,7 +227,7 @@ public class TestEpollWait extends TestAny {
 		final SocketUDT server = accept.accept0();
 		assertNotNull(server);
 		server.setBlocking(true);
-		SocketUDT.epollAdd0(epollID, server.id(), EpollUDT.Opt.NONE.code);
+		SocketUDT.epollAdd0(epollID, server.id(), EpollUDT.Opt.ERROR.code);
 
 		socketAwait(server, StatusUDT.CONNECTED);
 		log.info("server connect : {}", server.id());

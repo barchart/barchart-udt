@@ -82,11 +82,6 @@ public class SelectorUDT extends AbstractSelector {
 	public final int maximimSelectorSize;
 
 	/**
-	 * tracks correlation read with write for the same key
-	 */
-	private volatile int resultIndex;
-
-	/**
 	 * list of epoll sockets with read interest
 	 */
 	private final IntBuffer readBuffer;
@@ -104,6 +99,11 @@ public class SelectorUDT extends AbstractSelector {
 	registeredKeySet = HelpUDT.unmodifiableSet(registeredKeyMap.values());
 
 	/**
+	 * tracks correlation read with write for the same key
+	 */
+	private volatile int resultIndex;
+
+	/**
 	 * set of keys with data ready for an operation
 	 */
 	private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
@@ -115,17 +115,17 @@ public class SelectorUDT extends AbstractSelector {
 	private final Set<? extends SelectionKey> //
 	selectedKeySet = HelpUDT.ungrowableSet(selectedKeyMap.keySet());
 
-	/**
-	 * Canceled keys.
-	 */
-	private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
-	terminatedKeyMap = new ConcurrentHashMap<SelectionKeyUDT, SelectionKeyUDT>();
-
 	/** select is exclusive */
 	private final Lock selectLock = new ReentrantLock();
 
 	/** reported epoll socket list sizes */
 	private final IntBuffer sizeBuffer;
+
+	/**
+	 * Canceled keys.
+	 */
+	private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
+	terminatedKeyMap = new ConcurrentHashMap<SelectionKeyUDT, SelectionKeyUDT>();
 
 	/** guarded by {@link #doSelectLocked} */
 	private volatile int wakeupBaseCount;
@@ -322,6 +322,15 @@ public class SelectorUDT extends AbstractSelector {
 
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
 
+			/**
+			 * Epoll will report closed socket once in both read and write sets.
+			 * But selector consumer may cancel the key before close.
+			 */
+			if (keyUDT == null) {
+				logSocketId("missing from read ", socketId);
+				continue;
+			}
+
 			if (keyUDT.doRead(resultIndex)) {
 				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
 			}
@@ -339,6 +348,15 @@ public class SelectorUDT extends AbstractSelector {
 			final int socketId = writeBuffer.get(index);
 
 			final SelectionKeyUDT keyUDT = registeredKeyMap.get(socketId);
+
+			/**
+			 * Epoll will report closed socket once in both read and write sets.
+			 * But selector consumer may cancel the key before close.
+			 */
+			if (keyUDT == null) {
+				logSocketId("missing from write", socketId);
+				continue;
+			}
 
 			if (keyUDT.doWrite(resultIndex)) {
 				selectedKeyMap.putIfAbsent(keyUDT, keyUDT);
@@ -379,6 +397,12 @@ public class SelectorUDT extends AbstractSelector {
 			throw new ClosedSelectorException();
 		}
 		return (Set<SelectionKey>) registeredKeySet;
+	}
+
+	protected void logSocketId(final String title, final int socketId) {
+		if (log.isDebugEnabled()) {
+			log.debug("{} {}", title, String.format("[id: 0x%08x]", socketId));
+		}
 	}
 
 	/** 

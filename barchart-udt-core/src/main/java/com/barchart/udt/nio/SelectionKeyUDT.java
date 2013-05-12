@@ -16,7 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.EpollUDT;
 import com.barchart.udt.EpollUDT.Opt;
+import com.barchart.udt.ExceptionUDT;
+import com.barchart.udt.OptionUDT;
 import com.barchart.udt.SocketUDT;
+import com.barchart.udt.StatusUDT;
 
 /**
  * UDT selection key implementation.
@@ -24,8 +27,14 @@ import com.barchart.udt.SocketUDT;
 public class SelectionKeyUDT extends SelectionKey implements
 		Comparable<SelectionKeyUDT> {
 
+	/**
+	 * JDK interest to Epoll READ mapping.
+	 */
 	protected static final int HAS_READ = OP_ACCEPT | OP_READ;
 
+	/**
+	 * JDK interest to Epoll WRITE mapping.
+	 */
 	protected static final int HAS_WRITE = OP_CONNECT | OP_WRITE;
 
 	protected static final Logger log = LoggerFactory
@@ -40,18 +49,18 @@ public class SelectionKeyUDT extends SelectionKey implements
 		final boolean hasWrite = (interestOps & HAS_WRITE) != 0;
 
 		if (hasRead && hasWrite) {
-			return Opt.BOTH;
+			return Opt.ALL;
 		}
 
 		if (hasRead) {
-			return Opt.READ;
+			return Opt.ERROR_READ;
 		}
 
 		if (hasWrite) {
-			return Opt.WRITE;
+			return Opt.ERROR_WRITE;
 		}
 
-		return Opt.NONE;
+		return Opt.ERROR;
 
 	}
 
@@ -107,10 +116,10 @@ public class SelectionKeyUDT extends SelectionKey implements
 			final Object attachment //
 	) {
 
+		super.attach(attachment);
+
 		this.selectorUDT = selectorUDT;
 		this.channelUDT = channelUDT;
-
-		super.attach(attachment);
 
 		makeValid(true);
 
@@ -189,7 +198,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 			/** Check error report. */
 			if (!epollOpt.hasRead()) {
-				if (isSocketShutdown()) {
+				if (isSocketBroken()) {
 					readyOps = channel().validOps();
 					return true;
 				} else {
@@ -250,7 +259,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 			/** Check error report. */
 			if (!epollOpt.hasWrite()) {
-				if (isSocketShutdown()) {
+				if (isSocketBroken()) {
 					readyOps = channel().validOps();
 					return true;
 				} else {
@@ -324,6 +333,14 @@ public class SelectionKeyUDT extends SelectionKey implements
 	}
 
 	/**
+	 * Check socket error condition.
+	 */
+	boolean hasError() throws ExceptionUDT {
+		final int code = socketUDT().getOption(OptionUDT.Epoll_Event_Mask);
+		return EpollUDT.Opt.from(code).hasError();
+	}
+
+	/**
 	 * Key hach code based on socket-id.
 	 */
 	@Override
@@ -348,7 +365,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 			if (epollNew != epollOpt) {
 
-				if (Opt.NONE == epollNew) {
+				if (Opt.ERROR == epollNew) {
 					epollUDT().remove(socketUDT());
 				} else {
 					epollUDT().remove(socketUDT());
@@ -375,8 +392,10 @@ public class SelectionKeyUDT extends SelectionKey implements
 
 	/**
 	 * Check socket termination status.
+	 * 
+	 * @return true if status is {@link StatusUDT#BROKEN} or worse
 	 */
-	protected boolean isSocketShutdown() {
+	protected boolean isSocketBroken() {
 		switch (socketUDT().status()) {
 		case INIT:
 		case OPENED:
@@ -385,11 +404,12 @@ public class SelectionKeyUDT extends SelectionKey implements
 		case CONNECTED:
 			return false;
 		case BROKEN:
+		case CLOSING:
 		case CLOSED:
 		case NONEXIST:
 			return true;
 		default:
-			logError("Invalid socket status.");
+			logError("Unknown socket status.");
 			return true;
 		}
 	}
@@ -423,13 +443,13 @@ public class SelectionKeyUDT extends SelectionKey implements
 	protected void makeValid(final boolean isValid) {
 		try {
 			if (isValid) {
-				epollOpt = Opt.NONE;
+				epollOpt = Opt.ERROR;
 				epollUDT().add(socketUDT(), epollOpt);
 			} else {
 				epollUDT().remove(socketUDT());
 			}
 		} catch (final Throwable e) {
-			log.error("epoll failure", e);
+			log.error("Epoll failure.", e);
 		} finally {
 			this.isValid = isValid;
 		}

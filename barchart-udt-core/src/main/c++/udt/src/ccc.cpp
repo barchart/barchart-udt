@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*****************************************************************************
 written by
-   Yunhong Gu, last updated 02/28/2012
+   Yunhong Gu, last updated 02/21/2013
 *****************************************************************************/
 
 
@@ -213,7 +213,7 @@ void CUDTCC::onACK(int32_t ack)
          if (m_iRcvRate > 0)
             m_dPktSndPeriod = 1000000.0 / m_iRcvRate;
          else
-            m_dPktSndPeriod = m_dCWndSize / (m_iRTT + m_iRCInterval);
+            m_dPktSndPeriod = (m_iRTT + m_iRCInterval) / m_dCWndSize;
       }
    }
    else

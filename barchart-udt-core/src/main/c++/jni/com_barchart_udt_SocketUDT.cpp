@@ -195,8 +195,8 @@ jobject UDT_NewLingerUDT( //
 	} else {
 		value = lingerValue->l_linger;
 	}
-	jobject objLinger = env->NewObject(udt_LingerUDT,
-			udt_LingerUDT_init, (jint) value);
+	jobject objLinger = env->NewObject(udt_LingerUDT, udt_LingerUDT_init,
+			(jint) value);
 	CHK_NUL_RET_NUL(objLinger, "objLinger");
 	return objLinger;
 }
@@ -305,7 +305,8 @@ void UDT_InitFieldMonitor( //
 	// instant measurements
 	udt_M_usPktSndPeriod = env->GetFieldID(cls, "usPktSndPeriod", "D"); // packet sending period, in microseconds
 	udt_M_pktFlowWindow = env->GetFieldID(cls, "pktFlowWindow", "I"); // flow window size, in number of packets
-	udt_M_pktCongestionWindow = env->GetFieldID(cls, "pktCongestionWindow", "I"); // congestion window size, in number of packets
+	udt_M_pktCongestionWindow = env->GetFieldID(cls, "pktCongestionWindow",
+			"I"); // congestion window size, in number of packets
 	udt_M_pktFlightSize = env->GetFieldID(cls, "pktFlightSize", "I"); // number of packets on flight
 	udt_M_msRTT = env->GetFieldID(cls, "msRTT", "D"); // RTT, in milliseconds
 	udt_M_mbpsBandwidth = env->GetFieldID(cls, "mbpsBandwidth", "D"); // estimated bandwidth, in Mb/s
@@ -326,8 +327,7 @@ void UDT_InitClassRefAll(JNIEnv * const env) {
 	X_InitClassReference(env, &jdk_InetSocketAddress,
 			"java/net/InetSocketAddress");
 
-	X_InitClassReference(env, &jdk_SocketException,
-			"java/net/SocketException");
+	X_InitClassReference(env, &jdk_SocketException, "java/net/SocketException");
 
 	X_InitClassReference(env, &jdk_Set, "java/util/Set");
 	X_InitClassReference(env, &jdk_Iterator, "java/util/Iterator");
@@ -450,13 +450,13 @@ void UDT_InitMethodRefAll( //
 
 	// InetAddress
 
-	jdk_InetAddress_getAddress = env->GetMethodID(jdk_InetAddress,
-			"getAddress", "()[B");
+	jdk_InetAddress_getAddress = env->GetMethodID(jdk_InetAddress, "getAddress",
+			"()[B");
 	CHK_NUL_RET_RET(jdk_InetAddress_getAddress,
 			"jdk_clsInetAddress_getAddressID");
 
-	jdk_InetAddress_getByAddress = env->GetStaticMethodID(
-			jdk_InetAddress, "getByAddress", "([B)Ljava/net/InetAddress;");
+	jdk_InetAddress_getByAddress = env->GetStaticMethodID(jdk_InetAddress,
+			"getByAddress", "([B)Ljava/net/InetAddress;");
 	CHK_NUL_RET_RET(jdk_InetAddress_getByAddress,
 			"jdk_clsInetAddress_getByAddressID");
 
@@ -467,14 +467,12 @@ void UDT_InitMethodRefAll( //
 	CHK_NUL_RET_RET(jdk_InetSocketAddress_init,
 			"jdk_clsInetSocketAddress_initID");
 
-	jdk_InetSocketAddress_getAddress = env->GetMethodID(
-			jdk_InetSocketAddress, //
+	jdk_InetSocketAddress_getAddress = env->GetMethodID(jdk_InetSocketAddress, //
 			"getAddress", "()Ljava/net/InetAddress;");
 	CHK_NUL_RET_RET(jdk_InetSocketAddress_getAddress,
 			"jdk_clsInetSocketAddress_getAddressID");
 
-	jdk_InetSocketAddress_getPort = env->GetMethodID(
-			jdk_InetSocketAddress, //
+	jdk_InetSocketAddress_getPort = env->GetMethodID(jdk_InetSocketAddress, //
 			"getPort", "()I");
 	CHK_NUL_RET_RET(jdk_InetSocketAddress_getPort,
 			"jdk_clsInetSocketAddress_getPortID");
@@ -659,8 +657,8 @@ JNIEXPORT jobject JNICALL Java_com_barchart_udt_SocketUDT_accept0( //
 
 	CHK_NUL_RET_NUL(objTypeUDT, "objTypeUDT");
 
-	jobject objSocketUDT = env->NewObject(udt_SocketUDT,
-			udt_SocketUDT_init1, objTypeUDT, socketACC);
+	jobject objSocketUDT = env->NewObject(udt_SocketUDT, udt_SocketUDT_init1,
+			objTypeUDT, socketACC);
 
 	CHK_NUL_RET_NUL(objSocketUDT, "objSocketUDT");
 
@@ -1560,13 +1558,20 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_updateMonitor0( //
 	env->SetLongField(objMonitor, udt_M_msTimeStamp, monitor.msTimeStamp); // time since the UDT entity is started, in milliseconds
 	env->SetLongField(objMonitor, udt_M_pktSentTotal, monitor.pktSentTotal); // total number of sent data packets, including retransmissions
 	env->SetLongField(objMonitor, udt_M_pktRecvTotal, monitor.pktRecvTotal); // total number of received packets
-	env->SetIntField(objMonitor, udt_M_pktSndLossTotal, monitor.pktSndLossTotal); // total number of lost packets (sender side)
-	env->SetIntField(objMonitor, udt_M_pktRcvLossTotal, monitor.pktRcvLossTotal); // total number of lost packets (receiver side)
-	env->SetIntField(objMonitor, udt_M_pktRetransTotal, monitor.pktRetransTotal); // total number of retransmitted packets
-	env->SetIntField(objMonitor, udt_M_pktSentACKTotal, monitor.pktSentACKTotal); // total number of sent ACK packets
-	env->SetIntField(objMonitor, udt_M_pktRecvACKTotal, monitor.pktRecvACKTotal); // total number of received ACK packets
-	env->SetIntField(objMonitor, udt_M_pktSentNAKTotal, monitor.pktSentNAKTotal); // total number of sent NAK packets
-	env->SetIntField(objMonitor, udt_M_pktRecvNAKTotal, monitor.pktRecvNAKTotal); // total number of received NAK packets
+	env->SetIntField(objMonitor, udt_M_pktSndLossTotal,
+			monitor.pktSndLossTotal); // total number of lost packets (sender side)
+	env->SetIntField(objMonitor, udt_M_pktRcvLossTotal,
+			monitor.pktRcvLossTotal); // total number of lost packets (receiver side)
+	env->SetIntField(objMonitor, udt_M_pktRetransTotal,
+			monitor.pktRetransTotal); // total number of retransmitted packets
+	env->SetIntField(objMonitor, udt_M_pktSentACKTotal,
+			monitor.pktSentACKTotal); // total number of sent ACK packets
+	env->SetIntField(objMonitor, udt_M_pktRecvACKTotal,
+			monitor.pktRecvACKTotal); // total number of received ACK packets
+	env->SetIntField(objMonitor, udt_M_pktSentNAKTotal,
+			monitor.pktSentNAKTotal); // total number of sent NAK packets
+	env->SetIntField(objMonitor, udt_M_pktRecvNAKTotal,
+			monitor.pktRecvNAKTotal); // total number of received NAK packets
 	env->SetLongField(objMonitor, udt_M_usSndDurationTotal,
 			monitor.usSndDurationTotal); // total time duration when UDT is sending data (idle time exclusive)
 
@@ -1593,8 +1598,10 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_updateMonitor0( //
 	env->SetIntField(objMonitor, udt_M_pktFlightSize, monitor.pktFlightSize); // number of packets on flight
 	env->SetDoubleField(objMonitor, udt_M_msRTT, monitor.msRTT); // RTT, in milliseconds
 	env->SetDoubleField(objMonitor, udt_M_mbpsBandwidth, monitor.mbpsBandwidth); // estimated bandwidth, in Mb/s
-	env->SetIntField(objMonitor, udt_M_byteAvailSndBuf, monitor.byteAvailSndBuf); // available UDT sender buffer size
-	env->SetIntField(objMonitor, udt_M_byteAvailRcvBuf, monitor.byteAvailRcvBuf); // available UDT receiver buffer size
+	env->SetIntField(objMonitor, udt_M_byteAvailSndBuf,
+			monitor.byteAvailSndBuf); // available UDT sender buffer size
+	env->SetIntField(objMonitor, udt_M_byteAvailRcvBuf,
+			monitor.byteAvailRcvBuf); // available UDT receiver buffer size
 
 }
 
@@ -1722,6 +1729,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollRemove0( //
 
 }
 
+// Disabled.
 JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollUpdate0( //
 		JNIEnv * const env, //
 		const jclass clsSocketUDT, //
@@ -1733,8 +1741,11 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollUpdate0( //
 	UNUSED(clsSocketUDT);
 
 	const int events = static_cast<int>(pollOpt);
+	UNUSED(pollID);
+	UNUSED(pollOpt);
+	UNUSED(events);
 
-	const int rv = UDT::epoll_update_usock(pollID, socketID, &events);
+	const int rv = UDT::ERROR; // UDT::epoll_update_usock(pollID, socketID, &events);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -1745,6 +1756,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollUpdate0( //
 
 }
 
+// Disabled.
 JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollVerify0( //
 		JNIEnv * const env, //
 		const jclass clsSocketUDT, //
@@ -1752,10 +1764,11 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollVerify0( //
 		const jint socketID) {
 
 	UNUSED(clsSocketUDT);
+	UNUSED(pollID);
 
 	int events = 0;
 
-	const int rv = UDT::epoll_verify_usock(pollID, socketID, &events);
+	const int rv = UDT::ERROR; // UDT::epoll_verify_usock(pollID, socketID, &events);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -1792,14 +1805,16 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollWait0( //
 	jint* const sizeArray = //
 			static_cast<jint*>(env->GetDirectBufferAddress(objSizeBuffer));
 
-	// process timeout & errors
+	// process timeout or error
 	if (rv <= 0) { // UDT::ERROR is '-1'
+		// report zero size for timeout or error
+		sizeArray[UDT_READ_INDEX] = 0;
+		sizeArray[UDT_WRITE_INDEX] = 0;
+		sizeArray[UDT_EXCEPT_INDEX] = 0;
+		// report state
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
 		if (errorInfo.getErrorCode() == UDT::ERRORINFO::ETIMEOUT) {
 			// not a java exception:
-			sizeArray[UDT_READ_INDEX] = 0;
-			sizeArray[UDT_WRITE_INDEX] = 0;
-			sizeArray[UDT_EXCEPT_INDEX] = 0;
 			return UDT_TIMEOUT;
 		} else {
 			// really exception
@@ -1888,8 +1903,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_testIterateSet0( //
 
 	jint count = 0;
 
-	while (JNI_TRUE
-			== env->CallBooleanMethod(iterator, jdk_Iterator_hasNext)) {
+	while (JNI_TRUE == env->CallBooleanMethod(iterator, jdk_Iterator_hasNext)) {
 		jobject objAny = env->CallObjectMethod( //
 				iterator, jdk_Iterator_next);
 		UNUSED(objAny);
