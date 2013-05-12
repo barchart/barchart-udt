@@ -74,7 +74,7 @@ public class SocketUDT {
 	 * indication of inconsistent build.
 	 */
 	@Native
-	public static final int SIGNATURE_JNI = 20130427; // VersionUDT.BUILDTIME;
+	public static final int SIGNATURE_JNI = 20130512; // VersionUDT.BUILDTIME;
 
 	/**
 	 * infinite timeout:
@@ -600,13 +600,31 @@ public class SocketUDT {
 	protected native void clearError0();
 
 	/**
+	 * Close socket if not already closed.
+	 * 
 	 * @see #close0()
 	 */
 	public void close() throws ExceptionUDT {
 		synchronized (SocketUDT.class) {
-			if (isOpen()) {
+			switch (status()) {
+			case INIT:
+			case OPENED:
+			case LISTENING:
+			case CONNECTING:
+			case CONNECTED:
+			case BROKEN:
+				/** Requires close. */
 				close0();
 				log.debug("done : {}", this);
+				break;
+			case CLOSING:
+			case CLOSED:
+			case NONEXIST:
+				/** Effectively closed. */
+				log.debug("dead : {}", this);
+				break;
+			default:
+				log.error("Invalid socket/status {}/{}", this, status());
 			}
 		}
 	}

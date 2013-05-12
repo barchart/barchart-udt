@@ -11,12 +11,14 @@ import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import util.TestAny;
 
 import com.barchart.udt.EpollUDT.Opt;
 
+@Ignore
 public class TestEpollMask extends TestAny {
 
 	@Test
@@ -25,12 +27,11 @@ public class TestEpollMask extends TestAny {
 		epollUpdate(Opt.NONE);
 		epollUpdate(Opt.READ);
 		epollUpdate(Opt.WRITE);
-
-		// epollMask(Opt.ERROR);
-
 		epollUpdate(Opt.BOTH);
-
-		// epollMask(Opt.ALL);
+		epollUpdate(Opt.ERROR_READ);
+		epollUpdate(Opt.ERROR_WRITE);
+		epollUpdate(Opt.ERROR);
+		epollUpdate(Opt.ALL);
 
 	}
 
@@ -67,12 +68,11 @@ public class TestEpollMask extends TestAny {
 		epollVerify(Opt.NONE);
 		epollVerify(Opt.READ);
 		epollVerify(Opt.WRITE);
-
-		// epollMask(Opt.ERROR);
-
 		epollVerify(Opt.BOTH);
-
-		// epollMask(Opt.ALL);
+		epollVerify(Opt.ERROR_READ);
+		epollVerify(Opt.ERROR_WRITE);
+		epollVerify(Opt.ERROR);
+		epollVerify(Opt.ALL);
 
 	}
 
@@ -82,7 +82,7 @@ public class TestEpollMask extends TestAny {
 
 		final SocketUDT client = new SocketUDT(TypeUDT.DATAGRAM);
 
-		SocketUDT.epollAdd0(epollID, client.id(), EpollUDT.Opt.NONE.code);
+		// SocketUDT.epollAdd0(epollID, client.id(), EpollUDT.Opt.NONE.code);
 
 		SocketUDT.epollUpdate0(epollID, client.id(), opt.code);
 

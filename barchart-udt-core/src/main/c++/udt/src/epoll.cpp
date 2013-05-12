@@ -99,65 +99,16 @@ int CEPoll::add_usock(const int eid, const UDTSOCKET& u, const int* events)
    if (p == m_mPolls.end())
       throw CUDTException(5, 13);
 
+   // BARCHART: Manage all event types.
    if (!events || (*events & UDT_EPOLL_IN))
       p->second.m_sUDTSocksIn.insert(u);
    if (!events || (*events & UDT_EPOLL_OUT))
       p->second.m_sUDTSocksOut.insert(u);
+   if (!events || (*events & UDT_EPOLL_ERR))
+      p->second.m_sUDTSocksEx.insert(u);
 
    return 0;
 }
-
-// BARCHART
-int CEPoll::update_usock(const int eid, const UDTSOCKET& u, const int* events)
-{
-   CGuard pg(m_EPollLock);
-
-   map<int, CEPollDesc>::iterator p = m_mPolls.find(eid);
-   if (p == m_mPolls.end()){
-	      throw CUDTException(5, 13);
-   }
-
-   if(events){
-	   if (*events & UDT_EPOLL_IN){
-		   p->second.m_sUDTSocksIn.insert(u);
-	   }else{
-		   p->second.m_sUDTSocksIn.erase(u);
-	   }
-	   if (*events & UDT_EPOLL_OUT){
-		   p->second.m_sUDTSocksOut.insert(u);
-	   } else{
-		   p->second.m_sUDTSocksOut.erase(u);
-	   }
-   }
-
-   return 0;
-}
-
-
-// BARCHART
-int CEPoll::verify_usock(const int eid, const UDTSOCKET& u, int* events)
-{
-
-   CGuard pg(m_EPollLock);
-
-   map<int, CEPollDesc>::iterator p = m_mPolls.find(eid);
-   if (p == m_mPolls.end()){
-	      throw CUDTException(5, 13);
-   }
-
-   if(events){
-	   if(p->second.m_sUDTSocksIn.find(u) != p->second.m_sUDTSocksIn.end()){
-		   *events |= UDT_EPOLL_IN;
-	   }
-	   if(p->second.m_sUDTSocksOut.find(u) != p->second.m_sUDTSocksOut.end()){
-		   *events |= UDT_EPOLL_OUT;
-	   }
-   }
-
-   return 0;
-
-}
-
 
 int CEPoll::add_ssock(const int eid, const SYSSOCKET& s, const int* events)
 {
@@ -169,6 +120,7 @@ int CEPoll::add_ssock(const int eid, const SYSSOCKET& s, const int* events)
 
 #ifdef LINUX
    epoll_event ev;
+   memset(&ev, 0, sizeof(epoll_event));
 
    if (NULL == events)
       ev.events = EPOLLIN | EPOLLOUT | EPOLLERR;
@@ -203,10 +155,7 @@ int CEPoll::remove_usock(const int eid, const UDTSOCKET& u)
 
    p->second.m_sUDTSocksIn.erase(u);
    p->second.m_sUDTSocksOut.erase(u);
-
-   // when the socket is removed from a monitoring, it is not available anymore for any IO notification
-   p->second.m_sUDTReads.erase(u);
-   p->second.m_sUDTWrites.erase(u);
+   p->second.m_sUDTSocksEx.erase(u);
 
    return 0;
 }
@@ -277,6 +226,11 @@ int CEPoll::wait(const int eid, set<UDTSOCKET>* readfds, set<UDTSOCKET>* writefd
          for (set<UDTSOCKET>::const_iterator i = p->second.m_sUDTExcepts.begin(); i != p->second.m_sUDTExcepts.end(); ++ i)
             writefds->insert(*i);
          total += p->second.m_sUDTWrites.size() + p->second.m_sUDTExcepts.size();
+      }
+
+      // BARCHART: Remove errors when reported.
+      if(total > 0 && !p->second.m_sUDTExcepts.empty()){
+    	  p->second.m_sUDTExcepts.clear();
       }
 
       if (lrfds || lwfds)

@@ -47,10 +47,6 @@ written by
    #include <sys/uio.h>
    #include <pthread.h>
 #else
-   #ifdef __MINGW__
-      #include <stdint.h>
-      #include <ws2tcpip.h>
-   #endif
    #include <windows.h>
 #endif
 #include <cstdlib>
