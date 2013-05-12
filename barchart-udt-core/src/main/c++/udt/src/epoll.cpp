@@ -154,6 +154,11 @@ int CEPoll::remove_usock(const int eid, const UDTSOCKET& u)
    p->second.m_sUDTSocksOut.erase(u);
    p->second.m_sUDTSocksEx.erase(u);
 
+   // BARCHART
+   // when the socket is removed from a monitoring, it is not available anymore for any IO notification
+   p->second.m_sUDTReads.erase(u);
+   p->second.m_sUDTWrites.erase(u);
+
    return 0;
 }
 
