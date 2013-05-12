@@ -331,7 +331,7 @@
 						<executions>
 							<execution>
 								<id>copy-udt-sources-after-checkout</id>
-								<phase>process-sources-XXX</phase>
+								<phase>process-sources</phase>
 								<goals>
 									<goal>copy-resources</goal>
 								</goals>

@@ -1734,7 +1734,8 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_epollUpdate0( //
 
 	const int events = static_cast<int>(pollOpt);
 
-	const int rv = UDT::epoll_update_usock(pollID, socketID, &events);
+	// disabled
+	const int rv = UDT::ERROR; // UDT::epoll_update_usock(pollID, socketID, &events);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -1755,7 +1756,8 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_epollVerify0( //
 
 	int events = 0;
 
-	const int rv = UDT::epoll_verify_usock(pollID, socketID, &events);
+	// disabled
+	const int rv = UDT::ERROR; // UDT::epoll_verify_usock(pollID, socketID, &events);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
