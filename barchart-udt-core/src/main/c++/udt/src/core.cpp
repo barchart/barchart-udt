@@ -952,7 +952,13 @@ void CUDT::close()
       m_pSndQueue->m_pSndUList->remove(this);
 
    // trigger any pending IO events.
+   // s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_ERR, true);
+
+   // BARCHART: Trigger pending events as errors; CEPoll::wait does error cleanup.
+   s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_IN, false);
+   s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_OUT, false);
    s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_ERR, true);
+
    // then remove itself from all epoll monitoring
    try
    {
