@@ -53,9 +53,13 @@ public class EpollUDT {
 		 */
 		ERROR(0x8), //
 
-		BOTH(READ.code | WRITE.code), //
+		BOTH(WRITE.code | READ.code), //
 
-		ALL(READ.code | WRITE.code | ERROR.code), //
+		ERROR_READ(ERROR.code | READ.code), //
+
+		ERROR_WRITE(ERROR.code | WRITE.code), //
+
+		ALL(ERROR.code | WRITE.code | READ.code), //
 
 		UNKNOWN(-1);
 
@@ -95,12 +99,19 @@ public class EpollUDT {
 			return (code & WRITE.code) != 0;
 		}
 
+		/**
+		 * Non-empty mask of 3 parts.
+		 */
 		public boolean isValidInterestRequest() {
 			switch (this) {
 			case NONE:
 			case READ:
 			case WRITE:
+			case ERROR:
 			case BOTH:
+			case ERROR_WRITE:
+			case ERROR_READ:
+			case ALL:
 				return true;
 			default:
 				return false;
@@ -191,7 +202,7 @@ public class EpollUDT {
 
 		log.debug("ep {} add {} {}", id(), socket, option);
 
-		assert option.isValidInterestRequest();
+		// assert option.isValidInterestRequest();
 
 		SocketUDT.epollAdd0(id(), socket.id(), option.code);
 

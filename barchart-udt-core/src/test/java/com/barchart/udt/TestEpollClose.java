@@ -24,9 +24,7 @@ import com.barchart.udt.util.HelpUDT;
 public class TestEpollClose extends TestAny {
 
 	/**
-	 * verify closed socket is not reported by epoll
-	 * <p>
-	 * requires patch udt-4.10/epoll.cpp
+	 * Verify how closed socket is reported by epoll.
 	 */
 	@Test
 	public void epollWait0_Close() throws Exception {
