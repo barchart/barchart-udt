@@ -207,21 +207,15 @@
 				</executions>
 			</plugin>
 
-			<!-- Always attach main and test sources. -->
+			<!-- Always attach test sources. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>attach-test-sources</id>
 						<goals>
-							<goal>test-jar</goal>
+							<goal>test-jar-no-fork</goal>
 						</goals>
 					</execution>
 				</executions>
