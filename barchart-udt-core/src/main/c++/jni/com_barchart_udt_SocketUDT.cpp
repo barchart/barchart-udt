@@ -1376,7 +1376,8 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_send1( //
 			if (UDT::ERROR
 					== (ss = UDT::send(socketID, (char*) (data + ssize),
 							size - ssize, 0))) {
-				printf("send: %s\n", UDT::getlasterror().getErrorMessage());
+				printf("send: %s\n", UDT::getlasterror().getErrorMessage());		
+				ssize = ss;
 				break;
 			}
 			ssize += ss;
