@@ -64,7 +64,7 @@ public class NetInputStreamUDT extends InputStream {
 
 		assert count == 1;
 
-		return data[0];
+		return data[0] & 0xFF;
 
 	}
 
