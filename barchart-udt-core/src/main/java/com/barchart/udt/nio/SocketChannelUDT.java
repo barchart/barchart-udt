@@ -8,14 +8,17 @@
 package com.barchart.udt.nio;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.SocketOption;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ConnectionPendingException;
 import java.nio.channels.IllegalBlockingModeException;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.UnresolvedAddressException;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +78,10 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 
 	protected final SocketUDT socketUDT;
 
+    private SocketAddress localAddress;
+
+    private InetSocketAddress remoteSocket;
+
 	protected SocketChannelUDT( //
 			final SelectorProviderUDT provider, //
 			final SocketUDT socketUDT //
@@ -121,7 +128,7 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 			throw new NullPointerException();
 		}
 
-		final InetSocketAddress remoteSocket = (InetSocketAddress) remote;
+		remoteSocket = (InetSocketAddress) remote;
 
 		if (remoteSocket.isUnresolved()) {
 			log.error("can not use unresolved address: remote={}", remote);
@@ -239,7 +246,15 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 
 	}
 
-	@Override
+    @Override
+    public SocketAddress getRemoteAddress() throws IOException {
+        if(this.isConnectFinished()) {
+            return remoteSocket;
+        }
+        return null;
+    }
+
+    @Override
 	protected void implCloseSelectableChannel() throws IOException {
 		socketUDT.close();
 	}
@@ -522,4 +537,36 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 
 	}
 
+    @Override
+    public <T> SocketChannel setOption(final SocketOption<T> name, final T value) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> T getOption(final SocketOption<T> name) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Set<SocketOption<?>> supportedOptions() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SocketChannel shutdownInput() throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SocketChannel shutdownOutput() throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SocketAddress getLocalAddress() throws IOException {
+        if(this.isConnected()) {
+            return localAddress;
+        }
+        return null;
+    }
 }
