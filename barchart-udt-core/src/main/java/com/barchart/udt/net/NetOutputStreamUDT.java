@@ -85,4 +85,8 @@ public class NetOutputStreamUDT extends OutputStream {
 		socketUDT.close();
 	}
 
+	@Override
+	public void flush() throws IOException {
+		socketUDT.flush();
+	}
 }

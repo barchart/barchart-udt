@@ -600,6 +600,17 @@ public class SocketUDT {
 	protected native void clearError0();
 
 	/**
+	 * Flush all buffered data.
+	 *
+	 * @see #flush0()
+	 */
+	public void flush() throws ExceptionUDT {
+		synchronized(SocketUDT.class){
+			flush0();
+		}
+	}
+
+	/**
 	 * Close socket if not already closed.
 	 * 
 	 * @see #close0()
@@ -628,6 +639,12 @@ public class SocketUDT {
 			}
 		}
 	}
+
+	/**
+	 * @see <a
+	 *      href="http://udt.sourceforge.net/udt4/doc/close.htm">UDT::close()</a>
+	 */
+	protected native void flush0() throws ExceptionUDT;
 
 	/**
 	 * @see <a
