@@ -62,9 +62,13 @@
 		<!-- <narPluginArtifactId>maven-nar-plugin</narPluginArtifactId> -->
 		<!-- <narPluginVersion>2.0.1-SNAPSHOT</narPluginVersion> -->
 
-		<narPluginGroupId>org.codeswarm</narPluginGroupId>
-		<narPluginArtifactId>maven-nar-plugin</narPluginArtifactId>
-		<narPluginVersion>20121119</narPluginVersion>
+<!--		<narPluginGroupId>org.codeswarm</narPluginGroupId>-->
+<!--		<narPluginArtifactId>maven-nar-plugin</narPluginArtifactId>-->
+<!--		<narPluginVersion>20121119</narPluginVersion>-->
+
+		<narPluginGroupId>com.github.maven-nar</narPluginGroupId>
+		<narPluginArtifactId>nar-maven-plugin</narPluginArtifactId>
+		<narPluginVersion>3.0.0</narPluginVersion>
 
 	</properties>
 
