@@ -8,7 +8,10 @@
 package com.barchart.udt.nio;
 
 import java.io.IOException;
+import java.net.SocketAddress;
+import java.net.SocketOption;
 import java.nio.channels.ServerSocketChannel;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +41,7 @@ import com.barchart.udt.anno.ThreadSafe;
  * assert connectChannel.isConnected();
  * </pre>
  */
-public class ServerSocketChannelUDT extends ServerSocketChannel implements
-		ChannelUDT {
+public class ServerSocketChannelUDT extends ServerSocketChannel implements ChannelUDT {
 
 	protected static final Logger log = LoggerFactory
 			.getLogger(ServerSocketChannelUDT.class);
@@ -111,7 +113,27 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 		return (SelectorProviderUDT) super.provider();
 	}
 
-	@Override
+    @Override
+    public ServerSocketChannel bind(final SocketAddress local, final int backlog) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> ServerSocketChannel setOption(final SocketOption<T> name, final T value) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> T getOption(final SocketOption<T> name) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Set<SocketOption<?>> supportedOptions() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
 	public synchronized NioServerSocketUDT socket() {
 		if (socketAdapter == null) {
 			try {
@@ -139,4 +161,8 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 		return providerUDT().type();
 	}
 
+    @Override
+    public SocketAddress getLocalAddress() throws IOException {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>com.barchart.udt</groupId>
 		<artifactId>barchart-udt-archon</artifactId>
-		<version>2.2.2</version>
+		<version>2.3.1-SNAPSHOT</version>
 		<relativePath>../barchart-udt-archon</relativePath>
 	</parent>
 
@@ -34,7 +34,7 @@
 	<properties>
 
 		<!-- should be set by developer during interactive work -->
-		<versionEclipse>2.2.3-SNAPSHOT</versionEclipse>
+		<versionEclipse>2.3.0</versionEclipse>
 
 		<!-- will be set by maven-invoker-plugin during jenkins build -->
 		<versionJenkins>@project.version@</versionJenkins>
@@ -72,10 +72,9 @@
 	</profiles>
 
 	<build>
-
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
