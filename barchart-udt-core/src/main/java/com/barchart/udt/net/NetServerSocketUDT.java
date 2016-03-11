@@ -23,8 +23,8 @@ import com.barchart.udt.TypeUDT;
 /**
  * {@link ServerSocket} - like wrapper for {@link SocketUDT}
  */
-public class NetServerSocketUDT extends ServerSocket implements
-		IceServerSocket, IceCommon {
+public class NetServerSocketUDT extends ServerSocket
+		implements IceServerSocket, IceCommon {
 
 	protected final SocketUDT socketUDT;
 

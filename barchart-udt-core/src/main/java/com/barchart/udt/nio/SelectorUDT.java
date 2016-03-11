@@ -16,6 +16,7 @@ import java.nio.channels.IllegalSelectorException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.spi.AbstractSelectableChannel;
+import java.nio.channels.spi.AbstractSelectionKey;
 import java.nio.channels.spi.AbstractSelector;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.Iterator;
@@ -175,6 +176,11 @@ public class SelectorUDT extends AbstractSelector {
 			if (keyUDT.isValid()) {
 				keyUDT.makeValid(false);
 				registeredKeyMap.remove(keyUDT.socketId());
+				final SelectionKey findKey = keyUDT.channel().keyFor(this);
+				if (findKey != null
+						&& findKey instanceof AbstractSelectionKey) {
+					deregister((AbstractSelectionKey) findKey);
+				}
 			}
 		}
 
@@ -210,14 +216,15 @@ public class SelectorUDT extends AbstractSelector {
 	 *            >0 : finite;
 	 * @return
 	 * 
-	 *         <0 : should not happen
+	 * 		<0 : should not happen
 	 * 
 	 *         =0 : means nothing was selected/timeout
 	 * 
 	 *         >0 : number of selected keys
 	 */
 
-	protected int doEpollExclusive(final long millisTimeout) throws IOException {
+	protected int doEpollExclusive(final long millisTimeout)
+			throws IOException {
 
 		try {
 
@@ -299,7 +306,7 @@ public class SelectorUDT extends AbstractSelector {
 				writeBuffer, //
 				sizeBuffer, //
 				timeout //
-				);
+		);
 	}
 
 	protected void doResults() {

@@ -8,7 +8,10 @@
 package com.barchart.udt.nio;
 
 import java.io.IOException;
+import java.net.SocketAddress;
+import java.net.SocketOption;
 import java.nio.channels.ServerSocketChannel;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +41,8 @@ import com.barchart.udt.anno.ThreadSafe;
  * assert connectChannel.isConnected();
  * </pre>
  */
-public class ServerSocketChannelUDT extends ServerSocketChannel implements
-		ChannelUDT {
+public class ServerSocketChannelUDT extends ServerSocketChannel
+		implements ChannelUDT {
 
 	protected static final Logger log = LoggerFactory
 			.getLogger(ServerSocketChannelUDT.class);
@@ -137,6 +140,38 @@ public class ServerSocketChannelUDT extends ServerSocketChannel implements
 	@Override
 	public TypeUDT typeUDT() {
 		return providerUDT().type();
+	}
+
+	@Override
+	public SocketAddress getLocalAddress() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> T getOption(final SocketOption<T> name) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<SocketOption<?>> supportedOptions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ServerSocketChannel bind(final SocketAddress local,
+			final int backlog) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> ServerSocketChannel setOption(final SocketOption<T> name,
+			final T value) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

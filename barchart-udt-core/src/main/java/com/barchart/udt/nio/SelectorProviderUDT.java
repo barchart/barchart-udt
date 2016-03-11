@@ -8,6 +8,7 @@
 package com.barchart.udt.nio;
 
 import java.io.IOException;
+import java.net.ProtocolFamily;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.Pipe;
 import java.nio.channels.spi.SelectorProvider;
@@ -135,6 +136,13 @@ public class SelectorProviderUDT extends SelectorProvider {
 
 	public void setMaxSelectorSize(final int selectorSize) {
 		maxSelectorSize = selectorSize;
+	}
+
+	@Override
+	public DatagramChannel openDatagramChannel(final ProtocolFamily family)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
