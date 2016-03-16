@@ -10,14 +10,12 @@ package com.barchart.udt.nio;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.SocketOption;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ConnectionPendingException;
 import java.nio.channels.IllegalBlockingModeException;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.UnresolvedAddressException;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -512,60 +510,6 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 	@Override
 	public TypeUDT typeUDT() {
 		return providerUDT().type();
-	}
-
-	/** java 7 */
-	@Override
-	public SocketChannelUDT bind(final SocketAddress localAddress)
-			throws IOException {
-
-		socketUDT.bind((InetSocketAddress) localAddress);
-
-		return this;
-
-	}
-
-	@Override
-	public SocketAddress getLocalAddress() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T> T getOption(final SocketOption<T> name) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<SocketOption<?>> supportedOptions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T> SocketChannel setOption(final SocketOption<T> name,
-			final T value) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SocketChannel shutdownInput() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SocketChannel shutdownOutput() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SocketAddress getRemoteAddress() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
