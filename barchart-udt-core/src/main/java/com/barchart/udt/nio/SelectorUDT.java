@@ -16,7 +16,6 @@ import java.nio.channels.IllegalSelectorException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.spi.AbstractSelectableChannel;
-import java.nio.channels.spi.AbstractSelectionKey;
 import java.nio.channels.spi.AbstractSelector;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.Iterator;
@@ -174,13 +173,9 @@ public class SelectorUDT extends AbstractSelector {
 			final SelectionKeyUDT keyUDT = iterator.next();
 			iterator.remove();
 			if (keyUDT.isValid()) {
+				this.deregister(keyUDT);
 				keyUDT.makeValid(false);
 				registeredKeyMap.remove(keyUDT.socketId());
-				final SelectionKey findKey = keyUDT.channel().keyFor(this);
-				if (findKey != null
-						&& findKey instanceof AbstractSelectionKey) {
-					deregister((AbstractSelectionKey) findKey);
-				}
 			}
 		}
 
