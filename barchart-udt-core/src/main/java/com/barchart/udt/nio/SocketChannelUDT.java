@@ -512,4 +512,13 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 		return providerUDT().type();
 	}
 
+	/** java 7 */
+	public SocketChannelUDT bind(final SocketAddress localAddress)
+			throws IOException {
+
+		socketUDT.bind((InetSocketAddress) localAddress);
+
+		return this;
+
+	}
 }

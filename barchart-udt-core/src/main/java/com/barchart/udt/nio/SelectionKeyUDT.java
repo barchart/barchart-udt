@@ -202,6 +202,10 @@ public class SelectionKeyUDT extends AbstractSelectionKey
 					readyOps = channel().validOps();
 					return true;
 				} else {
+					/**
+					 * in some programe use invoke selectNow to clear canceld
+					 * key
+					 */
 					logError("Unexpected error report.");
 					return false;
 				}
@@ -428,13 +432,14 @@ public class SelectionKeyUDT extends AbstractSelectionKey
 	}
 
 	/**
-	 * Key processing logic error logger.
+	 * Key processing logic error logger. user while use selectNow to clear
+	 * cancel keys
 	 */
 	protected void logError(final String comment) {
 
 		final String message = "logic error : \n\t" + this;
 
-		log.warn(message, new Exception("" + comment));
+		log.debug(message, new Exception("" + comment));
 
 	}
 
