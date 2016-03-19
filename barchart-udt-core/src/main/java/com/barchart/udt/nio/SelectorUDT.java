@@ -167,7 +167,6 @@ public class SelectorUDT extends AbstractSelector {
 			while (iterator.hasNext()) {
 				final SelectionKeyUDT keyUDT = iterator.next();
 				iterator.remove();
-				log.debug("have remove here{}", keyUDT.isValid());
 				// if (keyUDT.isValid()) {
 				this.deregister(keyUDT);
 				keyUDT.makeValid(false);

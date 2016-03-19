@@ -25,7 +25,7 @@ public class NioServerSocketUDT extends NetServerSocketUDT {
 
 	@Override
 	public Socket accept() throws IOException {
-		throw new RuntimeException("feature not available");
+		return channelUDT.accept().socket();
 	}
 
 	@Override
