@@ -356,8 +356,8 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 	}
 
 	@Override
-	public long read(final ByteBuffer[] dsts, final int offset, final int length)
-			throws IOException {
+	public long read(final ByteBuffer[] dsts, final int offset,
+			final int length) throws IOException {
 		throw new RuntimeException("feature not available");
 	}
 
@@ -521,5 +521,4 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 		return this;
 
 	}
-
 }

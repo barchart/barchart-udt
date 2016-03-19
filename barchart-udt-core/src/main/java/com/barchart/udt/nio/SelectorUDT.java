@@ -124,8 +124,11 @@ public class SelectorUDT extends AbstractSelector {
 	/**
 	 * Canceled keys.
 	 */
-	private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
-	terminatedKeyMap = new ConcurrentHashMap<SelectionKeyUDT, SelectionKeyUDT>();
+	/*
+	 * private final ConcurrentMap<SelectionKeyUDT, SelectionKeyUDT> //
+	 * terminatedKeyMap = new ConcurrentHashMap<SelectionKeyUDT,
+	 * SelectionKeyUDT>();
+	 */
 
 	/** guarded by {@link #doSelectLocked} */
 	private volatile int wakeupBaseCount;
@@ -151,30 +154,24 @@ public class SelectorUDT extends AbstractSelector {
 	}
 
 	/**
-	 * Enqueue cancel request.
-	 */
-	protected void cancel(final SelectionKeyUDT keyUDT) {
-		terminatedKeyMap.putIfAbsent(keyUDT, keyUDT);
-	}
-
-	/**
 	 * Process pending cancel requests.
 	 */
 	protected void doCancel() {
 
-		if (terminatedKeyMap.isEmpty()) {
-			return;
-		}
+		final Set cks = cancelledKeys();
 
-		final Iterator<SelectionKeyUDT> iterator = terminatedKeyMap.values()
-				.iterator();
-
-		while (iterator.hasNext()) {
-			final SelectionKeyUDT keyUDT = iterator.next();
-			iterator.remove();
-			if (keyUDT.isValid()) {
+		synchronized (cks) {
+			if (cks.isEmpty())
+				return;
+			final Iterator<SelectionKeyUDT> iterator = cks.iterator();
+			while (iterator.hasNext()) {
+				final SelectionKeyUDT keyUDT = iterator.next();
+				iterator.remove();
+				// if (keyUDT.isValid()) {
+				this.deregister(keyUDT);
 				keyUDT.makeValid(false);
 				registeredKeyMap.remove(keyUDT.socketId());
+				// }
 			}
 		}
 
@@ -210,14 +207,15 @@ public class SelectorUDT extends AbstractSelector {
 	 *            >0 : finite;
 	 * @return
 	 * 
-	 *         <0 : should not happen
+	 * 		<0 : should not happen
 	 * 
 	 *         =0 : means nothing was selected/timeout
 	 * 
 	 *         >0 : number of selected keys
 	 */
 
-	protected int doEpollExclusive(final long millisTimeout) throws IOException {
+	protected int doEpollExclusive(final long millisTimeout)
+			throws IOException {
 
 		try {
 
@@ -299,7 +297,7 @@ public class SelectorUDT extends AbstractSelector {
 				writeBuffer, //
 				sizeBuffer, //
 				timeout //
-				);
+		);
 	}
 
 	protected void doResults() {
@@ -379,7 +377,7 @@ public class SelectorUDT extends AbstractSelector {
 			selectLock.lock();
 
 			for (final SelectionKeyUDT keyUDT : registeredKeyMap.values()) {
-				cancel(keyUDT);
+				keyUDT.cancel();
 			}
 
 		} finally {

@@ -1,15 +1,16 @@
 /**
  * Copyright (C) 2009-2013 Barchart, Inc. <http://www.barchart.com/>
- *
- * All rights reserved. Licensed under the OSI BSD License.
- *
- * http://www.opensource.org/licenses/bsd-license.php
- */
+*
+* All rights reserved. Licensed under the OSI BSD License.
+*
+* http://www.opensource.org/licenses/bsd-license.php
+*/
 package com.barchart.udt.nio;
 
 import java.nio.channels.CancelledKeyException;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
+import java.nio.channels.spi.AbstractSelectionKey;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +25,8 @@ import com.barchart.udt.StatusUDT;
 /**
  * UDT selection key implementation.
  */
-public class SelectionKeyUDT extends SelectionKey implements
-		Comparable<SelectionKeyUDT> {
+public class SelectionKeyUDT extends AbstractSelectionKey
+		implements Comparable<SelectionKeyUDT> {
 
 	/**
 	 * JDK interest to Epoll READ mapping.
@@ -93,7 +94,7 @@ public class SelectionKeyUDT extends SelectionKey implements
 	/**
 	 * Key validity state. Key is valid when created, and invalid when canceled.
 	 */
-	private volatile boolean isValid;
+	// private volatile boolean isValid;
 
 	/**
 	 * Reported ready interest.
@@ -140,17 +141,16 @@ public class SelectionKeyUDT extends SelectionKey implements
 	 */
 	protected void assertValidOps(final int interestOps) {
 		if ((interestOps & ~(channel().validOps())) != 0) {
-			throw new IllegalArgumentException("invalid interestOps="
-					+ interestOps);
+			throw new IllegalArgumentException(
+					"invalid interestOps=" + interestOps);
 		}
 	}
 
-	@Override
-	public void cancel() {
-		if (isValid()) {
-			selector().cancel(this);
-		}
-	}
+	/*
+	 * @Override
+	 * 
+	 * public void cancel() { if (isValid()) { selector().cancel(this); } }
+	 */
 
 	@Override
 	public SelectableChannel channel() {
@@ -202,6 +202,10 @@ public class SelectionKeyUDT extends SelectionKey implements
 					readyOps = channel().validOps();
 					return true;
 				} else {
+					/**
+					 * in some programe use invoke selectNow to clear canceld
+					 * key
+					 */
 					logError("Unexpected error report.");
 					return false;
 				}
@@ -414,10 +418,11 @@ public class SelectionKeyUDT extends SelectionKey implements
 		}
 	}
 
-	@Override
-	public boolean isValid() {
-		return isValid;
-	}
+	/*
+	 * @Override
+	 * 
+	 * public boolean isValid() { return isValid; }
+	 */
 
 	/**
 	 * Channel role.
@@ -427,13 +432,14 @@ public class SelectionKeyUDT extends SelectionKey implements
 	}
 
 	/**
-	 * Key processing logic error logger.
+	 * Key processing logic error logger. user while use selectNow to clear
+	 * cancel keys
 	 */
 	protected void logError(final String comment) {
 
 		final String message = "logic error : \n\t" + this;
 
-		log.warn(message, new Exception("" + comment));
+		log.debug(message, new Exception("" + comment));
 
 	}
 
@@ -451,7 +457,10 @@ public class SelectionKeyUDT extends SelectionKey implements
 		} catch (final Throwable e) {
 			log.error("Epoll failure.", e);
 		} finally {
-			this.isValid = isValid;
+			/*
+			 * if (!isValid) { cancel(); }
+			 */
+			// this.isValid = isValid;
 		}
 	}
 
@@ -486,20 +495,20 @@ public class SelectionKeyUDT extends SelectionKey implements
 	@Override
 	public String toString() {
 
-		return String
-				.format("[id: 0x%08x] poll=%s ready=%s inter=%s %s %s %s bind=%s:%s peer=%s:%s", //
-						socketUDT().id(), //
-						epollOpt, //
-						toStringOps(readyOps), //
-						toStringOps(interestOps), //
-						channelUDT.typeUDT(), //
-						channelUDT.kindUDT(), //
-						socketUDT().status(), //
-						socketUDT().getLocalInetAddress(), //
-						socketUDT().getLocalInetPort(), //
-						socketUDT().getRemoteInetAddress(), //
-						socketUDT().getRemoteInetPort() //
-				);
+		return String.format(
+				"[id: 0x%08x] poll=%s ready=%s inter=%s %s %s %s bind=%s:%s peer=%s:%s", //
+				socketUDT().id(), //
+				epollOpt, //
+				toStringOps(readyOps), //
+				toStringOps(interestOps), //
+				channelUDT.typeUDT(), //
+				channelUDT.kindUDT(), //
+				socketUDT().status(), //
+				socketUDT().getLocalInetAddress(), //
+				socketUDT().getLocalInetPort(), //
+				socketUDT().getRemoteInetAddress(), //
+				socketUDT().getRemoteInetPort() //
+		);
 
 	}
 

@@ -38,8 +38,8 @@ import com.barchart.udt.anno.ThreadSafe;
  * assert connectChannel.isConnected();
  * </pre>
  */
-public class ServerSocketChannelUDT extends ServerSocketChannel implements
-		ChannelUDT {
+public class ServerSocketChannelUDT extends ServerSocketChannel
+		implements ChannelUDT {
 
 	protected static final Logger log = LoggerFactory
 			.getLogger(ServerSocketChannelUDT.class);
