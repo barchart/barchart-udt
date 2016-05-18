@@ -37,7 +37,7 @@
 
 	<properties>
 
-		<projectJavaVersion>1.6</projectJavaVersion>
+		<projectJavaVersion>1.7</projectJavaVersion>
 		<projectMavenVersion>3.0.4</projectMavenVersion>
 
 		<projectBuildStamp><![CDATA[build stamp: ${project.artifactId} ${project.version} ${projectTimeISO}]]></projectBuildStamp>
