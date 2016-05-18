@@ -36,9 +36,11 @@
 		<!-- should be set by developer during interactive work -->
 		<versionEclipse>2.3.1-SNAPSHOT</versionEclipse>
 
-		<!-- will be set by maven-invoker-plugin during jenkins build -->
+		<!-- will be set by maven-invoker-plugin during jenkins build 
+		TODO fails Jenkins build
 		<versionJenkins>@project.version@</versionJenkins>
-
+    -->
+		<versionJenkins>2.3.1-SNAPSHOT</versionJenkins>
 	</properties>
 
 	<profiles>
