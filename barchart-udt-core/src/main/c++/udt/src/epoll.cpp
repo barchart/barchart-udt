@@ -99,13 +99,10 @@ int CEPoll::add_usock(const int eid, const UDTSOCKET& u, const int* events)
    if (p == m_mPolls.end())
       throw CUDTException(5, 13);
 
-   // BARCHART: Manage all event types.
    if (!events || (*events & UDT_EPOLL_IN))
       p->second.m_sUDTSocksIn.insert(u);
    if (!events || (*events & UDT_EPOLL_OUT))
       p->second.m_sUDTSocksOut.insert(u);
-   if (!events || (*events & UDT_EPOLL_ERR))
-      p->second.m_sUDTSocksEx.insert(u);
 
    return 0;
 }
@@ -226,11 +223,6 @@ int CEPoll::wait(const int eid, set<UDTSOCKET>* readfds, set<UDTSOCKET>* writefd
          for (set<UDTSOCKET>::const_iterator i = p->second.m_sUDTExcepts.begin(); i != p->second.m_sUDTExcepts.end(); ++ i)
             writefds->insert(*i);
          total += p->second.m_sUDTWrites.size() + p->second.m_sUDTExcepts.size();
-      }
-
-      // BARCHART: Remove errors when reported.
-      if(total > 0 && !p->second.m_sUDTExcepts.empty()){
-    	  p->second.m_sUDTExcepts.clear();
       }
 
       if (lrfds || lwfds)

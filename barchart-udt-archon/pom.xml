@@ -66,6 +66,8 @@
 		<narPluginArtifactId>maven-nar-plugin</narPluginArtifactId>
 		<narPluginVersion>20121119</narPluginVersion>
 
+	  <!-- TODO once upgrade is building -->
+    <maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
 
 	<build>
