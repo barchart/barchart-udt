@@ -33,15 +33,18 @@
 		<module>barchart-udt-core</module>
 		<module>barchart-udt-bundle</module>
 
-		<!-- integation tests -->
+		<!-- integation tests 
 		<module>barchart-udt-it</module>
+    -->
 
-		<!-- examples -->
+		<!-- examples 
 		<module>barchart-udt-demo</module>
+    -->
 
-		<!-- netty support -->
+		<!-- netty support 
 		<module>barchart-udt-netty3</module>
 		<module>barchart-udt-netty4</module>
+   -->
 
 	</modules>
 
