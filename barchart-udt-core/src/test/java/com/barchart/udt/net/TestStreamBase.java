@@ -83,11 +83,12 @@ public class TestStreamBase extends TestAny {
 					}
 					timer.stop();
 					log.info("timer : {}", timer.nanoString());
+				} catch (final Exception e) {
+					log.error("client; {}", e.getMessage());
+				} finally {
 					synchronized (this) {
 						this.notifyAll();
 					}
-				} catch (final Exception e) {
-					log.error("client; {}", e.getMessage());
 				}
 			}
 		};
@@ -142,7 +143,7 @@ public class TestStreamBase extends TestAny {
 			@Override
 			public void run() {
 				final Random random = new Random();
-				final int loop = 10000;
+				final int loop = 100;
 				final int size = 1000;
 				final byte[] arrayOut = new byte[size];
 				final byte[] arrayIn = new byte[size];
@@ -158,11 +159,12 @@ public class TestStreamBase extends TestAny {
 					}
 					timer.stop();
 					log.info("timer : {}", timer.nanoString());
+				} catch (final Exception e) {
+					log.error("client; {}", e.getMessage());
+				} finally {
 					synchronized (this) {
 						this.notifyAll();
 					}
-				} catch (final Exception e) {
-					log.error("client; {}", e.getMessage());
 				}
 			}
 		};

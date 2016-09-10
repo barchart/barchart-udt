@@ -70,12 +70,13 @@ public class TestEpollClose extends TestAny {
 			UnitHelp.clear(writeBuffer);
 		}
 
+		SocketUDT.epollRemove0(epollID, client.id());
+
 		client.close();
 
 		socketAwait(client, StatusUDT.CLOSED);
 		log.info("client {} {}", client, 0);
 
-		SocketUDT.epollRemove0(epollID, client.id());
 
 		{
 			log.info("### 2 ###");

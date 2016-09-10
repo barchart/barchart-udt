@@ -36,6 +36,8 @@ public class TestEpollConnection extends TestAny {
 	 */
 	@Test
 	public void connectionCreateDelete() throws Exception {
+		if (System.getProperty("os.name").toLowerCase().startsWith("win"))
+			return; //windows does not have epoll, select behaves differently
 
 		final IntBuffer readBuffer = HelpUDT.newDirectIntBufer(10);
 		final IntBuffer writeBuffer = HelpUDT.newDirectIntBufer(10);
