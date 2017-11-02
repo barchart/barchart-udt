@@ -207,7 +207,7 @@
 						</executions>
 					</plugin>
 
-					<!-- Attach existing core javadoc and sources jars to the bundle. -->
+					<!-- Attach existing core javadoc and sources jars to the bundle.
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
@@ -232,7 +232,7 @@
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
+					</plugin>  -->
 
 					<!-- Generate OSGI bundle manifest. -->
 					<plugin>
