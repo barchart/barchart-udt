@@ -21,8 +21,8 @@
 
 	<scm>
 		<url>https://github.com/barchart/barchart-udt</url>
-	    <connection>scm:git:git@github.com:barchart/barchart-udt.git</connection>
-    	<developerConnection>scm:git:git@github.com:barchart/barchart-udt.git</developerConnection>
+		<connection>scm:git:git@github.com:barchart/barchart-udt.git</connection>
+		<developerConnection>scm:git:git@github.com:barchart/barchart-udt.git</developerConnection>
 		<tag>master</tag>
 	</scm>
 
@@ -33,19 +33,27 @@
 		<module>barchart-udt-core</module>
 		<module>barchart-udt-bundle</module>
 
-		<!-- integation tests 
-		<module>barchart-udt-it</module>
-    -->
+		<!-- integation tests <module>barchart-udt-it</module> -->
 
-		<!-- examples 
-		<module>barchart-udt-demo</module>
-    -->
+		<!-- examples <module>barchart-udt-demo</module> -->
 
-		<!-- netty support 
-		<module>barchart-udt-netty3</module>
-		<module>barchart-udt-netty4</module>
-   -->
+		<!-- netty support <module>barchart-udt-netty3</module> <module>barchart-udt-netty4</module> -->
 
 	</modules>
 
+	<build>
+
+		<!-- Do not deploy layout project. -->
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
 </project>
