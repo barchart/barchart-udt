@@ -202,9 +202,13 @@ public class EpollUDT {
 
 		log.debug("ep {} add {} {}", id(), socket, option);
 
-		// assert option.isValidInterestRequest();
-
-		SocketUDT.epollAdd0(id(), socket.id(), option.code);
+		assert option.isValidInterestRequest();
+		try {
+			SocketUDT.epollAdd0(id(), socket.id(), option.code);
+		} catch (final Exception e) {
+			log.error("Error epoll.add", e);
+			throw e;
+		}
 
 	}
 
