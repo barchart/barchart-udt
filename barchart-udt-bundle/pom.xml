@@ -171,7 +171,7 @@
 								</configuration>
 							</execution>
 
-							<!-- Make local copy of javadoc and sources. -->
+							<!-- Make local copy of javadoc and sources. 
 							<execution>
 								<id>bundle-copy-docs</id>
 								<phase>generate-resources</phase>
@@ -203,7 +203,7 @@
 									<overWriteSnapshots>true</overWriteSnapshots>
 								</configuration>
 							</execution>
-
+-->
 						</executions>
 					</plugin>
 
