@@ -338,9 +338,14 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 
 		// see contract for receive()
 
-		if (sizeReceived < 0) {
+		if (sizeReceived == -1) {
+			/*
+			 * When in non blocking, the socket will return -1 for no data, Most
+			 * sockets return a negative -1 to signal the end of the stream, but
+			 * this not the end, because we are in non blocking.
+			 */
 			// log.trace("nothing was received; socket={}", socket);
-			return 0;
+			return -2;
 		}
 
 		if (sizeReceived == 0) {
