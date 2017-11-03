@@ -342,7 +342,8 @@ public class SocketChannelUDT extends SocketChannel implements ChannelUDT {
 			/*
 			 * When in non blocking, the socket will return -1 for no data, Most
 			 * sockets return a negative -1 to signal the end of the stream, but
-			 * this not the end, because we are in non blocking.
+			 * this not the end, because we are in non blocking. So return a -2
+			 * to allow higher level API's to not exit.
 			 */
 			// log.trace("nothing was received; socket={}", socket);
 			return -2;
