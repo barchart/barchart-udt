@@ -145,27 +145,27 @@
 											<classifier>${mac32}</classifier>
 											<type>nar</type>
 										</artifactItem> -->
-						<!-- 				<artifactItem>
+						 				<artifactItem>
 											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
 											<version>${dependencyVersion}</version>
 											<classifier>${mac64}</classifier>
 											<type>nar</type> 
-										</artifactItem>-->
+										</artifactItem>
 									<!-- 	<artifactItem>
 											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
 											<version>${dependencyVersion}</version>
 											<classifier>${win32}</classifier>
 											<type>nar</type>
-										</artifactItem>
+										</artifactItem> -->
 										<artifactItem>
 											<groupId>${dependencyGroupId}</groupId>
 											<artifactId>${dependencyArtifactId}</artifactId>
 											<version>${dependencyVersion}</version>
 											<classifier>${win64}</classifier>
 											<type>nar</type>
-										</artifactItem> -->
+										</artifactItem>
 
 									</artifactItems>
 								</configuration>
