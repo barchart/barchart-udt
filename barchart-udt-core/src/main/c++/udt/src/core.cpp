@@ -1342,6 +1342,15 @@ int CUDT::recvmsg(char* data, int len)
    if (!m_bSynRecving)
    {
       int res = m_pRcvBuffer->readMsg(data, len);
+
+      // udt4 epoll bug: always let sock readable.
+      //   http://sourceforge.net/p/udt/discussion/852996/thread/88d8bee5/
+      if (m_pRcvBuffer->getRcvMsgNum() <= 0)
+      {
+         // read is not available any more
+         s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_IN, false);
+      }
+
       if (0 == res)
          throw CUDTException(6, 2, 0);
       else
