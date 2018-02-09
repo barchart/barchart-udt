@@ -333,11 +333,11 @@
 									<overwrite>true</overwrite>
 									<resources>
 										<resource>
-											<directory>${checkoutUDT}/${moduleUDT}</directory>
+											<directory>${nativeSrcUDT}/src</directory>
 											<filtering>false</filtering>
 										</resource>
 									</resources>
-									<outputDirectory>${nativeSrcUDT}</outputDirectory>
+									<outputDirectory>${checkoutUDT}/${moduleUDT}/src</outputDirectory>
 								</configuration>
 							</execution>
 						</executions>
