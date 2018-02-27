@@ -103,6 +103,8 @@ int CEPoll::add_usock(const int eid, const UDTSOCKET& u, const int* events)
       p->second.m_sUDTSocksIn.insert(u);
    if (!events || (*events & UDT_EPOLL_OUT))
       p->second.m_sUDTSocksOut.insert(u);
+   if (!events || (*events & UDT_EPOLL_ERR))
+      p->second.m_sUDTSocksEx.insert(u);
 
    return 0;
 }
