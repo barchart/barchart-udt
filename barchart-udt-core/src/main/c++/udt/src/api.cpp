@@ -1305,10 +1305,10 @@ void CUDTUnited::removeSocket(const UDTSOCKET u)
    m->second.m_iRefCount --;
    if (0 == m->second.m_iRefCount)
    {
-      m->second.m_pChannel->close();
       delete m->second.m_pSndQueue;
       delete m->second.m_pRcvQueue;
       delete m->second.m_pTimer;
+      m->second.m_pChannel->close();
       delete m->second.m_pChannel;
       m_mMultiplexer.erase(m);
    }
