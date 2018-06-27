@@ -31,13 +31,9 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Developers: Andrei Pozolotin;
+ * Developers: Andrei Pozolotin, Michal Holic;
  *
  * =================================================================================
- */
-/*
- * NOTE: provides ONLY ipv4 implementation (not ipv6)
- *
  */
 
 // ### keep outside [extern "C"]
@@ -124,6 +120,7 @@ static jfieldID udt_S_remoteSocketAddress;
 static jfieldID udt_S_localSocketAddress;
 static jfieldID udt_S_monitor;
 static jfieldID udt_S_socketID;
+static jfieldID udt_S_socketAddressFamily;
 
 // UDT fields: com.barchart.udt.TypeUDT
 static jfieldID udt_T_code;
@@ -400,6 +397,8 @@ void UDT_InitFieldRefAll(JNIEnv * const env) {
 			"type", "Lcom/barchart/udt/TypeUDT;");
 	udt_S_monitor = env->GetFieldID(udt_SocketUDT, //
 			"monitor", "Lcom/barchart/udt/MonitorUDT;");
+	udt_S_socketAddressFamily = env->GetFieldID(udt_SocketUDT, //
+			"socketAddressFamily", "I");
 
 	// UDT TypeUDT
 
@@ -584,10 +583,11 @@ JNIEXPORT jint JNICALL Java_com_barchart_udt_SocketUDT_initInstance0( //
 		const jint typeCode //
 		) {
 
-	int socketAddressFamily = AF_INET;
 	int socketType = typeCode;
 
-	const jint socketID = UDT::socket(socketAddressFamily, socketType, 0);
+	const jint socketAddressFamily = env->GetIntField(self, udt_S_socketAddressFamily);
+
+	const jint socketID = UDT::socket((socketAddressFamily == 2)? AF_INET : AF_INET6, socketType, 0);
 
 	UDT_SetSocketID(env, self, socketID);
 
@@ -674,19 +674,26 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_bind0( //
 
 	const jint socketID = UDT_GetSocketID(env, self);
 
+	const jint socketAddressFamily = env->GetIntField(self, udt_S_socketAddressFamily);
+
 	int rv;
 
-	sockaddr localSockAddr;
-
-	rv = X_InitSockAddr(&localSockAddr);
-
-	if (rv == JNI_ERR) {
-		UDT_ThrowExceptionUDT_Message(env, socketID, "can not X_InitSockAddr");
-		return;
+	sockaddr_storage localSockAddr;
+	socklen_t localSockAddrLen;
+	if (socketAddressFamily == 2) {
+		//IPv4
+		memset(&localSockAddr, 0, sizeof(sockaddr_in));
+		localSockAddr.ss_family = AF_INET;
+		localSockAddrLen = sizeof(sockaddr_in);
+	} else {
+		//IPv6
+		memset(&localSockAddr, 0, sizeof(sockaddr_in6));
+		localSockAddr.ss_family = AF_INET6;
+		localSockAddrLen = sizeof(sockaddr_in6);
 	}
 
 	rv = X_ConvertInetSocketAddressToSockaddr(env, objLocalSocketAddress,
-			&localSockAddr);
+			&localSockAddr, socketAddressFamily);
 
 	if (rv == JNI_ERR) {
 		UDT_ThrowExceptionUDT_Message(env, socketID,
@@ -694,7 +701,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_bind0( //
 		return;
 	}
 
-	rv = UDT::bind(socketID, &localSockAddr, sizeof(localSockAddr));
+	rv = UDT::bind(socketID, (sockaddr*)&localSockAddr, localSockAddrLen);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -732,6 +739,8 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_connect0( //
 
 	const jint socketID = UDT_GetSocketID(env, self);
 
+	const jint socketAddressFamily = env->GetIntField(self, udt_S_socketAddressFamily);
+
 	if (objRemoteSocketAddress == NULL) {
 		UDT_ThrowExceptionUDT_Message(env, socketID,
 				"objRemoteSocketAddress == NULL");
@@ -740,17 +749,22 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_connect0( //
 
 	int rv;
 
-	sockaddr remoteSockAddr;
-
-	rv = X_InitSockAddr(&remoteSockAddr);
-
-	if (rv == JNI_ERR) {
-		UDT_ThrowExceptionUDT_Message(env, socketID, "can not X_InitSockAddr");
-		return;
+	sockaddr_storage remoteSockAddr;
+	socklen_t remoteSockAddrLen;
+	if (socketAddressFamily == 2) {
+		//IPv4
+		memset(&remoteSockAddr, 0, sizeof(sockaddr_in));
+		remoteSockAddr.ss_family = AF_INET;
+		remoteSockAddrLen = sizeof(sockaddr_in);
+	} else {
+		//IPv6
+		memset(&remoteSockAddr, 0, sizeof(sockaddr_in6));
+		remoteSockAddr.ss_family = AF_INET6;
+		remoteSockAddrLen = sizeof(sockaddr_in6);
 	}
 
 	rv = X_ConvertInetSocketAddressToSockaddr(env, //
-			objRemoteSocketAddress, &remoteSockAddr);
+			objRemoteSocketAddress, &remoteSockAddr, socketAddressFamily);
 
 	if (rv == JNI_ERR) {
 		UDT_ThrowExceptionUDT_Message(env, socketID,
@@ -758,7 +772,7 @@ JNIEXPORT void JNICALL Java_com_barchart_udt_SocketUDT_connect0( //
 		return;
 	}
 
-	rv = UDT::connect(socketID, &remoteSockAddr, sizeof(remoteSockAddr));
+	rv = UDT::connect(socketID, (sockaddr*)&remoteSockAddr, remoteSockAddrLen);
 
 	if (rv == UDT::ERROR) {
 		UDT::ERRORINFO errorInfo = UDT::getlasterror();
@@ -775,6 +789,8 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedRemoteSocket
 		) {
 
 	const jint socketID = UDT_GetSocketID(env, self);
+
+	const jint socketAddressFamily = env->GetIntField(self, udt_S_socketAddressFamily);
 
 	sockaddr remoteSockAddr;
 	int remoteSockAddrSize = sizeof(remoteSockAddr);
@@ -793,9 +809,9 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedRemoteSocket
 
 	if (objRemoteSocketAddress == NULL
 			|| !X_IsSockaddrEqualsInetSocketAddress(env, &remoteSockAddr,
-					objRemoteSocketAddress)) {
+					objRemoteSocketAddress, socketAddressFamily)) {
 
-		objRemoteSocketAddress = X_NewInetSocketAddress(env, &remoteSockAddr);
+		objRemoteSocketAddress = X_NewInetSocketAddress(env, &remoteSockAddr, socketAddressFamily);
 
 		env->SetObjectField(self, udt_S_remoteSocketAddress,
 				objRemoteSocketAddress);
@@ -812,6 +828,8 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedLocalSocketA
 		) {
 
 	const jint socketID = UDT_GetSocketID(env, self);
+
+	const jint socketAddressFamily = env->GetIntField(self, udt_S_socketAddressFamily);
 
 	sockaddr localSockAddr;
 	int localSockAddrSize = sizeof(localSockAddr);
@@ -830,9 +848,9 @@ JNIEXPORT jboolean JNICALL Java_com_barchart_udt_SocketUDT_hasLoadedLocalSocketA
 
 	if (objLocalSocketAddress == NULL
 			|| !X_IsSockaddrEqualsInetSocketAddress(env, &localSockAddr,
-					objLocalSocketAddress)) {
+					objLocalSocketAddress, socketAddressFamily)) {
 
-		objLocalSocketAddress = X_NewInetSocketAddress(env, &localSockAddr);
+		objLocalSocketAddress = X_NewInetSocketAddress(env, &localSockAddr, socketAddressFamily);
 
 		env->SetObjectField(self, udt_S_localSocketAddress,
 				objLocalSocketAddress);

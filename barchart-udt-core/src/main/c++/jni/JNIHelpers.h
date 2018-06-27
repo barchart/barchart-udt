@@ -31,7 +31,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Developers: Andrei Pozolotin, CCob
+ * Developers: Andrei Pozolotin, CCob, Michal Holic;
  *
  * =================================================================================
  */
@@ -148,8 +148,6 @@ jobject X_NewInteger(JNIEnv *env, int value);
 
 jobject X_NewLong(JNIEnv* env, int64_t value);
 
-int X_InitSockAddr(sockaddr* sockAddr);
-
 inline bool X_IsInRange(jlong min, jlong var, jlong max) {
 	if (min <= var && var <= max) {
 		return true;
@@ -172,19 +170,15 @@ inline void X_ConvertMillisIntoTimeValue(const jlong millisTimeout,
 	}
 }
 
-// NOTE: ipv4 only
 int X_ConvertInetSocketAddressToSockaddr(JNIEnv* env,
-		jobject objInetSocketAddress, sockaddr* sockAddr);
+		jobject objInetSocketAddress, sockaddr_storage* sockAddr, jint socketAddressFamily);
 
-// NOTE: only ipv4
-jobject X_NewInetAddress(JNIEnv* env, jint address);
+jobject X_NewInetAddress(JNIEnv* env, void* addressPointer, jshort sin_family);
 
-// NOTE: ipv4 only
-jobject X_NewInetSocketAddress(JNIEnv* env, sockaddr* sockAddr);
+jobject X_NewInetSocketAddress(JNIEnv* env, sockaddr* sockAddr, jint socketAddressFamily);
 
-// NOTE: ipv4 only
 bool X_IsSockaddrEqualsInetSocketAddress(JNIEnv* env, sockaddr* sockAddr,
-		jobject socketAddress);
+		jobject socketAddress, jint socketAddressFamily);
 
 
 void UDT_ThrowExceptionUDT_Message(JNIEnv* env, const jint socketID,

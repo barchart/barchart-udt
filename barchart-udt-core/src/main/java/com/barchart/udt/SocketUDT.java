@@ -24,8 +24,6 @@ import com.barchart.udt.util.HelpUDT;
 
 /**
  * UDT native socket wrapper
- * <p>
- * note: current implementation supports IPv4 only (no IPv6)
  */
 public class SocketUDT {
 
@@ -501,8 +499,6 @@ public class SocketUDT {
 
 	/**
 	 * native address family; read by JNI
-	 * <p>
-	 * TODO add support for AF_INET6
 	 */
 	@Native
 	private final int socketAddressFamily;
@@ -527,10 +523,13 @@ public class SocketUDT {
 	 */
 	public SocketUDT(final TypeUDT type) throws ExceptionUDT {
 		synchronized (SocketUDT.class) {
+			if (Boolean.valueOf(System.getProperty("java.net.preferIPv6Addresses")))
+				this.socketAddressFamily = 10; // ipv6
+			else
+				this.socketAddressFamily = 2; // ipv4
 			this.type = type;
 			this.monitor = new MonitorUDT(this);
 			this.socketID = initInstance0(type.code);
-			this.socketAddressFamily = 2; // ipv4
 			setDefaultMessageSendMode();
 		}
 		log.debug("init : {}", this);
@@ -546,10 +545,13 @@ public class SocketUDT {
 	protected SocketUDT(final TypeUDT type, final int socketID)
 			throws ExceptionUDT {
 		synchronized (SocketUDT.class) {
+			if (Boolean.valueOf(System.getProperty("java.net.preferIPv6Addresses")))
+				this.socketAddressFamily = 10; // ipv6
+			else
+				this.socketAddressFamily = 2; // ipv4
 			this.type = type;
 			this.monitor = new MonitorUDT(this);
 			this.socketID = initInstance1(socketID);
-			this.socketAddressFamily = 2; // ipv4
 			setDefaultMessageSendMode();
 		}
 		log.debug("init : {}", this);
